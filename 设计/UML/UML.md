@@ -40,17 +40,16 @@ UML2 中一共定义了 14 种图。
   - 实现图（implementation diagram）
     - 组件图
     - 部署图
-  - 剖面图
   - 复合结构图
 - 行为式图（Behavior diagrams）强调系统模型中触发的事件：
   - 活动图
   - 状态图
   - 用例图
-- 交互性图（Interaction diagrams），属于行为图形的子集合，强调系统模型中的资料流程：
-  - 通信图
-  - 交互概述图（UML 2.0）
-  - 时序图（UML 2.0）
-  - 时间图（UML 2.0）
+  - 交互性图（Interaction diagrams）
+    - 通信图
+    - 交互概述图（UML 2.0）
+    - 时序图（UML 2.0）
+    - 时间图（UML 2.0）
 
 ### 概念
 
@@ -65,8 +64,8 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 ## 参考资料
 
-https://zh.wikipedia.org/wiki/统一建模语言
-https://sparxsystems.cn/resources/uml2_tutorial/index.html
-https://www.omg.org/spec/UML
-https://www.tutorialspoint.com/uml/index.htm
-https://www.w3cschool.cn/uml_tutorial/
+- https://zh.wikipedia.org/wiki/统一建模语言
+- https://sparxsystems.cn/resources/uml2_tutorial/index.html
+- https://www.omg.org/spec/UML
+- https://www.tutorialspoint.com/uml/index.htm
+- https://www.w3cschool.cn/uml_tutorial/

@@ -228,30 +228,31 @@
 
 ## 3. 用例图
 
-**用例模型** - 用例模型用来记录系统的需求，它提供系统与用户及其他参与者的一种通信手段。
+> **用例图用来记录系统的需求，它提供系统与用户及其他参与者的一种通信手段。**
 
-**执行者** - 用例图显示了系统和系统外实体之间的交互。这些实体被引用为执行者。执行者代表角色，可以包括：用户，外部硬件和其他系统。执行者往往被画成简笔画小人。也可以用带«actor»关键字的类矩形表示。
+### 执行者
 
-<div>
-<img src="http://upload-images.jianshu.io/upload_images/3101171-ee55c839bb75bfa8.gif?imageMogr2/auto-orient/strip" />
-<img src="http://upload-images.jianshu.io/upload_images/3101171-a4d6d2405eb9e800.GIF?imageMogr2/auto-orient/strip" />
-</div>
+用例图显示了系统和系统外实体之间的交互。这些实体被引用为执行者。执行者代表角色，可以包括：用户，外部硬件和其他系统。执行者往往被画成简笔画小人。也可以用带«actor»关键字的类矩形表示。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-actor.gif)
 
 在下图中，执行者可以详细的泛化其他执行者:
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-74b6ae51651ceeb9.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-generalize.gif)
 
-**用例** - 用例是有意义的单独工作单元。它向系统外部的人或事提供一个易于观察的高层次行为视图。 用例的标注符号是一个椭圆。
+### 用例
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-fb294052d4ee9242.GIF?imageMogr2/auto-orient/strip)
+用例是有意义的单独工作单元。它向系统外部的人或事提供一个易于观察的高层次行为视图。 用例的标注符号是一个椭圆。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case.gif)
 
 使用用例的符号是带可选择箭头的连接线，箭头显示控制的方向。下图说明执行者 "Customer"使用 "Withdraw"用例。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-356e9bc9f477494f.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-use.gif)
 
 用途连接器（uses connector）可以有选择性的在每一个端点有多重性值，如下图，显示客户一次可能只执行一次取款交易。但是银行可以同时执行许多取款交易。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-01b6a0f9d3b04705.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-multiplicity-use.gif)
 
 ### 用例定义
 
@@ -268,7 +269,7 @@
 
 用例可能包含其他用例的功能来作为它正常处理的一部分。通常它假设，任何被包含的用例在基本程序运行时每一次都会被调用。下面例子：用例“卡的确认”<Card Identification> 在运行时，被用例“取钱”<Withdraw>当作一个子部分。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-5b1ea57e9bf7443e.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-include.gif)
 
 用例可以被一个或多个用例包含。通过提炼通用的行为，将它变成可以多次重复使用的用例。有助于降低功能重复级别。
 
@@ -276,15 +277,15 @@
 
 一个用例可以被用来扩展另一个用例的行为，通常使用在特别情况下。例如：假设在修改一个特别类型的客户订单之前，用户必须得到某种更高级别的许可，然后“获得许可”<Get Approval>用例将有选择的扩展常规的“修改订单”<Modify Order>用例。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-6218dcd5aa5f970e.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-extend.gif)
 
 **扩展点** - 扩展用例的加入点被定义为扩展点。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-1ac6b427bbf7b768.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-extend-with-condition.gif)
 
 **系统边界** - 它用来显示用例在系统内部，执行者在系统的外部。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-8fc64e4963b0b9da.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-system-boundary.gif)
 
 ## 4. 通信图
 
@@ -300,7 +301,7 @@
 
 ## 5. 交互概述图
 
-一个交互概览图是活动图的一种形式，它的节点代表交互图。交互图包含时序图，通信图，交互概览图和时间图。 大多数交互概览图标注与活动图一样。例如：起始，结束，判断，合并，分叉和结合节点是完全相同。并且，交互概览图介绍了两种新的元素：交互发生和交互元素。
+> **一个交互概览图是活动图的一种形式，它的节点代表交互图。交互图包含时序图，通信图，交互概览图和时间图。 大多数交互概览图标注与活动图一样。例如：起始，结束，判断，合并，分叉和结合节点是完全相同。并且，交互概览图介绍了两种新的元素：交互发生和交互元素。**
 
 ### 交互发生
 
@@ -322,39 +323,55 @@
 
 ## 6. 时序图
 
-时序图是交互图的一种形式，它显示对象沿生命线发展，对象之间随时间的交互表示为从源生命线指向目标生命线的消息。时序图能很好地显示那些对象与其它那些对象通信，什么消息触发了这些通信，时序图不能很好显示复杂过程的逻辑。
+> **时序图是交互图的一种形式，它显示对象沿生命线发展，对象之间随时间的交互表示为从源生命线指向目标生命线的消息。时序图能很好地显示那些对象与其它那些对象通信，什么消息触发了这些通信，时序图不能很好显示复杂过程的逻辑。**
 
-**生命线** - 一条生命线在时序图中代表一个独立的参与者。表示为包含对象名的矩形，如果它的名字是"self"，则说明该生命线代表控制带时序图的类元。
+### 生命线
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-84d4c28990089835.GIF?imageMogr2/auto-orient/strip)
+一条生命线在时序图中代表一个独立的参与者。表示为包含对象名的矩形，如果它的名字是"self"，则说明该生命线代表控制带时序图的类元。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-lifelines.gif)
 
 有时，时序图会包含一个顶端是执行者的生命线。这情况说明掌握这个时序图的是用例。健壮图中的边界，控制和实体元素也可以有生命线。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-2a31055037ddd7f1.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-more-lifelines.gif)
 
-**消息** - 消息显示为箭头。消息可以完成传输，也可能丢失和找回，它可以是同步的，也可以是异步的，即可以是调用，也可以是信号。在下图中，第一条消息是同步消息(标为实箭头)完成传输，并隐含一条返回消息。第二条消息是异步消息 (标为实线箭头)，第三条是异步返回消息(标为虚线)。
+### 消息
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-acfc006cb1f08692.GIF?imageMogr2/auto-orient/strip)
+消息显示为箭头。消息可以完成传输，也可能丢失和找回，它可以是同步的，也可以是异步的，即可以是调用，也可以是信号。在下图中，第一条消息是同步消息(标为实箭头)完成传输，并隐含一条返回消息。第二条消息是异步消息 (标为实线箭头)，第三条是异步返回消息(标为虚线)。
 
-**执行发生** - 向下延伸的细条状矩形表示执行事件或控制焦点的激活。在上图中有三个执行事件。第一个是源对象发送两条消息和收到两条回复。第二个是目标对象收到一条同步消息并返回一条回复。第三个是目标对象收到一条异步消息并返回一条回复。
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-messages.gif)
 
-**内部通信** - 内部消息表现为一个操作的递归调用，或一个方法调用属于同一个对象的其他方法。显示为生命线上执行事件的嵌套控制焦点。
+### 执行发生
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-f041d07a5e21317c.GIF?imageMogr2/auto-orient/strip)
+向下延伸的细条状矩形表示执行事件或控制焦点的激活。在上图中有三个执行事件。第一个是源对象发送两条消息和收到两条回复。第二个是目标对象收到一条同步消息并返回一条回复。第三个是目标对象收到一条异步消息并返回一条回复。
 
-**迷路消息和拾取消息** - 迷路消息是那些发送了却没有到达指定接收者，或者到达的接收者不再当前图中。拾取消息是收到来自那些未知的发送者，或者来自没有显示在当前图的发送者的消息。它们都表明是去往或来自一个终点元素。
+### 内部通信
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-df9907958b097ca1.GIF?imageMogr2/auto-orient/strip)
+内部消息表现为一个操作的递归调用，或一个方法调用属于同一个对象的其他方法。显示为生命线上执行事件的嵌套控制焦点。
 
-**生命线开始与结束** - 生命线可以在时序图时间刻度范围内创建和销毁，在下面的例子中，生命线被停止符号（叉号）终止。在前面的例子中，生命线顶端的符号（Child）显示在比创建它的对象符号（parent）沿页面要低的位置上。下图显示创建和终止对象。
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-recursion.gif)
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-1856a0aff9a4779a.GIF?imageMogr2/auto-orient/strip)
+### 迷路消息和拾取消息
 
-**时间和期限约束** - 消息默认显示为水平线。因为生命线显示为沿屏幕向下的时间通道，所以当给实时系统建模，或是有时间约束的业务过程建模，考虑执行动作所需时间长度是很重要的。因此可以给消息设置一个期限约束，这样的消息显示为下斜线。
+迷路消息是那些发送了却没有到达指定接收者，或者到达的接收者不再当前图中。拾取消息是收到来自那些未知的发送者，或者来自没有显示在当前图的发送者的消息。它们都表明是去往或来自一个终点元素。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-3b893a4cc39c6e1b.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-lost-and-found.gif)
 
-**复合片段** - 如前面所说，时序图不适合表达复杂的过程逻辑。在一种情况下，有许多机制允许把一定程度的过程逻辑加入到图中，并把它们放到复合片段的标题下。复合片段是一个或多个处理顺序被包含在一个框架中，并在指定名称的环境下执行。片段可以是:
+### 生命线开始与结束
+
+生命线可以在时序图时间刻度范围内创建和销毁，在下面的例子中，生命线被停止符号（叉号）终止。在前面的例子中，生命线顶端的符号（Child）显示在比创建它的对象符号（parent）沿页面要低的位置上。下图显示创建和终止对象。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-lost-and-found.gif)
+
+### 时间和期限约束
+
+消息默认显示为水平线。因为生命线显示为沿屏幕向下的时间通道，所以当给实时系统建模，或是有时间约束的业务过程建模，考虑执行动作所需时间长度是很重要的。因此可以给消息设置一个期限约束，这样的消息显示为下斜线。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-time.gif)
+
+### 复合片段
+
+如前面所说，时序图不适合表达复杂的过程逻辑。在一种情况下，有许多机制允许把一定程度的过程逻辑加入到图中，并把它们放到复合片段的标题下。复合片段是一个或多个处理顺序被包含在一个框架中，并在指定名称的环境下执行。片段可以是:
 
 - 选择性片段 (显示 “alt”) 为 if…then…else 结构建模。
 - 选项片段 (显示 “opt”) 为 "switch"(开关) 结构建模。
@@ -371,25 +388,29 @@
 
 下图显示的是循环片段：
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-395990e2b2a9227a.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-fragment.gif)
 
 这也是一个类似于复合片段的交互发生。 交互发生被其他图参考，显示为左上角带"ref"，将被参考图名显示在方框的中间。
 
-**门** - 门是连接片段内消息和片段外消息的连接点。 在 EA 中，门显示为片段框架上的小正方形。作用为时序图与页面外的连接器。 用来表示进来的消息源，或者出去消息的终点。下面两个图显示它们在实践中的使用。注意：" top level diagram"中的门用消息箭头指向参考片段，在这里没有必要把它画成方块。
+### 门
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-76c9d0ed8fb81594.GIF?imageMogr2/auto-orient/strip)
+门是连接片段内消息和片段外消息的连接点。 在 EA 中，门显示为片段框架上的小正方形。作用为时序图与页面外的连接器。 用来表示进来的消息源，或者出去消息的终点。下面两个图显示它们在实践中的使用。注意：" top level diagram"中的门用消息箭头指向参考片段，在这里没有必要把它画成方块。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-cbc88f525e140f73.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-top-level-diagram.gif)
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-nested-diagram.gif)
 
 ### 部分分解
 
 一个对象可以引出多条生命线，使得对象内部和对象之间的消息显示在同一图上。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-81962e0e941980f1.GIF?imageMogr2/auto-orient/strip)
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-part-decomposition.gif)
 
-**状态常量/延续** - 状态常量是生命线的约束，运行时始终为"真"。显示为两侧半圆的矩形，如下图：
+### 状态常量/延续
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-9885bcfde2f2482a.GIF?imageMogr2/auto-orient/strip)
+状态常量是生命线的约束，运行时始终为"真"。显示为两侧半圆的矩形，如下图：
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-state-invariant.gif)
 
 延续虽与状态常量有同样的标注，但是被用于复合片段，并可以延伸跨越多条生命线。
 
