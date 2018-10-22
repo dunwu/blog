@@ -29,7 +29,7 @@ tags:
 5.  从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-01.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-01.png" />
 </div>
 
 这五个性质强制了红黑树的关键性质: 从根到叶子的最长的可能路径不多于最短的可能路径的两倍长。为什么呢？性质 4 暗示着任何一个简单路径上不能有两个毗连的红色节点，这样，最短的可能路径全是黑色节点，最长的可能路径有交替的红色和黑色节点。同时根据性质 5 知道：所有最长的路径都有相同数目的黑色节点，这就表明了没有路径能多于任何其他路径的两倍长。
@@ -59,7 +59,7 @@ tags:
   3.1. 如果父节点 P 和叔父节点 U 二者都是红色
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-insert-01.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-insert-01.png" />
 </div>
 
 如上图所示，我们将 P 和 U 重绘为黑色，并重绘节点 G 为红色(用来保持性质 5)。
@@ -71,7 +71,7 @@ tags:
 3.2. 父节点 P 是红色而叔父节点 U 是黑色或缺少，新节点 N 是右孩子节点，而父节点 P 又是其父节点 G 的左孩子节点。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-insert-02.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-insert-02.png" />
 </div>
 
 在这种情形下，我们进行一次左旋转调换新节点和其父节点的角色；接着，我们按情形 3.3 处理以前的父节点 P 以解决仍然失效的性质 4。注意这个改变会导致某些路径通过它们以前不通过的新节点 N（比如图中 1 号叶子节点）或不通过节点 P（比如图中 3 号叶子节点），但由于这两个节点都是红色的，所以性质 5 仍有效。
@@ -79,7 +79,7 @@ tags:
 3.3. 父节点 P 是红色而叔父节点 U 是黑色或缺少，新节点 N 是左孩子节点，而父节点 P 又是其父节点 G 的左孩子节点。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-insert-03.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-insert-03.png" />
 </div>
 
 在这种情形下，我们进行针对祖父节点 G 的一次右旋转；在旋转产生的树中，以前的父节点 P 现在是新节点 N 和以前的祖父节点 G 的父节点。我们知道以前的祖父节点 G 是黑色，否则父节点 P 就不可能是红色（如果 P 和 G 都是红色就违反了性质 4，所以 G 必须是黑色）。我们切换以前的父节点 P 和祖父节点 G 的颜色，结果的树满足性质 4。性质 5 也仍然保持满足，因为通过这三个节点中任何一个的所有路径以前都通过祖父节点 G，现在它们都通过以前的父节点 P。在各自的情形下，这都是三个节点中唯一的黑色节点。
@@ -111,7 +111,7 @@ tags:
 此时 P 肯定是红色的。我们对 N 的父节点进行左旋转，然后把红色兄弟转换成 N 的祖父。我们接着对调 N 的父亲和祖父的颜色。尽管所有的路径仍然有相同数目的黑色节点，现在 N 有了一个黑色的兄弟和一个红色的父亲，所以我们可以接下去按 (2)、(3)或(4)情况来处理。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-delete-01.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-delete-01.png" />
 </div>
 
 3.2 S和S的孩子全是黑色的
@@ -119,7 +119,7 @@ tags:
 在这种情况下，P 可能是黑色的或者红色的，我们简单的重绘 S 为红色。结果是通过 S 的所有路径，它们就是以前不通过 N 的那些路径，都少了一个黑色节点。因为删除 N 的初始的父亲使通过 N 的所有路径少了一个黑色节点，这使事情都平衡了起来。但是，通过 P 的所有路径现在比不通过 P 的路径少了一个黑色节点。接下来，要调整以 P 作为 N 递归调整树。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-delete-02.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-delete-02.png" />
 </div>
 
 3.3 S是黑色的，S的左孩子是红色，右孩子是黑色
@@ -127,7 +127,7 @@ tags:
 这种情况下我们在 S 上做右旋转，这样 S 的左儿子成为 S 的父亲和 N 的新兄弟。我们接着交换 S 和它的新父亲的颜色。所有路径仍有同样数目的黑色节点，但是现在 N 有了一个右儿子是红色的黑色兄弟，所以我们进入了情况（4）。N 和它的父亲都不受这个变换的影响。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-delete-03.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-delete-03.png" />
 </div>
 
 3.4 S是黑色的，S的右孩子是红色
@@ -135,7 +135,7 @@ tags:
 在这种情况下我们在 N 的父亲上做左旋转，这样 S 成为 N 的父亲和 S 的右儿子的父亲。我们接着交换 N 的父亲和 S 的颜色，并使 S 的右儿子为黑色。子树在它的根上的仍是同样的颜色，所以属性 3 没有被违反。但是，N 现在增加了一个黑色祖先: 要么 N 的父亲变成黑色，要么它是黑色而 S 被增加为一个黑色祖父。所以，通过 N 的路径都增加了一个黑色节点。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/algorithm/master/images/tree/red-black-tree-delete-04.png" />
+<img src="http://dunwu.test.upcdn.net/images/algorithm/tree/red-black-tree-delete-04.png" />
 </div>
 
 ## 示例代码
