@@ -11,19 +11,91 @@ tags:
 
 > 结构图定义了一个模型的静态架构。它们通常被用来对那些构成模型的‘要素'建模，诸如：类，对象，接口和物理组件。另外，它们也被用来对元素间关联和依赖关系进行建模。
 >
-> 关键词：`包图`,`组件图`,`类图`,`部署图`,`复合结构图`,`对象图`
+> 关键词：`部署图`, `组件图`, `包图`, `类图`, `复合结构图`, `对象图`
 
 <!-- TOC depthFrom:2 depthTo:2 -->
 
+- [部署图](#部署图)
+- [组件图](#组件图)
 - [包图](#包图)
 - [类图](#类图)
-- [对象图](#对象图)
-- [组件图](#组件图)
-- [部署图](#部署图)
 - [复合结构图](#复合结构图)
+- [对象图](#对象图)
 - [参考资料](#参考资料)
 
 <!-- /TOC -->
+
+## 部署图
+
+> **部署图（Deployment Diagram）用于对系统的物理结构建模**。部署图将显示系统中的软件组件和硬件组件之间的关系以及处理工作的物理分布。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-deployment-diagram-example.png)
+
+### 节点
+
+节点既可以是硬件元素，也可以是软件元素。它显示为一个立方体，如下图所示。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-node.gif)
+
+### 节点实例
+
+图可以显示节点实例，实例与节点的区分是：实例的名称带下划线，冒号放在它的基本节点类型之前。实例在冒号之前可以有名称，也可以没有名称。下图显示了一个具名的计算机实例。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-node-instance.gif)
+
+### 节点构造型
+
+为节点提供了许多标准的构造型，分别命名为 «cdrom»， «cd-rom»， «computer»， «disk array»， «pc»， «pc client»， «pc server»， «secure»， «server»， «storage»， «unix server»， «user pc»。 并在节点符号的右上角显示适当的图标。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-node-stereotype.gif)
+
+### 工件
+
+工件是[软件开发](http://www.sparxsystems.cn/platforms/software_development.html)过程中的产品。包括过程模型（如：用例模型，设计模型等），源文件，执行文件，设计文档，测试报告，构造型，用户手册等等。
+
+工件表示为带有工件名称的矩形，并显示«artifact»关键字和文档符号。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-artifact.gif)
+
+### 关联
+
+在部署图的上下文联系中，关联代表节点间的联系通道。下图显示了一个网络系统的部署图，描述了网络协议为构造型和关联终端的多重性，
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-network-model.gif)
+
+### 作为容器的节点
+
+节点可以包含其他元素，如组件和工件。下图显示了一个嵌入式系统某个部分的部署图。描写了一个被主板节点包含的可执行工件。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-embedded-model.gif)
+
+## 组件图
+
+> **组件图（Component Diagram）描绘了组成一个软件系统的模块和嵌入控件**。组件图比类图具有更高层次的抽象－通常运行时一个组件被一个或多个类（或对象）实现。它们象积木那样使得组件能最终构成系统的绝大部分。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-component-diagram.gif)
+
+上图演示了一些组件和它们的内部关系。装配连接器（Assembly connectors）“连接”由"Product"和"Customer"的提供接口到由 "Order"指定的需求接口。 一个依赖关系映射了客户相关的帐户信息到“Order”需要的 "Payment"需求接口。
+
+实际上，组件图同包图很相似，它们都有明确的界限，把元素分组到逻辑结构中。他们之间的不同是：组件图提供了语义更丰富的分组机制，在组件图中，所有的模型元素都是私有的，而包图只显示公有的成员。
+
+### 表现组件
+
+组件可表示为带关键字 «component»的矩形类元；也可用右上角有组件图标的矩形表示。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-representing-components.gif)
+
+### 装配连接器
+
+装配连接器在组件 “Component1”的需求接口和另一个组件 “Component2”的提供接口之间建立桥梁; 这个桥梁使得一个组件能提供另一个组件所需要的服务。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-required-interfaces.gif)
+
+### 带端口组件
+
+使用端口的组件图允许在它的环境指定一个服务和行为，同时这个服务和行为也是组件需要的。当端口进行双向操作的时候，它可以指定输入和输出。下图详述了用于在线服务的带端口组件，它有两个提供接口 “order entry”和 “tracking”，也有 “payment” 需求接口。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-component-with-ports.gif)
 
 ## 包图
 
@@ -133,101 +205,9 @@ tags:
 
 ![](http://dunwu.test.upcdn.net/images/design/uml/uml-nestings.gif)
 
-## 对象图
-
-> **对象图（Object Diagram）可以认为是类图的特殊情形，是类图元素子集，被用来及时强调在某些点，类的实例间的关系**。这对理解类图很有帮助。他们在构造上与类图显示没有不同，但是反映出多样性和作用。
-
-### 类和对象元素
-
-下面的图显示了类元素和对象元素外观上的不同。注意：类元素包括三个部分，分别是名字栏，属性栏和操作栏；对象元素默认为没有分栏。名称显示也有不同：对象名称有下划线，并可能显示该对象实例化所用类元的名称。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-object.gif)
-
-### 运行状态
-
-类元元素可以有任意数量的属性和操作。在对象实例中不会被显示出来。但可能定义对象的运行状态，显示特殊实例的属性设置值。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-run-time-state.gif)
-
-### 类和对象图示例
-
-下图是一个对象图，其中插入了类定义图。它例示如何用对象图来测试类图中任务多重性的方法。“car” 类对 “wheel” 类有“1 对多” 的多重性，但是如果已经选择用“1 对 4” 来替代，那样就不会在对象图显示“3 个轮子”的汽车。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-object-diagram.gif)
-
-## 组件图
-
-> **组件图（Component Diagram）描绘了组成一个软件系统的模块和嵌入控件**。组件图比类图具有更高层次的抽象－通常运行时一个组件被一个或多个类（或对象）实现。它们象积木那样使得组件能最终构成系统的绝大部分。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-component-diagram.gif)
-
-上图演示了一些组件和它们的内部关系。装配连接器（Assembly connectors）“连接”由"Product"和"Customer"的提供接口到由 "Order"指定的需求接口。 一个依赖关系映射了客户相关的帐户信息到“Order”需要的 "Payment"需求接口。
-
-实际上，组件图同包图很相似，它们都有明确的界限，把元素分组到逻辑结构中。他们之间的不同是：组件图提供了语义更丰富的分组机制，在组件图中，所有的模型元素都是私有的，而包图只显示公有的成员。
-
-### 表现组件
-
-组件可表示为带关键字 «component»的矩形类元；也可用右上角有组件图标的矩形表示。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-representing-components.gif)
-
-### 装配连接器
-
-装配连接器在组件 “Component1”的需求接口和另一个组件 “Component2”的提供接口之间建立桥梁; 这个桥梁使得一个组件能提供另一个组件所需要的服务。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-required-interfaces.gif)
-
-### 带端口组件
-
-使用端口的组件图允许在它的环境指定一个服务和行为，同时这个服务和行为也是组件需要的。当端口进行双向操作的时候，它可以指定输入和输出。下图详述了用于在线服务的带端口组件，它有两个提供接口 “order entry”和 “tracking”，也有 “payment” 需求接口。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-component-with-ports.gif)
-
-## 部署图
-
-> 部署图（Deployment Diagram）是对系统运行时的架构进行建模。它**显示硬件元素（节点）的配置，以及软件元素与工件是如何映射到这些节点上的**。
-
-### 节点
-
-节点既可以是硬件元素，也可以是软件元素。它显示为一个立方体，如下图所示。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-node.gif)
-
-### 节点实例
-
-图可以显示节点实例，实例与节点的区分是：实例的名称带下划线，冒号放在它的基本节点类型之前。实例在冒号之前可以有名称，也可以没有名称。下图显示了一个具名的计算机实例。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-node-instance.gif)
-
-### 节点构造型
-
-为节点提供了许多标准的构造型，分别命名为 «cdrom»， «cd-rom»， «computer»， «disk array»， «pc»， «pc client»， «pc server»， «secure»， «server»， «storage»， «unix server»， «user pc»。 并在节点符号的右上角显示适当的图标。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-node-stereotype.gif)
-
-### 工件
-
-工件是[软件开发](http://www.sparxsystems.cn/platforms/software_development.html)过程中的产品。包括过程模型（如：用例模型，设计模型等），源文件，执行文件，设计文档，测试报告，构造型，用户手册等等。
-
-工件表示为带有工件名称的矩形，并显示«artifact»关键字和文档符号。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-artifact.gif)
-
-### 关联
-
-在部署图的上下文联系中，关联代表节点间的联系通道。下图显示了一个网络系统的部署图，描述了网络协议为构造型和关联终端的多重性，
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-network-model.gif)
-
-### 作为容器的节点
-
-节点可以包含其他元素，如组件和工件。下图显示了一个嵌入式系统某个部分的部署图。描写了一个被主板节点包含的可执行工件。
-
-![](http://dunwu.test.upcdn.net/images/design/uml/uml-embedded-model.gif)
-
 ## 复合结构图
 
-> **复合结构图显示类元内部结构，包括它与系统其他部分的交互点。也显示各部分的配置与关系，这些部分一起执行类元的行为。**
+> **复合结构图显示类的内部结构，包括它与系统其他部分的交互点。也显示各部分的配置与关系，这些部分一起执行类元的行为。**
 
 类元素已经在类图部分被详细地阐述，这部分用来说明类表现复合元素的方式，如：暴露接口，包含端口和部件。
 
@@ -289,6 +269,29 @@ tags:
 
 ![](http://dunwu.test.upcdn.net/images/design/uml/uml-occurrence.gif)
 
+## 对象图
+
+> **对象图（Object Diagram）可以认为是类图的特殊情形，是类图元素子集，被用来及时强调在某些点，类的实例间的关系**。这对理解类图很有帮助。他们在构造上与类图显示没有不同，但是反映出多样性和作用。
+
+### 类和对象元素
+
+下面的图显示了类元素和对象元素外观上的不同。注意：类元素包括三个部分，分别是名字栏，属性栏和操作栏；对象元素默认为没有分栏。名称显示也有不同：对象名称有下划线，并可能显示该对象实例化所用类元的名称。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-object.gif)
+
+### 运行状态
+
+类元元素可以有任意数量的属性和操作。在对象实例中不会被显示出来。但可能定义对象的运行状态，显示特殊实例的属性设置值。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-run-time-state.gif)
+
+### 类和对象图示例
+
+下图是一个对象图，其中插入了类定义图。它例示如何用对象图来测试类图中任务多重性的方法。“car” 类对 “wheel” 类有“1 对多” 的多重性，但是如果已经选择用“1 对 4” 来替代，那样就不会在对象图显示“3 个轮子”的汽车。
+
+![](http://dunwu.test.upcdn.net/images/design/uml/uml-object-diagram.gif)
+
 ## 参考资料
 
 - https://sparxsystems.cn/resources/uml2_tutorial/index.html
+- http://www.cnblogs.com/ywqu/category/223486.html
