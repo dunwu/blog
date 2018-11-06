@@ -2,7 +2,7 @@
 
 > Yarn 是快速、可靠、安全的 js 包管理器。
 >
-> 关键词： `nodejs`, `包管理`, `yarn`
+> 关键词： `nodejs`, `包管理`, `yarn`, `yarn.lock`
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

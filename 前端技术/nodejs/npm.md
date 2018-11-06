@@ -2,7 +2,7 @@
 
 > **Npm 是随同 Nodejs 一起安装的 js 包管理工具。**
 >
-> 关键词： `nodejs`, `包管理`, `npm`, `cnpm`
+> 关键词： `nodejs`, `包管理`, `npm`, `cnpm`, `package.json`, `node_modules`
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

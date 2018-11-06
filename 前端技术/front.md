@@ -10,6 +10,6 @@
 
 ## _Nodejs, Npm, Yarn_
 
-- [Nodejs](nodejs\nodejs.md)
-- [Npm](nodejs\npm.md) - 关键词： `nodejs`, `包管理`, `npm`, `cnpm`
-- [Yarn](nodejs\yarn.md) - 关键词： `nodejs`, `包管理`, `yarn`
+- [Nodejs](nodejs\nodejs.md) - 关键词： `nodejs`, `REPL`， `require`, `exports`
+- [Npm](nodejs\npm.md) - 关键词： `nodejs`, `包管理`, `npm`, `cnpm`, `package.json`, `node_modules`
+- [Yarn](nodejs\yarn.md) - 关键词： `nodejs`, `包管理`, `yarn`, `yarn.lock`
