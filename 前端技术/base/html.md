@@ -1,18 +1,8 @@
----
-title: Html 教程
-date: 2018/07/09
-categories:
-  - html
-tags:
-  - frontend
-  - html
----
+# Html5 快速入门
 
-# Html 教程
-
-> 本章节提供了 HTML 最常用标签的简单实用示例。
+> 超文本标记语言（英语：HyperText Markup Language，简称：HTML）是一种用于创建网页的标准标记语言。
 >
-> 你可以将其当做速查手册。
+> 关键词： `标签`, `元素`, `属性`
 
 ![](http://dunwu.test.upcdn.net/images/front/html/html5.jpg)
 
@@ -46,8 +36,7 @@ tags:
     - [中文编码](#中文编码)
     - [html 和 htm](#html-和-htm)
     - [HTML 忽略空格和换行](#html-忽略空格和换行)
-- [小结](#小结)
-- [资源](#资源)
+- [引用和引申](#引用和引申)
 
 <!-- /TOC -->
 
@@ -669,11 +658,7 @@ alt 属性用来为图像定义一串预备的可替换的文本。替换文本�
 
 说明：HTML 的输出结果并不会按照源代码中那样去排版内容。
 
-## 小结
-
-![](http://dunwu.test.upcdn.net/images/front/html/html-xmind.png)
-
-## 资源
+## 引用和引申
 
 - [mozilla html 教程](https://developer.mozilla.org/en-US/Learn/HTML)
-- [runoob html 教程](http://www.runoob.com/html/html-tutorial.html)
+- [W3school html 教程](http://www.w3school.com.cn/html/index.asp)
