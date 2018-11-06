@@ -219,5 +219,7 @@ license (MIT):
 
 ## 引用和引申
 
+> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
+
 - [Yarn Github](https://github.com/yarnpkg/yarn)
 - [Yarn 官方文档](https://yarnpkg.com/zh-Hans/)

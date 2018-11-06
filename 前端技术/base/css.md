@@ -1042,4 +1042,6 @@ div {
 
 ## 引用和引申
 
+> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
+
 - [W3school css 教程](http://www.w3school.com.cn/css/index.asp)

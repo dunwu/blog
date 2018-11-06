@@ -563,6 +563,8 @@ Usage: nrm [options] [command]
 
 ## 引用和引申
 
+> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
+
 - [Npm 官网](https://www.npmjs.com/)
 - [Npm 中文网](https://www.npmjs.com.cn/)
 - [Npm Github](https://github.com/npm/cli)
