@@ -6,7 +6,7 @@
 
 - [Html](base/html.md) - 关键词： `标签`, `元素`, `属性`
 - [Css](base/css.md)
-- [Javascript](base/javascript.md)
+- [Javascript](base/js.md)
 
 ## _Nodejs, Npm, Yarn_
 

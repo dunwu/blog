@@ -17,7 +17,7 @@
     - [安装依赖项](#安装依赖项)
 - [创建一个新项目](#创建一个新项目)
 - [配置文件](#配置文件)
-- [引用和引申](#引用和引申)
+- [引申和引用](#引申和引用)
 
 <!-- /TOC -->
 
@@ -217,9 +217,15 @@ license (MIT):
 
 `package.json`文件里存储了项目的有关信息。 包括项目名称、维护者信息、代码托管地址，以及最重要的：项目依赖。
 
-## 引用和引申
+## 引申和引用
 
-> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
+> :point_right: 相关阅读：
+>
+> - [Node.js](nodejs.md)
+> - [Npm](npm.md)
+> - [Yarn](yarn.md)
+>
+> :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 
 - [Yarn Github](https://github.com/yarnpkg/yarn)
 - [Yarn 官方文档](https://yarnpkg.com/zh-Hans/)

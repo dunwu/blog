@@ -17,7 +17,7 @@
 - [webpack.config.js](#webpackconfigjs)
     - [单入口(Entry)](#单入口entry)
     - [多入口(Entry)](#多入口entry)
-- [引用和引申](#引用和引申)
+- [引申和引用](#引申和引用)
 
 <!-- /TOC -->
 
@@ -186,17 +186,17 @@ $ webpack
 
 > :flashlight: **示例：** ([**DEMO02**](https://github.com/dunwu/frontend-tutorial/tree/master/codes/chapter03/webpack2/demo02))
 
-## 引用和引申
+## 引申和引用
 
-> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
->
-> Webpack 系列教程：
+> :point_right: 相关阅读：
 >
 > - [Webpack 入门](webpack.md)
 > - [Webpack 概念](concept.md)
 > - [Webpack 资源管理](asset-management.md)
 > - [Webpack 代码分离](code-splitting.md)
 > - [Webpack 开发工具](development.md)
+>
+> :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 
 - **官方资料**
   - [Webpack 官网](https://webpack.js.org/)

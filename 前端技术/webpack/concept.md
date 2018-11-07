@@ -215,17 +215,17 @@ HMR 是可选功能，只会影响包含 HMR 代码的模块。举个例子，�
 
 webpack 的强大之处在于它的可定制化，取决于特定项目需求，这里有*许多*配置 HMR 的方式。
 
-## 引用和引申
+## 引申和引用
 
-> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
->
-> Webpack 系列教程：
+> :point_right: 相关阅读：
 >
 > - [Webpack 入门](webpack.md)
 > - [Webpack 概念](concept.md)
 > - [Webpack 资源管理](asset-management.md)
 > - [Webpack 代码分离](code-splitting.md)
 > - [Webpack 开发工具](development.md)
+>
+> :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 
 - **官方资料**
   - [Webpack 官网](https://webpack.js.org/)

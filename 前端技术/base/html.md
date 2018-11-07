@@ -36,7 +36,7 @@
     - [中文编码](#中文编码)
     - [html 和 htm](#html-和-htm)
     - [HTML 忽略空格和换行](#html-忽略空格和换行)
-- [引用和引申](#引用和引申)
+- [引申和引用](#引申和引用)
 
 <!-- /TOC -->
 
@@ -658,9 +658,15 @@ alt 属性用来为图像定义一串预备的可替换的文本。替换文本�
 
 说明：HTML 的输出结果并不会按照源代码中那样去排版内容。
 
-## 引用和引申
+## 引申和引用
 
-> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
+> :point_right: 相关阅读：
+>
+> - [Html](html.md)
+> - [Css](css.md)
+> - [Javascript](javascript.md)
+>
+> :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 
 - [mozilla html 教程](https://developer.mozilla.org/en-US/Learn/HTML)
 - [W3school html 教程](http://www.w3school.com.cn/html/index.asp)

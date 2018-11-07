@@ -24,7 +24,7 @@
 - [npm 扩展](#npm-扩展)
     - [cnpm](#cnpm)
     - [nrm](#nrm)
-- [引用和引申](#引用和引申)
+- [引申和引用](#引申和引用)
 
 <!-- /TOC -->
 
@@ -561,9 +561,15 @@ Usage: nrm [options] [command]
     -V, --version  output the version number
 ```
 
-## 引用和引申
+## 引申和引用
 
-> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
+> :point_right: 相关阅读：
+>
+> - [Node.js](nodejs.md)
+> - [Npm](npm.md)
+> - [Yarn](yarn.md)
+>
+> :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 
 - [Npm 官网](https://www.npmjs.com/)
 - [Npm 中文网](https://www.npmjs.com.cn/)

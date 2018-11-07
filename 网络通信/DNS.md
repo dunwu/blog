@@ -16,7 +16,7 @@
 - [Linux 上的域名相关命令](#linux-上的域名相关命令)
     - [hostname](#hostname)
     - [nslookup](#nslookup)
-- [引用和引申](#引用和引申)
+- [引申和引用](#引申和引用)
 
 <!-- /TOC -->
 
@@ -123,7 +123,7 @@ Name:   host.1.jsdig.com
 Address: 100.42.212.8
 ```
 
-## 引用和引申
+## 引申和引用
 
 - [维基百科 - 域名](https://zh.wikipedia.org/wiki/域名)
 - [维基百科 - 域名系统](https://zh.wikipedia.org/wiki/域名系统)

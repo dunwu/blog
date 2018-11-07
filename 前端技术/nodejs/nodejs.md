@@ -7,27 +7,27 @@
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [安装配置](#安装配置)
-  - [Windows / IOS](#windows--ios)
-  - [Linux / Ubuntu / Debian](#linux--ubuntu--debian)
-  - [第一个应用](#第一个应用)
+    - [Windows / IOS](#windows--ios)
+    - [Linux / Ubuntu / Debian](#linux--ubuntu--debian)
+    - [第一个应用](#第一个应用)
 - [交互式解释器（REPL）](#交互式解释器repl)
-  - [简单的表达式运算](#简单的表达式运算)
-  - [使用变量](#使用变量)
-  - [多行表达式](#多行表达式)
+    - [简单的表达式运算](#简单的表达式运算)
+    - [使用变量](#使用变量)
+    - [多行表达式](#多行表达式)
 - [Node 的代码组织](#node-的代码组织)
-  - [模块路径解析规则](#模块路径解析规则)
-  - [包（package）](#包package)
-  - [index.js](#indexjs)
-  - [package.json](#packagejson)
-  - [命令行程序](#命令行程序)
-  - [工程目录](#工程目录)
+    - [模块路径解析规则](#模块路径解析规则)
+    - [包（package）](#包package)
+    - [index.js](#indexjs)
+    - [package.json](#packagejson)
+    - [命令行程序](#命令行程序)
+    - [工程目录](#工程目录)
 - [Node 的 IO 操作](#node-的-io-操作)
-  - [Buffer](#buffer)
-  - [Stream](#stream)
-  - [文件系统](#文件系统)
+    - [Buffer](#buffer)
+    - [Stream](#stream)
+    - [文件系统](#文件系统)
 - [Node.js 工具](#nodejs-工具)
-  - [nvm](#nvm)
-- [引用和引申](#引用和引申)
+    - [nvm](#nvm)
+- [引申和引用](#引申和引用)
 
 <!-- /TOC -->
 
@@ -952,26 +952,26 @@ nvm install 6.14.4  # 安装 Node.js 版本
 nvm use node6.14.4  # 指定 Node.js 版本（必须已安装）
 ```
 
-## 引用和引申
+## 引申和引用
 
-> :point_right: 欢迎阅读 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
+> :point_right: 相关阅读：
+>
+> - [Node.js](nodejs.md)
+> - [Npm](npm.md)
+> - [Yarn](yarn.md)
+>
+> :package: 本文归档在 [前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 
-**官方资源**
-
-- [Node.js 官网](https://nodejs.org/zh-cn/)
-- [Node.js Github](https://github.com/nodejs/node)
-
-**教程**
-
-- [Node.JS 最佳实践](https://github.com/i0natan/nodebestpractices)
-- [Node.js 包教不包会](https://github.com/alsotang/node-lessons)
-- [一起学 Node.js](https://github.com/nswbmw/N-blog)
-- [七天学会 NodeJS](https://github.com/nqdeng/7-days-nodejs)
-
-**工具**
-
-- [nvm](https://github.com/creationix/nvm) - Node 版本管理器
-
-**资源收集**
-
-- [awesome-nodejs](https://github.com/sindresorhus/awesome-nodejs) - Node.js 资源收集
+- **官方**
+  - [Node.js 官网](https://nodejs.org/zh-cn/)
+  - [Node.js Github](https://github.com/nodejs/node)
+- **教程**
+  - [Node.js 包教不包会](https://github.com/alsotang/node-lessons)
+  - [一起学 Node.js](https://github.com/nswbmw/N-blog)
+  - [七天学会 NodeJS](https://github.com/nqdeng/7-days-nodejs)
+- **规范**
+  - [Node.JS 最佳实践](https://github.com/i0natan/nodebestpractices)
+- **工具**
+  - [nvm](https://github.com/creationix/nvm) - Node 版本管理器
+- **更多资源**
+  - [awesome-nodejs](https://github.com/sindresorhus/awesome-nodejs)

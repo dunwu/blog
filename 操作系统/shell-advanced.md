@@ -13,7 +13,7 @@
 - [Linux 开机自启动脚本](#linux-开机自启动脚本)
     - [在 /etc/rc.local 文件中添加命令](#在-etcrclocal-文件中添加命令)
     - [在 /etc/rc.d/init.d 目录下添加自启动脚本](#在-etcrcdinitd-目录下添加自启动脚本)
-- [引用和引申](#引用和引申)
+- [引申和引用](#引申和引用)
 
 <!-- /TOC -->
 
@@ -97,7 +97,7 @@ a. 直接到 `/etc/rc2.d` 下删掉相应的链接，当然不是最好的方法
 b. 推荐做法：`update-rc.d -f s10 remove`
 c. 如果 update-rc.d 命令你不熟悉，还可以试试看 rcconf 这个命令，也很方便。
 
-## 引用和引申
+## 引申和引用
 
 - https://blog.csdn.net/linuxshine/article/details/50717272
 - https://www.cnblogs.com/ssooking/p/6094740.html

@@ -531,7 +531,7 @@ server {
 
 到此，就完成了。
 
-## 引用和引申
+## 引申和引用
 
 - [Nginx 的中文维基](http://tool.oschina.net/apidocs/apidoc?api=nginx-zh)
 - [Nginx 安装](install-nginx.md)
