@@ -217,7 +217,7 @@ webpack 的强大之处在于它的可定制化，取决于特定项目需求，
 
 ## 引申和引用
 
-> :point_right: 相关阅读：
+> :books: 拓展阅读
 >
 > - [Webpack 入门](webpack.md)
 > - [Webpack 概念](concept.md)

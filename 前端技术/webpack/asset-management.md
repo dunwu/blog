@@ -367,7 +367,7 @@ p {
 
 ## 引申和引用
 
-> :point_right: 相关阅读：
+> :books: 拓展阅读
 >
 > - [Webpack 入门](webpack.md)
 > - [Webpack 概念](concept.md)

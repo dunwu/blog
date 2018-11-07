@@ -954,7 +954,7 @@ nvm use node6.14.4  # 指定 Node.js 版本（必须已安装）
 
 ## 引申和引用
 
-> :point_right: 相关阅读：
+> :books: 拓展阅读
 >
 > - [Node.js](nodejs.md)
 > - [Npm](npm.md)

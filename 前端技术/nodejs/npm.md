@@ -563,7 +563,7 @@ Usage: nrm [options] [command]
 
 ## 引申和引用
 
-> :point_right: 相关阅读：
+> :books: 拓展阅读
 >
 > - [Node.js](nodejs.md)
 > - [Npm](npm.md)
