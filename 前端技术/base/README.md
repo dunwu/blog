@@ -2,17 +2,17 @@
 
 > 前端 web 技术的基石：html + css + js
 >
-> - HTML 是我们用来构造网站内容的不同部分并定义它们的意义或目的的语言。
-> - 我们可以使用 CSS 这个语言来设计和布局我们的 Web 内容，以及添加像动画一类的行为。
-> - JavaScript 是用于向 Web 页面添加动态功能的脚本语言。
+> - HTML 定义了网页的内容。
+> - CSS 定义了网页的样式。
+> - JavaScript 定义了网页的行为。
 
 ## :book: 本章内容
 
-建议学习顺序：html -> css -> js
+建议学习路线：html -> css -> js
 
-- [Html](base/html.md)
-- [Css](base/css.md)
-- [Javascript](base/js.md)
+- [Html](html.md)
+- [Css](css.md)
+- [Javascript](js.md)
 
 ## :books: 拓展阅读
 
