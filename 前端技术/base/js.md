@@ -41,9 +41,9 @@ JavaScript 是一种脚本，一门编程语言，它可以在网页上实现复
 ```html
 <!DOCTYPE html>
 <html>
-<body>
-<script src="myScript.js"></script>
-</body>
+  <body>
+    <script src="myScript.js"></script>
+  </body>
 </html>
 ```
 
@@ -71,7 +71,7 @@ length = 6;
 变量命名要求：
 
 - 变量必须以字母开头
-- 变量也能以 $ 和 \_ 符号开头（不过我们不推荐这么做）
+- 变量也能以 \$ 和 \_ 符号开头（不过我们不推荐这么做）
 - 变量名称对大小写敏感（y 和 Y 是不同的变量）
 
 ## 数据类型
