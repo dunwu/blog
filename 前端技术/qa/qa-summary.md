@@ -1,5 +1,19 @@
 # JavaScript QA 工具总结
 
+<!-- TOC -->
+
+- [JavaScript QA 工具总结](#javascript-qa-工具总结)
+    - [[JSLint](https://github.com/douglascrockford/JSLint)](#jslinthttpsgithubcomdouglascrockfordjslint)
+    - [[JSHint](https://github.com/jshint/jshint)](#jshinthttpsgithubcomjshintjshint)
+    - [[ESLint](https://github.com/eslint/eslint) :heavy_check_mark:](#eslinthttpsgithubcomeslinteslint-heavy_check_mark)
+    - [[Prettier](https://github.com/prettier/prettier) :heavy_check_mark:](#prettierhttpsgithubcomprettierprettier-heavy_check_mark)
+    - [[EditorConfig](https://editorconfig.org/) :heavy_check_mark:](#editorconfighttpseditorconfigorg-heavy_check_mark)
+    - [[Standard](https://github.com/feross/standard) :heavy_check_mark:](#standardhttpsgithubcomferossstandard-heavy_check_mark)
+    - [[TSlint](https://github.com/palantir/tslint)](#tslinthttpsgithubcompalantirtslint)
+    - [引申和引用](#引申和引用)
+
+<!-- /TOC -->
+
 ## [JSLint](https://github.com/douglascrockford/JSLint)
 
 JavaScript 静态检查工具。
@@ -54,6 +68,12 @@ JavaScript 静态检查工具。
 Intellij 和 Vscode 都可以安装 Prettier 插件来使用。
 
 [Install](https://prettier.io/docs/en/install.html) · [Options](https://prettier.io/docs/en/options.html) · [CLI](https://prettier.io/docs/en/cli.html) · [API](https://prettier.io/docs/en/api.html)
+
+## [EditorConfig](https://editorconfig.org/) :heavy_check_mark:
+
+可以在编辑器或 IDE 中维护代码格式。
+
+[EditorConfig 应用示例](https://github.com/editorconfig/editorconfig/wiki/Projects-Using-EditorConfig)
 
 ## [Standard](https://github.com/feross/standard) :heavy_check_mark:
 

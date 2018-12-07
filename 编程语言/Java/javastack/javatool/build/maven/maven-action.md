@@ -7,6 +7,7 @@
     - [1.2. 重复引入依赖](#12-重复引入依赖)
 - [2. 最佳实践](#2-最佳实践)
     - [2.1. 通过 bom 统一管理版本](#21-通过-bom-统一管理版本)
+    - [如何打包一个可以直接运行的 Spring Boot jar 包](#如何打包一个可以直接运行的-spring-boot-jar-包)
 
 <!-- /TOC -->
 
@@ -93,4 +94,63 @@ spring-framework-bom 形式：
         <scope>import</scope>
       </dependency>
 </dependencyManagement>
+```
+
+### 如何打包一个可以直接运行的 Spring Boot jar 包
+
+可以使用 spring-boot-maven-plugin 插件
+
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+      <executions>
+        <execution>
+          <goals>
+            <goal>repackage</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
+```
+
+如果引入了第三方 jar 包，如何打包？
+
+首先，要添加依赖
+
+```xml
+<dependency>
+  <groupId>io.github.dunwu</groupId>
+  <artifactId>dunwu-common</artifactId>
+  <version>1.0.0</version>
+  <scope>system</scope>
+  <systemPath>${project.basedir}/src/main/resources/lib/dunwu-common-1.0.0.jar</systemPath>
+</dependency>
+```
+
+接着，需要配置 spring-boot-maven-plugin 插件：
+
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+      <executions>
+        <execution>
+          <goals>
+            <goal>repackage</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <includeSystemScope>true</includeSystemScope>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 ```
