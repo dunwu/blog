@@ -200,7 +200,7 @@ export class AppModule {}
 
 <p><i>Pick a hero from the list</i></p>
 <ul>
-  <li *ngFor="let hero of heroes" (click)="selectHero(hero)">{{hero.name}}</li>
+  <li *ngFor="let hero of heroes" (click)="selectHero(hero)">{ {hero.name} }</li>
 </ul>
 
 <app-hero-detail *ngIf="selectedHero" [hero]="selectedHero"></app-hero-detail>
@@ -209,7 +209,7 @@ export class AppModule {}
 > 说明：上例中，除了 HTML 元素外，还包括一些 Angular 的模板语法元素：
 >
 > - `*ngFor` 指令告诉 Angular 在一个列表上进行迭代。
-> - `{{hero.name}}`、`(click)` 和 `[hero]` 把程序数据绑定到及绑定回 DOM，以响应用户的输入。更多内容参见稍后的数据绑定部分。
+> - `{ {hero.name} }`、`(click)` 和 `[hero]` 把程序数据绑定到及绑定回 DOM，以响应用户的输入。更多内容参见稍后的数据绑定部分。
 > - 模板中的 `<app-hero-detail>` 标签是一个代表新组件 HeroDetailComponent 的元素。 HeroDetailComponent（代码略）定义了 HeroListComponent 的英雄详情子视图。 注意观察像这样的自定义组件是如何与原生 HTML 元素无缝的混合在一起的。
 
 ### 数据绑定
@@ -238,7 +238,7 @@ Angular 自带了很多管道，完整的列表参见 [Pipes API 列表](https:/
 要在 HTML 模板中指定值的转换方式，请使用 [管道操作符 (|)](https://angular.cn/guide/template-syntax#pipe)。
 
 ```html
-{{interpolated_value | pipe_name}}
+{ {interpolated_value | pipe_name} }
 ```
 
 你可以把管道串联起来，把一个管道函数的输出送给另一个管道函数进行转换。 管道还能接收一些参数，来控制它该如何进行转换。比如，你可以把要使用的日期格式传给 `date` 管道：
@@ -246,15 +246,15 @@ Angular 自带了很多管道，完整的列表参见 [Pipes API 列表](https:/
 ```html
 <!-- Default format: output 'Jun 15, 2015' -->
 
-<p>Today is {{today | date}}</p>
+<p>Today is { {today | date} }</p>
 
 <!-- fullDate format: output 'Monday, June 15, 2015' -->
 
-<p>The date is {{today | date:'fullDate'}}</p>
+<p>The date is { {today | date:'fullDate'} }</p>
 
 <!-- shortTime format: output '9:43 AM' -->
 
-<p>The time is {{today | date:'shortTime'}}</p>
+<p>The time is { {today | date:'shortTime'} }</p>
 ```
 
 ### 指令

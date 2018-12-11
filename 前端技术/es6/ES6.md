@@ -308,7 +308,7 @@ GET`http://foo.org/bar?a=${a}&b=${b}
     Content-Type: application/json
     X-Credentials: ${credentials}
     { "foo": ${foo},
-      "bar": ${bar}}`(myOnReadyStateChangeHandler);
+      "bar": ${bar} }`(myOnReadyStateChangeHandler);
 ```
 
 ### Destructuring
