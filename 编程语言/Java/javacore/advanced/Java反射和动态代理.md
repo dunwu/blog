@@ -2,11 +2,11 @@
 title: Java 反射
 date: 2018/06/05
 categories:
-- javacore
+  - javacore
 tags:
-- java
-- javacore
-- advanced
+  - java
+  - javacore
+  - advanced
 ---
 
 # Java 反射和动态代理
@@ -179,7 +179,7 @@ System.out.println(obj.getClass().getCanonicalName());
 
 ```java
 class FieldSpy<T> {
-    public boolean[][] b = {{ false, false }, { true, true } };
+    public boolean[][] b = { { false, false }, { true, true } };
     public String name  = "Alice";
     public List<Integer> list;
     public T val;
@@ -493,7 +493,7 @@ Subject subject = (Subject)Proxy.newProxyInstance(handler.getClass().getClassLoa
 
 原因就是：在 newProxyInstance 这个方法的第二个参数上，我们给这个代理对象提供了一组什么接口，那么我这个代理对象就会实现了这组接口，这个时候我们当然可以将这个代理对象强制类型转化为这组接口中的任意一个，因为这里的接口是 Subject 类型，所以就可以将其转化为 Subject 类型了。
 
-**同时我们一定要记住，通过 `Proxy.newProxyInstance` 创建的代理对象是在 jvm 运行时动态生成的一个对象，它并不是我们的 InvocationHandler 类型，也不是我们定义的那组接口的类型，而是在运行是动态生成的一个对象，并且命名方式都是这样的形式，以$开头，proxy 为中，最后一个数字表示对象的标号**。
+**同时我们一定要记住，通过 `Proxy.newProxyInstance` 创建的代理对象是在 jvm 运行时动态生成的一个对象，它并不是我们的 InvocationHandler 类型，也不是我们定义的那组接口的类型，而是在运行是动态生成的一个对象，并且命名方式都是这样的形式，以\$开头，proxy 为中，最后一个数字表示对象的标号**。
 
 接着我们来看看这两句
 
