@@ -26,7 +26,26 @@ Docker CE 可以安装在 Linux 、Windows 10 (PC) 和 MAC 上。
 > - [官方安装指南](https://docs.docker.com/install/)
 > - [Docker 中文教程安装指南](https://yeasy.gitbooks.io/docker_practice/content/install/)
 
-### Dockerfile
+### [Docker 镜像](basics/docker-image.md)
+
+### [Docker 容器](basics/docker-container.md)
+
+### [Dockerfile](basics/docker-dockerfile.md)
+
+- FROM(指定基础镜像)
+- RUN(执行命令)
+- COPY(复制文件)
+- ADD(更高级的复制文件)
+- CMD(容器启动命令)
+- ENTRYPOINT(入口点)
+- ENV(设置环境变量)
+- ARG(构建参数)
+- VOLUME(定义匿名卷)
+- EXPOSE(暴露端口)
+- WORKDIR(指定工作目录)
+- USER(指定当前用户)
+- HEALTHCHECK(健康检查)
+- ONBUILD(为他人作嫁衣裳)
 
 ## 进阶篇
 
