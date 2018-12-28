@@ -1,50 +1,41 @@
----
-title: 细说 Java 主流日志工具库
-date: 2016/10/14
-categories:
-- javalib
-tags:
-- java
-- javalib
-- log
----
-
 # 细说 Java 主流日志工具库
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
-- [概述](#概述)
-  - [java.util.logging (JUL)](#javautillogging-jul)
-  - [Log4j](#log4j)
-  - [Logback](#logback)
-  - [Log4j vs Logback](#log4j-vs-logback)
-  - [common-logging](#common-logging)
-  - [slf4j](#slf4j)
-  - [common-logging vs slf4j](#common-logging-vs-slf4j)
-  - [总结](#总结)
+- [日志框架](#日志框架)
+    - [java.util.logging (JUL)](#javautillogging-jul)
+    - [Log4j](#log4j)
+    - [Logback](#logback)
+    - [Log4j2](#log4j2)
+    - [Log4j vs Logback vs Log4j2](#log4j-vs-logback-vs-log4j2)
+- [日志门面](#日志门面)
+    - [common-logging](#common-logging)
+    - [slf4j](#slf4j)
+    - [common-logging vs slf4j](#common-logging-vs-slf4j)
+    - [总结](#总结)
 - [实施日志解决方案](#实施日志解决方案)
-  - [引入 jar 包](#引入-jar-包)
-  - [使用 API](#使用-api)
+    - [引入 jar 包](#引入-jar-包)
+    - [使用 API](#使用-api)
+- [log4j2 配置](#log4j2-配置)
 - [logback 配置](#logback-配置)
-  - [`<configuration>`](#configuration)
-  - [`<appender>`](#appender)
-  - [`<logger>`](#logger)
-  - [`<root>`](#root)
-  - [完整的 logback.xml 参考示例](#完整的-logbackxml-参考示例)
+    - [`<configuration>`](#configuration)
+    - [`<appender>`](#appender)
+    - [`<logger>`](#logger)
+    - [`<root>`](#root)
+    - [完整的 logback.xml 参考示例](#完整的-logbackxml-参考示例)
 - [log4j 配置](#log4j-配置)
-  - [完整的 log4j.xml 参考示例](#完整的-log4jxml-参考示例)
-  - [logback 配置参数说明](#logback-配置参数说明)
+    - [完整的 log4j.xml 参考示例](#完整的-log4jxml-参考示例)
 - [参考](#参考)
 
 <!-- /TOC -->
-
-## 概述
 
 在项目开发中，为了跟踪代码的运行情况，常常要使用日志来记录信息。
 
 在 Java 世界，有很多的日志工具库来实现日志功能，避免了我们重复造轮子。
 
 我们先来逐一了解一下主流日志工具。
+
+## 日志框架
 
 ### java.util.logging (JUL)
 
@@ -62,9 +53,9 @@ Log4j 是高度可配置的，并可通过在运行时的外部文件配置。�
 
 Log4j 中有三个主要组成部分：
 
-* **loggers:**  负责捕获记录信息。
-* **appenders :**  负责发布日志信息，以不同的首选目的地。
-* **layouts:**  负责格式化不同风格的日志信息。
+- **loggers** - 负责捕获记录信息。
+- **appenders** - 负责发布日志信息，以不同的首选目的地。
+- **layouts** - 负责格式化不同风格的日志信息。
 
 [官网地址](http://logging.apache.org/log4j/2.x/)
 
@@ -72,63 +63,47 @@ Log4j 中有三个主要组成部分：
 
 Logback 是由 log4j 创始人 Ceki Gulcu 设计的又一个开源日记组件，目标是替代 log4j。
 
-logback 当前分成三个模块：`logback-core`、`logback- classic` 和 `logback-access`。
+logback 当前分成三个模块：`logback-core`、`logback-classic` 和 `logback-access`。
 
-`logback-core` 是其它两个模块的基础模块。
-
-`logback-classic` 是 log4j 的一个 改良版本。此外 `logback-classic` 完整实现 SLF4J API 使你可以很方便地更换成其它日记系统如 log4j 或 JDK14 Logging。
-
-`logback-access` 访问模块与 Servlet 容器集成提供通过 Http 来访问日记的功能。
+- `logback-core` - 是其它两个模块的基础模块。
+- `logback-classic` - 是 log4j 的一个 改良版本。此外 `logback-classic` 完整实现 SLF4J API 使你可以很方便地更换成其它日记系统如 log4j 或 JDK14 Logging。
+- `logback-access` - 访问模块与 Servlet 容器集成提供通过 Http 来访问日记的功能。
 
 [官网地址](http://logback.qos.ch/)
 
-### Log4j vs Logback
+### Log4j2
 
-Logback 相比 Log4j 具有许多好处：
+[官网地址](http://logging.apache.org/log4j/2.x/)
 
-**性能提升**
+按照官方的说法，Log4j2 是 Log4j 和 Logback 的替代。
 
-logback 在 log4j 基础上做了优化，使性能提高了近 10 倍。此外，内存开销也减少了。
+Log4j2 架构：
 
-**更充足的测试**
+![](http://dunwu.test.upcdn.net/images/java/javalib/log/log4j2-architecture.jpg)
 
-尽管 log4j 也做了测试，但是 logback 的测试更加充分。所以，logback 应该更加稳定。
+### Log4j vs Logback vs Log4j2
 
-**天然支持 slf4j**
+按照官方的说法，**Log4j2 大大优于 Log4j 和 Logback。**
 
-因为 Logback-classic 完全实现了 slf4j 的接口，所以天然支持 slf4j。使用 slf4j，有利于你切换日志工具库，减少工作量。
+那么，Log4j2 相比于先问世的 Log4j 和 Logback，它具有哪些优势呢？
 
-**自动重载配置文件**
+1. Log4j2 旨在用作审计日志记录框架。 Log4j 1.x 和 Logback 都会在重新配置时丢失事件。 Log4j 2 不会。在 Logback 中，Appender 中的异常永远不会对应用程序可见。在 Log4j 中，可以将 Appender 配置为允许异常渗透到应用程序。
+2. Log4j2 在多线程场景中，[异步 Loggers](https://logging.apache.org/log4j/2.x/manual/async.html) 的吞吐量比 Log4j 1.x 和 Logback 高 10 倍，延迟低几个数量级。
+3. Log4j2 对于独立应用程序是无垃圾的，对于稳定状态日志记录期间的 Web 应用程序来说是低垃圾。这减少了垃圾收集器的压力，并且可以提供更好的响应时间性能。
+4. Log4j2 使用插件系统，通过添加新的 Appender、Filter、Layout、Lookup 和 Pattern Converter，可以非常轻松地扩展框架，而无需对 Log4j 进行任何更改。
+5. 由于插件系统配置更简单。配置中的条目不需要指定类名。
+6. 支持[自定义日志等级](https://logging.apache.org/log4j/2.x/manual/customloglevels.html)。
+7. 支持 [lambda 表达式](https://logging.apache.org/log4j/2.x/manual/api.html#LambdaSupport)。
+8. 支持[消息对象](https://logging.apache.org/log4j/2.x/manual/messages.html)。
+9. Log4j 和 Logback 的 Layout 返回的是字符串，而 Log4j2 返回的是二进制数组，这使得它能被各种 Appender 使用。
+10. Syslog Appender 支持 TCP 和 UDP 并且支持 BSD 系统日志。
+11. Log4j2 利用 Java5 并发特性，尽量小粒度的使用锁，减少锁的开销。
 
-Logback-classic 可以自动重载更新过的配置文件。
+## 日志门面
 
-**自动移除旧日志**
+何谓日志门面？
 
-通过配置文件最大数和过期时间，Logback 可以控制日志文件数并自动清除过期的日志。
-
-**更灵活、更精细的配置**
-
-Logback 在配置中提供更加丰富的功能来帮助你更加精细的去定制你的日志组件：
-
-`<filter>`提供比 log4j 更丰富的过滤条件；
-
-增加`<if>`, `<then>` 和 `<else>`这样的条件控制;
-
-**打印异常的调用栈信息**
-
-Logback 在打印异常时，会打印调用栈的包装数据。
-
-**Logback-access**
-
-Logback-access 支持 Logback-classic 的所有特性，并且它可以提供丰富的 HTTP-access 日志功能。
-
-**总结**
-
-以上优点摘自官方推荐理由：[Reasons to prefer logback over log4j](http://logback.qos.ch/reasonsToSwitch.html)。
-
-由于 Logback 的作者也是 Log4j 的作者，所有推荐理由应该比较靠谱。
-
-总之，相比于 Log4j，好处多多，你心动了没？
+日志门面是对不同日志框架提供的一个 API 封装，可以在部署的时候不修改任何配置即可接入一种日志实现方案。
 
 ### common-logging
 
@@ -148,7 +123,7 @@ common-logging 的功能是提供日志功能的 API 接口，本身并不提供
 
 [官网地址](http://www.slf4j.org/)
 
-![slf4j工作模型](http://oyz7npk35.bkt.clouddn.com//image/java/libs/log/slf4j-to-other-log.png)
+![](http://dunwu.test.upcdn.net/images/java/javalib/log/slf4j-to-other-log.png)
 
 ### common-logging vs slf4j
 
@@ -158,7 +133,7 @@ slf4j 一大亮点是提供了更方便的日志记录方式：
 
 不需要使用`logger.isDebugEnabled()`来解决日志因为字符拼接产生的性能问题。slf4j 的方式是使用`{}`作为字符串替换符，形式如下：
 
-```
+```java
 logger.debug("id: {}, name: {} ", id, name);
 ```
 
@@ -242,7 +217,7 @@ _slf4j-jdk14-1.7.21.jar_ 会自动将 *slf4j-api-1.7.21.jar*  也添加到你�
 
 假如你正在开发应用程序所调用的组件当中已经使用了 common-logging，这时你需要 jcl-over-slf4j.jar 把日志信息输出重定向到 slf4j-api，slf4j-api 再去调用 slf4j 实际依赖的日志组件。这个过程称为桥接。下图是官方的 slf4j 桥接策略图：
 
-![slf4j桥接策略](http://oyz7npk35.bkt.clouddn.com//image/java/libs/log/slf4j-bind-strategy.png)
+![](http://dunwu.test.upcdn.net/images/java/javalib/log/slf4j-bind-strategy.png)
 
 从图中应该可以看出，无论你的老项目中使用的是 common-logging 或是直接使用 log4j、java.util.logging，都可以使用对应的桥接 jar 包来解决兼容问题。
 
@@ -367,81 +342,160 @@ public class JclTest {
 }
 ```
 
+## log4j2 配置
+
+log4j2 基本配置形式如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>;
+<Configuration>
+  <Properties>
+    <Property name="name1">value</property>
+    <Property name="name2" value="value2"/>
+  </Properties>
+  <Filter type="type" ... />
+  <Appenders>
+    <Appender type="type" name="name">
+      <Filter type="type" ... />
+    </Appender>
+    ...
+  </Appenders>
+  <Loggers>
+    <Logger name="name1">
+      <Filter type="type" ... />
+    </Logger>
+    ...
+    <Root level="level">
+      <AppenderRef ref="name"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+配置示例：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" strict="true" name="XMLConfigTest"
+               packages="org.apache.logging.log4j.test">
+  <Properties>
+    <Property name="filename">target/test.log</Property>
+  </Properties>
+  <Filter type="ThresholdFilter" level="trace"/>
+ 
+  <Appenders>
+    <Appender type="Console" name="STDOUT">
+      <Layout type="PatternLayout" pattern="%m MDC%X%n"/>
+      <Filters>
+        <Filter type="MarkerFilter" marker="FLOW" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="DENY" onMismatch="ACCEPT"/>
+      </Filters>
+    </Appender>
+    <Appender type="Console" name="FLOW">
+      <Layout type="PatternLayout" pattern="%C{1}.%M %m %ex%n"/><!-- class and line number -->
+      <Filters>
+        <Filter type="MarkerFilter" marker="FLOW" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="ACCEPT" onMismatch="DENY"/>
+      </Filters>
+    </Appender>
+    <Appender type="File" name="File" fileName="${filename}">
+      <Layout type="PatternLayout">
+        <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+      </Layout>
+    </Appender>
+  </Appenders>
+ 
+  <Loggers>
+    <Logger name="org.apache.logging.log4j.test1" level="debug" additivity="false">
+      <Filter type="ThreadContextMapFilter">
+        <KeyValuePair key="test" value="123"/>
+      </Filter>
+      <AppenderRef ref="STDOUT"/>
+    </Logger>
+ 
+    <Logger name="org.apache.logging.log4j.test2" level="debug" additivity="false">
+      <AppenderRef ref="File"/>
+    </Logger>
+ 
+    <Root level="trace">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
+```
+
 ## logback 配置
 
 ### `<configuration>`
 
-* 作用：`<configuration>` 是 logback 配置文件的根元素。
-* 要点
-  * 它有 `<appender>`、`<logger>`、`<root>` 三个子元素。
+- 作用：`<configuration>` 是 logback 配置文件的根元素。
+- 要点
+  - 它有 `<appender>`、`<logger>`、`<root>` 三个子元素。
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/dunwu/JavaStack/master/images/javalib/log/logback/basicSyntax.png">
-</p>
+![](http://dunwu.test.upcdn.net/images/java/javalib/log/logback-configuration.png)
 
 ### `<appender>`
 
-* 作用：将记录日志的任务委托给名为 appender 的组件。
-* 要点
-  * 可以配置零个或多个。
-  * 它有 `<file>`、`<filter>`、`<layout>`、`<encoder>` 四个子元素。
-* 属性
-  * name：设置 appender 名称。
-  * class：设置具体的实例化类。
+- 作用：将记录日志的任务委托给名为 appender 的组件。
+- 要点
+  - 可以配置零个或多个。
+  - 它有 `<file>`、`<filter>`、`<layout>`、`<encoder>` 四个子元素。
+- 属性
+  - name：设置 appender 名称。
+  - class：设置具体的实例化类。
 
 #### `<file>`
 
-* 作用：设置日志文件路径。
+- 作用：设置日志文件路径。
 
 #### `<filter>`
 
-* 作用：设置过滤器。
-* 要点
-  * 可以配置零个或多个。
+- 作用：设置过滤器。
+- 要点
+  - 可以配置零个或多个。
 
 #### `<layout>`
 
-* 作用：设置 appender。
-* 要点
-  * 可以配置零个或一个。
-* 属性
-  * class：设置具体的实例化类。
+- 作用：设置 appender。
+- 要点
+  - 可以配置零个或一个。
+- 属性
+  - class：设置具体的实例化类。
 
 #### `<encoder>`
 
-* 作用：设置编码。
-* 要点
-  * 可以配置零个或多个。
-* 属性
-  * class：设置具体的实例化类。
+- 作用：设置编码。
+- 要点
+  - 可以配置零个或多个。
+- 属性
+  - class：设置具体的实例化类。
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/dunwu/JavaStack/master/images/javalib/log/logback/appenderSyntax.png">
-</p>
+![](http://dunwu.test.upcdn.net/images/java/javalib/log/logback-appender.png)
 
 ### `<logger>`
 
-* 作用：设置 logger。
-* 要点
-  * 可以配置零个或多个。
-* 属性
-  * name
-  * level：设置日志级别。不区分大小写。可选值：TRACE、DEBUG、INFO、WARN、ERROR、ALL、OFF。
-  * additivity：可选值：true 或 false。
+- 作用：设置 logger。
+- 要点
+  - 可以配置零个或多个。
+- 属性
+  - name
+  - level：设置日志级别。不区分大小写。可选值：TRACE、DEBUG、INFO、WARN、ERROR、ALL、OFF。
+  - additivity：可选值：true 或 false。
 
 #### `<appender-ref>`
 
-* 作用：appender 引用。
-* 要点
-  * 可以配置零个或多个。
+- 作用：appender 引用。
+- 要点
+  - 可以配置零个或多个。
 
 ### `<root>`
 
-* 作用：设置根 logger。
-* 要点
-  * 只能配置一个。
-  * 除了 level，不支持任何属性。level 属性和 `<logger>` 中的相同。
-  * 有一个子元素 `<appender-ref>`，与 `<logger>` 中的相同。
+- 作用：设置根 logger。
+- 要点
+  - 只能配置一个。
+  - 除了 level，不支持任何属性。level 属性和 `<logger>` 中的相同。
+  - 有一个子元素 `<appender-ref>`，与 `<logger>` 中的相同。
 
 ### 完整的 logback.xml 参考示例
 
@@ -697,18 +751,10 @@ log4j 的配置文件一般有 xml 格式或 properties 格式。这里为了和
 </log4j:configuration>
 ```
 
-### logback 配置参数说明
-
-logback 基本兼容 log4j 的配置，并提供更多的功能。
-
-这里奉献一张本人整理的 logback 配置思维导图，高清无码。
-
-![logback配置](http://oyz7npk35.bkt.clouddn.com//image/java/libs/log/popular-logs-mind.png)
-
 ## 参考
 
-* [slf4 官方文档](http://www.slf4j.org/manual.html)
-* [logback 官方文档](http://logback.qos.ch/)
-* [log4j 官方文档](http://logging.apache.org/log4j/1.2/)
-* [commons-logging 官方文档](http://commons.apache.org/proper/commons-logging/)
-* http://blog.csdn.net/yycdaizi/article/details/8276265
+- [slf4 官方文档](http://www.slf4j.org/manual.html)
+- [logback 官方文档](http://logback.qos.ch/)
+- [log4j 官方文档](http://logging.apache.org/log4j/1.2/)
+- [commons-logging 官方文档](http://commons.apache.org/proper/commons-logging/)
+- http://blog.csdn.net/yycdaizi/article/details/8276265
