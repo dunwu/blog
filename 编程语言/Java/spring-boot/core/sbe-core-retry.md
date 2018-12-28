@@ -1,0 +1,47 @@
+# SpringBootTutorial :: Core :: Retry
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [源码](#源码)
+- [引申和引用](#引申和引用)
+
+<!-- /TOC -->
+
+## 简介
+
+### 开启 Retry
+
+使用 `@EnableRetry` 注解开启 Retry 功能。
+
+```java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.retry.annotation.EnableRetry;
+
+@EnableRetry
+@SpringBootApplication
+public class SbeCoreRetryApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SbeCoreRetryApplication.class, args);
+    }
+}
+```
+
+@Retryable
+
+使用 @Retryable 注解修饰方法
+
+## 源码
+
+完整示例：[源码](https://github.com/dunwu/spring-boot-tutorial/tree/master/codes/core/sbe-core-retry)
+
+## 引申和引用
+
+**引申**
+
+- [Spring Boot 教程](https://github.com/dunwu/spring-boot-tutorial)
+
+**参考**
+
+- [Bean Definition Profiles](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-definition-profiles)
+- [boot-features-profiles](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-profiles)

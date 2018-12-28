@@ -2,7 +2,7 @@
 
 > `Babel` 是一个通用的多用途 JavaScript 编译器。
 >
-> ​:warning: **注意：**
+> ⚠ **注意：**
 >
 > Babel 可以与很多构建工具（如 `Browserify`、`Grunt`、`Gulp` 等）进行集成。由于本教程选择 `Webpack` ，所以只讲解与 `Webpack` 的集成。想了解如何与其它工具集成，请参考：[**官方文档 - installation**](https://babeljs.io/docs/setup/#installation)
 >
@@ -10,41 +10,41 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
-- [简介](#简介)
-    - [Babel 能做什么？](#babel-能做什么)
-    - [Babel 不能做什么？](#babel-不能做什么)
-- [安装 Babel](#安装-babel)
-    - [`babel-cli`](#babel-cli)
-    - [`babel-node`](#babel-node)
-    - [`babel-register`](#babel-register)
-    - [`babel-core`](#babel-core)
-    - [与 webpack 集成](#与-webpack-集成)
-- [配置 Babel](#配置-babel)
-    - [`.babelrc`](#babelrc)
-    - [在其它工具中配置](#在其它工具中配置)
-- [执行 Babel 生成的代码](#执行-babel-生成的代码)
-    - [`babel-polyfill`](#babel-polyfill)
-    - [`babel-runtime`](#babel-runtime)
-- [引申和引用](#引申和引用)
+- [1. 简介](#1-简介)
+    - [1.1. Babel 能做什么？](#11-babel-能做什么)
+    - [1.2. Babel 不能做什么？](#12-babel-不能做什么)
+- [2. 安装 Babel](#2-安装-babel)
+    - [2.1. `babel-cli`](#21-babel-cli)
+    - [2.2. `babel-node`](#22-babel-node)
+    - [2.3. `babel-register`](#23-babel-register)
+    - [2.4. `babel-core`](#24-babel-core)
+    - [2.5. 与 webpack 集成](#25-与-webpack-集成)
+- [3. 配置 Babel](#3-配置-babel)
+    - [3.1. `.babelrc`](#31-babelrc)
+    - [3.2. 在其它工具中配置](#32-在其它工具中配置)
+- [4. 执行 Babel 生成的代码](#4-执行-babel-生成的代码)
+    - [4.1. `babel-polyfill`](#41-babel-polyfill)
+    - [4.2. `babel-runtime`](#42-babel-runtime)
+- [5. 引申和引用](#5-引申和引用)
 
 <!-- /TOC -->
 
-## 简介
+## 1. 简介
 
-### Babel 能做什么？
+### 1.1. Babel 能做什么？
 
 - Babel 通过语法转换来支持最新版本的 JavaScript （ES6），而不用等待浏览器的支持。
 - Babel 可以转换 React 的 JSX 语法和删除类型注释。
 - Babel 是由插件构建的。因此，你可以根据自己的需要订制。
 - 支持 source map ，所以您可以轻松调试您编译的代码。
 
-### Babel 不能做什么？
+### 1.2. Babel 不能做什么？
 
 - Babel 只转换语法（如箭头函数），不支持新的全局变量。但是，您可以使用 [`babel-polyfill`](http://babeljs.io/docs/usage/polyfill/) 来辅助支持。
 
-## 安装 Babel
+## 2. 安装 Babel
 
-### `babel-cli`
+### 2.1. `babel-cli`
 
 `babel-cli` 是 Babel 的命令行工具。
 
@@ -117,7 +117,7 @@ $ npm run build
 >
 > 会生成一个 `dist/demo01` 目录，其中就是被转码后的文件。
 
-### `babel-node`
+### 2.2. `babel-node`
 
 `babel-cli` 工具自带一个 `babel-node` 命令，提供一个支持 ES6 的 REPL 环境。它支持 Node 的 REPL 环境的所有功能，而且可以直接运行 ES6 代码。
 
@@ -156,7 +156,7 @@ $ babel-node example.js
 $ npm run babel-node
 ```
 
-### `babel-register`
+### 2.3. `babel-register`
 
 下一个常用的运行 Babel 的方法是通过  `babel-register`。这种方法只需要引入文件就可以运行 Babel，或许能更好地融入你的项目设置。
 
@@ -177,7 +177,7 @@ $ npm install --save-dev babel-register
 1. 创建  `index.js`  文件：
 
 ```js
-console.log("Hello world!");
+console.log('Hello world!');
 ```
 
 这是，使用  `node index.js`  来运行它是不会使用 Babel 来编译的。所以我们需要设置  `babel-register`。.
@@ -185,8 +185,8 @@ console.log("Hello world!");
 2. 创建  `register.js`  文件：
 
 ```js
-require("babel-register");
-require("./index.js");
+require('babel-register');
+require('./index.js');
 ```
 
 这样做可以把 Babel *注册*到 Node 的模块系统中并开始编译其中  `require`  的所有文件。
@@ -222,7 +222,7 @@ $ node register.js
 > Hello world!
 > ```
 
-### `babel-core`
+### 2.4. `babel-core`
 
 如果你需要以编程的方式来使用 Babel，可以使用  `babel-core`  这个包。
 
@@ -237,7 +237,7 @@ $ npm install babel-core
 在代码中引入 `babel-core`
 
 ```js
-var babel = require("babel-core");
+var babel = require('babel-core');
 ```
 
 **编译 API**
@@ -260,7 +260,7 @@ babel.transformFromAst(ast, code, options);
 // => { code, map, ast }
 ```
 
-### 与 webpack 集成
+### 2.5. 与 webpack 集成
 
 > ​:pushpin: **提示：**
 >
@@ -320,7 +320,7 @@ module: {
 > $ npm run clean
 > ```
 
-## 配置 Babel
+## 3. 配置 Babel
 
 > ​:pushpin: 提示：
 >
@@ -328,7 +328,7 @@ module: {
 >
 > 你需要通过配置文件，明确地告诉 Babel 应该要做什么。
 
-### `.babelrc`
+### 3.1. `.babelrc`
 
 `.babelrc`  文件是 `Babel` 的默认配置文件。
 
@@ -427,7 +427,7 @@ Babel 插件大致分为三类：
 
 更详细介绍请参考：[官方文档 - 插件](http://babeljs.io/docs/plugins)
 
-### 在其它工具中配置
+### 3.2. 在其它工具中配置
 
 > ​:pushpin:​ **提示：**
 >
@@ -480,11 +480,11 @@ Babel 插件大致分为三类：
 }
 ```
 
-## 执行 Babel 生成的代码
+## 4. 执行 Babel 生成的代码
 
 即便你已经用 Babel 编译了你的代码，但这还不算完。
 
-### `babel-polyfill`
+### 4.1. `babel-polyfill`
 
 Babel 几乎可以编译所有新潮的 JavaScript 语法，但对于 APIs 来说却并非如此。
 
@@ -523,10 +523,10 @@ $ npm install --save babel-polyfill
 然后，只需要在文件顶部导入 `babel-polyfill` 就可以了：
 
 ```js
-import "babel-polyfill";
+import 'babel-polyfill';
 ```
 
-### `babel-runtime`
+### 4.2. `babel-runtime`
 
 babel-runtime 与 polyfill 类似，不同之处在于它不修改全局范围，并且与 `babel-plugin-transform-runtime`（通常在库/插件代码中）一起使用。
 
@@ -561,8 +561,8 @@ class Foo {
 编译成：
 
 ```js
-import _classCallCheck from "babel-runtime/helpers/classCallCheck";
-import _createClass from "babel-runtime/helpers/createClass";
+import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
+import _createClass from 'babel-runtime/helpers/createClass';
 
 let Foo = (function() {
   function Foo() {
@@ -571,7 +571,7 @@ let Foo = (function() {
 
   _createClass(Foo, [
     {
-      key: "method",
+      key: 'method',
       value: function method() {}
     }
   ]);
@@ -582,7 +582,7 @@ let Foo = (function() {
 
 这样就不需要把  `_classCallCheck`  和  `_createClass`  这两个助手方法放进每一个需要的文件里去了。
 
-## 引申和引用
+## 5. 引申和引用
 
 > :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 
