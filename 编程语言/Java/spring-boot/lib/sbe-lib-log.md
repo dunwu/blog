@@ -1,8 +1,8 @@
-# SpringBootTutorial :: Log
+# SpringBootTutorial :: Lib :: Log
 
 > Spring Boot 支持集成 Java 世界主流的日志库。
 >
-> 如果对于 Java 日志库不熟悉，可以参考：[细说 Java 主流日志工具库](https://github.com/dunwu/notes/blob/master/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Java/javastack/javalib/java-log.md)
+> 如果对于 Java 日志库不熟悉，可以参考：[细说 Java 主流日志工具库](https://github.com/dunwu/notes/blob/master/编程语言/Java/javastack/javalib/java-log.md)
 >
 > 关键词： `log4j`, `log4j2`, `logback`, `slf4j`
 
@@ -15,6 +15,9 @@
 - [日志级别](#日志级别)
 - [日志组](#日志组)
 - [日志配置文件](#日志配置文件)
+- [Logback 扩展](#logback-扩展)
+    - [profile 指定配置](#profile-指定配置)
+    - [环境属性](#环境属性)
 - [Spring Boot 中的日志配置](#spring-boot-中的日志配置)
 - [源码](#源码)
 - [引申和引用](#引申和引用)
@@ -123,7 +126,7 @@ logging.level.tomcat=TRACE
 
 您可以使用 `org.springframework.boot.logging.LoggingSystem` 系统属性强制 Spring Boot 使用特定的日志记录系统。该值应该是 `LoggingSystem` 实现的完全限定类名。您还可以使用 `none` 值完全禁用 Spring Boot 的日志记录配置。
 
-由于在创建 `ApplicationContext` 之前初始化日志记录，因此无法在 Spring `@Configuration` 文件中控制来自   `@PropertySources` 的日志记录。更改日志记录系统或完全禁用它的唯一方法是通过系统属性。
+由于在创建 `ApplicationContext` 之前初始化日志记录，因此无法在 Spring `@Configuration` 文件中控制来自 `@PropertySources` 的日志记录。更改日志记录系统或完全禁用它的唯一方法是通过系统属性。
 
 ## Logback 扩展
 
@@ -147,7 +150,7 @@ logging.level.tomcat=TRACE
 
 ### 环境属性
 
- `<springProperty>` 标签允许指定从 `Environment` 中获取的属性，并在配置文件中引用。
+`<springProperty>` 标签允许指定从 `Environment` 中获取的属性，并在配置文件中引用。
 
 ```xml
 <springProperty scope="context" name="fluentHost" source="myapp.fluentd.host"
