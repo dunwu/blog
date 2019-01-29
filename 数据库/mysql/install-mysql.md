@@ -61,6 +61,21 @@ mysql-tools-community/x86_64      MySQL Tools Community                       69
 mysql80-community/x86_64          MySQL 8.0 Community Server                  33
 ```
 
+通过 yum 安装 mysql 有几个重要目录：
+
+```
+# 数据库目录
+/var/lib/mysql/
+# 配置文件
+/usr/share/mysql（mysql.server命令及配置文件）
+# 相关命令
+/usr/bin（mysqladmin mysqldump等命令）
+# 启动脚本
+/etc/rc.d/init.d/（启动脚本文件mysql的目录）
+# 配置文件
+/etc/my.cnf
+```
+
 ### 安装 mysql 服务器
 
 ```sh
