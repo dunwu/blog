@@ -11,13 +11,13 @@
   - [栈](data-structure/stack.md)
   - [队列](data-structure/queue.md)
   - [链表](data-structure/list.md)
-  - [树](data-structure/tree)
+  - [树](data-structure/tree) - [树](data-structure/tree/tree.md)、[二叉树](data-structure/tree/binary-tree.md)、[红黑树](data-structure/tree/red-black-tree.md)
   - [图](data-structure/graph.md)
   - [堆](data-structure/heap.md)
   - [散列表](data-structure/hash.md)
 - **结构算法**
   - [查找](data-structure/search)
-  - [排序](data-structure/sort)
+  - [排序](data-structure/sort) - [冒泡排序](data-structure/sort/bubble-sort.md)、[快速排序](data-structure/sort/quick-sort.md)、[直接插入排序](data-structure/sort/insert-sort.md)、[希尔排序](data-structure/sort/shell-sort.md)、[简单选择排序](data-structure/sort/selection-sort.md)、[堆排序](data-structure/sort/heap-sort.md)、[归并排序](data-structure/sort/merge-sort.md)、[基数排序](data-structure/sort/radix-sort.md)
 
 ## 学习资源
 
