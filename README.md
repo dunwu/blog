@@ -29,8 +29,8 @@
 
 > :package: [数据库](database)
 
-- [关系型数据库](database/sql)
-- [非关系型数据库](database/nosql)
+- [关系型数据库](database/sql) - `mysql`, `oracle`, `h2`, `flyway`
+- [非关系型数据库](database/nosql) - `redis`, `mongodb`
 
 ## 网络
 
@@ -66,6 +66,10 @@
 
 > :cloud: [大数据](big-data)
 
+- [HDFS](big-data/HDFS.md)
+- [YARN](big-data/YARN.md)
+- [MapReduce](big-data/MapReduce.md)
+
 ## 设计
 
 > :bulb: [设计](design)
@@ -77,3 +81,5 @@
 ## 软件工程
 
 > :building_construction: [软件工程](software)
+>
+> 软件工程是一门研究用工程化方法构建和维护有效的、实用的和高质量的软件的学科。它涉及程序设计语言、数据库、软件开发工具、系统平台、标准、设计模式等方面。
