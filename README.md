@@ -2,31 +2,43 @@
 
 > 本项目用于归档本人的各种笔记。
 
-|       :coffee:        | :slot_machine: |     :package:     | :spider_web:  |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
-| :-------------------: | :------------: | :---------------: | :-----------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
-| [编程语言](#编程语言) | [算法](#算法)  | [数据库](#数据库) | [网络](#网络) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [软件工程](#软件工程)  |
+|       :coffee:        |            :game_die:             |     :package:     | :spider_web:  |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
+| :-------------------: | :-------------------------------: | :---------------: | :-----------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
+| [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络](#网络) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [软件工程](#软件工程)  |
 
 ## 编程语言
+
+> :coffee: [**编程语言**](programming)
+>
+> 作为程序员，编程能力当然是基础中的基础。个人认为，根据个人喜好和工作性质，精通一两门语言即可。
 
 - [Java](programming/java)
 - [Python](programming/python.md)
 - [Shell](programming/shell)
 
-## 算法
+## 算法和数据结构
+
+> :game_die: [算法和数据结构](algorithm)
+>
+> 算法和数据结构，对于程序员来说，更像是内功。同样是写代码，为什么有的人的代码短小精悍，运行速度飞起；有的人的代码冗余晦涩，运行缓慢，这就要看算法和数据结构功底了。
 
 - [数据结构](algorithm/data-structure)
 - 算法（:construction: 待整理补充）
 
 ## 数据库
 
+> :package: [数据库](database)
+
 - [关系型数据库](database/sql)
 - [非关系型数据库](database/nosql)
 
 ## 网络
 
-（:construction: 待整理补充）
+> :spider_web: [网络](network)
 
 ## 操作系统
+
+> :computer: [操作系统](os)
 
 - [linux](os/linux)
 - [windows](os/windows)
@@ -34,17 +46,29 @@
 
 ## Web
 
+> :globe_with_meridians: [Web](web)
+
 - [nginx](web/nginx)
 
 ## 前端
 
-（:construction: 待整理补充）
+> :art: [前端](frontend) 开发通过 HTML，CSS 及 JavaScript 以及衍生出来的各种技术、框架、解决方案，来实现互联网产品的用户界面交互。
+
+- [前端基础](frontend/base) - `html` , `css` , `js`
+- [nodejs, npm, yarn](frontend/nodejs) - `nodejs`, `npm`, `yarn`
+- [es6, typescript, babel](frontend/es6) - `es6`, `typescript`, `babel`
+- [webpack](frontend/webpack)
+- [mvc](frontend/mvc) - `react`, `vue`, `angular`
+- [qa](frontend/qa) - `eslint`
+- [tool](frontend/tool) - `gitbook`
 
 ## 大数据
 
-（:construction: 待整理补充）
+> :cloud: [大数据](big-data)
 
 ## 设计
+
+> :bulb: [设计](design)
 
 - [UML](design/uml)
 - [设计模式](design/design-patterns)
@@ -52,4 +76,4 @@
 
 ## 软件工程
 
-（:construction: 待整理补充）
+> :building_construction: [软件工程](software)

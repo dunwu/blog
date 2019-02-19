@@ -26,7 +26,7 @@
 
 > 下一代 Javascript 语言
 
-- [ES6](es6/es6.md) - 关键词： `ES6`, `ECMAScript`, `arrow`, `this`, `let`, `const`, `class`, `extends`, `super`, `arrow` ...
+- [ES6](es6/ES6.md) - 关键词： `ES6`, `ECMAScript`, `arrow`, `this`, `let`, `const`, `class`, `extends`, `super`, `arrow` ...
 - [Babel](es6/babel.md) - 关键词： `babel-cli`, `.babelrc`, `preset`, `polyfill`
 - [TypeScript](es6/typescript.md) - 关键词： `typescript`, `tsc`
 
