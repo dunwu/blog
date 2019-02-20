@@ -1,14 +1,4 @@
----
-title: Sql
-date: 2015/05/01
-categories:
-- database
-tags:
-- database
-- sql
----
-
-# Sql
+# 关系型数据库 SQL 基本语法
 
 > 关系型数据库 SQL 语句大同小异。本文以 Mysql 为例。
 >
