@@ -1,6 +1,10 @@
 # 算法和数据结构
 
-## 数据结构
+> :dart: 所有配套源码整理归档在 [**algorithm-tutorial**](https://github.com/dunwu/algorithm-tutorial) 项目中。
+
+## :memo: 知识点
+
+### 数据结构
 
 > `数据结构` 是指相互之间存在着一种或多种关系的数据元素的集合和该集合中数据元素之间的关系组成。
 >
@@ -19,7 +23,7 @@
   - [查找](data-structure/search)
   - [排序](data-structure/sort) - [冒泡排序](data-structure/sort/bubble-sort.md)、[快速排序](data-structure/sort/quick-sort.md)、[直接插入排序](data-structure/sort/insert-sort.md)、[希尔排序](data-structure/sort/shell-sort.md)、[简单选择排序](data-structure/sort/selection-sort.md)、[堆排序](data-structure/sort/heap-sort.md)、[归并排序](data-structure/sort/merge-sort.md)、[基数排序](data-structure/sort/radix-sort.md)
 
-## 学习资源
+## :books: 学习资源
 
 ### 书
 
@@ -78,3 +82,7 @@
 
 - [高级数据结构和算法](https://www.coursera.org/learn/gaoji-shuju-jiegou/) 北大教授张铭老师在 coursera 上的课程。完成这门课之时，你将掌握多维数组、广义表、Trie 树、AVL 树、伸展树等高级数据结构，并结合内排序、外排序、检索、索引有关的算法，高效地解决现实生活中一些比较复杂的应用问题。当然 coursera 上也还有很多其它算法方面的视频课程。
 - [算法设计与分析 Design and Analysis of Algorithms](https://class.coursera.org/algorithms-001/lecture) 由北大教授 Wanling Qu 在 coursera 讲授的一门算法课程。首先介绍一些与算法有关的基础知识，然后阐述经典的算法设计思想和分析技术，主要涉及的算法设计技术是：分治策略、动态规划、贪心法、回溯与分支限界等。每个视频都配有相应的讲义（pdf 文件）以便阅读和复习。
+
+## :door: 传送门
+
+| [回首頁](https://github.com/dunwu/notes) |

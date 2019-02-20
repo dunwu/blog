@@ -41,15 +41,15 @@ tags:
 
 ## 概述
 
-HDFS 是 Hadoop 的核心子项目。
-
-HDFS 是 Hadoop Distributed File System 的缩写，即 Hadoop 分布式文件系统。
+> HDFS 是 Hadoop 的核心子项目。
+>
+> **HDFS** 是 **Hadoop Distributed File System** 的缩写，即 Hadoop 分布式文件系统。
+>
+> HDFS 是一种用于存储具有流数据访问模式的超大文件的文件系统，它运行在廉价的机器集群上。
 
 ### HDFS 的特点
 
-HDFS 是一个文件系统，通过流式数据访问模式来存储海量文件。
-
-优点：
+**优点**
 
 - **高容错** - 数据冗余多副本，副本丢失后自动恢复
 - **高可用** - NameNode HA、安全模式
@@ -57,7 +57,7 @@ HDFS 是一个文件系统，通过流式数据访问模式来存储海量文件
 - **批处理** - 流式数据访问；数据位置暴露给计算框架
 - **构建在廉价商用机器上** - 提供了容错和恢复机制
 
-缺点：
+**缺点**
 
 - **不适合低延迟数据访问** - 适合高吞吐率的场景，就是在某一时间内写入大量的数据。但是它在低延时的情况下是不行的，比如毫秒级以内读取数据，它是很难做到的。
 - **不适合大量小文件存储**
@@ -68,13 +68,15 @@ HDFS 是一个文件系统，通过流式数据访问模式来存储海量文件
 
 ## HDFS 的概念
 
-![架构](http://oyz7npk35.bkt.clouddn.com/images/bigdata/HDFS架构.png)
+HDFS 采用 Master/Slave 架构。
 
-HDFS 采用 Master/Slave 的架构来存储数据。在这个架构中，有以下重要概念，需要了解：
+一个 HDFS 集群是由一个 Namenode 和一定数目的 Datanodes 组成。Namenode 是一个中心服务器，负责管理文件系统的名字空间(namespace)以及客户端对文件的访问。集群中的 Datanode 一般是一个节点一个，负责管理它所在节点上的存储。HDFS 暴露了文件系统的名字空间，用户能够以文件的形式在上面存储数据。从内部看，一个文件其实被分成一个或多个数据块，这些块存储在一组 Datanode 上。Namenode 执行文件系统的名字空间操作，比如打开、关闭、重命名文件或目录。它也负责确定数据块到具体 Datanode 节点的映射。Datanode 负责处理文件系统客户端的读写请求。在 Namenode 的统一调度下进行数据块的创建、删除和复制。
+
+![](http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-architecture.png)
 
 ### NameNode
 
-NameNode 就是 master 工作节点。
+**NameNode 就是 master 工作节点。**
 
 - 管理命名空间
 - 管理元数据：文件的位置、所有者、权限、数据块等
@@ -85,8 +87,8 @@ NameNode 就是 master 工作节点。
 
 NameNode 通过 HA 机制来容错。
 
-- **Active NameNode** 是正在工作的 NameNode；
-- **Standby NameNode** 是备份的 NameNode。
+- **Active NameNode** - 是正在工作的 NameNode；
+- **Standby NameNode** - 是备份的 NameNode。
 
 Active NameNode 宕机后，Standby NameNode 快速升级为新的 Active NameNode。
 
@@ -105,7 +107,7 @@ Standby NameNode 在检查点定期将内存中的元数据保存到 fsimage 文
 
 ### DataNode
 
-DataNode 就是 slave 工作节点。NameNode 下达命令，DataNode 执行实际的操作。
+**DataNode 就是 slave 工作节点。**NameNode 下达命令，DataNode 执行实际的操作。
 
 - 存储 Block 和数据校验和
 - 执行客户端发送的读写操作
@@ -129,9 +131,11 @@ DataNode 就是 slave 工作节点。NameNode 下达命令，DataNode 执行实�
 
 ## Block 副本策略
 
-Block 副本策略是由 NameNode 来控制的。
+HDFS 被设计成能够在一个大集群中跨机器可靠地存储超大文件。它将每个文件存储成一系列的数据块，除了最后一个，所有的数据块都是同样大小的。为了容错，文件的所有数据块都会有副本。每个文件的数据块大小和副本系数都是可配置的。应用程序可以指定某个文件的副本数目。副本系数可以在文件创建的时候指定，也可以在之后改变。HDFS 中的文件都是一次性写入的，并且严格要求在任何时候只能有一个写入者。
 
-![HDFS 副本策略](http://oyz7npk35.bkt.clouddn.com/images/bigdata/HDFS数据中心.png)
+**Namenode 全权管理数据块的复制**，它周期性地从集群中的每个 Datanode 接收心跳信号和块状态报告(Blockreport)。接收到心跳信号意味着该 Datanode 节点工作正常。块状态报告包含了一个该 Datanode 上所有数据块的列表。
+
+![](http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-replica.png)
 
 - 副本 1：放在 Client 所在节点
   - 对于远程 Client，系统会随机选择节点
@@ -144,7 +148,7 @@ Block 副本策略是由 NameNode 来控制的。
 
 ### HDFS 读文件
 
-![HDFS 读文件](http://oyz7npk35.bkt.clouddn.com/images/bigdata/HDFS读文件.png)
+![](http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-read.png)
 
 1. 客户端调用 FileSyste 对象的 open() 方法在分布式文件系统中**打开要读取的文件**。
 2. 分布式文件系统通过使用 RPC（远程过程调用）来调用 namenode，**确定文件起始块的位置**。
@@ -155,7 +159,7 @@ Block 副本策略是由 NameNode 来控制的。
 
 ### HDFS 写文件
 
-![HDFS 写文件](http://oyz7npk35.bkt.clouddn.com/images/bigdata/HDFS写文件.png)
+![](http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-write.png)
 
 1. 客户端通过对 DistributedFileSystem 对象调用 create() 函数来**新建文件**。
 2. 分布式文件系统对 namenod 创建一个 RPC 调用，在文件系统的**命名空间中新建一个文件**。
@@ -221,4 +225,5 @@ QJM 共享存储系统
 
 - [HDFS 官方文档](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html)
 - [HDFS 知识点总结](https://www.cnblogs.com/caiyisen/p/7395843.html)
-- [Hadoop: The Definitive Guide, Fourth Edition](http://shop.oreilly.com/product/0636920033448.do) by Tom White
+- [《Hadoop: The Definitive Guide, Fourth Edition》](http://shop.oreilly.com/product/0636920033448.do) by Tom White
+- http://hadoop.apache.org/docs/r1.0.4/cn/hdfs_design.html
