@@ -42,26 +42,31 @@
 #### 应用、服务、工具运维和调优
 
 - 研发环境
-  - [JDK](ops/tool/jdk.md)
-  - [Nodejs](ops/tool/nodejs.md)
-  - [Tomcat](ops/tool/tomcat.md)
-  - [Zookeeper](ops/tool/zookeeper.md)
+  - [JDK](ops/service/jdk.md)
+  - [Nodejs](ops/service/nodejs.md)
+  - [Tomcat](ops/service/tomcat.md)
+  - [Zookeeper](ops/service/zookeeper.md)
 - 研发工具
-  - [Nexus](ops/tool/nexus.md)
-  - [Gitlab](ops/tool/gitlab) - Git 代码管理平台。
-  - [Jenkins](ops/tool/jenkins.md) - 持续集成和持续交付平台。
-  - [Elastic](ops/tool/elastic) - 常被称为 `ELK` ，是 Java 世界最流行的分布式日志解决方案 。 `ELK` 是 Elastic 公司旗下三款产品 [ElasticSearch](https://www.elastic.co/products/elasticsearch) 、[Logstash](https://www.elastic.co/products/logstash) 、[Kibana](https://www.elastic.co/products/kibana) 的首字母组合。
+  - [Nexus](ops/service/nexus.md)
+  - [Jenkins](ops/service/jenkins.md) - 持续集成和持续交付平台。
+  - [Elastic](ops/service/elastic) - 常被称为 `ELK` ，是 Java 世界最流行的分布式日志解决方案 。 `ELK` 是 Elastic 公司旗下三款产品 [ElasticSearch](https://www.elastic.co/products/elasticsearch) 、[Logstash](https://www.elastic.co/products/logstash) 、[Kibana](https://www.elastic.co/products/kibana) 的首字母组合。
+  - [Apollo](ops/service/apollo) - 分布式配置中心
 - 版本控制
-  - [Git](ops/tool/git)
-  - [Svn](ops/tool/svn.md) - Svn 是 Subversion 的简称，是一个开放源代码的版本控制系统，它采用了分支管理系统。
+  - [Gitlab](ops/service/gitlab) - Git 代码管理平台。
+  - [Svn](ops/service/svn.md) - Svn 是 Subversion 的简称，是一个开放源代码的版本控制系统，它采用了分支管理系统。
 - 消息中间件
-  - [Kafka](ops/tool/kafka) - 应该是 Java 世界最流行的消息中间件了吧。
-  - [RocketMQ](ops/tool/rocketmq) - 阿里巴巴开源的消息中间件。
+  - [Kafka](ops/service/kafka.md) - 应该是 Java 世界最流行的消息中间件了吧。
+  - [RocketMQ](ops/service/rocketmq.md) - 阿里巴巴开源的消息中间件。
 - 数据库
   - [Mysql](https://github.com/dunwu/database/blob/master/docs/mysql/install-mysql.md) - 关系型数据库
   - [PostgreSQL](https://github.com/dunwu/database/blob/master/docs/postgresql.md#安装) - 关系型数据库
   - [Mongodb](https://github.com/dunwu/database/blob/master/docs/mongodb/install-mongodb.md) - Nosql
   - [Redis](https://github.com/dunwu/database/blob/master/docs/redis/install-redis.md) - Nosql
+
+### [工具](tool)
+
+- [Git](tool/git)
+- [Vim](tool/vim.md)
 
 ## :books: 学习资源
 

@@ -7,7 +7,6 @@
 - [Linux](linux)
 - [Windows](windows)
 - [Docker](docker)
-- [Git](git)
 
 ## :books: 学习资源
 
