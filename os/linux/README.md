@@ -32,7 +32,22 @@
 8. [Linux 硬件管理](cli/08.Linux硬件管理.md) - 关键词：`df`, `du`, `top`, `free`, `iotop`
 9. [Linux 软件管理](cli/09.Linux软件管理.md) - 关键词：`rpm`, `yum`, `apt-get`
 
+### [工具](tool)
+
+- [Git](tool/git)
+- [Vim](tool/vim.md)
+
 ### [Linux 运维](ops)
+
+> :bulb: **说明**
+>
+> 这里总结了多种常用研发软件的安装、配置、使用指南。并提供基本安装、运行的脚本。
+>
+> [环境部署工具](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy) ：适合开发、运维人员，在 [CentOS](https://www.centos.org/) 机器上安装常用命令工具或开发软件。
+>
+> - _`Scripts`：安装配置脚本，按照说明安装使用即可。_
+> - _`Docs`: 安装配置文档，说明安装的方法以及一些注意事项。_
+> - _`Tutorial`: 教程文档。_
 
 #### Linux 服务器运维
 
@@ -42,31 +57,43 @@
 #### 应用、服务、工具运维和调优
 
 - 研发环境
-  - [JDK](ops/service/jdk.md)
-  - [Nodejs](ops/service/nodejs.md)
-  - [Tomcat](ops/service/tomcat.md)
-  - [Zookeeper](ops/service/zookeeper.md)
+  - JDK
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/jdk) | [**`Docs`**](ops/service/jdk.md) |
+  - Maven
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/maven) | [**`Docs`**](https://github.com/dunwu/javastack/tree/master/docs/javatool/build/maven) |
+  - Nginx
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/nginx) | [**`Docs`**](https://github.com/dunwu/nginx-tutorial) |
+  - Nodejs
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/nodejs) | [**`Docs`**](ops/service/nodejs.md) |
+  - Tomcat
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/tomcat) | [**`Docs`**](ops/service/tomcat.md) |
+  - Zookeeper
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/zookeeper) | [**`Docs`**](ops/service/zookeeper.md) |
 - 研发工具
-  - [Nexus](ops/service/nexus.md)
-  - [Jenkins](ops/service/jenkins.md) - 持续集成和持续交付平台。
-  - [Elastic](ops/service/elastic) - 常被称为 `ELK` ，是 Java 世界最流行的分布式日志解决方案 。 `ELK` 是 Elastic 公司旗下三款产品 [ElasticSearch](https://www.elastic.co/products/elasticsearch) 、[Logstash](https://www.elastic.co/products/logstash) 、[Kibana](https://www.elastic.co/products/kibana) 的首字母组合。
-  - [Apollo](ops/service/apollo) - 分布式配置中心
+  - Nexus - Maven 私服。
+    - | [**`Docs`**](ops/service/nexus.md) |
+  - Jenkins - 持续集成和持续交付平台。
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/jenkins) | [**`Docs`**](ops/service/jenkins.md) |
+  - Elastic - 常被称为 `ELK` ，是 Java 世界最流行的分布式日志解决方案 。 `ELK` 是 Elastic 公司旗下三款产品 [ElasticSearch](https://www.elastic.co/products/elasticsearch) 、[Logstash](https://www.elastic.co/products/logstash) 、[Kibana](https://www.elastic.co/products/kibana) 的首字母组合。
+    - | [**`Docs`**](ops/service/elastic) |
 - 版本控制
-  - [Gitlab](ops/service/gitlab) - Git 代码管理平台。
-  - [Svn](ops/service/svn.md) - Svn 是 Subversion 的简称，是一个开放源代码的版本控制系统，它采用了分支管理系统。
+  - Gitlab - Git 代码管理平台
+  - Svn - Svn 是 Subversion 的简称，是一个开放源代码的版本控制系统，它采用了分支管理系统。
+    - | [**`Docs`**](ops/service/svn.md) |
 - 消息中间件
-  - [Kafka](ops/service/kafka.md) - 应该是 Java 世界最流行的消息中间件了吧。
-  - [RocketMQ](ops/service/rocketmq.md) - 阿里巴巴开源的消息中间件。
+  - Kafka - 应该是 Java 世界最流行的消息中间件了吧。
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/kafka) | [**`Docs`**](ops/service/kafka.md) |
+  - RocketMQ - 阿里巴巴开源的消息中间件。
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/rocketmq) | [**`Docs`**](ops/service/rocketmq.md) |
 - 数据库
-  - [Mysql](https://github.com/dunwu/database/blob/master/docs/mysql/install-mysql.md) - 关系型数据库
-  - [PostgreSQL](https://github.com/dunwu/database/blob/master/docs/postgresql.md#安装) - 关系型数据库
-  - [Mongodb](https://github.com/dunwu/database/blob/master/docs/mongodb/install-mongodb.md) - Nosql
-  - [Redis](https://github.com/dunwu/database/blob/master/docs/redis/install-redis.md) - Nosql
-
-### [工具](tool)
-
-- [Git](tool/git)
-- [Vim](tool/vim.md)
+  - Mysql - 关系型数据库
+    - | [**`Docs`**](https://github.com/dunwu/database/blob/master/docs/mysql/install-mysql.md) |
+  - PostgreSQL - 关系型数据库
+    - | [**`Docs`**](https://github.com/dunwu/database/blob/master/docs/postgresql.md#安装) |
+  - Mongodb - Nosql
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/mongodb) | [**`Docs`**](https://github.com/dunwu/database/blob/master/docs/mongodb/install-mongodb.md) |
+  - Redis - Nosql
+    - | [**`Scripts`**](https://github.com/dunwu/os-tutorial/tree/master/codes/deploy/tool/redis) | [**`Docs`**](https://github.com/dunwu/database/blob/master/docs/redis/install-redis.md) |
 
 ## :books: 学习资源
 
