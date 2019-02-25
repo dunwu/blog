@@ -2,7 +2,7 @@
 
 > 计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/network/network.jpg"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/network.jpg"/></div><br>
 
 ## :bulb: 指南
 

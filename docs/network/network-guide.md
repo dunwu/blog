@@ -19,7 +19,7 @@
 
 计算机网络的拓扑结构可分为：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/network/overview/network-topological-structure.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/overview/network-topological-structure.gif"/></div><br>
 
 - 网型拓扑网型网（Mesh network）
 - 环型拓扑环型网（Ring network）
@@ -46,7 +46,7 @@
 
 ## 体系结构
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/network/overview/network-layers.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/overview/network-layers.png"/></div><br>
 
 - **物理层（Physical Layer）** - 物理层只接收和发送一串比特(bit)流，不考虑信息的意义和信息结构。
   - 数据单元：比特流。

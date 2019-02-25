@@ -1,6 +1,6 @@
 # 二叉树
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/data-structure/tree/二叉树.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/tree/二叉树.png"/></div><br>
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -26,7 +26,7 @@
 
 定义：高度为 h，并且由 **2<sup>h</sup>–1** 个结点的二叉树，被称为满二叉树。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/data-structure/tree/满二叉树.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/tree/满二叉树.png"/></div><br>
 
 ### 完全二叉树
 
@@ -34,4 +34,4 @@
 
 特点：叶子结点只能出现在最下层和次下层，且最下层的叶子结点集中在树的左部。显然，一棵满二叉树必定是一棵完全二叉树，而完全二叉树未必是满二叉树。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/data-structure/tree/完全二叉树.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/tree/完全二叉树.png"/></div><br>

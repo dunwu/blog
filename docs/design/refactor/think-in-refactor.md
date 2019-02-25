@@ -121,5 +121,5 @@
 
 《重构:改善既有代码的设计》中介绍了22种代码的坏味道以及重构手法。这些坏味道可以进一步归类。我总觉得将事物分类有助于理解和记忆。所以本系列将坏味道按照特性分类，然后逐一讲解。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/refactor/code-smell.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/refactor/code-smell.png"/></div><br>
 

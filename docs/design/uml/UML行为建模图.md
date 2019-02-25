@@ -22,7 +22,7 @@
 > UML 中，活动图用来展示活动的顺序。**显示了从起始点到终点的工作流，描述了活动图中存在于事件进程的判断路径**。活动图可以用来详细阐述某些活动执行中发生并行处理的情况。活动图对业务建模也比较有用，用来详细描述发生在业务活动中的过程。
 > 一个活动图的示例如下所示。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-diagram.gif"/></div><br>
 
 下面描述组成活动图的元素。
 
@@ -30,41 +30,41 @@
 
 活动是行为参数化顺序的规范。活动被表示为圆角矩形，内含全部的动作，工作流和其他组成活动的元素。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity.gif"/></div><br>
 
 ### 动作
 
 一个动作代表活动中的一个步骤。动作用圆角矩形表示。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-action.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-action.gif"/></div><br>
 
 ### 动作约束
 
 动作可以附带约束，下图显示了一个带前置条件和后置条件的动作。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-conditions.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-conditions.gif"/></div><br>
 
 ### 控制流
 
 控制流显示一个动作到下一个动作的流。表示为带箭头实线
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-edge.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-edge.gif"/></div><br>
 
 ### 初始节点
 
 一个开始或起始点用大黑圆点表示，如下图。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-initial.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-initial.gif"/></div><br>
 
 ### 结束节点
 
 结束节点有两种类型：活动结束节点和流结束节点。活动结束节点表示为中心带黑点的圆环。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-final.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-final.gif"/></div><br>
 
 流结束节点表示为内部为叉号的圆环。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-flow-final.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-flow-final.gif"/></div><br>
 
 这两种不同类型节点的区别为：流结束节点表明单独的控制流的终点。活动结束终点是活动图内所有控制流的结束。
 
@@ -72,31 +72,31 @@
 
 对象流是对象和数据转递的通道。对象显示为矩形。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-object.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-object.gif"/></div><br>
 
 对象流显示为带箭头的连接器，表明方向和通过的对象。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-object-flow.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-flow.gif"/></div><br>
 
 一个对象流在它的至少一个终端有一个对象。在上图中，可以采用带输入输出引脚的速记标柱表示。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-object-flow-alt.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-flow-alt.gif"/></div><br>
 
 数据存储显示为带 «datastore» 关键字的对象。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-data-store.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-data-store.gif"/></div><br>
 
 ### 判断节点和合并节点
 
 判断节点和合并节点是相同标注：菱形。它们可以被命名。从判断节点出来的控制流有监护条件，当监护条件满足时，可以对流控制。下图显示了判断节点和合并节点的使用。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-decision-or-merge.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-decision-or-merge.gif"/></div><br>
 
 ### 分叉和结合节点
 
 分叉和结合节点有同样的标柱：垂直或水平条（方向取决于工作流从左到右，还是从上到下）。它们说明了控制的并发线程的起始和终点，下图显示他们的使用示例。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-fork-and-join.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-fork-and-join.gif"/></div><br>
 
 结合节点与合并节点不同之处在于：结合节点同步两个输入量，产生一个单独的输出量。来自结合节点的输出量要接收到所有的输入量后才能执行。合并节点直接将控制流传递通过。如果两个或更多的输入量到达合并节点。则它的输出流指定的动作会被执行两次或更多次。
 
@@ -104,25 +104,25 @@
 
 扩展域是会执行多次的结构活动域。输入输出扩展节点表示为一组“3 厢” ，代表多个选择项。关键词 "iterative"， "parallel" 或 "stream"显示在区域的左上角
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-expansion-region.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-expansion-region.gif"/></div><br>
 
 ### 异常处理器
 
 异常处理器在活动图中可以建模。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-exception-handler.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-exception-handler.gif"/></div><br>
 
 ### 可中断活动区
 
 可中断活动区环绕一组可以中断的动作。在下面非常简单的例子中： 当控制被传递到结束订单 "Close Order" 动作，定单处理"Process Order" 动作会执行直到完成，除非"Cancel Request"取消请求中断被接受，这会将控制传递给"Cancel Order"动作。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-interruptible-activity-region.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interruptible-activity-region.gif"/></div><br>
 
 ### 分割
 
 一个活动分割显示为垂直或水平泳道。在下图中，分割被用来在活动图中分隔动作，有在 "accounting department"中执行的，有在 "customer"中执行的。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-activity-partitions.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-partitions.gif"/></div><br>
 
 ## 状态机图
 
@@ -130,7 +130,7 @@
 
 如下示例， 下列的状态机图显示了门在它的整个生命周期里如何运作。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-diagram.gif"/></div><br>
 
 门可以处于以下的三种状态之一： "Opened"打开状态， "Closed"关闭状态，或者"Locked"锁定状态。 它分别响应事件：“Open”开门， “Close”关门， “Lock”锁门 和 “Unlock”解锁。 注意：不是所有的事件，在所有的状态下都是有效的。如：一个门打开的时候是不可能锁定的，除非你关上门。并且，状态转移可能有附加监护条件：假设门是开的，如果“doorWay->isEmpty”（门是空的）被满足，那么它只能响应关门事件。状态机图使用的语法和约定将在下面的部分进行讨论。
 
@@ -138,19 +138,19 @@
 
 状态被表示为圆角矩形，状态名写在里面。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state.gif"/></div><br>
 
 ### 起始和结束状态
 
 初始状态表示为实心黑圆环，可以标注名称。结束状态表示为中心带黑点圆环，也可以被标注名称。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-initial-and-final.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-initial-and-final.gif"/></div><br>
 
 ### 转移
 
 一个状态到下一个状态的转移表示为带箭头实线。转移可以有一个“Trigger”触发器，一个“Guard”监护条件和一个“effect”效果。如下所示：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-transition.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-transition.gif"/></div><br>
 
 "Trigger"触发器是转移的起因，它可以是某个条件下的一个信号，一个事件，一个变化或一个时间通路。"Guard"监护是一个条件，而且必须为真，以便于让触发器引起转移。效果"Effect"是直接作用到对象上的一个动作，该对象具有做为转移结果的状态机。
 
@@ -158,7 +158,7 @@
 
 在上面的状态转移示例中，一个效果与该转移相关联。如果目标状态有多个转移到达，并且每一个转移都有相同的效果与它相关联，那最好将该效果与目标状态相关联，而不与转移相关联。你可以通过为这个状态定义初始动作来实现。下图显示了一个带入口动作和出口动作的状态。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-entry-and-exit.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-and-exit.gif"/></div><br>
 
 可以定义发生在事件上的动作或一直发生的动作。每一种类型的动作是可以定义任意数量的。
 
@@ -166,17 +166,17 @@
 
 一个状态可能有一个返回到自身的转移，如下图。效果与转移关联是十分有帮助。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-self-transition.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-self-transition.gif"/></div><br>
 
 ### 复合状态
 
 一个状态机图可以有子状态机图，如下图所示：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-compound.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-compound.gif"/></div><br>
 
 可选择不同方式显示相同信息，如下图所示：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-composite.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-composite.gif"/></div><br>
 
 上面版本的标注说明"Check PIN"的子状态机图显示在单独的图中。
 
@@ -184,35 +184,35 @@
 
 有时，你不想在正常的初始状态进入子状态机。例如下面的子状态机，它通常从"初始化"状态开始，但是如果因为某些原因，它不必执行初始化，可能靠转移到指定的入口点来从 "Ready" 状态开始。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-entry-point.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-point.gif"/></div><br>
 
 下图显示了状态机的上一层。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-entry-point-higher.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-point-higher.gif"/></div><br>
 
 ### 出口点
 
 有与入口点相类似的方式，它可能也指定可选择的出口点。下图给出了主处理状态执行后，所执行状态的去向将取决于该状态转移时所使用的路径。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-exit-point.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-exit-point.gif"/></div><br>
 
 ### 选择伪状态
 
 选择伪状态显示为菱形，有一个转移输入，两个或多个输出。下图显示不管到达哪一个状态，经过选择伪状态后的去向，取决于在伪状态中执行时所选择的消息格式。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-choice.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-choice.gif"/></div><br>
 
 ### 连接伪状态
 
 连接伪状态用来将多个状态转移链接在一起。一个单独的连接伪状态可以有一个或多个输入和一个或多个输出，监护可能应用于每一个转移，连接是没有语义的。连接可以把一个输入转移分成多个输出转移来实现一个静态分支。与之对照的是选择伪状态实现一个动态条件分支。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-junction.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-junction.gif"/></div><br>
 
 ### 终止伪状态
 
 进入终止伪状态是指状态机生命线已经终止。终止伪状态表示为叉号。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-terminate.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-terminate.gif"/></div><br>
 
 ### 历史状态
 
@@ -224,7 +224,7 @@
 
 一个状态可以被分成几个不同的区，包含同时存在和执行的子状态。下面的例子显示状态 "Applying Brakes"， "front brake"和"rear brakes" 将同时独立运作。注意使用了分叉和结合伪状态而不是选择和合并伪状态。这些符号用来同步并发的线程。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-concurrent-regions.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-concurrent-regions.gif"/></div><br>
 
 ## 用例图
 
@@ -234,25 +234,25 @@
 
 用例图显示了系统和系统外实体之间的交互。这些实体被引用为执行者。执行者代表角色，可以包括：用户，外部硬件和其他系统。执行者往往被画成简笔画小人。也可以用带«actor»关键字的类矩形表示。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-actor.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-actor.gif"/></div><br>
 
 在下图中，执行者可以详细的泛化其他执行者:
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-generalize.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-generalize.gif"/></div><br>
 
 ### 用例
 
 用例是有意义的单独工作单元。它向系统外部的人或事提供一个易于观察的高层次行为视图。 用例的标注符号是一个椭圆。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case.gif"/></div><br>
 
 使用用例的符号是带可选择箭头的连接线，箭头显示控制的方向。下图说明执行者 "Customer"使用 "Withdraw"用例。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-use.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-use.gif"/></div><br>
 
 用途连接器（uses connector）可以有选择性的在每一个端点有多重性值，如下图，显示客户一次可能只执行一次取款交易。但是银行可以同时执行许多取款交易。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-multiplicity-use.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-multiplicity-use.gif"/></div><br>
 
 ### 用例定义
 
@@ -269,7 +269,7 @@
 
 用例可能包含其他用例的功能来作为它正常处理的一部分。通常它假设，任何被包含的用例在基本程序运行时每一次都会被调用。下面例子：用例“卡的确认”<Card Identification> 在运行时，被用例“取钱”<Withdraw>当作一个子部分。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-include.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-include.gif"/></div><br>
 
 用例可以被一个或多个用例包含。通过提炼通用的行为，将它变成可以多次重复使用的用例。有助于降低功能重复级别。
 
@@ -277,15 +277,15 @@
 
 一个用例可以被用来扩展另一个用例的行为，通常使用在特别情况下。例如：假设在修改一个特别类型的客户订单之前，用户必须得到某种更高级别的许可，然后“获得许可”<Get Approval>用例将有选择的扩展常规的“修改订单”<Modify Order>用例。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-extend.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-extend.gif"/></div><br>
 
 **扩展点** - 扩展用例的加入点被定义为扩展点。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-extend-with-condition.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-extend-with-condition.gif"/></div><br>
 
 **系统边界** - 它用来显示用例在系统内部，执行者在系统的外部。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-use-case-system-boundary.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-system-boundary.gif"/></div><br>
 
 ## 通信图
 
@@ -295,9 +295,9 @@
 
 下面的两个图用通信图和时序图分别显示相同的信息。尽管我们可能从通信图的编号码得到消息顺序，但它不是立即可见的。通信图十分清楚的显示了邻近对象间全部完整的消息传递。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-communications-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-communications-diagram.gif"/></div><br>
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-diagram.gif"/></div><br>
 
 ## 交互概述图
 
@@ -307,19 +307,19 @@
 
 交互发生引用现有的交互图。显示为一个引用框，左上角显示 "ref" 。被引用的图名显示在框的中央。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-interaction-overview-01.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-01.gif"/></div><br>
 
 ### 交互元素
 
 交互元素与交互发生相似之处在于都是在一个矩形框中显示一个现有的交互图。不同之处在内部显示参考图的内容不同。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-interaction-overview-02.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-02.gif"/></div><br>
 
 ### 将它们放在一起
 
 所有的活动图控件，都可以相同地被使用于交互概览图，如：分叉，结合，合并等等。它把控制逻辑放入较低一级的图中。下面的例子就说明了一个典型的销售过程。子过程是从交互发生抽象而来。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-interaction-overview-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-diagram.gif"/></div><br>
 
 ## 时序图
 
@@ -329,17 +329,17 @@
 
 一条生命线在时序图中代表一个独立的参与者。表示为包含对象名的矩形，如果它的名字是"self"，则说明该生命线代表控制带时序图的类元。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-lifelines.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lifelines.gif"/></div><br>
 
 有时，时序图会包含一个顶端是执行者的生命线。这情况说明掌握这个时序图的是用例。健壮图中的边界，控制和实体元素也可以有生命线。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-more-lifelines.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-more-lifelines.gif"/></div><br>
 
 ### 消息
 
 消息显示为箭头。消息可以完成传输，也可能丢失和找回，它可以是同步的，也可以是异步的，即可以是调用，也可以是信号。在下图中，第一条消息是同步消息(标为实箭头)完成传输，并隐含一条返回消息。第二条消息是异步消息 (标为实线箭头)，第三条是异步返回消息(标为虚线)。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-messages.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-messages.gif"/></div><br>
 
 ### 执行发生
 
@@ -349,25 +349,25 @@
 
 内部消息表现为一个操作的递归调用，或一个方法调用属于同一个对象的其他方法。显示为生命线上执行事件的嵌套控制焦点。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-recursion.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-recursion.gif"/></div><br>
 
 ### 迷路消息和拾取消息
 
 迷路消息是那些发送了却没有到达指定接收者，或者到达的接收者不再当前图中。拾取消息是收到来自那些未知的发送者，或者来自没有显示在当前图的发送者的消息。它们都表明是去往或来自一个终点元素。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-lost-and-found.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lost-and-found.gif"/></div><br>
 
 ### 生命线开始与结束
 
 生命线可以在时序图时间刻度范围内创建和销毁，在下面的例子中，生命线被停止符号（叉号）终止。在前面的例子中，生命线顶端的符号（Child）显示在比创建它的对象符号（parent）沿页面要低的位置上。下图显示创建和终止对象。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-lost-and-found.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lost-and-found.gif"/></div><br>
 
 ### 时间和期限约束
 
 消息默认显示为水平线。因为生命线显示为沿屏幕向下的时间通道，所以当给实时系统建模，或是有时间约束的业务过程建模，考虑执行动作所需时间长度是很重要的。因此可以给消息设置一个期限约束，这样的消息显示为下斜线。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-time.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-time.gif"/></div><br>
 
 ### 复合片段
 
@@ -388,7 +388,7 @@
 
 下图显示的是循环片段：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-fragment.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-fragment.gif"/></div><br>
 
 这也是一个类似于复合片段的交互发生。 交互发生被其他图参考，显示为左上角带"ref"，将被参考图名显示在方框的中间。
 
@@ -396,21 +396,21 @@
 
 门是连接片段内消息和片段外消息的连接点。 在 EA 中，门显示为片段框架上的小正方形。作用为时序图与页面外的连接器。 用来表示进来的消息源，或者出去消息的终点。下面两个图显示它们在实践中的使用。注意：" top level diagram"中的门用消息箭头指向参考片段，在这里没有必要把它画成方块。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-top-level-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-top-level-diagram.gif"/></div><br>
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-nested-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-nested-diagram.gif"/></div><br>
 
 ### 部分分解
 
 一个对象可以引出多条生命线，使得对象内部和对象之间的消息显示在同一图上。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-part-decomposition.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-part-decomposition.gif"/></div><br>
 
 ### 状态常量/延续
 
 状态常量是生命线的约束，运行时始终为"真"。显示为两侧半圆的矩形，如下图：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-sequence-state-invariant.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-state-invariant.gif"/></div><br>
 
 延续虽与状态常量有同样的标注，但是被用于复合片段，并可以延伸跨越多条生命线。
 
@@ -422,19 +422,19 @@
 
 状态生命线显示随时间变化，一个单项状态的改变。不论时间单位如何选择，X 轴显示经过的时间，Y 轴被标为给出状态的列表。状态生命线如下所示：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-state-lifeline.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-lifeline.gif"/></div><br>
 
 ### 值生命线
 
 值生命线显示随时间变化，一个单项的值的变化。X 轴显示经过的时间，时间单位为任意，和状态生命线一样。平行线之间显示值，每次值变化，平行线交叉。如下图所示。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-value-lifeline.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-value-lifeline.gif"/></div><br>
 
 ### 将它们放在一起
 
 状态和值的生命线能叠加组合。它们必须有相同的 X 轴。 消息可以从一个生命线传递到另一个。每一个状态和值的变换能有一个定义的事件，一个时间限制是指一个事件何时必须发生，和一个期限限制说明状态或值多长时间必须有效。一旦这些已经被应用，其时间图可能显示如下。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/design/uml/uml-timing-diagram.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-timing-diagram.gif"/></div><br>
 
 ## 参考资料
 

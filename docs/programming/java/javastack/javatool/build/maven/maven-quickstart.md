@@ -99,13 +99,13 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 2．添加环境变量 MAVEN_HOME，值为 apache-maven-3.3.9 的安装路径
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195009.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195009.png"/></div><br>
 
 3．在 Path 环境变量的变量值末尾添加%MAVEN_HOME%\bin
 
 4．在 cmd 输入 mvn –version，如果出现 maven 的版本信息，说明配置成功。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195046.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195046.png"/></div><br>
 
 ### 本地仓储配置
 
@@ -115,7 +115,7 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 可以参照下图配置本地仓储位置。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195104.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195104.png"/></div><br>
 
 ## 第一个 Maven 工程
 
@@ -129,7 +129,7 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 点击 Help -> Eclipse Marketplace，搜索 maven 关键字，选择安装红框对应的 Maven 插件。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195117.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195117.png"/></div><br>
 
 #### Maven 环境配置
 
@@ -137,7 +137,7 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 如下图所示，配置 settings.xml 文件的位置
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195128.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195128.png"/></div><br>
 
 #### 创建 Maven 工程
 
@@ -145,7 +145,7 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 接下来设置项目的参数，如下：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195151.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195151.png"/></div><br>
 
 **groupId**是项目组织唯一的标识符，实际对应 JAVA 的包的结构，是 main 目录里 java 的目录结构。
 
@@ -159,11 +159,11 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 在 Elipse 项目上右击  -> Run As  就能看到很多 Maven 操作。这些操作和 maven 命令是等效的。例如 Maven clean，等同于 mvn clean 命令。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195208.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195208.png"/></div><br>
 
 你也可以点击 Maven build，输入组合命令，并保存下来。如下图：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195219.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195219.png"/></div><br>
 
 **Maven 命令构建方式**
 
@@ -171,7 +171,7 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 进入工程所在目录，输入 maven 命令就可以了。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181127195243.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195243.png"/></div><br>
 
 ## 使用指导
 

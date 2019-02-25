@@ -1,6 +1,6 @@
 # ngular、React、Vue
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181106151530.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106151530.png"/></div><br>
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -29,7 +29,7 @@
 Github Star 数：React > Vue > Angular
 贡献者数：React > Angular > Vue
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181106151737.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106151737.png"/></div><br>
 
 ## React，Angular 和 Vue 的比较
 

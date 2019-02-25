@@ -79,7 +79,7 @@ logback 当前分成三个模块：`logback-core`、`logback-classic` 和 `logba
 
 Log4j2 架构：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/java/javalib/log/log4j2-architecture.jpg"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/log/log4j2-architecture.jpg"/></div><br>
 
 ### Log4j vs Logback vs Log4j2
 
@@ -123,7 +123,7 @@ common-logging 的功能是提供日志功能的 API 接口，本身并不提供
 
 [官网地址](http://www.slf4j.org/)
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/java/javalib/log/slf4j-to-other-log.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/log/slf4j-to-other-log.png"/></div><br>
 
 ### common-logging vs slf4j
 
@@ -217,7 +217,7 @@ _slf4j-jdk14-1.7.21.jar_ 会自动将 *slf4j-api-1.7.21.jar*  也添加到你的
 
 假如你正在开发应用程序所调用的组件当中已经使用了 common-logging，这时你需要 jcl-over-slf4j.jar 把日志信息输出重定向到 slf4j-api，slf4j-api 再去调用 slf4j 实际依赖的日志组件。这个过程称为桥接。下图是官方的 slf4j 桥接策略图：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/java/javalib/log/slf4j-bind-strategy.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/log/slf4j-bind-strategy.png"/></div><br>
 
 从图中应该可以看出，无论你的老项目中使用的是 common-logging 或是直接使用 log4j、java.util.logging，都可以使用对应的桥接 jar 包来解决兼容问题。
 
@@ -433,7 +433,7 @@ log4j2 基本配置形式如下：
 - 要点
   - 它有 `<appender>`、`<logger>`、`<root>` 三个子元素。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/java/javalib/log/logback-configuration.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/log/logback-configuration.png"/></div><br>
 
 ### `<appender>`
 
@@ -471,7 +471,7 @@ log4j2 基本配置形式如下：
 - 属性
   - class：设置具体的实例化类。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/java/javalib/log/logback-appender.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/log/logback-appender.png"/></div><br>
 
 ### `<logger>`
 

@@ -70,7 +70,7 @@
   - 软件测试 - 测试的过程分单元测试、组装测试以及系统测试三个阶段进行。测试的方法主要有白盒测试和黑盒测试两种。
 - 维护
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/software-engineering/软件生命周期.gif"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/software-engineering/软件生命周期.gif"/></div><br>
 
 ## 软件生命周期模型
 
@@ -78,7 +78,7 @@
 
 > 瀑布模型（Waterfall Model）强调系统开发应有完整的周期，且必须完整的经历周期的每一开发阶段，并系统化的考量分析与设计的技术、时间与资源之投入等。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/software-engineering/瀑布模型.jpg"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/software-engineering/瀑布模型.jpg"/></div><br>
 
 #### 核心思想
 
@@ -108,7 +108,7 @@
 
 > 螺旋模型基本做法是在“瀑布模型”的每一个开发阶段前引入一个非常严格的风险识别、风险分析和风险控制，它把软件项目分解成一个个小项目。每个小项目都标识一个或多个主要风险，直到所有的主要风险因素都被确定。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/software-engineering/螺旋模型.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/software-engineering/螺旋模型.png"/></div><br>
 
 #### 核心思想
 

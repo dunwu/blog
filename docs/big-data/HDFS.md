@@ -72,7 +72,7 @@ HDFS 采用 Master/Slave 架构。
 
 一个 HDFS 集群是由一个 Namenode 和一定数目的 Datanodes 组成。Namenode 是一个中心服务器，负责管理文件系统的名字空间(namespace)以及客户端对文件的访问。集群中的 Datanode 一般是一个节点一个，负责管理它所在节点上的存储。HDFS 暴露了文件系统的名字空间，用户能够以文件的形式在上面存储数据。从内部看，一个文件其实被分成一个或多个数据块，这些块存储在一组 Datanode 上。Namenode 执行文件系统的名字空间操作，比如打开、关闭、重命名文件或目录。它也负责确定数据块到具体 Datanode 节点的映射。Datanode 负责处理文件系统客户端的读写请求。在 Namenode 的统一调度下进行数据块的创建、删除和复制。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-architecture.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hdfs/hdfs-architecture.png"/></div><br>
 
 ### NameNode
 
@@ -135,7 +135,7 @@ HDFS 被设计成能够在一个大集群中跨机器可靠地存储超大文件
 
 **Namenode 全权管理数据块的复制**，它周期性地从集群中的每个 Datanode 接收心跳信号和块状态报告(Blockreport)。接收到心跳信号意味着该 Datanode 节点工作正常。块状态报告包含了一个该 Datanode 上所有数据块的列表。
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-replica.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hdfs/hdfs-replica.png"/></div><br>
 
 - 副本 1：放在 Client 所在节点
   - 对于远程 Client，系统会随机选择节点
@@ -148,7 +148,7 @@ HDFS 被设计成能够在一个大集群中跨机器可靠地存储超大文件
 
 ### HDFS 读文件
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-read.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hdfs/hdfs-read.png"/></div><br>
 
 1. 客户端调用 FileSyste 对象的 open() 方法在分布式文件系统中**打开要读取的文件**。
 2. 分布式文件系统通过使用 RPC（远程过程调用）来调用 namenode，**确定文件起始块的位置**。
@@ -159,7 +159,7 @@ HDFS 被设计成能够在一个大集群中跨机器可靠地存储超大文件
 
 ### HDFS 写文件
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/hdfs/hdfs-write.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hdfs/hdfs-write.png"/></div><br>
 
 1. 客户端通过对 DistributedFileSystem 对象调用 create() 函数来**新建文件**。
 2. 分布式文件系统对 namenod 创建一个 RPC 调用，在文件系统的**命名空间中新建一个文件**。

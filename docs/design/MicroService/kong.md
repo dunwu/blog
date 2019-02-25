@@ -20,7 +20,7 @@
 
 ### 为什么选择 Kong
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/microservices/kong/why-kong.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/microservices/kong/why-kong.png"/></div><br>
 
 ## Quickstart
 

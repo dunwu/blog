@@ -70,7 +70,7 @@ logger.debug("Processing trade with id: {} and symbol : {} ", id, symbol);
 
 9. 【强制】日志格式遵循如下格式：
 
-<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/java/javalib/log/logback/log-pattern.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/log/logback/log-pattern.png"/></div><br>
 
 打印出的日志信息如：
 
