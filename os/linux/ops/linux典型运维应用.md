@@ -43,6 +43,8 @@ sudo systemctl stop firewalld.service
 sudo systemctl disable firewalld.service
 ```
 
+> :point_right: 参考：https://www.cnblogs.com/moxiaoan/p/5683743.html
+
 ## 系统维护
 
 ### 使用 NTP 进行时间同步

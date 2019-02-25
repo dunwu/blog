@@ -22,14 +22,14 @@
 > [Clover](http://cn.ejie.me/) 是 Windows Explorer 资源管理器的一个扩展，为其增加类似谷歌 Chrome 浏览器的多标签页功能。
 
 <div align="center">
-<img src="http://cn.ejie.me/images/clover.jpg" width="640" />
+<img src="http://cn.ejie.me/images/clover.jpg" />
 </div>
 
 ### 1.2. Everything
 
 > [Everything](http://www.voidtools.com/) 可以立即在 windows 系统中找到制定名称的文件和文件夹。
 
-![](http://oyz7npk35.bkt.clouddn.com/images/20180920180930174548.png)
+![](https://www.voidtools.com/sssmall2.gif)
 
 ### 1.3. Wox
 
@@ -41,7 +41,7 @@
 
 > [Q-dir](http://www.softpedia.com/get/File-managers/Q-Dir.shtml) 是轻量的文件管理器,特点鲜明,各种布局视图切换灵活,默认四个小窗口组成一个大窗口,操作快捷。
 
-![](http://oyz7npk35.bkt.clouddn.com/images/20180920180930174437.png)
+![](https://images.sftcdn.net/images/t_app-cover-l,f_auto/p/f63005b2-96d9-11e6-8384-00163ed833e7/2823215223/q-dir-screenshot.jp)
 
 ### 1.5. Fences
 
