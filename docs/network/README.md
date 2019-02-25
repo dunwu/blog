@@ -42,9 +42,9 @@
 - [计算机网络指南](network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
 - [物理层](physical) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
 - [数据链路层](data-link-layer.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-- [网络层](network)
-- [传输层](transport)
-- [应用层](application)
+- [网络层](network) - 关键词：`IP`、`ICMP`、`ARP`、路由
+- [传输层](transport) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- [应用层](application) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 
 ## :books: 学习资源
 

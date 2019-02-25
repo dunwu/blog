@@ -7,15 +7,15 @@
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [简介](#简介)
-    - [什么是 DNS？](#什么是-dns)
-    - [什么是域名？](#什么是域名)
-    - [DNS 的分层](#dns-的分层)
-    - [DNS 服务类型](#dns-服务类型)
-    - [记录类型](#记录类型)
+  - [什么是 DNS？](#什么是-dns)
+  - [什么是域名？](#什么是域名)
+  - [DNS 的分层](#dns-的分层)
+  - [DNS 服务类型](#dns-服务类型)
+  - [记录类型](#记录类型)
 - [域名解析](#域名解析)
 - [Linux 上的域名相关命令](#linux-上的域名相关命令)
-    - [hostname](#hostname)
-    - [nslookup](#nslookup)
+  - [hostname](#hostname)
+  - [nslookup](#nslookup)
 - [引申和引用](#引申和引用)
 
 <!-- /TOC -->
@@ -32,7 +32,7 @@ DNS 是一个应用层协议。
 
 域名是由一串用点分隔符 `.` 组成的互联网上某一台计算机或计算机组的名称，用于在数据传输时标识计算机的方位。域名可以说是一个 IP 地址的代称，目的是为了便于记忆后者。例如，wikipedia.org 是一个域名，和 IP 地址 208.80.152.2 相对应。人们可以直接访问 wikipedia.org 来代替 IP 地址，然后域名系统（DNS）就会将它转化成便于机器识别的 IP 地址。这样，人们只需要记忆 wikipedia.org 这一串带有特殊含义的字符，而不需要记忆没有含义的数字。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/dns/dns-domain.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/application/dns/dns-domain.png"/></div><br>
 
 ### DNS 的分层
 
@@ -67,7 +67,7 @@ DNS 中，常见的资源记录类型有：
 
 通过域名去查询域名服务器，得到 IP 地址的过程叫做域名解析。在解析域名时，一般先静态域名解析，再动态解析域名。可以将一些常用的域名放入静态域名解析表中，这样可以大大提高域名解析效率。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/dns/dns-resolve.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/application/dns/dns-resolve.png"/></div><br>
 
 上图展示了一个动态域名解析的流程，步骤如下：
 

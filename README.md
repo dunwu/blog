@@ -2,7 +2,7 @@
 
 > :gorilla: 程序猿是怎样炼成的？不断的学习，不断的积累，这个进化过程就像一个循环，只是没有 break。。。
 
-|       :coffee:        |            :game_die:             |     :package:     |       :spider_web:        |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
+|      :keyboard:       |            :game_die:             |     :package:     |       :spider_web:        |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
 | :-------------------: | :-------------------------------: | :---------------: | :-----------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
 | [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [计算机网络](#计算机网络) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [软件工程](#软件工程)  |
 
@@ -23,6 +23,13 @@
 - [非关系型数据库](docs/database/nosql) - `redis`, `mongodb`
 
 ## [计算机网络](docs/network)
+
+- [计算机网络指南](docs/network/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
+- [物理层](docs/network/physical) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+- [数据链路层](docs/network/data-link-layer.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+- [网络层](docs/network/network) - 关键词：`IP`、`ICMP`、`ARP`、路由
+- [传输层](docs/network/transport) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- [应用层](docs/network/application) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 
 ## [操作系统](docs/os)
 
