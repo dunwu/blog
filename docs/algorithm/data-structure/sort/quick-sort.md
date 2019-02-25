@@ -26,7 +26,7 @@ tags:
 
 详细的图解往往比大堆的文字更有说明力，所以直接上图：
 
-![快速排序示例图.png](http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/quick-sort.png)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/quick-sort.png"/></div><br>
 
 上图中，演示了快速排序的处理过程：
 

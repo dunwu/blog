@@ -177,7 +177,7 @@ Vim 是从 vi 发展出来的一个文本编辑器。代码补完、编译及错
    >
    > \> 如果你认为单词是由 blank 字符分隔符，那么你需要使用大写的 E 和 W。（注：程序语句）
    >
-   > ![Word moves example](http://upload-images.jianshu.io/upload_images/3101171-46f752c581d79057.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-46f752c581d79057.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 下面，让我来说说最强的光标移动：
 
@@ -226,7 +226,7 @@ Vim 是从 vi 发展出来的一个文本编辑器。代码补完、编译及错
 > - `t,` → 到逗号前的第一个字符。逗号可以变成其它字符。
 > - `3fa` → 在当前行查找第三个出现的 a。
 > - `F` 和 `T` → 和 `f` 和 `t` 一样，只不过是相反方向。
->   ![Line moves](http://upload-images.jianshu.io/upload_images/3101171-00835b8316330c58.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-00835b8316330c58.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 还有一个很有用的命令是 `dt"` → 删除所有的内容，直到遇到双引号—— `"。`
 
@@ -248,7 +248,7 @@ Vim 是从 vi 发展出来的一个文本编辑器。代码补完、编译及错
 > - `v2i)` → 会选择 `map (+) ("foo")`
 > - `v2a)` → 会选择 `(map (+) ("foo"))`
 
-![Text objects selection](http://upload-images.jianshu.io/upload_images/3101171-0b109d66a6111c83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-0b109d66a6111c83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 #### 块操作: `<C-v>`
 
@@ -259,7 +259,7 @@ Vim 是从 vi 发展出来的一个文本编辑器。代码补完、编译及错
 - `<C-d>` → 向下移动 (你也可以使用 hjkl 来移动光标，或是使用%，或是别的)
 - `I-- [ESC]` → I 是插入，插入“`--`”，按 ESC 键来为每一行生效。
 
-![Rectangular blocks](http://upload-images.jianshu.io/upload_images/3101171-8b093a0f65707949.gif?imageMogr2/auto-orient/strip)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-8b093a0f65707949.gif?imageMogr2/auto-orient/strip"/></div><br>
 
 在 Windows 下的 vim，你需要使用 `<C-q>` 而不是 `<C-v>` ，`<C-v>` 是拷贝剪贴板。
 
@@ -315,7 +315,7 @@ Vim 是从 vi 发展出来的一个文本编辑器。代码补完、编译及错
 - `$` 到行最后
 - `A`, 输入字符串，按 `ESC。`
 
-![Append to many lines](http://upload-images.jianshu.io/upload_images/3101171-b192601247334c4e.gif?imageMogr2/auto-orient/strip)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-b192601247334c4e.gif?imageMogr2/auto-orient/strip"/></div><br>
 
 #### 分屏: `:split` 和 `vsplit`.
 

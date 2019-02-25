@@ -22,7 +22,7 @@ tags:
 * `Error` 是 `Throwable` 的一个子类。表示合理的应用程序不应该尝试捕获的严重问题。大多数此类错误都是异常情况。
 * `Exception` 是 `Throwable` 的一个子类。表示合理的应用程序可能想要捕获的条件。
 
-![image.png](https://upload-images.jianshu.io/upload_images/3101171-5783f3592a2327f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-5783f3592a2327f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 ### 主要方法
 

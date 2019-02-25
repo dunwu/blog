@@ -32,7 +32,7 @@ tags:
 
 <!-- /TOC -->
 
-![数据类型.png](https://upload-images.jianshu.io/upload_images/3101171-58d48d5d2e4a1e92.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-58d48d5d2e4a1e92.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 ## 数据类型分类
 

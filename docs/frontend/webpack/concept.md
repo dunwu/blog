@@ -4,7 +4,7 @@
 
 学习 webpack，需要先了解几个核心概念，下面会一一道来。
 
-![webpack-introduction](https://raw.githubusercontent.com/dunwu/frontend-tutorial/master/docs/assets/images/webpack-introduction.png)
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/frontend-tutorial/master/docs/assets/images/webpack-introduction.png"/></div><br>
 
 ## 模块化(module)
 
@@ -205,7 +205,7 @@ HMR 是可选功能，只会影响包含 HMR 代码的模块。举个例子，�
 
 左侧表示初始编译器通过。右侧表示更新了模块 4 和 9 。
 
-![generated update chunks](https://camo.githubusercontent.com/afdb8057414988ac33b85eb25a225181f9efb7b1/687474703a2f2f7765627061636b2e6769746875622e696f2f6173736574732f484d522e737667)
+<br><div align="center"><img src="https://camo.githubusercontent.com/afdb8057414988ac33b85eb25a225181f9efb7b1/687474703a2f2f7765627061636b2e6769746875622e696f2f6173736574732f484d522e737667"/></div><br>
 
 ### 它能够用于？
 

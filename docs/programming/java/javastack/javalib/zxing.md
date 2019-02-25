@@ -87,7 +87,7 @@ public String decode(String filepath) throws IOException, NotFoundException {
 
 以下是一个生成的二维码图片示例：
 
-![qrcode.png](http://upload-images.jianshu.io/upload_images/3101171-26b73730088f0ab8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-26b73730088f0ab8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 ## 参考
 

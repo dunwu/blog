@@ -112,7 +112,7 @@ Eclipse IDE 支持 Gradle 和 Maven 两种构建工具，所以在 Eclipse IDE �
 
 Orbit 仓库地址：http://download.eclipse.org/tools/orbit/downloads
 
-![orbit p2 mockito](https://camo.githubusercontent.com/79c0e1d7c1e50563574535f33e64b365af512af9/687474703a2f2f7777322e73696e61696d672e636e2f6c617267652f3732663936636261677731663562326a6c627239376a32306e79306867373763)
+<br><div align="center"><img src="https://camo.githubusercontent.com/79c0e1d7c1e50563574535f33e64b365af512af9/687474703a2f2f7777322e73696e61696d672e636e2f6c617267652f3732663936636261677731663562326a6c627239376a32306e79306867373763"/></div><br>
 
 ## 使用 Mockito API
 

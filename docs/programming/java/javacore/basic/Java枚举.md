@@ -12,7 +12,7 @@ tags:
 
 ## 知识点
 
-![枚举.png](https://upload-images.jianshu.io/upload_images/3101171-9c7b947d48b0de29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-9c7b947d48b0de29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 ## 概念
 

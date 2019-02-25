@@ -115,7 +115,7 @@ tar -zxf apache-tomcat-8.5.24.tar.gz
 
 启动后，访问 http://localhost:8080 ，可以看到 Tomcat 安装成功的测试页面。
 
-![tomcat.png](https://raw.githubusercontent.com/dunwu/JavaWeb/master/images/tools/tomcat/tomcat.png)
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/JavaWeb/master/images/tools/tomcat/tomcat.png"/></div><br>
 
 ### 配置
 

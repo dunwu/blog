@@ -88,7 +88,7 @@ public void Merge(int[] array, int low, int mid, int high) {
 
 掌握了合并的方法，接下来，让我们来了解**如何分解**。 
 
-![归并排序示例图.png](http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/merge-sort.png)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/merge-sort.png"/></div><br>
 
 在某趟归并中，设各子表的长度为 **gap**，则归并前 R[0...n-1] 中共有 **n/gap** 个有序的子表：`R[0...gap-1]`, `R[gap...2*gap-1]`, ... , `R[(n/gap)*gap ... n-1]`。
 

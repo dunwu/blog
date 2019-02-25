@@ -468,7 +468,7 @@ $1,000
 
 软件手册是一部完整的书，建议采用下面的结构。
 
-![structure.png](structure.png)
+<br><div align="center"><img src="structure.png"/></div><br>
 
 - **简介**（Introduction）： [必备][目录|文件] 提供对产品和文档本身的总体的、扼要的说明
 - **入门篇**（Quickstart）：[可选][文件] 如何最快速地使用产品

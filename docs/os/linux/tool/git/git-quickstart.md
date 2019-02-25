@@ -107,7 +107,7 @@ Git 中使用这种哈希值的情况很多，你将经常看到这种哈希值�
 
   同理，如果你想同步别人的修改，你需要从远程仓库拉取更新。
 
-![git-theory.png](http://oyz7npk35.bkt.clouddn.com//image/linux/git/git-theory.png)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/linux/git/git-theory.png"/></div><br>
 
 ## 安装
 
@@ -190,7 +190,7 @@ $ git config --global user.email johndoe@example.com
 
 本节选择性介绍 git 中比较常用的命令行场景。
 
-![git-cheat-sheet.png](http://oyz7npk35.bkt.clouddn.com//image/linux/git/git-cheat-sheet.png)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/linux/git/git-cheat-sheet.png"/></div><br>
 
 ### 创建
 
@@ -458,7 +458,7 @@ HTTPS 这种方式要求你每次 push 时都要输入用户名、密码，有�
 
 而 SSH 要求你本地生成证书，然后在你的 Github 账户中注册。第一次配置麻烦是麻烦了点，但是以后就免去了每次 push 需要输入用户名、密码的繁琐。
 
-![image.png](http://upload-images.jianshu.io/upload_images/3101171-66f60822aeb2c21c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-66f60822aeb2c21c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 以下介绍以下，如何生成证书，以及在 Github 中注册。
 
@@ -508,7 +508,7 @@ NrRFi9wrf+M7Q== schacon@mylaptop.local
 
 后面，你在克隆你的 Github 项目时使用 SSH 方式即可。
 
-![The key field](https://help.github.chttps://raw.githubusercontent.com/dunwu/design/master/images/refactor/help/settings/ssh-key-paste.png)
+<br><div align="center"><img src="https://help.github.chttps://raw.githubusercontent.com/dunwu/design/master/images/refactor/help/settings/ssh-key-paste.png"/></div><br>
 
 如果觉得我的讲解还不够细致，可以参考：https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/
 
@@ -516,7 +516,7 @@ NrRFi9wrf+M7Q== schacon@mylaptop.local
 
 最后，放一张我总结的脑图总结一下以上的知识点。
 
-![Git.png](http://upload-images.jianshu.io/upload_images/3101171-2044cc669d78eef9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-2044cc669d78eef9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 ## 资料
 

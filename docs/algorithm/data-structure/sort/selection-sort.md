@@ -29,7 +29,7 @@ tags:
 
 **核心代码**
 
-![选择排序示例图.png](http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/selection-sort.png) 
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/selection-sort.png"/></div><br>
 
 ## 算法分析
 

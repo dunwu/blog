@@ -224,7 +224,7 @@ switch 语句中有 case，而`<c:choose>`标签中对应有`<c:when>`，switch 
 
 ## `<c:forEach>`, `<c:forTokens>` 标签
 
-[![JSP 标准标签库](http://www.runoob.com/images/up.gif)JSP 标准标签库](http://www.runoob.com/jsp/jsp-jstl.html)
+<br><div align="center"><img src="http://www.runoob.com/jsp/jsp-jstl.html"/></div><br>
 
 这些标签封装了 Java 中的 for，while，do-while 循环。
 

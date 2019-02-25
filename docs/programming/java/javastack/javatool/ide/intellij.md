@@ -235,7 +235,7 @@ IntelliJ IDEA 作为一个以快捷键为中心的 IDE，为大多数操作建�
 
 ### Intellij IDEA 官方快捷键表
 
-![Paste_Image.png](http://upload-images.jianshu.io/upload_images/3101171-6a44121ae280a10e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-6a44121ae280a10e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 ## 插件
 
@@ -262,7 +262,7 @@ IntelliJ IDEA 作为一个以快捷键为中心的 IDE，为大多数操作建�
 
 下载地址：https://github.com/altercation/solarized
 
-![solarized show](https://github.com/altercation/solarized/raw/master/img/solarized-vim.png)
+<br><div align="center"><img src="https://github.com/altercation/solarized/raw/master/img/solarized-vim.png"/></div><br>
 
 ## 破解
 

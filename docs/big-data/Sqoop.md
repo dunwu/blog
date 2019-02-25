@@ -48,7 +48,7 @@ tags:
 
 #### Sqoop 1 优缺点
 
-![sqoop-architecture](http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-architecture.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-architecture.png"/></div><br>
 
 优点
 
@@ -66,7 +66,7 @@ tags:
 
 #### Sqoop 2 优缺点
 
-![sqoop-v2-architecture](http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-v2-architecture.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-v2-architecture.png"/></div><br>
 
 优点
 

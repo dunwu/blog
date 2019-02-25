@@ -133,7 +133,7 @@ public class HmacCoder{
 
 签名时要使用私钥和待签名数据，验证时则需要公钥、签名值和待签名数据，其核心算法主要是消息摘要算法。
 
-![Java实现消息摘要与数字签名图](http://oyz7npk35.bkt.clouddn.com//image/javase/encode/java-message-digest-process.jpg)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/javase/encode/java-message-digest-process.jpg"/></div><br>
 
 #### 常用算法
 

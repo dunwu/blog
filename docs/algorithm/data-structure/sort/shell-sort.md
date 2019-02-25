@@ -26,7 +26,7 @@ tags:
 
 我们来通过演示图，更深入的理解一下这个过程。 
 
-![希尔排序示例图.png](http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/shell-sort.png)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/shell-sort.png"/></div><br>
 
 在上面这幅图中：
 

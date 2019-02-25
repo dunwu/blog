@@ -62,7 +62,7 @@ tags:
 
 先了解一下 JVM 的类加载过程：
 
-![20140427160344203.png](https://upload-images.jianshu.io/upload_images/3101171-65434596b5da72f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-65434596b5da72f9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 Java 编译器编译好 `.java` 文件之后，产生 `.class` 文件在磁盘中。`.class` 文件是二进制文件，内容是只有 JVM 虚拟机能够识别的机器码。JVM 虚拟机读取字节码文件，取出二进制数据，加载到内存中，解析.class 文件内的信息，生成对应的 Class 对象。
 
@@ -75,7 +75,7 @@ Java 编译器编译好 `.java` 文件之后，产生 `.class` 文件在磁盘�
 
 下图为反射机制的步骤：
 
-![20170513133210763.png](https://upload-images.jianshu.io/upload_images/3101171-fa2c56240e5f7215.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-fa2c56240e5f7215.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 步骤说明：
 
@@ -302,7 +302,7 @@ Java 动态代理常被用于一些 Java 框架中。例如 Spring 的 AOP ，Du
 
 先介绍一下代理模式，如下图：
 
-![image.png](https://upload-images.jianshu.io/upload_images/3101171-6269723ea61527bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-6269723ea61527bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 当在代码阶段规定这种代理关系，Proxy 类通过编译器编译成 class 文件，当系统运行时，此 class 已经存在了。这种静态的代理模式固然在访问无法访问的资源，增强现有的接口业务功能方面有很大的优点，但是大量使用这种静态代理，会使我们系统内的类的规模增大，并且不易维护；并且由于 Proxy 和 RealSubject 的功能本质上是相同的，Proxy 只是起到了中介的作用，这种代理在系统中的存在，导致系统结构比较臃肿和松散。
 
@@ -310,7 +310,7 @@ Java 动态代理常被用于一些 Java 框架中。例如 Spring 的 AOP ，Du
 
 为了解决经典代理模式的问题，就有了创建动态代理的想法：在运行状态中，需要代理的地方，根据 Subject 和 RealSubject，动态地创建一个 Proxy，用完之后，就会销毁，这样就可以避免了 Proxy 角色的 class 在系统中冗杂的问题了。
 
-![20140515134257500.jpg](https://upload-images.jianshu.io/upload_images/3101171-6e282fabb28e4dd8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-6e282fabb28e4dd8.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
 
 Java 动态代理基于经典代理模式，引入了一个 InvocationHandler，InvocationHandler 负责统一管理所有的方法调用。
 
