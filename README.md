@@ -6,54 +6,54 @@
 | :-------------------: | :-------------------------------: | :---------------: | :-----------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
 | [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [计算机网络](#计算机网络) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [软件工程](#软件工程)  |
 
-## [编程语言](programming)
+## [编程语言](docs/programming)
 
-- [Java](programming/java)
-- [Python](programming/python.md)
-- [Shell](programming/shell)
+- [Java](docs/programming/java)
+- [Python](docs/programming/python.md)
+- [Shell](docs/programming/shell)
 
-## [算法和数据结构](algorithm)
+## [算法和数据结构](docs/algorithm)
 
-- [数据结构](algorithm/data-structure)
+- [数据结构](docs/algorithm/data-structure)
 - 算法（:construction: 待整理补充）
 
-## [数据库](database)
+## [数据库](docs/database)
 
-- [关系型数据库](database/sql) - `mysql`, `oracle`, `h2`, `flyway`
-- [非关系型数据库](database/nosql) - `redis`, `mongodb`
+- [关系型数据库](docs/database/sql) - `mysql`, `oracle`, `h2`, `flyway`
+- [非关系型数据库](docs/database/nosql) - `redis`, `mongodb`
 
-## [计算机网络](network)
+## [计算机网络](docs/network)
 
-## [操作系统](os)
+## [操作系统](docs/os)
 
-- [Linux](os/linux)
-- [Windows](os/windows)
-- [Docker](os/docker)
+- [Linux](docs/os/linux)
+- [Windows](docs/os/windows)
+- [Docker](docs/os/docker)
 
-## [Web](web)
+## [Web](docs/web)
 
-- [Nginx](web/nginx)
+- [Nginx](docs/web/nginx)
 
-## [前端](frontend)
+## [前端](docs/frontend)
 
-- [前端基础](frontend/base) - `html` , `css` , `js`
-- [nodejs, npm, yarn](frontend/nodejs) - `nodejs`, `npm`, `yarn`
-- [es6, typescript, babel](frontend/es6) - `es6`, `typescript`, `babel`
-- [webpack](frontend/webpack)
-- [mvc](frontend/mvc) - `react`, `vue`, `angular`
-- [qa](frontend/qa) - `eslint`
-- [tool](frontend/tool) - `gitbook`
+- [前端基础](docs/frontend/base) - `html` , `css` , `js`
+- [nodejs, npm, yarn](docs/frontend/nodejs) - `nodejs`, `npm`, `yarn`
+- [es6, typescript, babel](docs/frontend/es6) - `es6`, `typescript`, `babel`
+- [webpack](docs/frontend/webpack)
+- [mvc](docs/frontend/mvc) - `react`, `vue`, `angular`
+- [qa](docs/frontend/qa) - `eslint`
+- [tool](docs/frontend/tool) - `gitbook`
 
-## [大数据](big-data)
+## [大数据](docs/big-data)
 
-- [HDFS](big-data/HDFS.md)
-- [YARN](big-data/YARN.md)
-- [MapReduce](big-data/MapReduce.md)
+- [HDFS](docs/big-data/HDFS.md)
+- [YARN](docs/big-data/YARN.md)
+- [MapReduce](docs/big-data/MapReduce.md)
 
-## [设计](design)
+## [设计](docs/design)
 
-- [UML](design/uml)
-- [设计模式](design/design-patterns)
-- [重构](design/refactor)
+- [UML](docs/design/uml)
+- [设计模式](docs/design/design-patterns)
+- [重构](docs/design/refactor)
 
-## [软件工程](software)
+## [软件工程](docs/software)
