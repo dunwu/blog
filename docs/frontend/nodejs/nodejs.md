@@ -37,7 +37,7 @@
 
 可以在官方下载安装文件：[https://nodejs.org/en/download/](https://nodejs.org/en/download/)。
 
-![](http://dunwu.test.upcdn.net/snap/20181106200239.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181106200239.png"/></div><br>
 
 ### Linux / Ubuntu / Debian
 
@@ -69,10 +69,10 @@ Node.js REPL(Read Eval Print Loop:交互式解释器) 表示一个电脑的环�
 
 Node 自带了交互式解释器，可以执行以下任务：
 
-- **读取** - 读取用户输入，解析输入了 Javascript 数据结构并存储在内存中。
-- **执行** - 执行输入的数据结构
-- **打印** - 输出结果
-- **循环** - 循环操作以上步骤直到用户两次按下  **ctrl-c**  按钮退出。
+- **读取** - 读取用户输入，解析输入了 Javascript 数据结构并存储在内存中。
+- **执行** - 执行输入的数据结构
+- **打印** - 输出结果
+- **循环** - 循环操作以上步骤直到用户两次按下  **ctrl-c**  按钮退出。
 
 Node 的交互式解释器可以很好的调试 Javascript 代码。
 
@@ -92,9 +92,9 @@ $ node
 
 你可以将数据存储在变量中，并在你需要的时候使用它。
 
-变量声明需要使用  `var`  关键字，如果没有使用 `var` 关键字变量会直接打印出来。
+变量声明需要使用  `var`  关键字，如果没有使用 `var` 关键字变量会直接打印出来。
 
-使用  `var`  关键字的变量可以使用 `console.log()` 来输出变量。
+使用  `var`  关键字的变量可以使用 `console.log()` 来输出变量。
 
 ```node
 $ node
@@ -133,7 +133,7 @@ undefined
 >
 ```
 
-**...**  三个点的符号是系统自动生成的，你回车换行后即可。Node 会自动检测是否为连续的表达式。
+**...**  三个点的符号是系统自动生成的，你回车换行后即可。Node 会自动检测是否为连续的表达式。
 
 不会打乱对象原有的继承关系。
 
@@ -384,10 +384,10 @@ buf.write(string[, offset[, length]][, encoding])
 
 **参数**
 
-- **string** - 写入缓冲区的字符串。
-- **offset** - 缓冲区开始写入的索引值，默认为 0 。
-- **length** - 写入的字节数，默认为 buffer.length
-- **encoding** - 使用的编码。默认为 'utf8' 。
+- **string** - 写入缓冲区的字符串。
+- **offset** - 缓冲区开始写入的索引值，默认为 0 。
+- **length** - 写入的字节数，默认为 buffer.length
+- **encoding** - 使用的编码。默认为 'utf8' 。
 
 **返回值**
 
@@ -420,9 +420,9 @@ buf.toString([encoding[, start[, end]]])
 
 **参数**
 
-- **encoding** - 使用的编码。默认为 'utf8' 。
-- **start** - 指定开始读取的索引位置，默认为 0。
-- **end** - 结束位置，默认为缓冲区的末尾。
+- **encoding** - 使用的编码。默认为 'utf8' 。
+- **start** - 指定开始读取的索引位置，默认为 0。
+- **end** - 结束位置，默认为缓冲区的末尾。
 
 **返回值**
 
@@ -478,8 +478,8 @@ Buffer.concat(list[, totalLength])
 
 **参数**
 
-- **list** - 用于合并的 Buffer 对象数组列表。
-- **totalLength** - 指定合并后 Buffer 对象的总长度。
+- **list** - 用于合并的 Buffer 对象数组列表。
+- **totalLength** - 指定合并后 Buffer 对象的总长度。
 
 **返回值**
 
@@ -512,11 +512,11 @@ buf.compare(otherBuffer);
 
 参数描述如下：
 
-- **otherBuffer**  与  **buf**  对象比较的另外一个 Buffer 对象。
+- **otherBuffer**  与  **buf**  对象比较的另外一个 Buffer 对象。
 
 **返回值**
 
-返回一个数字，表示  **buf**  在  **otherBuffer**  之前，之后或相同。
+返回一个数字，表示  **buf**  在  **otherBuffer**  之前，之后或相同。
 
 **实例**
 
@@ -550,10 +550,10 @@ buf.copy(targetBuffer[, targetStart[, sourceStart[, sourceEnd]]])
 
 **参数**
 
-- **targetBuffer** - 要拷贝的 Buffer 对象。
-- **targetStart** - 数字, 可选, 默认: 0
-- **sourceStart** - 数字, 可选, 默认: 0
-- **sourceEnd** - 数字, 可选, 默认: buffer.length
+- **targetBuffer** - 要拷贝的 Buffer 对象。
+- **targetStart** - 数字, 可选, 默认: 0
+- **sourceStart** - 数字, 可选, 默认: 0
+- **sourceEnd** - 数字, 可选, 默认: buffer.length
 
 **返回值**
 
@@ -584,8 +584,8 @@ buf.slice([start[, end]])
 
 **参数**
 
-- **start** - 数字, 可选, 默认: 0
-- **end** - 数字, 可选, 默认: buffer.length
+- **start** - 数字, 可选, 默认: 0
+- **end** - 数字, 可选, 默认: buffer.length
 
 **返回值**
 
@@ -636,17 +636,17 @@ Stream 是一个抽象接口，Node 中有很多对象实现了这个接口。�
 
 Node.js，Stream 有四种流类型：
 
-- **Readable** - 可读操作。
-- **Writable** - 可写操作。
-- **Duplex** - 可读可写操作.
-- **Transform** - 操作被写入数据，然后读出结果。
+- **Readable** - 可读操作。
+- **Writable** - 可写操作。
+- **Duplex** - 可读可写操作.
+- **Transform** - 操作被写入数据，然后读出结果。
 
 所有的 Stream 对象都是 EventEmitter 的实例。常用的事件有：
 
-- **data** - 当有数据可读时触发。
-- **end** - 没有更多的数据可读时触发。
-- **error** - 在接收和写入过程中发生错误时触发。
-- **finish** - 所有数据已被写入到底层系统时触发。
+- **data** - 当有数据可读时触发。
+- **end** - 没有更多的数据可读时触发。
+- **error** - 在接收和写入过程中发生错误时触发。
+- **finish** - 所有数据已被写入到底层系统时触发。
 
 本教程会为大家介绍常用的流操作。
 
@@ -735,10 +735,10 @@ fs.open(path, flags[, mode], callback)
 
 **参数**
 
-- **path** - 文件的路径。
-- **flags** - 文件打开的行为。具体值详见下文。
-- **mode** - 设置文件模式(权限)，文件创建默认权限为 0666(可读，可写)。
-- **callback** - 回调函数，带有两个参数如：callback(err, fd)。
+- **path** - 文件的路径。
+- **flags** - 文件打开的行为。具体值详见下文。
+- **mode** - 设置文件模式(权限)，文件创建默认权限为 0666(可读，可写)。
+- **callback** - 回调函数，带有两个参数如：callback(err, fd)。
 
 flags 参数可以是以下值：
 
@@ -769,8 +769,8 @@ fs.stat(path, callback);
 
 **参数**
 
-- **path** - 文件路径。
-- **callback** - 回调函数，带有两个参数如：(err, stats), **stats**  是 fs.Stats 对象。
+- **path** - 文件路径。
+- **callback** - 回调函数，带有两个参数如：(err, stats), **stats**  是 fs.Stats 对象。
 
 fs.stat(path)执行后，会将 stats 类的实例返回给其回调函数。可以通过 stats 类中的提供方法判断文件的相关属性。
 
@@ -800,10 +800,10 @@ fs.writeFile(file, data[, options], callback)
 
 **参数**
 
-- **file** - 文件名或文件描述符。
-- **data** - 要写入文件的数据，可以是 String(字符串) 或 Buffer(流) 对象。
-- **options** - 该参数是一个对象，包含 {encoding, mode, flag}。默认编码为 utf8, 模式为 0666 ， flag 为 'w'
-- **callback** - 回调函数，回调函数只包含错误信息参数(err)，在写入失败时返回。
+- **file** - 文件名或文件描述符。
+- **data** - 要写入文件的数据，可以是 String(字符串) 或 Buffer(流) 对象。
+- **options** - 该参数是一个对象，包含 {encoding, mode, flag}。默认编码为 utf8, 模式为 0666 ， flag 为 'w'
+- **callback** - 回调函数，回调函数只包含错误信息参数(err)，在写入失败时返回。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo04.js
 
@@ -819,12 +819,12 @@ fs.read(fd, buffer, offset, length, position, callback);
 
 **参数**
 
-- **fd** - 通过 fs.open() 方法返回的文件描述符。
-- **buffer** - 数据写入的缓冲区。
-- **offset** - 缓冲区写入的写入偏移量。
-- **length** - 要从文件中读取的字节数。
-- **position** - 文件读取的起始位置，如果 position 的值为 null，则会从当前文件指针的位置读取。
-- **callback** - 回调函数，有三个参数 err, bytesRead, buffer，err 为错误信息， bytesRead 表示读取的字节数，buffer 为缓冲区对象。
+- **fd** - 通过 fs.open() 方法返回的文件描述符。
+- **buffer** - 数据写入的缓冲区。
+- **offset** - 缓冲区写入的写入偏移量。
+- **length** - 要从文件中读取的字节数。
+- **position** - 文件读取的起始位置，如果 position 的值为 null，则会从当前文件指针的位置读取。
+- **callback** - 回调函数，有三个参数 err, bytesRead, buffer，err 为错误信息， bytesRead 表示读取的字节数，buffer 为缓冲区对象。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo05.js
 
@@ -840,8 +840,8 @@ fs.close(fd, callback);
 
 **参数**
 
-- **fd** - 通过 fs.open() 方法返回的文件描述符。
-- **callback** - 回调函数，没有参数。
+- **fd** - 通过 fs.open() 方法返回的文件描述符。
+- **callback** - 回调函数，没有参数。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo06.js
 
@@ -857,9 +857,9 @@ fs.ftruncate(fd, len, callback);
 
 **参数**
 
-- **fd** - 通过 fs.open() 方法返回的文件描述符。
-- **len** - 文件内容截取的长度。
-- **callback** - 回调函数，没有参数。
+- **fd** - 通过 fs.open() 方法返回的文件描述符。
+- **len** - 文件内容截取的长度。
+- **callback** - 回调函数，没有参数。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo07.js
 
@@ -873,8 +873,8 @@ fs.unlink(path, callback);
 
 **参数**
 
-- **path** - 文件路径。
-- **callback** - 回调函数，没有参数。
+- **path** - 文件路径。
+- **callback** - 回调函数，没有参数。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo08.js
 
@@ -888,9 +888,9 @@ fs.mkdir(path[, mode], callback)
 
 **参数**
 
-- **path** - 文件路径。
-- **mode** - 设置目录权限，默认为 0777。
-- **callback** - 回调函数，没有参数。
+- **path** - 文件路径。
+- **mode** - 设置目录权限，默认为 0777。
+- **callback** - 回调函数，没有参数。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo09.js
 
@@ -904,8 +904,8 @@ fs.readdir(path, callback);
 
 **参数**
 
-- **path** - 文件路径。
-- **callback** - 回调函数，回调函数带有两个参数 err, files，err 为错误信息，files 为 目录下的文件数组列表。
+- **path** - 文件路径。
+- **callback** - 回调函数，回调函数带有两个参数 err, files，err 为错误信息，files 为 目录下的文件数组列表。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo10.js
 
@@ -919,8 +919,8 @@ fs.rmdir(path, callback);
 
 **参数**
 
-- **path** - 文件路径。
-- **callback** - 回调函数，没有参数。
+- **path** - 文件路径。
+- **callback** - 回调函数，没有参数。
 
 **完整代码示例**：codes/chapter01/node/fs/fsDemo11.js
 

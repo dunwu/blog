@@ -161,13 +161,13 @@ web.xml
 
 当您完成了一个用户的 session 会话数据，您有以下几种选择：
 
-**移除一个特定的属性：**您可以调用  `removeAttribute(String name)` 方法来删除与特定的键相关联的值。
+**移除一个特定的属性：**您可以调用  `removeAttribute(String name)` 方法来删除与特定的键相关联的值。
 
-**删除整个 session 会话：**您可以调用  `invalidate()`  方法来丢弃整个 session 会话。
+**删除整个 session 会话：**您可以调用  `invalidate()`  方法来丢弃整个 session 会话。
 
-**设置 session 会话过期时间：**您可以调用 `setMaxInactiveInterval(int interval)`  方法来单独设置 session 会话超时。
+**设置 session 会话过期时间：**您可以调用 `setMaxInactiveInterval(int interval)`  方法来单独设置 session 会话超时。
 
-**注销用户：**如果使用的是支持 servlet 2.4 的服务器，您可以调用  `logout`  来注销 Web 服务器的客户端，并把属于所有用户的所有 session 会话设置为无效。
+**注销用户：**如果使用的是支持 servlet 2.4 的服务器，您可以调用  `logout`  来注销 Web 服务器的客户端，并把属于所有用户的所有 session 会话设置为无效。
 
 **web.xml 配置：**如果您使用的是 Tomcat，除了上述方法，您还可以在 web.xml 文件中配置 session 会话超时，如下所示：
 

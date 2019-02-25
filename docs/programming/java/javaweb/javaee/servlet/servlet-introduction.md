@@ -42,19 +42,19 @@ Servlet 执行以下主要任务：
 
 Java Servlet 是运行在带有支持 Java Servlet 规范的解释器的 web 服务器上的 Java 类。
 
-Servlet 可以使用  **javax.servlet**  和  **javax.servlet.http**  包创建，它是 Java 企业版的标准组成部分，Java 企业版是支持大型开发项目的 Java 类库的扩展版本。
+Servlet 可以使用  **javax.servlet**  和  **javax.servlet.http**  包创建，它是 Java 企业版的标准组成部分，Java 企业版是支持大型开发项目的 Java 类库的扩展版本。
 
 这些类实现 Java Servlet 和 JSP 规范。在写本教程的时候，二者相应的版本分别是 Java Servlet 2.5 和 JSP 2.1。
 
 Java Servlet 就像任何其他的 Java 类一样已经被创建和编译。在您安装 Servlet 包并把它们添加到您的计算机上的 Classpath 类路径中之后，您就可以通过 JDK 的 Java 编译器或任何其他编译器来编译 Servlet。
 
-# Servlet  生命周期
+# Servlet  生命周期
 
 Servlet 生命周期可被定义为从创建直到毁灭的整个过程。以下是 Servlet 遵循的过程：
 
-- Servlet 通过调用  **init ()**  方法进行初始化。
-- Servlet 调用  **service()**  方法来处理客户端的请求。
-- Servlet 通过调用  **destroy()**  方法终止（结束）。
+- Servlet 通过调用  **init ()**  方法进行初始化。
+- Servlet 调用  **service()**  方法来处理客户端的请求。
+- Servlet 通过调用  **destroy()**  方法终止（结束）。
 - 最后，Servlet 是由 JVM 的垃圾回收器进行垃圾回收的。
 
 现在让我们详细讨论生命周期的方法。

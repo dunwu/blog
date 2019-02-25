@@ -57,7 +57,7 @@ tags:
 
 `/`
 
-如果某个 Servlet 的映射路径仅仅为一个正斜杠`/`，那么这个 Servlet 就成为当前 Web 应用程序的缺省 Servlet。  凡是在`web.xml`文件中找不到匹配的`<servlet-mapping>`元素的 URL，它们的访问请求都将交给缺省 Servlet 处理，也就是说，缺省 Servlet 用于处理所有其他 Servlet 都不处理的访问请求。
+如果某个 Servlet 的映射路径仅仅为一个正斜杠`/`，那么这个 Servlet 就成为当前 Web 应用程序的缺省 Servlet。  凡是在`web.xml`文件中找不到匹配的`<servlet-mapping>`元素的 URL，它们的访问请求都将交给缺省 Servlet 处理，也就是说，缺省 Servlet 用于处理所有其他 Servlet 都不处理的访问请求。
 
 `*`
 

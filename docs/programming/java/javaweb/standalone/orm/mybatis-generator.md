@@ -447,7 +447,7 @@ public void addFieldComment(Field field, IntrospectedTable introspectedTable, In
   - MySql
   - SqlServer
   - SYBASE
-  - JDBC - 这会配置 MBG 使用 MyBatis3 支持的 JDBC 标准的生成 key 来生成代码。 这是一个独立于数据库获取标识列中的值的方法。  重要 - 只有当目标运行为 MyBatis3 时才会产生正确的代码。 如果与 iBATIS2 一起使用目标运行时会产生运行时错误的代码。这个元素还包含两个可选属性：
+  - JDBC - 这会配置 MBG 使用 MyBatis3 支持的 JDBC 标准的生成 key 来生成代码。 这是一个独立于数据库获取标识列中的值的方法。  重要 - 只有当目标运行为 MyBatis3 时才会产生正确的代码。 如果与 iBATIS2 一起使用目标运行时会产生运行时错误的代码。这个元素还包含两个可选属性：
 - `identity` - 当设置为 true 时,该列会被标记为 `identity` 列， 并且 `<selectKey>` 元素会被插入在 insert 后面。 当设置为 false 时， `<selectKey>` 会插入到 insert 之前（通常是序列）。**重要** - 即使您 type 属性指定为 post，您仍然需要为 `identity` 列将该参数设置为 true。 这将标志 MBG 从插入列表中删除该列。默认值是 false。
 - `type` - `type=post and identity=true` 的时候生成的 `<selectKey>` 中的 order=AFTER，当 type=pre 的时候，identity 只能为 false，生成的 `<selectKey>` 中的 order=BEFORE。可以这么理解，自动增长的列只有插入到数据库后才能得到 ID，所以是 AFTER,使用序列时，只有先获取序列之后，才能插入数据库，所以是 BEFORE。
 

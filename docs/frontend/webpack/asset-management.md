@@ -18,7 +18,7 @@
 
 JavaScript 世界已有好几个有名的资源管理工具，webpack 有什么独到之处呢？
 
-在 **webpack** 出现之前，前端开发人员会使用 **grunt** 和 **gulp** 等工具来处理这些 web 资源，如样式文件（例如  `.css`, `.less`, `.sass`），图片（例如  `.png`, `.jpg`, `.svg`），字体（例如  `.woff`, `.woff2`, `.eot`）和数据（例如  `.json`, `.xml`, `.csv`）等，并将它们从  `/src`  文件夹移动到  `/dist`  或  `/build`  目录中。
+在 **webpack** 出现之前，前端开发人员会使用 **grunt** 和 **gulp** 等工具来处理这些 web 资源，如样式文件（例如  `.css`, `.less`, `.sass`），图片（例如  `.png`, `.jpg`, `.svg`），字体（例如  `.woff`, `.woff2`, `.eot`）和数据（例如  `.json`, `.xml`, `.csv`）等，并将它们从  `/src`  文件夹移动到  `/dist`  或  `/build`  目录中。
 
 而 webpack 从 `entry(入口)` 开始，访问应用程序，并**动态打包(dynamically bundle)**所有依赖项。这是极好的创举，因为现在每个模块都可以明确表述它自身的依赖，这可以避免打包未使用的模块。
 
@@ -107,7 +107,7 @@ require("./index.css");
 
 `Plugin(插件)` 用于解决 Loader 无法解决的问题，它是 Loader 的辅助。
 
-由于  **plugin**  可以携带参数/选项，你必须在 wepback 配置中，向  `plugins`  属性传入  `new`  实例。
+由于  **plugin**  可以携带参数/选项，你必须在 wepback 配置中，向  `plugins`  属性传入  `new`  实例。
 
 ### 安装插件
 
@@ -210,7 +210,7 @@ module: {
 
 ### 加载 CSS
 
-为了从 JavaScript 模块中  `import`  一个 CSS 文件，你只需要在 module 中安装并添加  [style-loader](https://doc.webpack-china.org/loaders/style-loader)  和  [css-loader](https://doc.webpack-china.org/loaders/css-loader) 。
+为了从 JavaScript 模块中  `import`  一个 CSS 文件，你只需要在 module 中安装并添加  [style-loader](https://doc.webpack-china.org/loaders/style-loader)  和  [css-loader](https://doc.webpack-china.org/loaders/css-loader) 。
 
 ```bash
 $ npm install --save-dev style-loader css-loader
@@ -233,7 +233,7 @@ module.exports = {
 };
 ```
 
-好了，此时你就可以在代码中通过  `import './style.css'` 的方式引入 CSS 文件。
+好了，此时你就可以在代码中通过  `import './style.css'` 的方式引入 CSS 文件。
 
 其余，加载 less，sass 等样式文件也是大同小异，不一一细说。
 

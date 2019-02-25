@@ -46,7 +46,7 @@ cd my-app
 ng serve --open
 ```
 
-![](https://angular.cn/generated/images/guide/cli-quickstart/app-works.png)
+<br><div align="center"><img src="https://angular.cn/generated/images/guide/cli-quickstart/app-works.png"/></div><br>
 
 （4）添加组件
 
@@ -77,7 +77,7 @@ h1 {
 
 效果：
 
-![](https://angular.cn/generated/images/guide/cli-quickstart/my-first-app.png)
+<br><div align="center"><img src="https://angular.cn/generated/images/guide/cli-quickstart/my-first-app.png"/></div><br>
 
 ## 架构
 
@@ -88,7 +88,7 @@ Angular 的基本构造块是 **NgModule**，它为**组件**提供了编译的�
 - 组件定义**视图**。视图是一组可见的屏幕元素，Angular 可以根据你的程序逻辑和数据来选择和修改它们。 每个应用都至少有一个根组件。
 - 组件使用**服务**。服务会提供那些与视图不直接相关的功能。服务提供商可以作为**依赖**被**注入**到组件中， 这能让你的代码更加模块化、可复用，而且高效。
 
-![](http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular架构.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular架构.png"/></div><br>
 
 组件和模板共同定义了 Angular 的视图。
 
@@ -136,11 +136,11 @@ export class AppModule {}
 
 NgModule 为其中的组件提供了一个**编译上下文环境**。根模块总会有一个根组件，并在引导期间创建它。 但是，任何模块都能包含任意数量的其它组件，这些组件可以通过路由器加载，也可以通过模板创建。那些属于这个 NgModule 的组件会共享同一个编译上下文环境。
 
-![](http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular编译上下文环境.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular编译上下文环境.png"/></div><br>
 
 组件及其模板共同定义**视图**。组件还可以包含**视图层级结构**，它能让你定义任意复杂的屏幕区域，可以将其作为一个整体进行创建、修改和销毁。 一个视图层次结构中可以混合使用由不同 NgModule 中的组件定义的视图。 这种情况很常见，特别是对一些 UI 库来说。
 
-![](http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular视图层级结构.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular视图层级结构.png"/></div><br>
 
 当你创建一个组件时，它直接与一个叫做**宿主视图**的视图关联起来。 宿主视图可以是视图层次结构的根，该视图层次结构可以包含一些**内嵌视图**，这些内嵌视图又是其它组件的宿主视图。 这些组件可以位于相同的 NgModule 中，也可以从其它 NgModule 中导入。 树中的视图可以嵌套到任意深度。
 
@@ -225,7 +225,7 @@ Angular 支持**双向数据绑定**，这意味着 DOM 中发生的变化（比
 
 下图显示了数据绑定标记的四种形式。每种形式都有一个方向 —— 从组件到 DOM、从 DOM 到组件或双向。
 
-![](http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular数据绑定.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular数据绑定.png"/></div><br>
 
 在双向绑定中，数据属性值通过属性绑定从组件流到输入框。用户的修改通过事件绑定流回组件，把属性值设置为最新的值。
 
@@ -361,7 +361,7 @@ constructor(private service: HeroService) { }
 
 `HeroService` 的注入过程如下所示：
 
-![](http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular依赖注入.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/front/mvc/angular/Angular依赖注入.png"/></div><br>
 
 ### 提供服务
 

@@ -86,8 +86,8 @@ tags:
 
 ### 导入
 
-![import](http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-import.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-import.png"/></div><br>
 
 ### 导出
 
-![export](http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-export.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-export.png"/></div><br>

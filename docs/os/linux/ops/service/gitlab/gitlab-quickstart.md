@@ -32,11 +32,11 @@
 
 ## 创建项目
 
-![](http://dunwu.test.upcdn.net/snap/20190131150658.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20190131150658.png"/></div><br>
 
 输入项目信息，点击 Create project 按钮，在 Gitlab 创建项目。
 
-![](http://dunwu.test.upcdn.net/snap/20190131150759.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20190131150759.png"/></div><br>
 
 ## 克隆项目到本地
 
@@ -44,7 +44,7 @@
 
 拷贝项目地址，然后在本地执行 `git clone <url>`
 
-![1548919326929](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1548919326929.png)
+<br><div align="center"><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1548919326929.png"/></div><br>
 
 ## 创建 Issue
 

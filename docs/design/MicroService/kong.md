@@ -20,7 +20,7 @@
 
 ### 为什么选择 Kong
 
-![](http://dunwu.test.upcdn.net/images/microservices/kong/why-kong.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/microservices/kong/why-kong.png"/></div><br>
 
 ## Quickstart
 
@@ -32,7 +32,7 @@ Kong 支持在多种环境下安装。
 
 官方安装说明：https://konghq.com/install/
 
-![](http://oyz7npk35.bkt.clouddn.com/images/20180920181011104339.png)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181011104339.png"/></div><br>
 
 以下为 Centos7 安装步骤：
 

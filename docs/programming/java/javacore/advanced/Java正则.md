@@ -1313,7 +1313,7 @@ public int findAll(String regex, String content) {
 #### 校验中国固话号码
 
 **描述：**固话号码，必须加区号（以 0 开头）。
-3 位有效区号：010、020~029，固话位数为 8 位。
+3 位有效区号：010、020\~029，固话位数为 8 位。
 4 位有效区号：03xx 开头到 09xx，固话位数为 7。
 
 如果想了解更详细的信息，请参考 [**_百度百科-电话区号_**](http://baike.baidu.com/link?url=sX8JoxK1ja5uM5pDYvQe27_QsyqAZ_78DLSeEvwjqtG_uXqU6p5Oh7CPbImNbnwu1ClOmD8udgDIswZfYzQIw0z3BYZO3eTplvVDzieuowTYqt7yHGDAqyT7o4vvGhg4) 。
@@ -1328,7 +1328,7 @@ public int findAll(String regex, String content) {
 
 #### 校验 IPv4 地址
 
-**描述：**IP 地址是一个 32 位的二进制数，通常被分割为 4 个“8 位二进制数”（也就是 4 个字节）。IP 地址通常用“点分十进制”表示成（a.b.c.d）的形式，其中，a,b,c,d 都是 0~255 之间的十进制整数。
+**描述：**IP 地址是一个 32 位的二进制数，通常被分割为 4 个“8 位二进制数”（也就是 4 个字节）。IP 地址通常用“点分十进制”表示成（a.b.c.d）的形式，其中，a,b,c,d 都是 0\~255 之间的十进制整数。
 
 ```
 ^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$

@@ -1,6 +1,6 @@
 # Webpack 入门
 
-> [Webpack](https://webpack.github.io/)  是一个模组打包工具（module bundler）。其主要目的是将 JavaScript 文件捆绑在浏览器中，但它也能够转换，捆绑或打包任何资源文件。
+> [Webpack](https://webpack.github.io/)  是一个模组打包工具（module bundler）。其主要目的是将 JavaScript 文件捆绑在浏览器中，但它也能够转换，捆绑或打包任何资源文件。
 >
 > Webpack 可以按需加载应用程序的组件。使得 Javascript 应用可以高度复用。
 >
@@ -40,7 +40,7 @@ $ npm install --save-dev webpack@<version>
 
 上面是 `npm` 的标准配置，也是我们推荐的实践。
 
-> 当你在本地安装 webpack 后，你能够从  `node_modules/.bin/webpack`  访问它的 bin 版本。
+> 当你在本地安装 webpack 后，你能够从  `node_modules/.bin/webpack`  访问它的 bin 版本。
 
 ### 全局安装
 
@@ -48,7 +48,7 @@ $ npm install --save-dev webpack@<version>
 $ npm install --global webpack
 ```
 
-`webpack`  命令现在可以全局执行了。
+`webpack`  命令现在可以全局执行了。
 
 ## 创建一个 bundle 文件
 

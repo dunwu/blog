@@ -27,7 +27,7 @@ FreeMarker 是一款 模板引擎： 即一种基于模板和要改变的数据�
 
 简言之：模板 + 数据 = 输出
 
-![](http://freemarker.foofun.cn/figures/overview.png)
+<br><div align="center"><img src="http://freemarker.foofun.cn/figures/overview.png"/></div><br>
 
 ## 2. 入门
 
@@ -152,7 +152,7 @@ Freemark 支持的类型有：
 - **FTL 标签**：FTL 标签和 HTML 标签很相似，但是它们却是给 FreeMarker 的指示， 而且不会打印在输出内容中。
 - **注释**：注释和 HTML 的注释也很相似，但它们是由 `<#--` 和 `-->`来分隔的。注释会被 FreeMarker 直接忽略， 更不会在输出内容中显示。
 
-![](http://dunwu.test.upcdn.net/snap/ftl-template.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/ftl-template.png"/></div><br>
 
 > :warning: 注意：
 >

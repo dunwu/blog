@@ -16,7 +16,7 @@
 
 你可以把你的代码分离到不同的 bundle 中，然后你就可以去按需加载这些文件。
 
-总的来说， `webpack`  分离可以分为两类：
+总的来说， `webpack`  分离可以分为两类：
 
 - 资源分离
 - 代码分离
@@ -29,7 +29,7 @@
 
 你可能也想将你的样式代码分离到单独的 bundle 中，以此使其独立于应用程序逻辑。这加强了样式的可缓存性，并且使得浏览器能够并行加载应用程序代码中的样式文件，避免 FOUC 问题 ([无样式内容造成的闪烁](https://en.wikipedia.org/wiki/Flash_of_unstyled_content))。
 
-安装  [`ExtractTextWebpackPlugin`](https://doc.webpack-china.org/plugins/extract-text-webpack-plugin)  如下
+安装  [`ExtractTextWebpackPlugin`](https://doc.webpack-china.org/plugins/extract-text-webpack-plugin)  如下
 
 ```bash
 $ npm install --save-dev extract-text-webpack-plugin
@@ -71,7 +71,7 @@ module.exports = {
 
 如果我们将这些库(library)中的代码，保留在与应用程序代码相独立的 bundle 中，我们就可以利用浏览器缓存机制，把这些文件长时间地缓存在用户机器上。
 
-为了完成这个目标，不管应用程序代码如何变化，vendor 文件名中的  `hash`  部分必须保持不变。学习如何使用  `CommonsChunkPlugin` [分离 vendor/library](https://doc.webpack-china.org/guides/code-splitting-libraries)  代码。
+为了完成这个目标，不管应用程序代码如何变化，vendor 文件名中的  `hash`  部分必须保持不变。学习如何使用  `CommonsChunkPlugin` [分离 vendor/library](https://doc.webpack-china.org/guides/code-splitting-libraries)  代码。
 
 webpack.config.js
 
@@ -132,15 +132,15 @@ vendor.2f1bd4c8.js
 
 前一节，我们了解了 webpack 可以将资源拆分为 bundle。接下来，我们要学习如何异步加载。例如，这允许首先提供最低限度的引导 bundle，并在稍后再异步地加载其他功能。
 
-webpack 支持两种相似的技术实现此目的：使用  `import()` (推荐，ECMAScript 提案) 和  `require.ensure()` (遗留，webpack 特定)。本文只介绍官方推荐的 `import()` 方式。
+webpack 支持两种相似的技术实现此目的：使用  `import()` (推荐，ECMAScript 提案) 和  `require.ensure()` (遗留，webpack 特定)。本文只介绍官方推荐的 `import()` 方式。
 
-[ES2015 loader 规范](https://whatwg.github.io/loader/)定义了  `import()`  作为一种在运行时(runtime)动态载入 ES2015 模块的方法。
+[ES2015 loader 规范](https://whatwg.github.io/loader/)定义了  `import()`  作为一种在运行时(runtime)动态载入 ES2015 模块的方法。
 
-webpack 把  `import()`  作为一个分离点(split-point)，并把引入的模块作为一个单独的 chunk。 `import()`  将模块名字作为参数并返回一个  `Promoise`  对象，即  `import(name) -> Promise`
+webpack 把  `import()`  作为一个分离点(split-point)，并把引入的模块作为一个单独的 chunk。 `import()`  将模块名字作为参数并返回一个  `Promoise`  对象，即  `import(name) -> Promise`
 
 ### 配合 Babel 使用
 
-如果你想要在  [Babel](http://babeljs.io/)  中使用  `import`，但是由于 import() 还是属于 Stage 3 的特性，所以你需要安装/添加  [`syntax-dynamic-import`](http://babeljs.io/docs/plugins/syntax-dynamic-import/)  插件来避免 parser 报错。在草案正式成为规范后，就不再需要这个插件了。
+如果你想要在  [Babel](http://babeljs.io/)  中使用  `import`，但是由于 import() 还是属于 Stage 3 的特性，所以你需要安装/添加  [`syntax-dynamic-import`](http://babeljs.io/docs/plugins/syntax-dynamic-import/)  插件来避免 parser 报错。在草案正式成为规范后，就不再需要这个插件了。
 
 例：
 

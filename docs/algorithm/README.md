@@ -70,7 +70,7 @@
 ### 基本算法演示
 
 - <http://sjjg.js.zwu.edu.cn/SFXX/sf1/sfys.html>
-- <http://www.cs.usfca.edu/~galles/visualization/Algorithms.html>
+- <http://www.cs.usfca.edu/\~galles/visualization/Algorithms.html>
 
 ### 编程网站
 

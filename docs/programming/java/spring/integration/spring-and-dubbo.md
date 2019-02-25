@@ -27,7 +27,7 @@ vi conf/zoo.cfg
 
 ```
 
-如果不需要集群，`zoo.cfg` 的内容如下 [2](https://dubbo.gitbooks.io/dubbo-admin-book/content/install/zookeeper.html#fn_2)：
+如果不需要集群，`zoo.cfg` 的内容如下 [2](https://dubbo.gitbooks.io/dubbo-admin-book/content/install/zookeeper.html#fn_2)：
 
 ```
 tickTime=2000
@@ -37,7 +37,7 @@ dataDir=/home/dubbo/zookeeper-3.3.3/data
 clientPort=2181
 ```
 
-如果需要集群，`zoo.cfg` 的内容如下 [3](https://dubbo.gitbooks.io/dubbo-admin-book/content/install/zookeeper.html#fn_3)：
+如果需要集群，`zoo.cfg` 的内容如下 [3](https://dubbo.gitbooks.io/dubbo-admin-book/content/install/zookeeper.html#fn_3)：
 
 ```
 tickTime=2000
@@ -50,7 +50,7 @@ server.2=10.20.153.11:2555:3555
 
 ```
 
-并在 data 目录 [4](https://dubbo.gitbooks.io/dubbo-admin-book/content/install/zookeeper.html#fn_4) 下放置 myid 文件：
+并在 data 目录 [4](https://dubbo.gitbooks.io/dubbo-admin-book/content/install/zookeeper.html#fn_4) 下放置 myid 文件：
 
 ```
 mkdir data
@@ -58,7 +58,7 @@ vi myid
 
 ```
 
-myid 指明自己的 id，对应上面 `zoo.cfg` 中 `server.` 后的数字，第一台的内容为 1，第二台的内容为 2，内容如下：
+myid 指明自己的 id，对应上面 `zoo.cfg` 中 `server.` 后的数字，第一台的内容为 1，第二台的内容为 2，内容如下：
 
 ```
 1
@@ -99,14 +99,14 @@ dubbo.registry.address=zookeeper://10.20.153.10:2181?backup=10.20.153.11:2181
 > 1. Zookeeper是 Apache Hadoop 的子项目，强度相对较好，建议生产环境使用该注册中心
 > 2. 其中 data 目录需改成你真实输出目录
 > 3. 其中 data 目录和 server 地址需改成你真实部署机器的信息
-> 4. 上面 `zoo.cfg` 中的 `dataDir`
+> 4. 上面 `zoo.cfg` 中的 `dataDir`
 > 5. [http://zookeeper.apache.org/doc/r3.3.3/zookeeperAdmin.html](http://zookeeper.apache.org/doc/r3.3.3/zookeeperAdmin.html)
 
 ## Dubbo
 
 Dubbo 采用全 Spring 配置方式，透明化接入应用，对应用没有任何 API 侵入，只需用 Spring 加载 Dubbo 的配置即可，Dubbo 基于 Spring 的 Schema 扩展进行加载。
 
-如果不想使用 Spring 配置，可以通过 [API 的方式](https://dubbo.gitbooks.io/configuration/api.md) 进行调用。
+如果不想使用 Spring 配置，可以通过 [API 的方式](https://dubbo.gitbooks.io/configuration/api.md) 进行调用。
 
 ## 服务提供者
 
@@ -114,7 +114,7 @@ Dubbo 采用全 Spring 配置方式，透明化接入应用，对应用没有任
 
 ### 定义服务接口
 
-DemoService.java [1](https://dubbo.gitbooks.io/dubbo-user-book/quick-start.html#fn_1)：
+DemoService.java [1](https://dubbo.gitbooks.io/dubbo-user-book/quick-start.html#fn_1)：
 
 ```java
 package com.alibaba.dubbo.demo;
@@ -126,7 +126,7 @@ public interface DemoService {
 
 ### 在服务提供方实现接口
 
-DemoServiceImpl.java [2](https://dubbo.gitbooks.io/dubbo-user-book/quick-start.html#fn_2)：
+DemoServiceImpl.java [2](https://dubbo.gitbooks.io/dubbo-user-book/quick-start.html#fn_2)：
 
 ```java
 package com.alibaba.dubbo.demo.provider;
@@ -216,7 +216,7 @@ consumer.xml：
 
 ### 加载Spring配置，并调用远程服务
 
-Consumer.java [3](https://dubbo.gitbooks.io/dubbo-user-book/quick-start.html#fn_3)：
+Consumer.java [3](https://dubbo.gitbooks.io/dubbo-user-book/quick-start.html#fn_3)：
 
 ```
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -239,7 +239,7 @@ public class Consumer {
 
 ## FAQ
 
-建议使用 `dubbo-2.3.3` 以上版本的 zookeeper 注册中心客户端。
+建议使用 `dubbo-2.3.3` 以上版本的 zookeeper 注册中心客户端。
 
 ## 资料
 

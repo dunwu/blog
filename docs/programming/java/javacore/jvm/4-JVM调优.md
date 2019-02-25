@@ -433,9 +433,9 @@ Full GC 回收日志:
 
 通过两张图非常明显看出 gc 日志构成：
 
-Young GC 日志:![img](http://ityouknow.com/assets/images/2017/jvm/Young%20GC.png)
+<br><div align="center"><img src="http://ityouknow.com/assets/images/2017/jvm/Young%20GC.png"/></div><br>
 
-Full GC 日志:![img](http://ityouknow.com/assets/images/2017/jvm/Full%20GC.png)
+<br><div align="center"><img src="http://ityouknow.com/assets/images/2017/jvm/Full%20GC.png"/></div><br>
 
 ### 5.4. OutOfMemory(OOM)分析
 

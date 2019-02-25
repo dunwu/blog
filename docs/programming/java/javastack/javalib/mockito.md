@@ -85,7 +85,7 @@ _Mockito_ 是一个流行 mock 框架，可以和 JUnit 结合起来使用。Moc
 2. 执行测试代码
 3. 验证测试代码是否被正确的执行
 
-![mockitousagevisualization](https://camo.githubusercontent.com/d10c5af5eb7d78af30d92e0f1a9813f419e3975e/687474703a2f2f7777322e73696e61696d672e636e2f6c617267652f3732663936636261677731663562326a386d3276736a323068683035366a7276)
+<br><div align="center"><img src="https://camo.githubusercontent.com/d10c5af5eb7d78af30d92e0f1a9813f419e3975e/687474703a2f2f7777322e73696e61696d672e636e2f6c617267652f3732663936636261677731663562326a386d3276736a323068683035366a7276"/></div><br>
 
 ## 为自己的项目添加 Mockito 依赖
 

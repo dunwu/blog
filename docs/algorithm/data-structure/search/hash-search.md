@@ -20,7 +20,7 @@
 
 构造哈希表这个场景就像汽车找停车位，如果车位被人占了，只能找空的地方停。
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-4f4e0c3def86f7bb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240 "点击查看源网页")
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-4f4e0c3def86f7bb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240 "点击查看源网页""/></div><br>
 
 ## 构造哈希表
 

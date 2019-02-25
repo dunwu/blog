@@ -171,7 +171,7 @@ vue ui
 
 上述命令会打开一个浏览器窗口，并以图形化界面将你引导至项目创建的流程。
 
-![](https://cli.vuejs.org/ui-new-project.png)
+<br><div align="center"><img src="https://cli.vuejs.org/ui-new-project.png"/></div><br>
 
 ## 插件
 
@@ -217,7 +217,7 @@ vue add @vue/eslint
 
 一个 Vue CLI preset 是一个包含创建新项目所需预定义选项和插件的 JSON 对象，让用户无需在命令提示中选择它们。
 
-在 `vue create` 过程中保存的 preset 会被放在你的 home 目录下的一个配置文件中 (`~/.vuerc`)。你可以通过直接编辑这个文件来调整、添加、删除保存好的 preset。
+在 `vue create` 过程中保存的 preset 会被放在你的 home 目录下的一个配置文件中 (`\~/.vuerc`)。你可以通过直接编辑这个文件来调整、添加、删除保存好的 preset。
 
 这里有一个 preset 的示例：
 
@@ -330,7 +330,7 @@ npm run serve
 yarn serve
 ```
 
-![](https://cli.vuejs.org/ui-analyzer.png)
+<br><div align="center"><img src="https://cli.vuejs.org/ui-analyzer.png"/></div><br>
 
 ## 开发
 

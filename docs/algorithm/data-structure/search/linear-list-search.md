@@ -64,9 +64,9 @@ public int orderSearch(int[] list, int length, int key) {
 
 **算法分析**
 
-顺序查找算法**最好的情况**是，第一个记录即匹配关键字，则需要比较 **1** 次；
+顺序查找算法**最好的情况**是，第一个记录即匹配关键字，则需要比较 **1** 次；
 
-**最坏的情况**是，最后一个记录匹配关键字，则需要比较 **N** 次。
+**最坏的情况**是，最后一个记录匹配关键字，则需要比较 **N** 次。
 
 所以，顺序查找算法的平均查找长度为
 
@@ -168,7 +168,7 @@ public int binarySearch(int[] list, int length, int key) {
 
 **代码范例**
 
-![image](http://upload-images.jianshu.io/upload_images/3101171-2737612c781e66e8.gif?imageMogr2/auto-orient/strip)
+<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-2737612c781e66e8.gif?imageMogr2/auto-orient/strip"/></div><br>
 
 ```java
 class BlockSearch {
@@ -273,14 +273,14 @@ class BlockSearch {
 **运行结果**
 
 ```
-线性表: 8 14 6 9 10 22 34 18 19 31 40 38 54 66 46 71 78 68 80 85 
+线性表: 8 14 6 9 10 22 34 18 19 31 40 38 54 66 46 71 78 68 80 85 
 构造索引表如下：
-key = 14, link = 0
-key = 34, link = 5
-key = 66, link = 10
-key = 85, link = 15
+key = 14, link = 0
+key = 34, link = 5
+key = 66, link = 10
+key = 85, link = 15
 
-查找key = 85成功，位置为19
+查找key = 85成功，位置为19
 ```
 
 **算法分析**

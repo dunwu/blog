@@ -53,7 +53,7 @@
 
 组件间依赖关系：
 
-![](http://dunwu.test.upcdn.net/images/java/javalib/test/junit/junit5-components.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/java/javalib/test/junit/junit5-components.png"/></div><br>
 
 ## 2. JUnit 注解
 

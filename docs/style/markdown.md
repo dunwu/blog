@@ -159,7 +159,7 @@ _斜体_
 >
 > **粗体**
 >
-> ~~删除线~~
+> \~~删除线\~~
 
 粗体、斜体、删除线也可以组合起来使用：
 
@@ -169,11 +169,11 @@ _斜体_
 | `_斜体2_`                 | _斜体 2_                 |
 | `**粗体1**`               | **粗体 1**               |
 | `__粗体2__`               | **粗体 2**               |
-| `~~删除线~~`              | ~~删除线~~               |
+| `\~~删除线\~~`              | \~~删除线\~~               |
 | `***斜粗体1***`           | **_斜粗体 1_**           |
 | `___斜粗体2___`           | **_斜粗体 2_**           |
-| `***~~斜粗体删除线1~~***` | **_~~斜粗体删除线 1~~_** |
-| `~~***斜粗体删除线2***~~` | ~~**_斜粗体删除线 2_**~~ |
+| `***\~~斜粗体删除线1\~~***` | **_\~~斜粗体删除线 1\~~_** |
+| `\~~***斜粗体删除线2***\~~` | \~~**_斜粗体删除线 2_**\~~ |
 
 ### 2.8. 分割线
 
@@ -353,7 +353,7 @@ _斜体_
 
 效果：
 
-[![baidu](http://www.baidu.com/img/bdlogo.gif '百度logo')](https://www.baidu.com)
+<br><div align="center"><img src="http://www.baidu.com/img/bdlogo.gif '百度logo'"/></div><br>
 
 ### 5.4. 锚点
 
@@ -381,7 +381,7 @@ alt 和 title 即对应 HTML 中的 alt 和 title 属性（都可省略）：
 
 效果：
 
-![baidu](http://www.baidu.com/img/bdlogo.gif '百度logo')
+<br><div align="center"><img src="http://www.baidu.com/img/bdlogo.gif '百度logo'"/></div><br>
 
 ## 7. 表格
 
@@ -427,7 +427,7 @@ alt 和 title 即对应 HTML 中的 alt 和 title 属性（都可省略）：
 
 | 名字  | 描述                         |
 | ----- | ---------------------------- |
-| Help  | ~~Display the~~ help window. |
+| Help  | \~~Display the\~~ help window. |
 | Close | _Closes_ a window            |
 
 #### 表格中嵌入图片（链接）
@@ -436,7 +436,7 @@ alt 和 title 即对应 HTML 中的 alt 和 title 属性（都可省略）：
 
 | 图片                                                     | 描述 |
 | -------------------------------------------------------- | ---- |
-| ![baidu](http://www.baidu.com/img/bdlogo.gif '百度logo') | 百度 |
+<br><div align="center"><img src="http://www.baidu.com/img/bdlogo.gif '百度logo'"/></div><br>
 
 ## 8. 表情
 

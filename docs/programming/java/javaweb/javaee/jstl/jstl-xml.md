@@ -17,9 +17,9 @@ JSTL XML 标签库提供了创建和操作 XML 文档的标签。引用 XML 标�
 
 在使用 xml 标签前，你必须将 XML 和 XPath 的相关包拷贝至你的`<Tomcat 安装目录>\lib`下:
 
-- **XercesImpl.jar**下载地址： [http://www.apache.org/dist/xerces/j/](http://www.apache.org/dist/xerces/j/)
+- **XercesImpl.jar**下载地址： [http://www.apache.org/dist/xerces/j/](http://www.apache.org/dist/xerces/j/)
 
-- **xalan.jar**下载地址： [http://xml.apache.org/xalan-j/index.html](http://xml.apache.org/xalan-j/index.html)
+- **xalan.jar**下载地址： [http://xml.apache.org/xalan-j/index.html](http://xml.apache.org/xalan-j/index.html)
 
 | 标签            | 描述                                                        |
 | --------------- | ----------------------------------------------------------- |

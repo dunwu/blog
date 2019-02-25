@@ -61,9 +61,9 @@ Base64 编码可用于在 HTTP 环境下传递较长的标识信息。在其他�
 
 ```xml
 <dependency>
-  <groupId>commons-codec</groupId>
-  <artifactId>commons-codec</artifactId>
-  <version>1.10</version>
+  <groupId>commons-codec</groupId>
+  <artifactId>commons-codec</artifactId>
+  <version>1.10</version>
 </dependency>
 ```
 
@@ -71,7 +71,7 @@ Base64 编码可用于在 HTTP 环境下传递较长的标识信息。在其他�
 
 注：在 commons-codec 包中的 Base64 这个类中提供了 Base64 的编码、解码方式。
 
-其中，`encodeBase64`提供的是标准的 Base64 编码方式；`encodeBase64URLSafe`提供了 URL 安全的 Base64 编码方式（将+  和  /替换为  -  和  \_）。
+其中，`encodeBase64`提供的是标准的 Base64 编码方式；`encodeBase64URLSafe`提供了 URL 安全的 Base64 编码方式（将+  和  /替换为  -  和  \_）。
 
 ```java
 package org.zp.javase.security.encrypt;
@@ -134,25 +134,25 @@ public class Base64Demo {
 
 根据数据加密时每个加密区块见得关联方式来区分，可以分为以下种工作模式：
 
-**(1)   电子密码本模式(Electronic Code Book, ECB)**
+**(1)   电子密码本模式(Electronic Code Book, ECB)**
 
 用途：适合加密密钥，随机数等短数据。例如，安全地传递 DES 密钥，ECB 是最合适的模式。
 
-**(2)   密文链接模式(Cipher Booki Chaining, CBC)**
+**(2)   密文链接模式(Cipher Booki Chaining, CBC)**
 
 用途：可加密任意长度的数据，适用于计算产生检测数据完整性的消息认证 MAC。
 
-**(3)   密文反馈模式(Cipher Feed Back, CFB)**
+**(3)   密文反馈模式(Cipher Feed Back, CFB)**
 
 用途：因错误传播无界，可以用于检查发现明文密文的篡改。
 
-**(4)   输出反馈模式(Output Feed Back, OFB)**
+**(4)   输出反馈模式(Output Feed Back, OFB)**
 
 用途：使用于加密冗余性较大的数据，比如语音和图像数据。
 
 AES 算法除了以上 4 中模式外，还有一种新的工作模式：
 
-**(5)   计数器模式(Counter, CTR)**
+**(5)   计数器模式(Counter, CTR)**
 
 用途：适用于各种加密应用。
 
@@ -198,7 +198,7 @@ DES、DESede、AES 和 IDEA 等算法都是基于密钥加密的对称加密算�
 
 ```java
 KeyGenerator kg = KeyGenerator.getInstance("DES");
-SecureRandom random = new SecureRandom();
+SecureRandom random = new SecureRandom();
 kg.init(random);
 SecretKey secretKey = kg.generateKey();
 ```
@@ -393,8 +393,8 @@ byte[] salt = secureRandom.generateSeed(8); // 盐长度必须为8字节
 **（2）根据密码产生 Key**
 
 ```java
-String password = "123456";
-PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray());
+String password = "123456";
+PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray());
 SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
 SecretKey secretKey = keyFactory.generateSecret(keySpec);
 ```
@@ -438,7 +438,7 @@ byte[] ciphertext = cipher.doFinal(plaintext);
 
 另一方面，甲方可以使用乙方的公钥对机密信息进行签名后再发送给乙方；乙方再用自己的私匙对数据进行验证。
 
-甲方只能用其私钥解密，由其公钥加密后的任何信息。  非对称加密算法的保密性比较好，它消除了最终用户交换密钥的需要。
+甲方只能用其私钥解密，由其公钥加密后的任何信息。  非对称加密算法的保密性比较好，它消除了最终用户交换密钥的需要。
 
 #### 常用算法
 

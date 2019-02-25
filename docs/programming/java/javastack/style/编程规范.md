@@ -31,7 +31,7 @@
 
 导入 svn://192.168.31.52/应用创新/06 编码/编程规范/TranswarpStyle.xml 文件，如下图所示。
 
-![](http://oyz7npk35.bkt.clouddn.com/images/20180920181023163721.png)
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181023163721.png"/></div><br>
 
 点击确定即可。
 

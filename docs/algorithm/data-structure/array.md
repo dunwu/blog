@@ -26,7 +26,7 @@
 
 这里有一个例子：
 
-![](http://dunwu.test.upcdn.net/images/data-structure/array/一维数组.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/data-structure/array/一维数组.png"/></div><br>
 
 在上面的例子中，数组 A 中有 6 个元素。也就是说，A 的长度是 6 。我们可以使用 A[0] 来表示数组中的第一个元素。因此，A[0] = 6 。类似地，A[1] = 3，A[2] = 8，依此类推。
 
@@ -42,7 +42,7 @@
 
 下图显示了*大小为 M \* N 的数组 A* 的实际结构：
 
-![](http://dunwu.test.upcdn.net/images/data-structure/array/C++二维数组.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/data-structure/array/C++二维数组.png"/></div><br>
 
 因此，如果我们将 A 定义为也包含 _M \* N_ 个元素的一维数组，那么实际上 A[i][j] 就等于 A[i * N + j]。
 
@@ -50,7 +50,7 @@
 
 下图显示了 Java 中二维数组 A 的实际结构：
 
-![](http://dunwu.test.upcdn.net/images/data-structure/array/JAVA二维数组.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/data-structure/array/JAVA二维数组.png"/></div><br>
 
 二维数组示例：
 

@@ -61,28 +61,28 @@ maven 插件方式
 
 ```xml
 <dependency>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>jetty-webapp</artifactId>
-  <version>9.3.2.v20150730</version>
-  <scope>test</scope>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>jetty-webapp</artifactId>
+  <version>9.3.2.v20150730</version>
+  <scope>test</scope>
 </dependency>
 <dependency>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>jetty-annotations</artifactId>
-  <version>9.3.2.v20150730</version>
-  <scope>test</scope>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>jetty-annotations</artifactId>
+  <version>9.3.2.v20150730</version>
+  <scope>test</scope>
 </dependency>
 <dependency>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>apache-jsp</artifactId>
-  <version>9.3.2.v20150730</version>
-  <scope>test</scope>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>apache-jsp</artifactId>
+  <version>9.3.2.v20150730</version>
+  <scope>test</scope>
 </dependency>
 <dependency>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>apache-jstl</artifactId>
-  <version>9.3.2.v20150730</version>
-  <scope>test</scope>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>apache-jstl</artifactId>
+  <version>9.3.2.v20150730</version>
+  <scope>test</scope>
 </dependency>
 ```
 
@@ -91,46 +91,46 @@ maven 插件方式
 ```java
 public class SplitFileServer
 {
-    public static void main( String[] args ) throws Exception
-    {
-        // 创建Server对象，并绑定端口
-        Server server = new Server();
-        ServerConnector connector = new ServerConnector(server);
-        connector.setPort(8090);
-        server.setConnectors(new Connector[] { connector });
+    public static void main( String[] args ) throws Exception
+    {
+        // 创建Server对象，并绑定端口
+        Server server = new Server();
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(8090);
+        server.setConnectors(new Connector[] { connector });
 
-        // 创建上下文句柄，绑定上下文路径。这样启动后的url就会是:http://host:port/context
-        ResourceHandler rh0 = new ResourceHandler();
-        ContextHandler context0 = new ContextHandler();
-        context0.setContextPath("/");
+        // 创建上下文句柄，绑定上下文路径。这样启动后的url就会是:http://host:port/context
+        ResourceHandler rh0 = new ResourceHandler();
+        ContextHandler context0 = new ContextHandler();
+        context0.setContextPath("/");
 
-        // 绑定测试资源目录（在本例的配置目录dir0的路径是src/test/resources/dir0）
-        File dir0 = MavenTestingUtils.getTestResourceDir("dir0");
-        context0.setBaseResource(Resource.newResource(dir0));
-        context0.setHandler(rh0);
+        // 绑定测试资源目录（在本例的配置目录dir0的路径是src/test/resources/dir0）
+        File dir0 = MavenTestingUtils.getTestResourceDir("dir0");
+        context0.setBaseResource(Resource.newResource(dir0));
+        context0.setHandler(rh0);
 
-        // 和上面的例子一样
-        ResourceHandler rh1 = new ResourceHandler();
-        ContextHandler context1 = new ContextHandler();
-        context1.setContextPath("/");
-        File dir1 = MavenTestingUtils.getTestResourceDir("dir1");
-        context1.setBaseResource(Resource.newResource(dir1));
-        context1.setHandler(rh1);
+        // 和上面的例子一样
+        ResourceHandler rh1 = new ResourceHandler();
+        ContextHandler context1 = new ContextHandler();
+        context1.setContextPath("/");
+        File dir1 = MavenTestingUtils.getTestResourceDir("dir1");
+        context1.setBaseResource(Resource.newResource(dir1));
+        context1.setHandler(rh1);
 
-        // 绑定两个资源句柄
-        ContextHandlerCollection contexts = new ContextHandlerCollection();
-        contexts.setHandlers(new Handler[] { context0, context1 });
-        server.setHandler(contexts);
+        // 绑定两个资源句柄
+        ContextHandlerCollection contexts = new ContextHandlerCollection();
+        contexts.setHandlers(new Handler[] { context0, context1 });
+        server.setHandler(contexts);
 
-        // 启动
-        server.start();
+        // 启动
+        server.start();
 
-        // 打印dump时的信息
-        System.out.println(server.dump());
+        // 打印dump时的信息
+        System.out.println(server.dump());
 
-        // join当前线程
-        server.join();
-    }
+        // join当前线程
+        server.join();
+    }
 }
 ```
 
@@ -156,9 +156,9 @@ public class SplitFileServer
 
 ```xml
 <plugin>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>jetty-maven-plugin</artifactId>
-  <version>9.3.12.v20160915</version>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>jetty-maven-plugin</artifactId>
+  <version>9.3.12.v20160915</version>
 </plugin>
 ```
 
@@ -174,85 +174,85 @@ mvn jetty:run
 
 ```xml
 <plugin>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>jetty-maven-plugin</artifactId>
-  <version>9.3.12.v20160915</version>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>jetty-maven-plugin</artifactId>
+  <version>9.3.12.v20160915</version>
 
-  <configuration>
+  <configuration>
  <webAppSourceDirectory>${project.basedir}/src/staticfiles</webAppSourceDirectory>
 
-    <!-- 配置webapp -->
+    <!-- 配置webapp -->
  <webApp>
-   <contextPath>/</contextPath>
-   <descriptor>${project.basedir}/src/over/here/web.xml</descriptor>
-   <jettyEnvXml>${project.basedir}/src/over/here/jetty-env.xml</jettyEnvXml>
+   <contextPath>/</contextPath>
+   <descriptor>${project.basedir}/src/over/here/web.xml</descriptor>
+   <jettyEnvXml>${project.basedir}/src/over/here/jetty-env.xml</jettyEnvXml>
  </webApp>
 
-    <!-- 配置classes -->
+    <!-- 配置classes -->
  <classesDirectory>${project.basedir}/somewhere/else</classesDirectory>
  <scanClassesPattern>
-   <excludes>
-  <exclude>**/Foo.class</exclude>
-   </excludes>
+   <excludes>
+  <exclude>**/Foo.class</exclude>
+   </excludes>
  </scanClassesPattern>
  <scanTargets>
-   <scanTarget>src/mydir</scanTarget>
-   <scanTarget>src/myfile.txt</scanTarget>
+   <scanTarget>src/mydir</scanTarget>
+   <scanTarget>src/myfile.txt</scanTarget>
  </scanTargets>
 
-    <!-- 扫描target目录下的资源文件 -->
+    <!-- 扫描target目录下的资源文件 -->
  <scanTargetPatterns>
-   <scanTargetPattern>
+   <scanTargetPattern>
  <directory>src/other-resources</directory>
  <includes>
-   <include>**/*.xml</include>
-   <include>**/*.properties</include>
+   <include>**/*.xml</include>
+   <include>**/*.properties</include>
  </includes>
  <excludes>
-   <exclude>**/myspecial.xml</exclude>
-   <exclude>**/myspecial.properties</exclude>
+   <exclude>**/myspecial.xml</exclude>
+   <exclude>**/myspecial.properties</exclude>
  </excludes>
-   </scanTargetPattern>
+   </scanTargetPattern>
  </scanTargetPatterns>
-  </configuration>
+  </configuration>
 </plugin>
 ```
 
 官方给的 jetty-env.xml 范例
 
 ```xml
- <?xml version="1.0"?>
- <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+ <?xml version="1.0"?>
+ <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
 
- <Configure class="org.eclipse.jetty.webapp.WebAppContext">
+ <Configure class="org.eclipse.jetty.webapp.WebAppContext">
 
-   <!-- Add an EnvEntry only valid for this webapp               -->
-   <New id="gargle"  class="org.eclipse.jetty.plus.jndi.EnvEntry">
-     <Arg>gargle</Arg>
-     <Arg type="java.lang.Double">100</Arg>
-     <Arg type="boolean">true</Arg>
-   </New>
+   <!-- Add an EnvEntry only valid for this webapp               -->
+   <New id="gargle"  class="org.eclipse.jetty.plus.jndi.EnvEntry">
+     <Arg>gargle</Arg>
+     <Arg type="java.lang.Double">100</Arg>
+     <Arg type="boolean">true</Arg>
+   </New>
 
-  <!-- Add an override for a global EnvEntry                           -->
-   <New id="wiggle"  class="org.eclipse.jetty.plus.jndi.EnvEntry">
-     <Arg>wiggle</Arg>
-     <Arg type="java.lang.Double">55.0</Arg>
-     <Arg type="boolean">true</Arg>
-   </New>
+  <!-- Add an override for a global EnvEntry                           -->
+   <New id="wiggle"  class="org.eclipse.jetty.plus.jndi.EnvEntry">
+     <Arg>wiggle</Arg>
+     <Arg type="java.lang.Double">55.0</Arg>
+     <Arg type="boolean">true</Arg>
+   </New>
 
-   <!-- an XADataSource                                                -->
-   <New id="mydatasource99" class="org.eclipse.jetty.plus.jndi.Resource">
-     <Arg>jdbc/mydatasource99</Arg>
-     <Arg>
-       <New class="com.atomikos.jdbc.SimpleDataSourceBean">
-         <Set name="xaDataSourceClassName">org.apache.derby.jdbc.EmbeddedXADataSource</Set>
-         <Set name="xaDataSourceProperties">databaseName=testdb99;createDatabase=create</Set>
-         <Set name="UniqueResourceName">mydatasource99</Set>
-       </New>
-     </Arg>
-   </New>
+   <!-- an XADataSource                                                -->
+   <New id="mydatasource99" class="org.eclipse.jetty.plus.jndi.Resource">
+     <Arg>jdbc/mydatasource99</Arg>
+     <Arg>
+       <New class="com.atomikos.jdbc.SimpleDataSourceBean">
+         <Set name="xaDataSourceClassName">org.apache.derby.jdbc.EmbeddedXADataSource</Set>
+         <Set name="xaDataSourceProperties">databaseName=testdb99;createDatabase=create</Set>
+         <Set name="UniqueResourceName">mydatasource99</Set>
+       </New>
+     </Arg>
+   </New>
 
- </Configure>
+ </Configure>
 ```
 
 ## 参考

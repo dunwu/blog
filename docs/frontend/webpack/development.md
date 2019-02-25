@@ -7,7 +7,7 @@
 
 当 JavaScript 异常抛出时，你常会想知道这个错误发生在哪个文件的哪一行。然而因为 webpack 将文件输出为一个或多个 bundle，所以 追踪这一错误会很不方便。
 
-**Source maps**  试图解决这一问题。它有很多选择，各有优劣：
+**Source maps**  试图解决这一问题。它有很多选择，各有优劣：
 
 | devtool                      | build | rebuild | production | quality                       |
 | ---------------------------- | ----- | ------- | ---------- | ----------------------------- |
@@ -20,7 +20,7 @@
 | source-map                   | --    | --      | yes        | original source               |
 | nosources-source-map         | --    | --      | yes        | without source content        |
 
-> `+`  表示较快，`-`  表示较慢，`o`  表示时间相同
+> `+`  表示较快，`-`  表示较慢，`o`  表示时间相同
 
 对于开发环境，通常希望更快速的 Source Map，需要添加到 bundle 中以增加体积为代价，但是对于生产环境，则希望更精准的 Source Map，需要从 bundle 中分离并独立存在。
 
@@ -46,7 +46,7 @@ module.exports = {
 
 **webpack-dev-server** 可以提供了一个服务器和实时重载（live reloading） 功能。
 
-在开始前，确定你有一个  `index.html`  文件指向你的 bundle。假设  `output.filename`  是  `bunlde.js`。
+在开始前，确定你有一个  `index.html`  文件指向你的 bundle。假设  `output.filename`  是  `bunlde.js`。
 
 ```html
 <html>
@@ -56,25 +56,25 @@ module.exports = {
 </html>
 ```
 
-首先从 npm 安装  `webpack-dev-server`：
+首先从 npm 安装  `webpack-dev-server`：
 
 ```bash
 $ npm install --save-dev webpack-dev-server
 ```
 
-安装完成之后，你应该可以使用  `webpack-dev-server`  了，方式如下：
+安装完成之后，你应该可以使用  `webpack-dev-server`  了，方式如下：
 
 ```bash
 $ webpack-dev-server --open
 ```
 
-上述命令应该自动在浏览器中打开  `http://localhost:8080`。
+上述命令应该自动在浏览器中打开  `http://localhost:8080`。
 
 > ​:pushpin: **提示：**
 >
 > 本教程中的 [**示例代码**](https://github.com/dunwu/frontend-tutorial/tree/master/codes) 除了 `demo00` ，都可以使用 webpack-dev-server 命令启动服务。
 
-在你的文件中做一点更改并且保存。你应该可以在控制台中看到正在编译。编译完成之后，页面应该会刷新。如果控制台中什么都没发生，你可能需要调整下  [`watchOptions`](https://doc.webpack-china.org/configuration/dev-server#devserver-watchoptions-)。
+在你的文件中做一点更改并且保存。你应该可以在控制台中看到正在编译。编译完成之后，页面应该会刷新。如果控制台中什么都没发生，你可能需要调整下  [`watchOptions`](https://doc.webpack-china.org/configuration/dev-server#devserver-watchoptions-)。
 
 默认情况下 webpack 会使用**inline mode**（内联模式）。这种模式在你的 bundle 中注入客户端（用来 live reloading 和展示构建错误）。Inline 模式下，你会在你的 DevTools 控制台中看到构建错误。
 
@@ -113,7 +113,7 @@ $ webpack-dev-server --open
 
 请按以下步骤一步步来：
 
-首先，安装依赖  `react-hot-loader`（确保使用这个包的  `next`  版本）
+首先，安装依赖  `react-hot-loader`（确保使用这个包的  `next`  版本）
 
 ```bash
 $ npm install --save babel-loader react-hot-loader@next
@@ -157,7 +157,7 @@ output: {
 
 **配置 module**
 
-需要使用 ES2015 模块来使 HMR 正常工作。为此，在我们的 es2015 preset 设置中，将  `module`  选项设置为 false。
+需要使用 ES2015 模块来使 HMR 正常工作。为此，在我们的 es2015 preset 设置中，将  `module`  选项设置为 false。
 
 并且，在此要引入 `react-hot-loader/babel` 开启 React 代码的模块热替换(HMR)
 

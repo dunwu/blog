@@ -130,11 +130,11 @@ green == Color.BLUE: false
 **例：C/C++ 语言中的枚举声明**
 
 ```c
-typedef enum{
-    ONE = 1,
-    TWO,
-    THREE = 3,
-    TEN = 10
+typedef enum{
+    ONE = 1,
+    TWO,
+    THREE = 3,
+    TEN = 10
 } Number;
 ```
 

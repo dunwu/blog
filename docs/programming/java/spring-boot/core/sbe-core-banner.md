@@ -69,7 +69,7 @@ ${AnsiBackground.WHITE}${AnsiColor.RED}${AnsiStyle.UNDERLINE}
 
 启动应用后，控制台将打印如下 logo：
 
-![](http://dunwu.test.upcdn.net/snap/20181221231330.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/snap/20181221231330.png"/></div><br>
 
 推荐两个生成字符画的网站，可以将生成的字符串放入这个`banner.txt` 文件：
 

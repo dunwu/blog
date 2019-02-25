@@ -33,7 +33,7 @@ var app = new Vue({
 
 ### vue 生命周期
 
-![](http://dunwu.test.upcdn.net/images/front/mvc/vue/vue-lifecycle.png)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/front/mvc/vue/vue-lifecycle.png"/></div><br>
 
 ## 引申和引用
 

@@ -4,7 +4,7 @@
 >
 > 关键词： `标签`, `元素`, `属性`
 
-![](http://dunwu.test.upcdn.net/images/front/html/html5.jpg)
+<br><div align="center"><img src="http://dunwu.test.upcdn.net/images/front/html/html5.jpg"/></div><br>
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -46,9 +46,9 @@
 
 HTML 是用来描述网页的一种语言。
 
-- HTML 指的是超文本标记语言: Hypertext Markup Language
+- HTML 指的是超文本标记语言: Hypertext Markup Language
 - HTML 不是一种编程语言，而是一种**标记**语言
-- 标记语言是一套**标记标签** (markup tag)
+- 标记语言是一套**标记标签** (markup tag)
 - HTML 使用标记标签来**描述**网页
 - HTML 文档包含了 HTML**标签**及**文本**内容
 - HTML 文档也叫做 **web 页面**
@@ -174,7 +174,7 @@ HTML 元素:
 
 双引号是最常用的，不过使用单引号也没有问题。
 
-**提示:**  在某些个别的情况下，比如属性值本身就含有双引号，那么您必须使用单引号，例如：`name='John "ShotGun" Nelson'`
+**提示:**  在某些个别的情况下，比如属性值本身就含有双引号，那么您必须使用单引号，例如：`name='John "ShotGun" Nelson'`
 
 #### 常用属性
 

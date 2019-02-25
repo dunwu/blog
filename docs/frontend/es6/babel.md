@@ -83,7 +83,7 @@ $ babel src -d lib
 > 1. 在同一台机器上的不同项目或许会依赖不同版本的 Babel 并允许你有选择的更新。
 > 2. 这意味着你对工作环境没有隐式依赖，这让你的项目有很好的可移植性并且易于安装。
 
-本地安装 `babel-cli` ，直接使用 `babel` 命令将无法识别。你可以选在在  `package.json`  文件的  `scripts`  属性中定义命令。`npm` 会自动找到本地安装的库。
+本地安装 `babel-cli` ，直接使用 `babel` 命令将无法识别。你可以选在在  `package.json`  文件的  `scripts`  属性中定义命令。`npm` 会自动找到本地安装的库。
 
 ```json
 {
@@ -123,7 +123,7 @@ $ npm run build
 
 它不用单独安装，而是随 `babel-cli` 一起安装。然后，执行 `babel-node` 就进入 PEPL 环境。
 
-然后用  `babel-node`  来替代  `node`  运行所有的代码：
+然后用  `babel-node`  来替代  `node`  运行所有的代码：
 
 ```bash
 $ babel-node
@@ -158,7 +158,7 @@ $ npm run babel-node
 
 ### 2.3. `babel-register`
 
-下一个常用的运行 Babel 的方法是通过  `babel-register`。这种方法只需要引入文件就可以运行 Babel，或许能更好地融入你的项目设置。
+下一个常用的运行 Babel 的方法是通过  `babel-register`。这种方法只需要引入文件就可以运行 Babel，或许能更好地融入你的项目设置。
 
 > ​:warning: **注意：**
 >
@@ -174,26 +174,26 @@ $ npm install --save-dev babel-register
 
 **使用**
 
-1. 创建  `index.js`  文件：
+1. 创建  `index.js`  文件：
 
 ```js
 console.log('Hello world!');
 ```
 
-这是，使用  `node index.js`  来运行它是不会使用 Babel 来编译的。所以我们需要设置  `babel-register`。.
+这是，使用  `node index.js`  来运行它是不会使用 Babel 来编译的。所以我们需要设置  `babel-register`。.
 
-2. 创建  `register.js`  文件：
+2. 创建  `register.js`  文件：
 
 ```js
 require('babel-register');
 require('./index.js');
 ```
 
-这样做可以把 Babel *注册*到 Node 的模块系统中并开始编译其中  `require`  的所有文件。
+这样做可以把 Babel *注册*到 Node 的模块系统中并开始编译其中  `require`  的所有文件。
 
 3. 执行命令
 
-   现在我们可以使用  `register.js`  来代替  `node index.js`  来运行了。
+   现在我们可以使用  `register.js`  来代替  `node index.js`  来运行了。
 
 ```bash
 $ node register.js
@@ -224,7 +224,7 @@ $ node register.js
 
 ### 2.4. `babel-core`
 
-如果你需要以编程的方式来使用 Babel，可以使用  `babel-core`  这个包。
+如果你需要以编程的方式来使用 Babel，可以使用  `babel-core`  这个包。
 
 **安装**
 
@@ -243,7 +243,7 @@ var babel = require('babel-core');
 **编译 API**
 
 ```js
-# 如果是字符串形式的 JavaScript 代码，可以使用 transform 编译
+# 如果是字符串形式的 JavaScript 代码，可以使用 transform 编译
 babel.transform("code();", options);
 // => { code, map, ast }
 
@@ -330,9 +330,9 @@ module: {
 
 ### 3.1. `.babelrc`
 
-`.babelrc`  文件是 `Babel` 的默认配置文件。
+`.babelrc`  文件是 `Babel` 的默认配置文件。
 
-`.babelrc` **文件的内容形式就是序列化的 JSON。**
+`.babelrc` **文件的内容形式就是序列化的 JSON。**
 
 该文件用来设置转码规则（presets）和插件（plugins），基本格式如下：
 
@@ -372,9 +372,9 @@ module: {
   > - `babel-preset-stage-2`
   > - `babel-preset-stage-3`
   >
-  > stage-4 预设是不存在的因为它就是上面的  `es2015`  预设。
+  > stage-4 预设是不存在的因为它就是上面的  `es2015`  预设。
   >
-  > 以上每种预设都依赖于紧随的后期阶段预设。例如，`babel-preset-stage-1`  依赖  `babel-preset-stage-2`，后者又依赖`babel-preset-stage-3`。
+  > 以上每种预设都依赖于紧随的后期阶段预设。例如，`babel-preset-stage-1`  依赖  `babel-preset-stage-2`，后者又依赖`babel-preset-stage-3`。
 
 **安装**
 
@@ -394,7 +394,7 @@ $ npm install --save-dev babel-preset-stage-3
 
 **使用**
 
-安装完后，需要在配置文件  `.babelrc`  中引入项目中实际需要的预设转码规则，让 Babel 得以知道规则。
+安装完后，需要在配置文件  `.babelrc`  中引入项目中实际需要的预设转码规则，让 Babel 得以知道规则。
 
 形式如下：
 
@@ -431,7 +431,7 @@ Babel 插件大致分为三类：
 
 > ​:pushpin:​ **提示：**
 >
-> 除了在  `.babelrc`  文件中定义 Babel 配置。实际上，还可以在其他工具中对其进行配置。
+> 除了在  `.babelrc`  文件中定义 Babel 配置。实际上，还可以在其他工具中对其进行配置。
 
 #### 在 `package.json` 中配置
 
@@ -506,9 +506,9 @@ function addAll() {
 }
 ```
 
-然而，它依然无法随处可用。因为并非所有的 JavaScript 环境都支持  `Array.from`。
+然而，它依然无法随处可用。因为并非所有的 JavaScript 环境都支持  `Array.from`。
 
-为了解决这个问题，我们使用一种叫做  [Polyfill（代码填充，也可译作兼容性补丁）](https://remysharp.com/2010/10/08/what-is-a-polyfill)  的技术。 简单地说，polyfill 即是在当前运行环境中用来复制（意指模拟性的复制，而不是拷贝）尚不存在的原生 api 的代码。 能让你提前使用还不可用的 APIs，`Array.from`  就是一个例子。
+为了解决这个问题，我们使用一种叫做  [Polyfill（代码填充，也可译作兼容性补丁）](https://remysharp.com/2010/10/08/what-is-a-polyfill)  的技术。 简单地说，polyfill 即是在当前运行环境中用来复制（意指模拟性的复制，而不是拷贝）尚不存在的原生 api 的代码。 能让你提前使用还不可用的 APIs，`Array.from`  就是一个例子。
 
 Babel 提供了 `babel-polyfill` 来支持 polyfill 。
 
@@ -534,14 +534,14 @@ babel-runtime 与 polyfill 类似，不同之处在于它不修改全局范围�
 
 由于这些助手方法可能会特别长并且会被添加到每一个文件的顶部，因此你可以把它们统一移动到一个单一的“运行时（runtime）”中去。
 
-通过安装  `babel-plugin-transform-runtime`  和  `babel-runtime`  来开始。
+通过安装  `babel-plugin-transform-runtime`  和  `babel-runtime`  来开始。
 
 ```bash
 $ npm install --save-dev babel-plugin-transform-runtime
 $ npm install --save babel-runtime
 ```
 
-然后更新  `.babelrc`：
+然后更新  `.babelrc`：
 
 ```json
 {
@@ -580,7 +580,7 @@ let Foo = (function() {
 })();
 ```
 
-这样就不需要把  `_classCallCheck`  和  `_createClass`  这两个助手方法放进每一个需要的文件里去了。
+这样就不需要把  `_classCallCheck`  和  `_createClass`  这两个助手方法放进每一个需要的文件里去了。
 
 ## 5. 引申和引用
 

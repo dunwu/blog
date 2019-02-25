@@ -368,7 +368,7 @@ public class SimpleTomcatServer {
 - 设置启动应用的端口、JVM 参数、启动浏览器等。
 - 成功后，可以访问 http://localhost:8080/（当然，你也可以在 url 中设置上下文名称）。
 
-![](https://raw.githubusercontent.com/dunwu/JavaWeb/master/images/tools/tomcat/tomcat-intellij-run-config.png)
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/JavaWeb/master/images/tools/tomcat/tomcat-intellij-run-config.png"/></div><br>
 
 > **说明**
 >

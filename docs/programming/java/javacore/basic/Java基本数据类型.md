@@ -64,13 +64,13 @@ Java 中的数据类型有两类：
 Java 语言提供了 **8** 种基本类型，大致分为 **4** 类
 
 - **整数型**
-  - `byte` - 8 位，最大存储数据量是 255，存放的数据范围是 -128 ~ 127 之间。
-  - `short` - 16 位，最大数据存储量是 65536，数据范围是 -32768 ~ 32767 之间。
+  - `byte` - 8 位，最大存储数据量是 255，存放的数据范围是 -128 \~ 127 之间。
+  - `short` - 16 位，最大数据存储量是 65536，数据范围是 -32768 \~ 32767 之间。
   - `int` - 32 位，最大数据存储容量是 2 的 32 次方减 1，数据范围是负的 2 的 31 次方到正的 2 的 31 次方减 1。
   - `long` - 64 位，最大数据存储容量是 2 的 64 次方减 1，数据范围为负的 2 的 63 次方到正的 2 的 63 次方减 1。
 - **浮点型**
-  - `float` - 32 位，数据范围在 3.4e-45 ~ 1.4e38，直接赋值时必须在数字后加上 f 或 F。
-  - `double` - 64 位，数据范围在 4.9e-324 ~ 1.8e308，赋值时可以加 d 或 D 也可以不加。
+  - `float` - 32 位，数据范围在 3.4e-45 \~ 1.4e38，直接赋值时必须在数字后加上 f 或 F。
+  - `double` - 64 位，数据范围在 4.9e-324 \~ 1.8e308，赋值时可以加 d 或 D 也可以不加。
 - **字符型**
   - `char` - 16 位，存储 Unicode 码，用单引号赋值。
 - **布尔型**
@@ -132,15 +132,15 @@ public class DataTypeScopeDemo {
 示例：
 
 ```java
-long x = 30;
-float y = 14.3f;
-System.out.println("x/y = " + x/y);
+long x = 30;
+float y = 14.3f;
+System.out.println("x/y = " + x/y);
 ```
 
 输出：
 
 ```
-x/y = 1.9607843
+x/y = 1.9607843
 ```
 
 可见 long 虽然精度大于 float 类型，但是结果为浮点数类型。
@@ -154,9 +154,9 @@ x/y = 1.9607843
 示例：
 
 ```java
-float f = 25.5f;
-int x = (int)f;
-System.out.println("x = " + x);
+float f = 25.5f;
+int x = (int)f;
+System.out.println("x = " + x);
 ```
 
 ## 装箱和拆箱
@@ -165,14 +165,14 @@ System.out.println("x = " + x);
 
 Java 中基本类型的包装类如下：
 
-- Byte <-> byte
-- Short <-> short
-- Integer <-> int
-- Long <-> long
-- Float <-> float
-- Double <-> double
-- Character <-> char
-- Boolean <-> boolean
+- Byte <-> byte
+- Short <-> short
+- Integer <-> int
+- Long <-> long
+- Float <-> float
+- Double <-> double
+- Character <-> char
+- Boolean <-> boolean
 
 ### 装箱
 

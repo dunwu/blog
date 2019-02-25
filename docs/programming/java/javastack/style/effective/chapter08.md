@@ -102,9 +102,9 @@ float 和 double 类型主要是为了科学计算和工程计算而设计的，
 
 ### 第49条：基本类型优先于装箱基本类型
 
-基本类型：*int*, *double*, *boolean*
+基本类型：*int*, *double*, *boolean*
 
-基本装箱类型：*Integer*, *Double*, *Boolean*
+基本装箱类型：*Integer*, *Double*, *Boolean*
 
 差异：
 
@@ -150,7 +150,7 @@ i == 42 // NullPointerException
 
 - 字符串不适合代替其他的值类型。
 - 字符串不适合代替枚举类型。
-- 字符串不适合代替聚集类型（*aggregate* types）。
+- 字符串不适合代替聚集类型（*aggregate* types）。
 - 字符串不适合代替能力表（capabilities）。
 - 若使用不当，字符串会比其他的类型更不灵活、速度更慢、也更容易出错。
 
@@ -215,7 +215,7 @@ List<Subscriber> subscribers = new ArrayList<Subscriber>();
 
 ### 第53条：接口优先于反射机制
 
-`java.lang.reflection` 支持**通过程序来访问关于已装载的类的信息**。给定一个 Class 实例，你可以获得  Constructor, Method 和 Field 实例。
+`java.lang.reflection` 支持**通过程序来访问关于已装载的类的信息**。给定一个 Class 实例，你可以获得  Constructor, Method 和 Field 实例。
 
 反射机制允许一个类使用另一个类，及时当前者被编译的时候还根本不存在。但是，也会付出一定的代价：
 
@@ -265,7 +265,7 @@ public static void main (String[] args){
 
 ### 第54条：谨慎地使用本地方法
 
-> **Java Native Interface(JNI)** 允许 Java 程序可以调用本地方法，所谓本地方法是指用本地程序设计语言（如 C 或者 C++）来编写的特殊方法。
+> **Java Native Interface(JNI)** 允许 Java 程序可以调用本地方法，所谓本地方法是指用本地程序设计语言（如 C 或者 C++）来编写的特殊方法。
 
 从历史上看，本地方法主要有三种用途：
 
@@ -323,13 +323,13 @@ public static void main (String[] args){
 | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
 | Classes and enum types                   | Singular noun or noun phrase             | Timer, BufferedWriter, ChessPiece        |
 | Interfaces                               | Like classes                             | Collection, Comparator                   |
-| Interfaces                               | With an adjective ending in *able* or *ible* | Runnable, Iterable, Accessible           |
+| Interfaces                               | With an adjective ending in *able* or *ible* | Runnable, Iterable, Accessible           |
 | Annotation types                         | Nouns, verbs, prepositions, adjectives ... | BindingAnnotation, Inject, ImplementedBy, Singleton |
 | Static factories (common names)          | ---                                      | valueOf, of, getInstance, newInstance, getType, newType |
 | **Methods that...**                      | ---                                      | ---                                      |
 | perform actions                          | verb or verb phrase                      | append, drawImage                        |
-| return a boolean                         | names beginning with *is* or, *has*      | isDigit, isProbablePrime, isEmpty, isEnabled, hasSiblings |
-| return a non-boolean or attribute        | noun, a noun phrase, or begin with *get* | size, hashCode, or getTime               |
+| return a boolean                         | names beginning with *is* or, *has*      | isDigit, isProbablePrime, isEmpty, isEnabled, hasSiblings |
+| return a non-boolean or attribute        | noun, a noun phrase, or begin with *get* | size, hashCode, or getTime               |
 | convert the type of an object            | *toType*                                 | toString, toArray                        |
 | return a view ([Item 5](https://github.com/HugoMatilla/Effective-JAVA-Summary#5-avoid-creating-objects)) of a different type | *asType*                                 | asList                                   |
 | return a primitive with the same value   |                                          |                                          |

@@ -21,7 +21,7 @@ JSTL SQL 标签库提供了与关系型数据库（Oracle，MySQL，SQL Server �
 | `<sql:query>`         | 运行 SQL 查询语句                                                            |
 | `<sql:update>`        | 运行 SQL 更新语句                                                            |
 | `<sql:param>`         | 将 SQL 语句中的参数设为指定值                                                |
-| `<sql:dateParam>`     | 将 SQL 语句中的日期参数设为指定的 java.util.Date  对象值                     |
+| `<sql:dateParam>`     | 将 SQL 语句中的日期参数设为指定的 java.util.Date  对象值                     |
 | `<sql:transaction>`   | 在共享数据库连接中提供嵌套的数据库行为元素，将所有语句以一个事务的形式来运行 |
 
 ## `<sql:setDataSource>` 标签

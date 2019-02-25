@@ -96,7 +96,7 @@ Hibernate 多年来一直是事实上的 Java 持久化标准，但是现在 Jav
 
 ### TransactionDefinition
 
-上面讲到的事务管理器接口 `PlatformTransactionManager` 通过 `getTransaction(TransactionDefinition definition)` 方法来得到事务，这个方法里面的参数是 `TransactionDefinition` 类，这个类就定义了一些基本的事务属性。 
+上面讲到的事务管理器接口 `PlatformTransactionManager` 通过 `getTransaction(TransactionDefinition definition)` 方法来得到事务，这个方法里面的参数是 `TransactionDefinition` 类，这个类就定义了一些基本的事务属性。 
 那么什么是事务属性呢？事务属性可以理解成事务的一些基本配置，描述了事务策略如何应用到方法上。事务属性包含了5个方面，如图所示：
 
 ![技术分享](http://img.blog.csdn.net/20160325003448793)
@@ -128,7 +128,7 @@ public interface TransactionDefinition {
 | PROPAGATION_NEVER         | 表示当前方法不应该运行在事务上下文中。如果当前正有一个事务在运行，则会抛出异常  |
 | PROPAGATION_NESTED        | 表示如果当前已经存在一个事务，那么该方法将会在嵌套事务中运行。嵌套的事务可以独立于当前事务进行单独地提交或回滚。如果当前事务不存在，那么其行为与PROPAGATION_REQUIRED一样。注意各厂商对这种传播行为的支持是有所差异的。可以参考资源管理器的文档来确认它们是否支持嵌套事务 |
 
-*注：以下具体讲解传播行为的内容参考自Spring事务机制详解* 
+*注：以下具体讲解传播行为的内容参考自Spring事务机制详解* 
 
 1. PROPAGATION_REQUIRED 如果存在一个事务，则支持当前事务。如果没有事务则开启一个新的事务。
 
@@ -182,7 +182,7 @@ Main{
 } 
 ```
 
-Spring保证在methodB方法中所有的调用都获得到一个相同的连接。在调用methodB时，没有一个存在的事务，所以获得一个新的连接，开启了一个新的事务。 
+Spring保证在methodB方法中所有的调用都获得到一个相同的连接。在调用methodB时，没有一个存在的事务，所以获得一个新的连接，开启了一个新的事务。 
 单独调用MethodA时，在MethodA内又会调用MethodB.
 
 执行效果相当于：
@@ -362,7 +362,7 @@ PROPAGATION_REQUIRED应该是我们首先的事务传播行为。它能够满足
 
 事务的第二个维度就是隔离级别（isolation level）。隔离级别定义了一个事务可能受其他并发事务影响的程度。
 
-1. 并发事务引起的问题 
+1. 并发事务引起的问题 
 
 在典型的应用程序中，多个事务并发运行，经常会操作相同的数据来完成各自的任务。并发虽然是必须的，但可能会导致一下的问题。
 
@@ -372,8 +372,8 @@ PROPAGATION_REQUIRED应该是我们首先的事务传播行为。它能够满足
 
 **不可重复读与幻读的区别**
 
-不可重复读的重点是修改: 
-同样的条件, 你读取过的数据, 再次读取出来发现值不一样了 
+不可重复读的重点是修改: 
+同样的条件, 你读取过的数据, 再次读取出来发现值不一样了 
 例如：在事务1中，Mary 读取了自己的工资为1000,操作并没有完成
 
 ```
@@ -398,8 +398,8 @@ PROPAGATION_REQUIRED应该是我们首先的事务传播行为。它能够满足
 
 在一个事务中前后两次读取的结果并不一致，导致了不可重复读。
 
-幻读的重点在于新增或者删除： 
-同样的条件, 第1次和第2次读出来的记录数不一样 
+幻读的重点在于新增或者删除： 
+同样的条件, 第1次和第2次读出来的记录数不一样 
 例如：目前工资为1000的员工有10人。事务1,读取所有工资为1000的员工。
 
 ```
@@ -426,8 +426,8 @@ PROPAGATION_REQUIRED应该是我们首先的事务传播行为。它能够满足
 
 共读取到了11条记录，这就产生了幻像读。
 
-从总的结果来看, 似乎不可重复读和幻读都表现为两次读取的结果不一致。但如果你从控制的角度来看, 两者的区别就比较大。 
-对于前者, 只需要锁住满足条件的记录。 
+从总的结果来看, 似乎不可重复读和幻读都表现为两次读取的结果不一致。但如果你从控制的角度来看, 两者的区别就比较大。 
+对于前者, 只需要锁住满足条件的记录。 
 对于后者, 要锁住满足条件及其相近的记录。
 
 2. 隔离级别
@@ -450,7 +450,7 @@ PROPAGATION_REQUIRED应该是我们首先的事务传播行为。它能够满足
 
 #### 回滚规则
 
-事务五边形的最后一个方面是一组规则，这些规则定义了哪些异常会导致事务回滚而哪些不会。默认情况下，事务只有遇到运行期异常时才会回滚，而在遇到检查型异常时不会回滚（这一行为与EJB的回滚行为是一致的） 
+事务五边形的最后一个方面是一组规则，这些规则定义了哪些异常会导致事务回滚而哪些不会。默认情况下，事务只有遇到运行期异常时才会回滚，而在遇到检查型异常时不会回滚（这一行为与EJB的回滚行为是一致的） 
 但是你可以声明事务在遇到特定的检查型异常时像遇到运行期异常那样回滚。同样，你还可以声明事务遇到特定的异常不回滚，即使这些异常是运行期异常。
 
 ### TransactionStatus
@@ -473,7 +473,7 @@ public interface TransactionStatus extends SavepointManager {
 
 ### 编程式和声明式事务的区别
 
-Spring 提供了对编程式事务和声明式事务的支持。编程式事务允许用户在代码中精确定义事务的边界，而声明式事务（基于AOP）有助于用户将操作与事务规则进行解耦。 
+Spring 提供了对编程式事务和声明式事务的支持。编程式事务允许用户在代码中精确定义事务的边界，而声明式事务（基于AOP）有助于用户将操作与事务规则进行解耦。 
 简单地说，编程式事务侵入到了业务代码里面，但是提供了更加详细的事务管理；而声明式事务由于基于 AOP，所以既能起到事务管理的作用，又可以不影响业务代码的具体实现。
 
 Spring 提供两种方式的编程式事务管理，分别是：使用 `TransactionTemplate` 和使用 `PlatformTransactionManager`。
@@ -785,11 +785,11 @@ public class UserDaoImpl extends HibernateDaoSupport implements UserDao {
 
 *注：该实例参考自Spring中的事务管理实例详解*
 
-**首先是数据库表** 
+**首先是数据库表** 
 
-book(isbn, book_name, price) 
+book(isbn, book_name, price) 
 
-account(username, balance) 
+account(username, balance) 
 
 book_stock(isbn, stock)
 
@@ -823,7 +823,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 </beans>
 ```
 
-**使用的类** 
+**使用的类** 
 BookShopDao
 
 ```java

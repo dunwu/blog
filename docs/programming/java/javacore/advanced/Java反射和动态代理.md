@@ -482,7 +482,7 @@ After method
 Result is: Over
 ```
 
-我们首先来看看 `com.sun.proxy.$Proxy0` 这东西，我们看到，这个东西是由  `System.out.println(subject.getClass().getName());` 这条语句打印出来的，那么为什么我们返回的这个代理对象的类名是这样的呢？
+我们首先来看看 `com.sun.proxy.$Proxy0` 这东西，我们看到，这个东西是由  `System.out.println(subject.getClass().getName());` 这条语句打印出来的，那么为什么我们返回的这个代理对象的类名是这样的呢？
 
 ```java
 Subject subject = (Subject)Proxy.newProxyInstance(handler.getClass().getClassLoader(), realSubject

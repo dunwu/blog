@@ -85,12 +85,12 @@ HeaderN: ...
 
 ## 设置 HTTP 状态码的方法
 
-下面的方法可用于在 Servlet 程序中设置 HTTP 状态码。这些方法通过  `HttpServletResponse`  对象可用。
+下面的方法可用于在 Servlet 程序中设置 HTTP 状态码。这些方法通过  `HttpServletResponse`  对象可用。
 
 | 序号 | 方法 & 描述                                                                                                                                                                                                                       |
 | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | **public void setStatus ( int statusCode )**该方法设置一个任意的状态码。setStatus 方法接受一个 int（状态码）作为参数。如果您的反应包含了一个特殊的状态码和文档，请确保在使用  *PrintWriter*  实际返回任何内容之前调用 setStatus。 |
-| 2    | **public void sendRedirect(String url)**该方法生成一个 302 响应，连同一个带有新文档 URL 的  *Location*  头。                                                                                                                      |
+| 1    | **public void setStatus ( int statusCode )**该方法设置一个任意的状态码。setStatus 方法接受一个 int（状态码）作为参数。如果您的反应包含了一个特殊的状态码和文档，请确保在使用  *PrintWriter*  实际返回任何内容之前调用 setStatus。 |
+| 2    | **public void sendRedirect(String url)**该方法生成一个 302 响应，连同一个带有新文档 URL 的  *Location*  头。                                                                                                                      |
 | 3    | **public void sendError(int code, String message)**该方法发送一个状态码（通常为 404），连同一个在 HTML 文档内部自动格式化并发送到客户端的短消息。                                                                                 |
 
 ## HTTP 状态码实例

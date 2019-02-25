@@ -50,13 +50,13 @@ IoC 不是什么技术，而是一种设计思想。在 Java 开发中，IoC 意
 
 用图例说明一下，传统程序设计如图 2-1，都是主动去创建相关对象然后再组合起来：
 
-![img](http://sishuok.com/forum/upload/2012/2/19/a02c1e3154ef4be3f15fb91275a26494__1.JPG)
+<br><div align="center"><img src="http://sishuok.com/forum/upload/2012/2/19/a02c1e3154ef4be3f15fb91275a26494__1.JPG"/></div><br>
 
 图 2-1 传统应用程序示意图
 
 当有了 IoC/DI 的容器后，在客户端类中不再主动去创建这些对象了，如图 2-2 所示:
 
-![img](http://sishuok.com/forum/upload/2012/2/19/6fdf1048726cc2edcac4fca685f050ac__2.JPG)
+<br><div align="center"><img src="http://sishuok.com/forum/upload/2012/2/19/6fdf1048726cc2edcac4fca685f050ac__2.JPG"/></div><br>
 
 图 2-2 有 IoC/DI 容器后程序结构示意图
 
@@ -123,13 +123,13 @@ Spring IoC 容器如何知道哪些是它管理的对象呢？这就需要配置
 - **ClassPathXmlApplicationContext**：`ApplicationContext` 的实现，从 classpath 获取配置文件；
 
 ```java
-BeanFactory beanFactory = new ClassPathXmlApplicationContext("classpath.xml");
+BeanFactory beanFactory = new ClassPathXmlApplicationContext("classpath.xml");
 ```
 
 - **FileSystemXmlApplicationContext**：`ApplicationContext` 的实现，从文件系统获取配置文件。
 
 ```java
-BeanFactory beanFactory = new FileSystemXmlApplicationContext("fileSystemConfig.xml");
+BeanFactory beanFactory = new FileSystemXmlApplicationContext("fileSystemConfig.xml");
 ```
 
 ### IoC 容器工作步骤

@@ -65,7 +65,7 @@ JSP 行为是一组 JSP 内置的标签，只需要书写很少的标记代码�
 
 **例**
 
-以下我们定义了两个文件  **date.jsp**  和  **main.jsp**，代码如下所示：
+以下我们定义了两个文件  **date.jsp**  和  **main.jsp**，代码如下所示：
 
 date.jsp 文件代码：
 
@@ -109,7 +109,7 @@ include 动作实例
 
 ## <jsp:useBean>
 
-**jsp:useBean**  动作用来加载一个将在 JSP 页面中使用的 JavaBean。
+**jsp:useBean**  动作用来加载一个将在 JSP 页面中使用的 JavaBean。
 
 这个功能非常有用，因为它使得我们可以发挥 Java 组件复用的优势。
 
@@ -207,11 +207,11 @@ public class TestBean {
 $ javac TestBean.java
 ```
 
-编译完成后会在当前目录下生成一个  **TestBean.class**  文件， 将该文件拷贝至当前 JSP 项目的  **WebContent/WEB-INF/classes/com/runoob/main**  下( com/runoob/main 包路径，没有需要手动创建)。
+编译完成后会在当前目录下生成一个  **TestBean.class**  文件， 将该文件拷贝至当前 JSP 项目的  **WebContent/WEB-INF/classes/com/runoob/main**  下( com/runoob/main 包路径，没有需要手动创建)。
 
 下面是一个 Eclipse 中目录结构图：
 
-![img](http://www.runoob.com/wp-content/uploads/2014/01/6AC33FBA-0B76-4BFD-A690-E856E9E01900.jpg)
+<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/6AC33FBA-0B76-4BFD-A690-E856E9E01900.jpg"/></div><br>
 
 下面是一个很简单的例子，它的功能是装载一个 Bean，然后设置/读取它的 message 属性。
 
@@ -245,7 +245,7 @@ $ javac TestBean.java
 
 浏览器访问，执行以上文件，输出如下所示：
 
-![img](http://www.runoob.com/wp-content/uploads/2014/01/D7AD87A8-3392-4D4E-8731-18806B0644CD.jpg)
+<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/D7AD87A8-3392-4D4E-8731-18806B0644CD.jpg"/></div><br>
 
 ---
 
@@ -361,7 +361,7 @@ plugin 动作有多个对应 HTML 元素的属性用于格式化 Java 组件。p
 
 浏览器访问以下页面，输出结果如下所示：
 
-![img](http://www.runoob.com/wp-content/uploads/2014/01/7D8C47F0-0DDE-4F1D-8BE1-B2C9C955683E.jpg)
+<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/7D8C47F0-0DDE-4F1D-8BE1-B2C9C955683E.jpg"/></div><br>
 
 ---
 

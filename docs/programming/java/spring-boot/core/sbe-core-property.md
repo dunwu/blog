@@ -27,7 +27,7 @@
 
 Spring Boot 加载 property 顺序如下：
 
-1. [Devtools 全局配置](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#using-boot-devtools-globalsettings) (当 devtools 被激活 `~/.spring-boot-devtools.properties`).
+1. [Devtools 全局配置](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#using-boot-devtools-globalsettings) (当 devtools 被激活 `\~/.spring-boot-devtools.properties`).
 2. [测试环境中的 `@TestPropertySource` 注解配置](https://docs.spring.io/spring/docs/5.1.3.RELEASE/javadoc-api/org/springframework/test/context/TestPropertySource.html)
 3. 测试环境中的属性 `properties`：[`@SpringBootTest`](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/api/org/springframework/boot/test/context/SpringBootTest.html) 和 [测试注解](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#boot-features-testing-spring-boot-applications-testing-autoconfigured-tests).
 4. 命令行参数

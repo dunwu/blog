@@ -10,7 +10,7 @@
 - `POP3(Post Office Protocol - Version 3)` ：即邮局协议版本 3 ，用于接收电子邮件的标准协议。
 - `IMAP(Internet Mail Access Protocol)` ：即 Internet 邮件访问协议。是 POP3 的替代协议。
 
-这三种协议都有对应 SSL 加密传输的协议，分别是  **SMTPS **， **POP3S **和  **IMAPS **。
+这三种协议都有对应 SSL 加密传输的协议，分别是  **SMTPS **， **POP3S **和  **IMAPS **。
 
 `MIME(Multipurpose Internet Mail Extensions)` ：即多用途因特网邮件扩展标准。它不是邮件传输协议。但对传输内容的消息、附件及其它的内容定义了格式。
 
@@ -49,18 +49,18 @@ JavaMail 对收发邮件进行了高级的抽象，形成了一些关键的的�
 
 java.util.Properties 类代表一组属性集合。
 
-它的每一个键和值都是 String **类型。**
+它的每一个键和值都是 String **类型。**
 
 由于 JavaMail 需要和邮件服务器进行通信，这就要求程序提供许多诸如服务器地址、端口、用户名、密码等信息， JavaMail 通过 Properties 对象封装这些属性信息。
 
 例： 如下面的代码封装了几个属性信息：
 
 ```java
-Properties prop = new Properties();
-prop.setProperty("mail.debug", "true");
-prop.setProperty("mail.host", "[email protected]");
-prop.setProperty("mail.transport.protocol", "smtp");
-prop.setProperty("mail.smtp.auth", "true");
+Properties prop = new Properties();
+prop.setProperty("mail.debug", "true");
+prop.setProperty("mail.host", "[email protected]");
+prop.setProperty("mail.transport.protocol", "smtp");
+prop.setProperty("mail.smtp.auth", "true");
 ```
 
 针对不同的的邮件协议， JavaMail 规定了服务提供者必须支持一系列属性，
@@ -98,9 +98,9 @@ JavaMail 在 Jar 包的 META-INF 目录下，通过以下文件提供了基本�
 **例：**
 
 ```java
-Properties props = new Properties();
-props.setProperty("mail.transport.protocol", "smtp");
-Session session = Session.getInstance(props);
+Properties props = new Properties();
+props.setProperty("mail.transport.protocol", "smtp");
+Session session = Session.getInstance(props);
 ```
 
 ### javax.mail.Transport 类（邮件传输）
@@ -109,21 +109,21 @@ Session session = Session.getInstance(props);
 
 JavaMail 将这两种不同操作描述为传输（ javax.mail.Transport ）和存储（ javax.mail.Store ），传输对应邮件的发送，而存储对应邮件的接收。
 
-- `getTransport` - Session 类中的 getTransport **() **有多个重载方法，可以用来创建 Transport 对象。
-- `connect` - 如果设置了认证命令—— mail.smtp.auth ，那么使用 Transport 类的 connect 方法连接服务器时，则必须加上用户名和密码。
-- `sendMessage` - Transport 类的 sendMessage 方法用来发送邮件消息。
-- `close` - Transport 类的 close 方法用来关闭和邮件服务器的连接。
+- `getTransport` - Session 类中的 getTransport **() **有多个重载方法，可以用来创建 Transport 对象。
+- `connect` - 如果设置了认证命令—— mail.smtp.auth ，那么使用 Transport 类的 connect 方法连接服务器时，则必须加上用户名和密码。
+- `sendMessage` - Transport 类的 sendMessage 方法用来发送邮件消息。
+- `close` - Transport 类的 close 方法用来关闭和邮件服务器的连接。
 
 ### javax.mail.Store 类（邮件存储 ）
 
-- `getStore` - Session 类中的 getStore ()  有多个重载方法，可以用来创建 Store 对象。
+- `getStore` - Session 类中的 getStore ()  有多个重载方法，可以用来创建 Store 对象。
 - `connect` - 如果设置了认证命令—— mail.smtp.auth ，那么使用 Store 类的 connect 方法连接服务器时，则必须加上用户名和密码。
 - `getFolder` - Store 类的 getFolder 方法可以 获取邮箱内的邮件夹 Folder 对象
 - `close` - Store 类的 close 方法用来关闭和邮件服务器的连接。
 
 ### javax.mail.Message 类（消息对象）
 
-- `javax.mail.Message` - 是个抽象类，只能用子类去实例化，多数情况下为  `javax.mail.internet.MimeMessage`。
+- `javax.mail.Message` - 是个抽象类，只能用子类去实例化，多数情况下为  `javax.mail.internet.MimeMessage`。
 - `MimeMessage` - 代表 MIME 类型的电子邮件消息。
 
 要创建一个 Message ，需要将 Session 对象传递给 `MimeMessage` 构造器：
@@ -155,7 +155,7 @@ MimeMessage message = new MimeMessage(session);
 **例：**
 
 ```java
-Address address = new InternetAddress("[email protected]");
+Address address = new InternetAddress("[email protected]");
 ```
 
 ### Authenticator 类（认证者）
@@ -167,9 +167,9 @@ Address address = new InternetAddress("[email protected]");
 **例：**
 
 ```java
-Properties props = new Properties();
-Authenticator auth = new MyAuthenticator();
-Session session = Session.getDefaultInstance(props, auth);
+Properties props = new Properties();
+Authenticator auth = new MyAuthenticator();
+Session session = Session.getDefaultInstance(props, auth);
 ```
 
 ## 实例
@@ -321,7 +321,7 @@ public static void main(String[] args) throws Exception {
 }
 ```
 
-### 获取邮箱中的邮件  
+### 获取邮箱中的邮件  
 
 ```java
  public static void main(String[] args) throws Exception {

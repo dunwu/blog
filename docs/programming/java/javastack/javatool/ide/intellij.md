@@ -32,17 +32,17 @@ IntelliJ IDEA 作为一个以快捷键为中心的 IDE，为大多数操作建�
 | 操作                                                                                                                                                                                       | 快捷键                             |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
 | [根据名称查找操作](https://www.jetbrains.com/help/idea/navigating-to-action.html)                                                                                                          | `Ctrl+Shift+A`                     |
-| 显示可用  [意图操作](https://www.jetbrains.com/help/idea/intention-actions.html)  列表                                                                                                     | `Alt+Enter`                        |
+| 显示可用  [意图操作](https://www.jetbrains.com/help/idea/intention-actions.html)  列表                                                                                                     | `Alt+Enter`                        |
 | 切换视图 ([Project](https://www.jetbrains.com/help/idea/project-tool-window.html),[Structure](https://www.jetbrains.com/help/idea/structure-tool-window-file-structure-popup.html), etc.). | `Alt+F1`                           |
 | [切换](https://www.jetbrains.com/help/idea/navigating-between-files-and-tool-windows.html)工具窗口和在编辑器中打开的文件                                                                   | `Ctrl+Tab`                         |
-| 显示  [导航栏](https://www.jetbrains.com/help/idea/navigation-bar.html).                                                                                                                   | `Alt+Home`                         |
+| 显示  [导航栏](https://www.jetbrains.com/help/idea/navigation-bar.html).                                                                                                                   | `Alt+Home`                         |
 | [插入代码模板](https://www.jetbrains.com/help/idea/generating-code.html).                                                                                                                  | `Ctrl+J`                           |
 | [在周围插入代码模板](https://www.jetbrains.com/help/idea/creating-code-constructs-using-surround-templates.html).                                                                          | `Ctrl+Alt+J`                       |
 | [Edit an item from the Project or another tree view](https://www.jetbrains.com/help/idea/opening-and-reopening-files-in-the-editor.html).                                                  | `F4`                               |
 | [注释](https://www.jetbrains.com/help/idea/commenting-and-uncommenting-blocks-of-code.html)                                                                                                | `Ctrl+/` `Ctrl+Shift+/`            |
 | [根据名称查找类或文件](https://www.jetbrains.com/help/idea/navigating-to-class-file-or-symbol-by-name.html).                                                                               | `Ctrl+N` `Ctrl+Shift+N`            |
 | [拷贝当前行或指定的行](https://www.jetbrains.com/help/idea/adding-deleting-and-moving-code-elements.html#duplicate).                                                                       | `Ctrl+D`                           |
-| [增加或减少选中的表达式](https://www.jetbrains.com/help/idea/selecting-text-in-the-editor.html).                                                                                           | `Ctrl+W` and `Ctrl+Shift+W`        |
+| [增加或减少选中的表达式](https://www.jetbrains.com/help/idea/selecting-text-in-the-editor.html).                                                                                           | `Ctrl+W` and `Ctrl+Shift+W`        |
 | [在当前文件查找或替换](https://www.jetbrains.com/help/idea/finding-and-replacing-text-in-file.html).                                                                                       | `Ctrl+F` `Ctrl+R`                  |
 | [在项目中或指定的目录中查找或替换](https://www.jetbrains.com/help/idea/finding-and-replacing-text-in-project.html)                                                                         | `Ctrl+Shift+F` `Ctrl+Shift+R`      |
 | [全局搜索](https://www.jetbrains.com/help/idea/searching-everywhere.htmls)                                                                                                                 | 双击 `Shift`                       |
@@ -73,7 +73,7 @@ IntelliJ IDEA 作为一个以快捷键为中心的 IDE，为大多数操作建�
 
 | 快捷键                  | 介绍                                                                                                     |
 | ----------------------- | -------------------------------------------------------------------------------------------------------- |
-| Ctrl + Space            | 基础代码补全，默认在 Windows 系统上被输入法占用，需要进行修改，建议修改为  Ctrl + 逗号`（必备）`         |
+| Ctrl + Space            | 基础代码补全，默认在 Windows 系统上被输入法占用，需要进行修改，建议修改为  Ctrl + 逗号`（必备）`         |
 | Ctrl + Alt + Space      | 类名自动完成                                                                                             |
 | Ctrl + Shift + Enter    | 自动结束代码，行末自动添加分号`（必备）`                                                                 |
 | Ctrl + P                | 方法参数提示显示                                                                                         |

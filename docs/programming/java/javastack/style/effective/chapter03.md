@@ -22,11 +22,11 @@
 
 ### equals 方法实现了等价关系（equivalence relation）
 
-- 自反性: *x.equals(x)==true*
-- 对称性: *x.equals(y)==y.equals(x)*
-- 传递性: *x.equals(y)==y.equals(z)==z.equals(x)*
-- 一致性: *x.equals(y)==x.equals(y)==x.equals(y)==...*
-- 非空性: *x.equals(null)->false*
+- 自反性: *x.equals(x)==true*
+- 对称性: *x.equals(y)==y.equals(x)*
+- 传递性: *x.equals(y)==y.equals(z)==z.equals(x)*
+- 一致性: *x.equals(y)==x.equals(y)==x.equals(y)==...*
+- 非空性: *x.equals(null)->false*
 
 ### 要点
 
@@ -89,9 +89,9 @@ public class ColorPoint {
 
 Cloneable interface does not contain methods If a class implements Cloneable, Object's clone method returns a field-by-field copy of the object. Otherwise it throws CloneNotSupportedException.
 
-If you override the clone method in a nonfinal class, you should return an object obtained by invoking *super.clone*. A class that implements *Cloneable* is expected to provide a properly functioning public *clone* method.
+If you override the clone method in a nonfinal class, you should return an object obtained by invoking *super.clone*. A class that implements *Cloneable* is expected to provide a properly functioning public *clone* method.
 
-Simple clone method if object does **not** contain fields that refer to mutable objects.
+Simple clone method if object does **not** contain fields that refer to mutable objects.
 
 ```
 	@Override public PhoneNumber clone() {
@@ -104,10 +104,10 @@ Simple clone method if object does **not** contain fields that refer to mutabl
 	}
 ```
 
-If object **contains** fields that refer to mutable objects, we need another solution. Mutable fields will point to same objects in memory and the original and the cloned method will share these objects.
+If object **contains** fields that refer to mutable objects, we need another solution. Mutable fields will point to same objects in memory and the original and the cloned method will share these objects.
 
-*clone* is another constructor and therefore it must ensure not harming the original object and establishing invariants.
-Calling *clone* recursively in the mutable objects is the easiest way.
+*clone* is another constructor and therefore it must ensure not harming the original object and establishing invariants.
+Calling *clone* recursively in the mutable objects is the easiest way.
 
 ```
 	@Override public Stack clone() {
@@ -122,13 +122,13 @@ Calling *clone* recursively in the mutable objects is the easiest way.
 	}
 ```
 
-Mutable objects and finals: The *clone* architecture is incompatible with normal use of final fields referring to mutable objects. More complex objects would need specific approaches where recursively calling *clone* won't work.
+Mutable objects and finals: The *clone* architecture is incompatible with normal use of final fields referring to mutable objects. More complex objects would need specific approaches where recursively calling *clone* won't work.
 
-A *clone* method should not invoke any nonfinal methods on the clone under construction ([Item 17](https://github.com/HugoMatilla/Effective-JAVA-Summary#17-design-and-document-for-inheritance-or-else-prohibit-it)).
+A *clone* method should not invoke any nonfinal methods on the clone under construction ([Item 17](https://github.com/HugoMatilla/Effective-JAVA-Summary#17-design-and-document-for-inheritance-or-else-prohibit-it)).
 
-Object's *clone* method is declared to throw *CloneNotSupportedException*, but overriding clone methods can omit this declaration.
-Public *clone* methods should omit it. ([Item 59](https://github.com/HugoMatilla/Effective-JAVA-Summary#59-avoid-unnecessary-use-of-checked-exceptions)).
-If a class overrides clone, the overriding method should mimic the behavior of *Object.clone*:
+Object's *clone* method is declared to throw *CloneNotSupportedException*, but overriding clone methods can omit this declaration.
+Public *clone* methods should omit it. ([Item 59](https://github.com/HugoMatilla/Effective-JAVA-Summary#59-avoid-unnecessary-use-of-checked-exceptions)).
+If a class overrides clone, the overriding method should mimic the behavior of *Object.clone*:
 
 - it should be declared protected,
 - it should be declared to throw CloneNotSupportedException,
@@ -136,13 +136,13 @@ If a class overrides clone, the overriding method should mimic the behavior of 
 
 Subclasses are free to implement Cloneable or not, just as if they extended Object directly
 
-*clone* method must be properly synchronized just like any other method ([Item 66](https://github.com/HugoMatilla/Effective-JAVA-Summary#66-synchronize-access-to-shared-mutable-data)).
+*clone* method must be properly synchronized just like any other method ([Item 66](https://github.com/HugoMatilla/Effective-JAVA-Summary#66-synchronize-access-to-shared-mutable-data)).
 
 Summary: classes that implement Cloneable should create a method that:
 
 - override clone
 - return type is the class
-- call *super.clone*
+- call *super.clone*
 - fix fields that need to be fixed
 
 Better provide an alternative of object copying, or don't provide it at all.
@@ -167,25 +167,25 @@ These alternatives:
 - don't throw unnecessary checked exceptions
 - don't require casts.
 
-Furthermore they can use its Interface-based copy constructors and factories, *conversion constructors* and *conversion factories*and allow clients to choose the implementation type `public HashSet(Set set) -> TreeSet;`
+Furthermore they can use its Interface-based copy constructors and factories, *conversion constructors* and *conversion factories*and allow clients to choose the implementation type `public HashSet(Set set) -> TreeSet;`
 
 ## 第12条：考虑实现Comparable接口
 
-*Comparable* is an interface. It is not declared in *Object*
+*Comparable* is an interface. It is not declared in *Object*
 
-Sorting an array of objects that implement *Comparable* is as simple as `Arrays.sort(a);`
+Sorting an array of objects that implement *Comparable* is as simple as `Arrays.sort(a);`
 
 The class will interoperate with many generic algorithms and collection implementations that depend on this interface. You gain lot of power with small effort.
 
 Follow this provisions (Reflexive, Transitive, Symmetric):
 
-1. `if a > b then b < a` `if a == b then b == a` `if a < b then b > a`
+1. `if a > b then b < a` `if a == b then b == a` `if a < b then b > a`
 2. `if a > b and b > c then a > c`
 3. `if a == b and b == c then a == c`
-4. Strong suggestion: `a.equals(b) == a.compareTo(b)`
+4. Strong suggestion: `a.equals(b) == a.compareTo(b)`
 
-For integral primitives use `<` and `>`operators.
+For integral primitives use `<` and `>`operators.
 
-For floating-point fields use *Float.compare* or *Double.compare*
+For floating-point fields use *Float.compare* or *Double.compare*
 
 For arrays start with the most significant field and work your way down.

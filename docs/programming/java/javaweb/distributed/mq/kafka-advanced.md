@@ -289,11 +289,11 @@ Kafka 允许您轻松分离不同（微）服务之间的通信。利用 Streams
 
 Broker 端在缓存中保存了这 seq number，对于接收的每条消息，如果其序号比 Broker 缓存中序号大于 1 则接受它，否则将其丢弃。这样就可以实现了消息重复提交了。但是，只能保证单个 Producer 对于同一个<Topic, Partition>的 Exactly Once 语义。不能保证同一个 Producer 一个 topic 不同的 partion 幂等。
 
-![1](http://www.heartthinkdo.com/wp-content/uploads/2018/05/1-1.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/1-1.png"/></div><br>
 
 实现幂等之后
 
-![2](http://www.heartthinkdo.com/wp-content/uploads/2018/05/2.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/2.png"/></div><br>
 
 #### 7.1.2. 生成 PID 的流程
 
@@ -740,11 +740,11 @@ producer 提供了 initTransactions, beginTransaction, sendOffsets, commitTransa
 
 **一个 app 有一个 tid，同一个应用的不同实例 PID 是一样的，只是 epoch 的值不同**。如：
 
-![3](http://www.heartthinkdo.com/wp-content/uploads/2018/05/3-1.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/3-1.png"/></div><br>
 
 同一份代码运行两个实例，分步执行如下：_在实例 1 没有进行提交事务前，开始执行实例 2 的初始化事务_
 
-![4](http://www.heartthinkdo.com/wp-content/uploads/2018/05/4-1-1024x458.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/4-1-1024x458.png"/></div><br>
 
 **step1 实例 1-初始化事务**。的打印出对应 productId 和 epoch，信息如下：
 
@@ -764,7 +764,7 @@ org.apache.kafka.common.errors.ProducerFencedException: Producer attempted an op
 
 为了避免这种错误，同一个事务 ID，只有保证如下顺序 epch 小 producer 执行 init-transaction 和 committransaction，然后 epoch 较大的 procuder 才能开始执行 init-transaction 和 commit-transaction，如下顺序：
 
-![80061024](http://www.heartthinkdo.com/wp-content/uploads/2018/05/80061024.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/80061024.png"/></div><br>
 
 有了 transactionId 后，Kafka 可保证：
 
@@ -834,7 +834,7 @@ protected Producer<K, V> createTransactionalProducer() {
 
 #### 8.5.4. Consume-transform-Produce 的流程
 
-![Snip20180504_56](http://www.heartthinkdo.com/wp-content/uploads/2018/05/Snip20180504_56.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/Snip20180504_56.png"/></div><br>
 
 **流程 1** **：**查找 Tranaction Corordinator。
 
@@ -874,7 +874,7 @@ AddPartitionsToTxnRequest => TransactionalId PID Epoch [Topic [Partition]]
 
 生产者发送数据，虽然没有还没有执行 commit 或者 absrot，但是此时消息已经保存到 kafka 上，可以参考如下图断点位置处，此时已经可以查看到消息了，而且即使后面执行 abort，消息也不会删除，只是更改状态字段标识消息为 abort 状态。
 
-![62059279](http://www.heartthinkdo.com/wp-content/uploads/2018/05/62059279-1024x437.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/62059279-1024x437.png"/></div><br>
 
 **流程 4.3：** AddOffsetCommitsToTxnRequest
 
@@ -944,7 +944,7 @@ WriteTxnMarkersRequest => [CoorinadorEpoch PID Epoch Marker [Topic [Partition]]]
 
 kafka 文件主要包括 broker 的 data（主题：test）、事务协调器对应的 transaction_log（主题：\_\_tranaction_state）、偏移量信息（主题:\_consumer_offsets）三种类型。如下图
 
-![1](http://www.heartthinkdo.com/wp-content/uploads/2018/05/1-2-207x300.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/1-2-207x300.png"/></div><br>
 
 这三种文件类型其实都是 topic 的分区，所以对于每一个目录都包含*.log、*.index、_.timeindex、_.txnindex 文件（仅这个文件是为了实现事务属性引入的）。segment 和 segmengt 对应 index、timeindex、txnindex 文件命名中序号表示的是第几个消息。如下图中，00000000000000368769.index 和 00000000000000568769.log 中“368969”就是表示文件中存储的第一个消息是 468969 个消息。
 
@@ -953,7 +953,7 @@ kafka 文件主要包括 broker 的 data（主题：test）、事务协调器对
 - baseOffset：索引对应 segment 文件中的第几条 message。
 - position：在 segment 中的绝对位置。
 
-![67930538](http://www.heartthinkdo.com/wp-content/uploads/2018/05/67930538-300x179.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/67930538-300x179.png"/></div><br>
 
 查看文件内容：
 
@@ -967,7 +967,7 @@ Trasaction markers 就是 kafka 为了实现事务定义的 Controll Message。�
 
 Transaction Log 如下放置在“\_tranaction_state”主题下面，默认是 50 个分区，每一个分区中文件格式和 broker 存储消息是一样的,都有 log/index/timeindex 文件，如下：
 
-![57646045](http://www.heartthinkdo.com/wp-content/uploads/2018/05/57646045.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/57646045.png"/></div><br>
 
 #### 8.5.5. 消费读取事务消息(READ_COMMITED)
 
@@ -982,7 +982,7 @@ Consumer 为了实现事务，新增了一个 isolation.level 配置，有两个
 
 如下图中，按顺序保存到 broker 中消息有：事务 1 消息 T1-M1、对于事务 2 的消息有 T2-M1、事务 1 消息 T1-M2、非事务消息 M1，最终到达 client 端的循序是 M1-> T2-M1 -> T1-M1 -> T1-M2。
 
-![84999567](http://www.heartthinkdo.com/wp-content/uploads/2018/05/84999567.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/84999567.png"/></div><br>
 
 具体步骤如下：
 
@@ -1042,11 +1042,11 @@ ThrottleTime [TopicName [Partition ErrorCode HighwaterMarkOffset AbortedTransact
 
 - 存放数据的 log
 
-![1](http://www.heartthinkdo.com/wp-content/uploads/2018/05/1-3.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/1-3.png"/></div><br>
 
 - 存放 Absort Index 的内容如下：
 
-![3](http://www.heartthinkdo.com/wp-content/uploads/2018/05/3-2.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/3-2.png"/></div><br>
 
 执行读取数据流程如下：
 
@@ -1054,23 +1054,23 @@ ThrottleTime [TopicName [Partition ErrorCode HighwaterMarkOffset AbortedTransact
 
 - 首先，broker 读取 data log 中数据
 
-![11](http://www.heartthinkdo.com/wp-content/uploads/2018/05/11-1.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/11-1.png"/></div><br>
 
 - 然后，broker 依次读取 abort index 的内容，发现 LSO 大于等于 4 就停止。如上可以获取到 P2 对应的 offset 从 2 到 5 的消息都是被丢弃的：
 
-​ ![12](http://www.heartthinkdo.com/wp-content/uploads/2018/05/12-1.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/12-1.png"/></div><br>
 
 - 最后，broker 将上面 data log 和 abort index 中满足条件的数据返回给 consumer。
 
 **step2 ：**在 consumer 端根据 absrot index 中返回的内容，过滤丢弃的消息，最终给用户消息为
 
-![13](http://www.heartthinkdo.com/wp-content/uploads/2018/05/13-300x103.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/13-300x103.png"/></div><br>
 
 ##### Absorted Transaction Index
 
 在 broker 中数据中新增一个索引文件，保存 aborted tranasation 对应的 offsets，只有事务执行 abort 时，才会往这个文件新增一个记录，初始这个文件是不存在的，只有第一条 abort 时，才会创建这个文件。
 
-![2](http://www.heartthinkdo.com/wp-content/uploads/2018/05/2-1-300x149.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/2-1-300x149.png"/></div><br>
 
 这个索引文件结构的每一行结构是 TransactionEntry：
 
@@ -1090,11 +1090,11 @@ Broker 在缓存中维护了所有处于运行状态的事务对应的 initial o
 
 举例说明下 LSO 的计算，对于一个 data log 中内如如下
 
-![31](http://www.heartthinkdo.com/wp-content/uploads/2018/05/31.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/31.png"/></div><br>
 
 对应的 abort index 文件中内如如下：**LSO 是递增的**
 
-![32](http://www.heartthinkdo.com/wp-content/uploads/2018/05/32.png)
+<br><div align="center"><img src="http://www.heartthinkdo.com/wp-content/uploads/2018/05/32.png"/></div><br>
 
 (2)第二步 如果事务是提交状态，则在索引文件中新增 TransactionEntry。
 
