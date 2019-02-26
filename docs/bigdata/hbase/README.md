@@ -10,9 +10,9 @@
     - [Regin 服务器](#regin-服务器)
     - [ZooKeeper](#zookeeper)
 - [HBase 和 RDBMS](#hbase-和-rdbms)
-- [引申和引用](#引申和引用)
-    - [引申](#引申)
-    - [引用](#引用)
+- [更多内容](#更多内容)
+    - [扩展阅读](#扩展阅读)
+    - [参考资料](#参考资料)
 
 <!-- /TOC -->
 
@@ -104,14 +104,14 @@ HBase 使用 ZooKeeper 作为分布式协调服务来维护集群中的服务器
 | 它反规范化的数据。                                  | 它具有规范化的数据。                       |
 | 它用于半结构以及结构化数据是非常好的。              | 用于结构化数据非常好。                     |
 
-## 引申和引用
+## 更多内容
 
-### 引申
+### 扩展阅读
 
 - [HBase 命令](hbase-cli.md)
 - [HBase 配置](hbase-configuration.md)
 
-### 引用
+### 参考资料
 
 - [HBase 官网](http://hbase.apache.org/)
 - [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf)

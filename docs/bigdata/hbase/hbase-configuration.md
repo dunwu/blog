@@ -73,6 +73,6 @@ hbase-site.xm 配置如下：
 
 ## 引用和引申
 
-### 引申
+### 扩展阅读
 
 - [Apache HBase Configuration](http://hbase.apache.org/book.html#configuration)

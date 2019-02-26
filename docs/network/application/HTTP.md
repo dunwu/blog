@@ -9,7 +9,7 @@
 - [客户端请求消息](#客户端请求消息)
 - [服务器响应消息](#服务器响应消息)
 - [HTTP 状态码](#http-状态码)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -205,7 +205,7 @@ HTTP 状态码由三个十进制数字组成，第一个十进制数字定义了
 | 504    | Gateway Time-out                |
 | 505    | HTTP Version not supported      |
 
-## 引申和引用
+## 更多内容
 
 - http://blog.csdn.net/gueter/article/details/1524447
 - http://www.runoob.com/http/http-intro.html

@@ -11,7 +11,7 @@
     - [配置数据源](#配置数据源)
     - [注入 JdbcTemplate](#注入-jdbctemplate)
     - [完整示例](#完整示例)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -190,7 +190,7 @@ public class UserDAOImpl implements UserDAO {
 
 运行应用或单元测试例前，请先执行 `codes/data/sbe-data-jdbc/sql/ddl.sql`
 
-## 引申和引用
+## 更多内容
 
 **引申**
 

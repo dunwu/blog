@@ -8,7 +8,7 @@
 
 - [Quick Start](#quick-start)
 - [简介](#简介)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -44,7 +44,7 @@ Cassandra 的主要特点就是它不是一个数据库，而是由一堆数据�
 - **列表数据结构** - 在混合模式可以将超级列添加到 5 维。对于每个用户的索引，这是非常方便的。
 - **分布式写操作** - 有可以在任何地方任何时间集中读或写任何数据。并且不会有任何单点失败。
 
-## 引申和引用
+## 更多内容
 
 - [Cassandra 官网](http://cassandra.apache.org)
 - [Cassandra Github](https://github.com/apache/cassandra)

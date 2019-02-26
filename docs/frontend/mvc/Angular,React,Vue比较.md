@@ -18,7 +18,7 @@
     - [学习曲线](#学习曲线)
 - [总结](#总结)
     - [如何选择 React、Vue、Angular？](#如何选择-reactvueangular)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -139,6 +139,6 @@ Vue 学习起来很容易。
 - 如果你喜欢 Vue 但是害怕有限的技术生态系统：React
 - 如果你不能决定，先学习 React，然后 Vue，然后 Angular。
 
-## 引申和引用
+## 更多内容
 
 - [[译] 2017 年比较 Angular、React、Vue 三剑客](https://juejin.im/post/5a0d5df1f265da43062a542f)

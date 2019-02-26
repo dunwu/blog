@@ -8,7 +8,7 @@
     - [通过 Spring Data 访问 Elasticsearch](#通过-spring-data-访问-elasticsearch)
     - [Elasticsearch Repositories](#elasticsearch-repositories)
 - [源码](#源码)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -98,7 +98,7 @@ cd target
 java -jar sbe-data-elasticsearch.jar
 ```
 
-## 引申和引用
+## 更多内容
 
 **引申**
 

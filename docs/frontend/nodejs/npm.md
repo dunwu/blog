@@ -24,7 +24,7 @@
 - [npm 扩展](#npm-扩展)
     - [cnpm](#cnpm)
     - [nrm](#nrm)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -561,7 +561,7 @@ Usage: nrm [options] [command]
     -V, --version  output the version number
 ```
 
-## 引申和引用
+## 更多内容
 
 > :books: 拓展阅读
 >

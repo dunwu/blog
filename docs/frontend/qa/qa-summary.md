@@ -10,7 +10,7 @@
     - [[EditorConfig](https://editorconfig.org/) :heavy_check_mark:](#editorconfighttpseditorconfigorg-heavy_check_mark)
     - [[Standard](https://github.com/feross/standard) :heavy_check_mark:](#standardhttpsgithubcomferossstandard-heavy_check_mark)
     - [[TSlint](https://github.com/palantir/tslint)](#tslinthttpsgithubcompalantirtslint)
-    - [引申和引用](#引申和引用)
+    - [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -88,6 +88,6 @@ JavaScript 静态检查工具。
 
 TypeScript 静态检查工具。
 
-## 引申和引用
+## 更多内容
 
 > :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)

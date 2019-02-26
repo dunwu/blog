@@ -10,7 +10,7 @@
     - [settings.xml 配置](#settingsxml-配置)
     - [pom.xml 配置](#pomxml-配置)
 - [部署和发布](#部署和发布)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -294,7 +294,7 @@ gpg:              unchanged: 1
 
 > 说明：-P 参数后面的 sonatype 需要和 pom.xml 中 `<profile>` 的 id 保持一致，才能激活 profile。
 
-## 引申和引用
+## 更多内容
 
 - https://www.jianshu.com/p/8c3d7fb09bce
 - http://www.ruanyifeng.com/blog/2013/07/gpg.html

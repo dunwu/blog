@@ -20,7 +20,7 @@
     - [环境属性](#环境属性)
 - [Spring Boot 中的日志配置](#spring-boot-中的日志配置)
 - [源码](#源码)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -190,7 +190,7 @@ logging.register-shutdown-hook=false # Register a shutdown hook for the logging 
 
 分别展示如何在 Spring Boot 中使用 `log4j`, `log4j2`, `logback` 记录日志。
 
-## 引申和引用
+## 更多内容
 
 **引申**
 

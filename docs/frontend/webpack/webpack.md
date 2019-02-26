@@ -17,7 +17,7 @@
 - [webpack.config.js](#webpackconfigjs)
     - [单入口(Entry)](#单入口entry)
     - [多入口(Entry)](#多入口entry)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -186,7 +186,7 @@ $ webpack
 
 > :flashlight: **示例：** ([**DEMO02**](https://github.com/dunwu/frontend-tutorial/tree/master/codes/chapter03/webpack2/demo02))
 
-## 引申和引用
+## 更多内容
 
 > :books: 拓展阅读
 >

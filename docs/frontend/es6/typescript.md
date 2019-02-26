@@ -64,7 +64,7 @@ tsc greeter.ts
 
 在浏览器里打开 greeter.html 运行这个应用。
 
-## 引申和引用
+## 更多内容
 
 > :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 

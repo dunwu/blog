@@ -365,7 +365,7 @@ p {
 
 > :flashlight: **示例 DEMO08：** ([**DEMO**](https://dunwu.github.io/frontend-tutorial/chapter03/webpack2/demo08/dist/index.html) / [**SOURCE**](https://github.com/dunwu/frontend-tutorial/tree/master/codes/chapter03/webpack2/demo08))
 
-## 引申和引用
+## 更多内容
 
 > :books: 拓展阅读
 >

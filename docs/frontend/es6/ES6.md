@@ -27,7 +27,7 @@
     - [Promises](#promises)
     - [Reflect API](#reflect-api)
     - [Tail Calls(尾调用)](#tail-calls尾调用)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -906,7 +906,7 @@ function factorial(n, acc = 1) {
 factorial(100000)
 ```
 
-## 引申和引用
+## 更多内容
 
 > :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 

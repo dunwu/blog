@@ -19,7 +19,7 @@
     - [jar 激活 profile](#jar-激活-profile)
     - [在 Java 代码中激活 profile](#在-java-代码中激活-profile)
 - [源码](#源码)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -204,7 +204,7 @@ cd target
 java -jar -Dspring.profiles.active=prod sbe-core-profile.jar
 ```
 
-## 引申和引用
+## 更多内容
 
 **引申**
 

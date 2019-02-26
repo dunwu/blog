@@ -31,7 +31,7 @@ ESLint 是一种用于识别和报告 ECMAScript / JavaScript 代码中的模式
 - [ESLint 命令](#eslint-命令)
     - [选项](#选项)
     - [.eslintignore 文件](#eslintignore-文件)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -1586,7 +1586,7 @@ node_modules/*
 
 ESLint 默认忽略的模式分解和目录的更多详细信息可以在  [Configuring ESLint](https://cn.eslint.org/docs/user-guide/configuring#ignoring-files-and-directories)  中找到。
 
-## 引申和引用
+## 更多内容
 
 > :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 

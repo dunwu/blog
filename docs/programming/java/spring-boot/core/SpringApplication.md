@@ -12,7 +12,7 @@
 - [使用 ApplicationRunner 或 CommandLineRunner](#使用-applicationrunner-或-commandlinerunner)
 - [退出应用](#退出应用)
 - [管理功能](#管理功能)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -226,7 +226,7 @@ public class ExitCodeApplication {
 
 > 注：如果想知道应用使用的 HTTP 端口是什么，可以通过 local.server.port 获取。
 
-## 引申和引用
+## 更多内容
 
 **引申**
 

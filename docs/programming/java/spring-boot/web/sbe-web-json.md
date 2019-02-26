@@ -12,7 +12,7 @@
     - [GSON 配置](#gson-配置)
 - [Spring Boot 中使用 Fastjson](#spring-boot-中使用-fastjson)
 - [示例源码](#示例源码)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -259,7 +259,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 完整示例：[源码](https://github.com/dunwu/spring-boot-tutorial/tree/master/codes/web/sbe-web-json)
 
-## 引申和引用
+## 更多内容
 
 **引申**
 

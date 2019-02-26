@@ -25,7 +25,7 @@
 - [4. 执行 Babel 生成的代码](#4-执行-babel-生成的代码)
     - [4.1. `babel-polyfill`](#41-babel-polyfill)
     - [4.2. `babel-runtime`](#42-babel-runtime)
-- [5. 引申和引用](#5-引申和引用)
+- [5. 更多内容](#5-更多内容)
 
 <!-- /TOC -->
 
@@ -582,7 +582,7 @@ let Foo = (function() {
 
 这样就不需要把  `_classCallCheck`  和  `_createClass`  这两个助手方法放进每一个需要的文件里去了。
 
-## 5. 引申和引用
+## 5. 更多内容
 
 > :package: 本文归档在 [我的前端技术教程系列：frontend-tutorial](https://github.com/dunwu/frontend-tutorial)
 

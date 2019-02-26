@@ -37,7 +37,7 @@
 - EditorConfig for VS Code
 - Git History
 
-## 引申和引用
+## 更多内容
 
 - 官方
   - https://github.com/Microsoft/vscode

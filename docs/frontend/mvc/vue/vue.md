@@ -4,7 +4,7 @@
 
 - [简介](#简介)
     - [vue 生命周期](#vue-生命周期)
-- [引申和引用](#引申和引用)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -35,7 +35,7 @@ var app = new Vue({
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/front/mvc/vue/vue-lifecycle.png"/></div><br>
 
-## 引申和引用
+## 更多内容
 
 - 官方
   - [vue Github](https://github.com/vuejs/vue)
