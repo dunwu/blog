@@ -8,19 +8,19 @@
 
 ## [编程语言](docs/programming)
 
-- [Java](docs/programming/java)
+- [Java](docs/programming/java) - Java 语法、JVM、并发编程、JavaEE、Spring、Spring Boot、Mybatis
 - [Python](docs/programming/python.md)
 - [Shell](docs/programming/shell)
 
 ## [算法和数据结构](docs/algorithm)
 
-- [数据结构](docs/algorithm/data-structure)
+- [数据结构](docs/algorithm/data-structure) - 关键词：数组、线性表、栈、队列、哈希、树、图、查找、排序
 - 算法（:construction: 待整理补充）
 
 ## [数据库](docs/database)
 
-- [关系型数据库](docs/database/sql) - `mysql`, `oracle`, `h2`, `flyway`
-- [非关系型数据库](docs/database/nosql) - `redis`, `mongodb`
+- [关系型数据库](docs/database/sql) - Mysql、Oracle、H2、Flyway
+- [非关系型数据库](docs/database/nosql) - Redis、Mongodb
 
 ## [计算机网络](docs/network)
 
@@ -33,13 +33,13 @@
 
 ## [操作系统](docs/os)
 
-- [Linux](docs/os/linux)
+- [Linux](docs/os/linux) - 文件目录管理、文件内容查看、文件压缩和解压、用户管理、系统管理、网络管理、硬件管理、软件管理
 - [Windows](docs/os/windows)
 - [Docker](docs/os/docker)
 
 ## [Web](docs/web)
 
-- [Nginx](docs/web/nginx)
+- [Nginx](docs/web/nginx) - 关键词：反向代理、负载均衡、缓存、跨域
 
 ## [前端](docs/frontend)
 
@@ -51,16 +51,16 @@
 - [qa](docs/frontend/qa) - `eslint`
 - [tool](docs/frontend/tool) - `gitbook`
 
-## [大数据](docs/big-data)
+## [大数据](docs/bigdata)
 
-- [HDFS](docs/big-data/HDFS.md)
-- [YARN](docs/big-data/YARN.md)
-- [MapReduce](docs/big-data/MapReduce.md)
+- [HDFS](docs/bigdata/HDFS.md)
+- [YARN](docs/bigdata/YARN.md)
+- [MapReduce](docs/bigdata/MapReduce.md)
 
 ## [设计](docs/design)
 
-- [UML](docs/design/uml)
-- [设计模式](docs/design/design-patterns)
-- [重构](docs/design/refactor)
+- [UML](docs/design/uml) - 关键词：类图、对象图、包图、组件图、部署图、复合结构图、活动图、状态图、用例图、通信图、交互概述图、时序图、时间图
+- [设计模式](docs/design/design-patterns) - 关键词：简单工厂模式、单例模式、工厂方法模式、抽象工厂模式、建造者模式、原型模式、适配器模式、桥接模式、装饰者模式、组合模式、外观模式、享元模式、代理模式、模板方法模式、命令模式、迭代器模式、观察者模式、解释器模式、中介者模式、职责链模式、备忘录模式、策略模式、访问者模式、状态模式
+- [重构](docs/design/refactor) - 关键词：过长函数、过大的类、基本类型偏执、过长参数列、数据泥团、switch 声明、临时字段、被拒绝的馈赠、异曲同工的类、发散式变化、霰弹式修改、平行继承体系、过多的注释、重复代码、冗余类、纯稚的数据类、夸夸其谈未来性、依恋情结、狎昵关系、过度耦合的消息链、中间人、不完美的库类
 
 ## [软件工程](docs/software)
