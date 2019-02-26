@@ -56,6 +56,7 @@
 - [HDFS](docs/bigdata/HDFS.md)
 - [YARN](docs/bigdata/YARN.md)
 - [MapReduce](docs/bigdata/MapReduce.md)
+- [HBase](docs/bigdata/hbase) - 建立在 HDFS 基础上的面向列的分布式数据库。
 
 ## [设计](docs/design)
 
