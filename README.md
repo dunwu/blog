@@ -19,8 +19,17 @@
 
 ## [数据库](docs/database)
 
-- [关系型数据库](docs/database/sql) - Mysql、Oracle、H2、Flyway
-- [非关系型数据库](docs/database/nosql) - Redis、Mongodb
+- [关系型数据库](docs/database/sql)
+  - [关系型数据库 SQL 基本语法](docs/database/sql/sql.md)
+  - [关系型数据库基本原理](docs/database/sql/关系型数据库基本原理.md)
+  - [关系型数据库面试题](docs/database/sql/关系型数据库面试题.md)
+  - [Mysql](docs/database/sql/rdbms/mysql)
+  - [PostgreSQL](docs/database/sql/rdbms/postgresql.md)
+  - [H2](docs/database/sql/rdbms/h2.md)
+- [非关系型数据库](docs/database/nosql)
+  - [Redis](docs/database/nosql/redis)
+  - [MongoDB](docs/database/nosql/mongodb)
+  - [Cassandra](docs/database/nosql/Cassandra.md)
 
 ## [计算机网络](docs/network)
 

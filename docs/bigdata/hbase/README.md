@@ -113,6 +113,14 @@ HBase 使用 ZooKeeper 作为分布式协调服务来维护集群中的服务器
 
 ### 参考资料
 
+#### 官方
+
 - [HBase 官网](http://hbase.apache.org/)
+- [HBase 官方文档](https://hbase.apache.org/book.html)
+- [HBase 官方文档中文版](http://abloz.com/hbase/book.html)
+- [HBase API](https://hbase.apache.org/apidocs/index.html)
+
+#### 文章
+
 - [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf)
 - https://mapr.com/blog/in-depth-look-hbase-architecture/

@@ -1,14 +1,4 @@
----
-title: Mysql
-date: 2018/07/02
-categories:
-- database
-tags:
-- database
-- mysql
----
-
-# Mysql
+# Mysql 原理
 
 > 关键词：存储引擎,数据类型,事务,MVCC,索引,执行计划,主从复制
 
