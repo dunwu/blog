@@ -62,10 +62,12 @@ $ yum makecache
 （3）查看 rpm 安装状态
 
 ```bash
-$ yum repolist enabled | grep mysql.*
-mysql-connectors-community/x86_64 MySQL Connectors Community                  65
-mysql-tools-community/x86_64      MySQL Tools Community                       69
-mysql80-community/x86_64          MySQL 8.0 Community Server                  33
+$ yum search mysql | grep server
+mysql-community-common.i686 : MySQL database common files for server and client
+mysql-community-common.x86_64 : MySQL database common files for server and
+mysql-community-test.x86_64 : Test suite for the MySQL database server
+                       : administering MySQL servers
+mysql-community-server.x86_64 : A very fast and reliable SQL database server
 ```
 
 通过 yum 安装 mysql 有几个重要目录：
