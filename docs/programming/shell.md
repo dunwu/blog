@@ -1,14 +1,3 @@
----
-title: Shell 快速指南
-date: 2017/11/20
-categories:
-  - linux
-tags:
-  - linux
-  - shell
-  - bash
----
-
 # Shell 快速指南
 
 ```
@@ -37,7 +26,7 @@ tags:
     - [函数](#函数)
     - [流和重定向](#流和重定向)
     - [Debugging](#debugging)
-    - [资料](#资料)
+- [更多内容](#更多内容)
 
 <!-- /TOC -->
 
@@ -1184,7 +1173,9 @@ set +x
 echo "xtrace is turned off again"
 ```
 
-### 资料
+## 更多内容
+
+> :notebook: 本文已归档到：https://github.com/dunwu/notes
 
 - [awesome-shell](https://github.com/alebcay/awesome-shell)，shell 资源列表
 - [awesome-bash](https://github.com/awesome-lists/awesome-bash)，bash 资源列表

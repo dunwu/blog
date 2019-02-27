@@ -6,4 +6,4 @@
 
 - [Java](java)
 - [Python](python.md)
-- [Shell](shell)
+- [Shell](shell.md) - 关键词：解释器、注释、变量、Shell 扩展、数组、运算符、语句、函数、流和重定向、Debugging
