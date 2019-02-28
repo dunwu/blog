@@ -21,8 +21,7 @@
 - [13. 存储过程](#13-存储过程)
 - [14. 游标](#14-游标)
 - [15. 触发器](#15-触发器)
-- [16. 知识点小结](#16-知识点小结)
-- [17. 参考资料](#17-参考资料)
+- [16. 更多内容](#16-更多内容)
 
 <!-- /TOC -->
 
@@ -1025,34 +1024,34 @@ select @s as sum;
 ```sql
 DELIMITER $
 CREATE  PROCEDURE getTotal()
-BEGIN  
+BEGIN
     DECLARE total INT;
-    -- 创建接收游标数据的变量  
-    DECLARE sid INT;  
-    DECLARE sname VARCHAR(10);  
-    -- 创建总数变量  
-    DECLARE sage INT;  
-    -- 创建结束标志变量  
-    DECLARE done INT DEFAULT false;  
-    -- 创建游标  
-    DECLARE cur CURSOR FOR SELECT id,name,age from cursor_table where age>30;  
-    -- 指定游标循环结束时的返回值  
+    -- 创建接收游标数据的变量
+    DECLARE sid INT;
+    DECLARE sname VARCHAR(10);
+    -- 创建总数变量
+    DECLARE sage INT;
+    -- 创建结束标志变量
+    DECLARE done INT DEFAULT false;
+    -- 创建游标
+    DECLARE cur CURSOR FOR SELECT id,name,age from cursor_table where age>30;
+    -- 指定游标循环结束时的返回值
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = true;
-    SET total = 0;  
-    OPEN cur;  
-    FETCH cur INTO sid, sname, sage;  
+    SET total = 0;
+    OPEN cur;
+    FETCH cur INTO sid, sname, sage;
     WHILE(NOT done)
-    DO  
-        SET total = total + 1;  
-        FETCH cur INTO sid, sname, sage;  
-    END WHILE;  
+    DO
+        SET total = total + 1;
+        FETCH cur INTO sid, sname, sage;
+    END WHILE;
 
-    CLOSE cur;  
+    CLOSE cur;
     SELECT total;
 END $
 DELIMITER ;
 
--- 调用存储过程  
+-- 调用存储过程
 call getTotal();
 ```
 
@@ -1131,13 +1130,9 @@ DROP TRIGGER IF EXISTS trigger_insert_user;
   - 在 `DELETE` 型触发器中，`OLD` 用来表示将要或已经被删除的原数据；
   - 使用方法： `NEW.columnName` （columnName 为相应数据表某一列名）
 
-## 16. 知识点小结
+## 16. 更多内容
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/dunwu/database/master/images/mysql/mysql.png" alt="mysql" width="1024">
-</p>
-
-## 17. 参考资料
+> :notebook: 本文已归档到：https://github.com/dunwu/notes
 
 - BenForta. SQL 必知必会 [M]. 人民邮电出版社, 2013.
 - [『浅入深出』MySQL 中事务的实现](https://draveness.me/mysql-transaction)
