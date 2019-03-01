@@ -1,12 +1,11 @@
-# Shell 快速指南
+# 一篇文章让你彻底掌握 shell 语言
 
-> 由于 bash 是 Linux 标准默认的 shell，可以说 bash 是 shell 编程的基础。
+> 由于 bash 是 Linux 标准默认的 shell 解释器，可以说 bash 是 shell 编程的基础。
 >
-> 所以，下面将全部基于 bash 来讲解 shell 编程。
+> 本文主要介绍 bash 的语法，对于 linux 指令不做任何介绍。
 >
-> 此外，本篇章主要介绍的是 shell 编程的语法，对于 linux 指令不做任何介绍。
-
-> 本文的源码已归档到 [os-tutorial](https://github.com/dunwu/os-tutorial/tree/master/codes/shell)
+> :notebook: 本文已归档到：[notes](https://github.com/dunwu/notes)
+> :keyboard: 本文的源码已归档到 [os-tutorial](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos)
 
 ```
 ███████╗██╗  ██╗███████╗██╗     ██╗
@@ -26,6 +25,8 @@
 - [基本语法](#基本语法)
     - [解释器](#解释器)
     - [注释](#注释)
+    - [echo](#echo)
+    - [printf](#printf)
 - [变量](#变量)
     - [变量命名原则](#变量命名原则)
     - [声明变量](#声明变量)
@@ -55,11 +56,17 @@
     - [逻辑运算符](#逻辑运算符)
     - [字符串运算符](#字符串运算符)
     - [文件测试运算符](#文件测试运算符)
-- [语句](#语句)
+- [控制语句](#控制语句)
+    - [条件语句](#条件语句)
+    - [循环语句](#循环语句)
 - [函数](#函数)
+    - [函数处理参数](#函数处理参数)
 - [Shell 扩展](#shell-扩展)
 - [流和重定向](#流和重定向)
-- [Debugging](#debugging)
+    - [输入、输出流](#输入输出流)
+    - [重定向](#重定向)
+    - [`/dev/null` 文件](#devnull-文件)
+- [Debug](#debug)
 - [更多内容](#更多内容)
 
 <!-- /TOC -->
@@ -166,7 +173,7 @@ chmod +x /path/to/script.sh #使脚本具有执行权限
 
 这种方式要求脚本文件的第一行必须指明运行该脚本的程序，比如：
 
-**:keyboard: 『示例源码』** [helloworld.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/helloworld.sh)
+**:keyboard: 『示例源码』** [helloworld.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/helloworld.sh)
 
 ```bash
 #!/usr/bin/env bash
@@ -200,7 +207,7 @@ shell 语法中，注释是特殊的语句，会被 shell 解释器忽略。
 - 单行注释 - 以 `#` 开头，到行尾结束。
 - 多行注释 - 以 `:<<EOF` 开头，到 `EOF` 结束。
 
-**:keyboard: 『示例源码』** [comment-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/comment-demo.sh)
+**:keyboard: 『示例源码』** [comment-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/comment-demo.sh)
 
 ```bash
 #--------------------------------------------
@@ -218,6 +225,142 @@ echo '这是多行注释'
 echo '这是多行注释'
 EOF
 ```
+
+### echo
+
+echo 用于字符串的输出。
+
+输出普通字符串：
+
+```bash
+echo "hello, world"
+# Output: hello, world
+```
+
+输出含变量的字符串：
+
+```bash
+echo "hello, \"zp\""
+# Output: hello, "zp"
+```
+
+输出含变量的字符串：
+
+```bash
+name=zp
+echo "hello, \"${name}\""
+# Output: hello, "zp"
+```
+
+输出含换行符的字符串：
+
+```bash
+# 输出含换行符的字符串
+echo "YES\nNO"
+#  Output: YES\nNO
+
+echo -e "YES\nNO" # -e 开启转义
+#  Output:
+#  YES
+#  NO
+```
+
+输出含不换行符的字符串：
+
+```bash
+echo "YES"
+echo "NO"
+#  Output:
+#  YES
+#  NO
+
+echo -e "YES\c" # -e 开启转义 \c 不换行
+echo "NO"
+#  Output:
+#  YESNO
+```
+
+输出重定向至文件
+
+```bash
+echo "test" > test.txt
+```
+
+输出执行结果
+
+```bash
+echo `pwd`
+#  Output:(当前目录路径)
+```
+
+**:keyboard: 『示例源码』** [echo-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/echo-demo.sh)
+
+### printf
+
+printf 用于格式化输出字符串。
+
+默认，printf 不会像 echo 一样自动添加换行符，如果需要换行可以手动添加 `\n`。
+
+**:keyboard: 『示例源码』** [printf-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/printf-demo.sh)
+
+```bash
+# 单引号
+printf '%d %s\n' 1 "abc"
+#  Output:1 abc
+
+# 双引号
+printf "%d %s\n" 1 "abc"
+#  Output:1 abc
+
+# 无引号
+printf %s abcdef
+#  Output: abcdef(并不会换行)
+
+# 格式只指定了一个参数，但多出的参数仍然会按照该格式输出
+printf "%s\n" abc def
+#  Output:
+#  abc
+#  def
+
+printf "%s %s %s\n" a b c d e f g h i j
+#  Output:
+#  a b c
+#  d e f
+#  g h i
+#  j
+
+# 如果没有参数，那么 %s 用 NULL 代替，%d 用 0 代替
+printf "%s and %d \n"
+#  Output:
+#   and 0
+
+# 格式化输出
+printf "%-10s %-8s %-4s\n" 姓名 性别 体重kg
+printf "%-10s %-8s %-4.2f\n" 郭靖 男 66.1234
+printf "%-10s %-8s %-4.2f\n" 杨过 男 48.6543
+printf "%-10s %-8s %-4.2f\n" 郭芙 女 47.9876
+#  Output:
+#  姓名     性别   体重kg
+#  郭靖     男      66.12
+#  杨过     男      48.65
+#  郭芙     女      47.99
+```
+
+#### printf 的转义符
+
+| 序列    | 说明                                                                                                                                                                          |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `\a`    | 警告字符，通常为 ASCII 的 BEL 字符                                                                                                                                            |
+| `\b`    | 后退                                                                                                                                                                          |
+| `\c`    | 抑制（不显示）输出结果中任何结尾的换行字符（只在%b 格式指示符控制下的参数字符串中有效），而且，任何留在参数里的字符、任何接下来的参数以及任何留在格式字符串中的字符，都被忽略 |
+| `\f`    | 换页（formfeed）                                                                                                                                                              |
+| `\n`    | 换行                                                                                                                                                                          |
+| `\r`    | 回车（Carriage return）                                                                                                                                                       |
+| `\t`    | 水平制表符                                                                                                                                                                    |
+| `\v`    | 垂直制表符                                                                                                                                                                    |
+| `\\`    | 一个字面上的反斜杠字符                                                                                                                                                        |
+| `\ddd`  | 表示 1 到 3 位数八进制值的字符。仅在格式字符串中有效                                                                                                                          |
+| `\0ddd` | 表示 1 到 3 位的八进制值字符                                                                                                                                                  |
 
 ## 变量
 
@@ -290,7 +433,7 @@ echo ${dword}
 
 ### 变量示例源码
 
-**⌨️ 『示例源码』** [variable-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/variable-demo.sh)
+**⌨️ 『示例源码』** [variable-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/variable-demo.sh)
 
 ## 脚本参数
 
@@ -307,7 +450,7 @@ echo ${dword}
 | `$#`           | 不包括`$0`在内的位置参数的个数 |
 | `$FUNCNAME`    | 函数名称（仅在函数内部有值）   |
 
-**:keyboard: 『示例源码』** [variable-demo4.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/variable/variable-demo4.sh)
+**:keyboard: 『示例源码』** [variable-demo4.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/variable/variable-demo4.sh)
 
 ```bash
 if [[ -n $1 ]]; then
@@ -397,7 +540,7 @@ echo `expr index "${text}" ll`
 
 ### 字符串示例源码
 
-**⌨️ 『示例源码』** [array-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/string-demo.sh)
+**⌨️ 『示例源码』** [array-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/string-demo.sh)
 
 ## 数组
 
@@ -509,7 +652,7 @@ echo ${nums[@]}
 
 ### 数组示例源码
 
-**:keyboard: 『示例源码』** [array-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/array-demo.sh)
+**:keyboard: 『示例源码』** [array-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/array-demo.sh)
 
 ## 运算符
 
@@ -530,7 +673,7 @@ echo ${nums[@]}
 
 **注意：**条件表达式要放在方括号之间，并且要有空格，例如: `[$x==$y]` 是错误的，必须写成 `[ $x == $y ]`。
 
-**:keyboard: 『示例源码』** [operator-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/operator/operator-demo.sh)
+**:keyboard: 『示例源码』** [operator-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo.sh)
 
 ```bash
 x=10
@@ -588,7 +731,7 @@ fi
 | `-ge`  | 检测左边的数是否大于等于右边的，如果是，则返回 true。 | `[ $a -ge $b ]` 返回 false。 |
 | `-le`  | 检测左边的数是否小于等于右边的，如果是，则返回 true。 | `[ $a -le $b ]`返回 true。   |
 
-**:keyboard: 『示例源码』** [operator-demo2.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/operator/operator-demo2.sh)
+**:keyboard: 『示例源码』** [operator-demo2.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo2.sh)
 
 ```bash
 x=10
@@ -596,7 +739,7 @@ y=20
 
 echo "x=${x}, y=${y}"
 
-if [[ ${x} -eq ${y} ]];then
+if [[ ${x} -eq ${y} ]]; then
    echo "${x} -eq ${y} : x 等于 y"
 else
    echo "${x} -eq ${y}: x 不等于 y"
@@ -653,7 +796,7 @@ fi
 | `-o`   | 或运算，有一个表达式为 true 则返回 true。           | `[ $a -lt 20 -o $b -gt 100 ]` 返回 true。  |
 | `-a`   | 与运算，两个表达式都为 true 才返回 true。           | `[ $a -lt 20 -a $b -gt 100 ]` 返回 false。 |
 
-**:keyboard: 『示例源码』** [operator-demo3.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/operator/operator-demo3.sh)
+**:keyboard: 『示例源码』** [operator-demo3.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo3.sh)
 
 ```bash
 x=10
@@ -661,25 +804,25 @@ y=20
 
 echo "x=${x}, y=${y}"
 
-if [[ ${x} != ${y} ]];then
+if [[ ${x} != ${y} ]]; then
    echo "${x} != ${y} : x 不等于 y"
 else
    echo "${x} != ${y}: x 等于 y"
 fi
 
-if [[ ${x} -lt 100 && ${y} -gt 15 ]];then
+if [[ ${x} -lt 100 && ${y} -gt 15 ]]; then
    echo "${x} 小于 100 且 ${y} 大于 15 : 返回 true"
 else
    echo "${x} 小于 100 且 ${y} 大于 15 : 返回 false"
 fi
 
-if [[ ${x} -lt 100 || ${y} -gt 100 ]];then
+if [[ ${x} -lt 100 || ${y} -gt 100 ]]; then
    echo "${x} 小于 100 或 ${y} 大于 100 : 返回 true"
 else
    echo "${x} 小于 100 或 ${y} 大于 100 : 返回 false"
 fi
 
-if [[ ${x} -lt 5 || ${y} -gt 100 ]];then
+if [[ ${x} -lt 5 || ${y} -gt 100 ]]; then
    echo "${x} 小于 5 或 ${y} 大于 100 : 返回 true"
 else
    echo "${x} 小于 5 或 ${y} 大于 100 : 返回 false"
@@ -703,7 +846,7 @@ fi
 | `&&`   | 逻辑的 AND | `[[ ${x} -lt 100 && ${y} -gt 100 ]]` 返回 false |
 | `||`   | 逻辑的 OR  | `[[ ${x} -lt 100 || ${y} -gt 100 ]]` 返回 true  |
 
-**:keyboard: 『示例源码』** [operator-demo4.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/operator/operator-demo4.sh)
+**:keyboard: 『示例源码』** [operator-demo4.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo4.sh)
 
 ```bash
 x=10
@@ -744,7 +887,7 @@ fi
 | `-n`   | 检测字符串长度是否为 0，不为 0 返回 true。 | `[ -n $a ]` 返回 true。    |
 | `str`  | 检测字符串是否为空，不为空返回 true。      | `[ $a ]` 返回 true。       |
 
-**:keyboard: 『示例源码』** [operator-demo5.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/operator/operator-demo5.sh)
+**:keyboard: 『示例源码』** [operator-demo5.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo5.sh)
 
 ```bash
 x="abc"
@@ -753,31 +896,31 @@ y="xyz"
 
 echo "x=${x}, y=${y}"
 
-if [[ ${x} = ${y} ]];then
+if [[ ${x} = ${y} ]]; then
    echo "${x} = ${y} : x 等于 y"
 else
    echo "${x} = ${y}: x 不等于 y"
 fi
 
-if [[ ${x} != ${y} ]];then
+if [[ ${x} != ${y} ]]; then
    echo "${x} != ${y} : x 不等于 y"
 else
    echo "${x} != ${y}: x 等于 y"
 fi
 
-if [[ -z ${x} ]];then
+if [[ -z ${x} ]]; then
    echo "-z ${x} : 字符串长度为 0"
 else
    echo "-z ${x} : 字符串长度不为 0"
 fi
 
-if [[ -n "${x}" ]];then
+if [[ -n "${x}" ]]; then
    echo "-n ${x} : 字符串长度不为 0"
 else
    echo "-n ${x} : 字符串长度为 0"
 fi
 
-if [[ ${x} ]];then
+if [[ ${x} ]]; then
    echo "${x} : 字符串不为空"
 else
    echo "${x} : 字符串为空"
@@ -815,42 +958,42 @@ fi
 | -s file | 检测文件是否为空（文件大小是否大于 0），不为空返回 true。                   | `[ -s $file ]` 返回 true。  |
 | -e file | 检测文件（包括目录）是否存在，如果是，则返回 true。                         | `[ -e $file ]` 返回 true。  |
 
-**:keyboard: 『示例源码』** [operator-demo6.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/operator/operator-demo6.sh)
+**:keyboard: 『示例源码』** [operator-demo6.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo6.sh)
 
 ```bash
 file="/etc/hosts"
 
-if [[ -r ${file} ]];then
+if [[ -r ${file} ]]; then
    echo "${file} 文件可读"
 else
    echo "${file} 文件不可读"
 fi
-if [[ -w ${file} ]];then
+if [[ -w ${file} ]]; then
    echo "${file} 文件可写"
 else
    echo "${file} 文件不可写"
 fi
-if [[ -x ${file} ]];then
+if [[ -x ${file} ]]; then
    echo "${file} 文件可执行"
 else
    echo "${file} 文件不可执行"
 fi
-if [[ -f ${file} ]];then
+if [[ -f ${file} ]]; then
    echo "${file} 文件为普通文件"
 else
    echo "${file} 文件为特殊文件"
 fi
-if [[ -d ${file} ]];then
+if [[ -d ${file} ]]; then
    echo "${file} 文件是个目录"
 else
    echo "${file} 文件不是个目录"
 fi
-if [[ -s ${file} ]];then
+if [[ -s ${file} ]]; then
    echo "${file} 文件不为空"
 else
    echo "${file} 文件为空"
 fi
-if [[ -e ${file} ]];then
+if [[ -e ${file} ]]; then
    echo "${file} 文件存在"
 else
    echo "${file} 文件不存在"
@@ -867,94 +1010,107 @@ fi
 #  /etc/hosts 文件存在
 ```
 
-## 语句
+## 控制语句
 
-#### 条件语句
+### 条件语句
 
 跟其它程序设计语言一样，Bash 中的条件语句让我们可以决定一个操作是否被执行。结果取决于一个包在`[[ ]]`里的表达式。
 
-条件表达式可以包含`&&`和`||`运算符，分别对应 _与_ 和 _或_ 。除此之外还有很多有用的[表达式](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md#%E5%9F%BA%E5%85%83%E5%92%8C%E7%BB%84%E5%90%88%E8%A1%A8%E8%BE%BE%E5%BC%8F)。
+由`[[ ]]`（`sh`中是`[ ]`）包起来的表达式被称作 **检测命令** 或 **基元**。这些表达式帮助我们检测一个条件的结果。这里可以找到有关[bash 中单双中括号区别](http://serverfault.com/a/52050)的答案。
 
 共有两个不同的条件表达式：`if`和`case`。
 
-##### 基元和组合表达式
+#### `if`
 
-由`[[ ]]`（`sh`中是`[ ]`）包起来的表达式被称作 **检测命令** 或 **基元**。这些表达式帮助我们检测一个条件的结果。在下面的表里，为了兼容`sh`，我们用的是`[ ]`。这里可以找到有关[bash 中单双中括号区别](http://serverfault.com/a/52050)的答案。
-
-##### 使用`if`
+（1）`if` 语句
 
 `if`在使用上跟其它语言相同。如果中括号里的表达式为真，那么`then`和`fi`之间的代码会被执行。`fi`标志着条件代码块的结束。
 
 ```bash
-### 写成一行
-if [[ 1 -eq 1 ]]; then echo "true"; fi
+# 写成一行
+if [[ 1 -eq 1 ]]; then echo "1 -eq 1 result is: true"; fi
+# Output: 1 -eq 1 result is: true
 
-### 写成多行
-if [[ 1 -eq 1 ]]; then
-  echo "true"
+# 写成多行
+if [[ "abc" -eq "abc" ]]
+then
+  echo ""abc" -eq "abc" result is: true"
 fi
+# Output: abc -eq abc result is: true
 ```
+
+（2）`if else` 语句
 
 同样，我们可以使用`if..else`语句，例如：
 
 ```bash
-### 写成一行
-if [[ 2 -ne 1 ]]; then echo "true"; else echo "false"; fi
-
-### 写成多行
 if [[ 2 -ne 1 ]]; then
   echo "true"
 else
   echo "false"
 fi
+# Output: true
 ```
+
+（3）`if elif else` 语句
 
 有些时候，`if..else`不能满足我们的要求。别忘了`if..elif..else`，使用起来也很方便。
 
-**:keyboard: 『示例源码』**
-
 ```bash
-if [[ `uname` == "Adam" ]]; then
-  echo "Do not eat an apple!"
-elif [[ `uname` == "Eva" ]]; then
-  echo "Do not take an apple!"
+x=10
+y=20
+if [[ ${x} > ${y} ]]; then
+   echo "${x} > ${y}"
+elif [[ ${x} < ${y} ]]; then
+   echo "${x} < ${y}"
 else
-  echo "Apples are delicious!"
+   echo "${x} = ${y}"
 fi
+# Output: 10 < 20
 ```
 
-##### 使用`case`
+**:keyboard: 『示例源码』** [if-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/if-demo.sh)
+
+#### `case`
 
 如果你需要面对很多情况，分别要采取不同的措施，那么使用`case`会比嵌套的`if`更有用。使用`case`来解决复杂的条件判断，看起来像下面这样：
 
-```bash
-echo "input param: " $1
+**:keyboard: 『示例源码』** [case-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/case-demo.sh)
 
-case $1 in
-  "jpg" | "jpeg")
-    echo "It's image with jpeg extension."
+```bash
+exec
+case ${oper} in
+  "+")
+    val=`expr ${x} + ${y}`
+    echo "${x} + ${y} = ${val}"
   ;;
-  "png")
-    echo "It's image with png extension."
+  "-")
+    val=`expr ${x} - ${y}`
+    echo "${x} - ${y} = ${val}"
   ;;
-  "gif")
-    echo "Oh, it's a giphy!"
+  "*")
+    val=`expr ${x} \* ${y}`
+    echo "${x} * ${y} = ${val}"
+  ;;
+  "/")
+    val=`expr ${x} / ${y}`
+    echo "${x} / ${y} = ${val}"
   ;;
   *)
-    echo "Woops! It's not image!"
+    echo "Unknown oper!"
   ;;
 esac
 ```
 
 每种情况都是匹配了某个模式的表达式。`|`用来分割多个模式，`)`用来结束一个模式序列。第一个匹配上的模式对应的命令将会被执行。`*`代表任何不匹配以上给定模式的模式。命令块儿之间要用`;;`分隔。
 
-#### 循环语句
+### 循环语句
 
 循环其实不足为奇。跟其它程序设计语言一样，bash 中的循环也是只要控制条件为真就一直迭代执行的代码块。
 
 Bash 中有四种循环：`for`，`while`，`until`和`select`。
 
-##### `for`循环
+#### `for`循环
 
 `for`与它在 C 语言中的姊妹非常像。看起来是这样：
 
@@ -984,15 +1140,16 @@ done
 当我们想对一个目录下的所有文件做同样的操作时，`for`就很方便了。举个例子，如果我们想把所有的`.bash`文件移动到`script`文件夹中，并给它们可执行权限，我们的脚本可以这样写：
 
 ```bash
-#!/bin/bash
-
-for FILE in $HOME/*.bash; do
-  mv "$FILE" "${HOME}/scripts"
-  chmod +x "${HOME}/scripts/${FILE}"
+DIR=/home/zp
+for FILE in ${DIR}/*.sh; do
+  mv "$FILE" "${DIR}/scripts"
 done
+# 将 /home/zp 目录下所有 sh 文件拷贝到 /home/zp/scripts
 ```
 
-##### `while`循环
+**:keyboard: 『示例源码』** [for-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/for-demo.sh)
+
+#### `while`循环
 
 `while`循环检测一个条件，只要这个条件为 _真_，就执行一段命令。被检测的条件跟`if..then`中使用的[基元](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md#%E5%9F%BA%E5%85%83%E5%92%8C%E7%BB%84%E5%90%88%E8%A1%A8%E8%BE%BE%E5%BC%8F)并无二异。因此一个`while`循环看起来会是这样：
 
@@ -1008,27 +1165,48 @@ done
 比如下面这个例子：
 
 ```bash
-#!/bin/bash
-
 ### 0到9之间每个数的平方
 x=0
-while [[ $x -lt 10 ]]; do ### x小于10
-  echo $(( x * x ))
-  x=$(( x + 1 )) ### x加1
+while [[ ${x} -lt 10 ]]; do
+  echo $((x * x))
+  x=$((x + 1))
 done
+#  Output:
+#  0
+#  1
+#  4
+#  9
+#  16
+#  25
+#  36
+#  49
+#  64
+#  81
 ```
 
-##### `until`循环
+**:keyboard: 『示例源码』** [while-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/while-demo.sh)
+
+#### `until`循环
 
 `until`循环跟`while`循环正好相反。它跟`while`一样也需要检测一个测试条件，但不同的是，只要该条件为 _假_ 就一直执行循环：
 
 ```bash
-until [[ condition ]]; do
-  ### 语句
+x=0
+until [[ ${x} -ge 5 ]]; do
+  echo ${x}
+  x=`expr ${x} + 1`
 done
+#  Output:
+#  0
+#  1
+#  2
+#  3
+#  4
 ```
 
-##### `select`循环
+**:keyboard: 『示例源码』** [until-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/until-demo.sh)
+
+#### `select`循环
 
 `select`循环帮助我们组织一个用户菜单。它的语法几乎跟`for`循环一致：
 
@@ -1044,19 +1222,19 @@ done
 一个可能的实例可能会是这样：
 
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 PS3="Choose the package manager: "
 select ITEM in bower npm gem pip
 do
-  echo -n "Enter the package name: " && read PACKAGE
-  case $ITEM in
-    bower) bower install $PACKAGE ;;
-    npm)   npm   install $PACKAGE ;;
-    gem)   gem   install $PACKAGE ;;
-    pip)   pip   install $PACKAGE ;;
-  esac
-  break ### 避免无限循环
+echo -n "Enter the package name: " && read PACKAGE
+case ${ITEM} in
+  bower) bower install ${PACKAGE} ;;
+  npm) npm install ${PACKAGE} ;;
+  gem) gem install ${PACKAGE} ;;
+  pip) pip install ${PACKAGE} ;;
+esac
+break # 避免无限循环
 done
 ```
 
@@ -1071,11 +1249,12 @@ $ ./my_script
 3) gem
 4) pip
 Choose the package manager: 2
-Enter the package name: bash-handbook
-<installing bash-handbook>
+Enter the package name: gitbook-cli
 ```
 
-##### break 和 continue
+**:keyboard: 『示例源码』** [select-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/select-demo.sh)
+
+#### `break` 和 `continue`
 
 如果想提前结束一个循环或跳过某次循环执行，可以使用 shell 的`break`和`continue`语句来实现。它们可以在任何循环中使用。
 
@@ -1083,65 +1262,160 @@ Enter the package name: bash-handbook
 >
 > `continue`语句用来跳过某次迭代。
 
+**:keyboard: 『示例源码』** [break-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/break-demo.sh)
+
 ```bash
-for (( i = 0; i < 10; i++ )); do
-  if [[ $(( i % 2 )) -eq 0 ]]; then continue; fi
-  echo $i
+# 查找 10 以内第一个能整除 2 和 3 的正整数
+i=1
+while [[ ${i} -lt 10 ]]; do
+  if [[ $((i % 3)) -eq 0 ]] && [[ $((i % 2)) -eq 0 ]]; then
+    echo ${i}
+    break;
+  fi
+  i=`expr ${i} + 1`
 done
+# Output: 6
 ```
 
-运行上面的例子，会打印出所有 0 到 9 之间的奇数。
+**:keyboard: 『示例源码』** [continue-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/continue-demo.sh)
+
+```bash
+# 打印10以内的奇数
+for (( i = 0; i < 10; i ++ )); do
+  if [[ $((i % 2)) -eq 0 ]]; then
+    continue;
+  fi
+  echo ${i}
+done
+#  Output:
+#  1
+#  3
+#  5
+#  7
+#  9
+```
 
 ## 函数
 
-在脚本中，我们可以定义并调用函数。跟其它程序设计语言类似，函数是一个代码块，但有所不同。
-
-bash 中，函数是一个命令序列，这个命令序列组织在某个名字下面，即 _函数名_ 。调用函数跟其它语言一样，写下函数名字，函数就会被 _调用_ 。
-
-我们可以这样声明函数：
+bash 函数定义语法如下：
 
 ```bash
-my_func () {
-  ### 语句
+[ function ] funname [()] {
+    action;
+    [return int;]
 }
-
-my_func ### 调用 my_func
 ```
 
-我们必须在调用前声明函数。
+> :bulb: 说明：
+>
+> 1. 函数定义时，`function` 关键字可有可无。
+> 2. 函数返回值 - return 返回函数返回值，返回值类型只能为整数（0-255）。如果不加 return 语句，shell 默认将以最后一条命令的运行结果，作为函数返回值。
+> 3. 函数返回值在调用该函数后通过 `$?` 来获得。
+> 4. 所有函数在使用前必须定义。这意味着必须将函数放在脚本开始部分，直至 shell 解释器首次发现它时，才可以使用。调用函数仅使用其函数名即可。
 
-函数可以接收参数并返回结果 —— 返回值。参数，在函数内部，跟[非交互式](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md#%E9%9D%9E%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F)下的脚本参数处理方式相同 —— 使用[位置参数](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md#%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0)。返回值可以使用`return`命令 _返回_ 。
-
-下面这个函数接收一个名字参数，返回`0`，表示成功执行。
+**:keyboard: 『示例源码』** [function-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/shell/demos/function/function-demo.sh)
 
 ```bash
-### 带参数的函数
-greeting () {
-  if [[ -n $1 ]]; then
-    echo "Hello, $1!"
-  else
-    echo "Hello, unknown!"
-  fi
-  return 0
-}
+#!/usr/bin/env bash
 
-greeting Denys  ### Hello, Denys!
-greeting        ### Hello, stranger!
+calc(){
+  PS3="choose the oper: "
+  select oper in + - \* / # 生成操作符选择菜单
+  do
+  echo -n "enter first num: " && read x # 读取输入参数
+  echo -n "enter second num: " && read y # 读取输入参数
+  exec
+  case ${oper} in
+    "+")
+      return $((${x} + ${y}))
+    ;;
+    "-")
+      return $((${x} - ${y}))
+    ;;
+    "*")
+      return $((${x} * ${y}))
+    ;;
+    "/")
+      return $((${x} / ${y}))
+    ;;
+    *)
+      echo "${oper} is not support!"
+      return 0
+    ;;
+  esac
+  break
+  done
+}
+calc
+echo "the result is: $?" # $? 获取 calc 函数返回值
 ```
 
-我们之前已经介绍过[返回值](https://github.com/denysdovhan/bash-handbook/blob/master/translations/zh-CN/README.md#%E8%BF%94%E5%9B%9E%E5%80%BC)。不带任何参数的`return`会返回最后一个执行的命令的返回值。上面的例子，`return 0`会返回一个成功表示执行的值，`0`。
+执行结果：
+
+```bash
+$ ./function-demo.sh
+1) +
+2) -
+3) *
+4) /
+choose the oper: 3
+enter first num: 10
+enter second num: 10
+the result is: 100
+```
+
+### 函数处理参数
 
 另外，还有几个特殊字符用来处理参数：
 
-| 参数处理 | 说明                                                           |
-| -------- | -------------------------------------------------------------- |
-| #       | 传递到脚本的参数个数                                           |
-| \*      | 以一个单字符串显示所有向脚本传递的参数                         |
-|        | 脚本运行的当前进程 ID 号                                       |
-| !       | 后台运行的最后一个进程的 ID 号                                 |
-| @       | 与 \*相同，但是使用时加引号，并在引号中返回每个参数。         |
-| -       | 显示 Shell 使用的当前选项，与 set 命令功能相同。               |
-| ?       | 显示最后命令的退出状态。0 表示没有错误，其他任何值表明有错误。 |
+| 参数处理 | 说明                                             |
+| -------- | ------------------------------------------------ |
+| `$#`     | 返回参数个数                                     |
+| `$*`     | 返回所有参数                                     |
+| `$$`     | 脚本运行的当前进程 ID 号                         |
+| `$!`     | 后台运行的最后一个进程的 ID 号                   |
+| `$@`     | 返回所有参数                                     |
+| `$-`     | 返回 Shell 使用的当前选项，与 set 命令功能相同。 |
+| `$?`     | 函数返回值                                       |
+
+**:keyboard: 『示例源码』** [function-demo2.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/shell/demos/function/function-demo2.sh)
+
+```bash
+runner() {
+  return 0
+}
+
+name=zp
+paramsFunction(){
+  echo "函数第一个入参：$1"
+  echo "函数第二个入参：$2"
+  echo "传递到脚本的参数个数：$#"
+  echo "所有参数："
+  printf "+ %s\n" "$*"
+  echo "脚本运行的当前进程 ID 号：$$"
+  echo "后台运行的最后一个进程的 ID 号：$!"
+  echo "所有参数："
+  printf "+ %s\n" "$@"
+  echo "Shell 使用的当前选项：$-"
+  runner
+  echo "runner 函数的返回值：$?"
+}
+paramsFunction 1 "abc" "hello, \"zp\""
+#  Output:
+#  函数第一个入参：1
+#  函数第二个入参：abc
+#  传递到脚本的参数个数：3
+#  所有参数：
+#  + 1 abc hello, "zp"
+#  脚本运行的当前进程 ID 号：26400
+#  后台运行的最后一个进程的 ID 号：
+#  所有参数：
+#  + 1
+#  + abc
+#  + hello, "zp"
+#  Shell 使用的当前选项：hB
+#  runner 函数的返回值：0
+```
 
 ## Shell 扩展
 
@@ -1232,7 +1506,7 @@ Bash 有很强大的工具来处理程序之间的协同工作。使用流，我
 
 学习如何使用这些强大的、高级的工具是非常非常重要的。
 
-#### 输入、输出流
+### 输入、输出流
 
 Bash 接收输入，并以字符序列或 **字符流** 的形式产生输出。这些流能被重定向到文件或另一个流中。
 
@@ -1244,7 +1518,7 @@ Bash 接收输入，并以字符序列或 **字符流** 的形式产生输出。
 | `1`  | `stdout` | 标准输出     |
 | `2`  | `stderr` | 标准错误输出 |
 
-#### 重定向
+### 重定向
 
 重定向让我们可以控制一个命令的输入来自哪里，输出结果到什么地方。这些运算符在控制流的重定向时会被用到：
 
@@ -1273,11 +1547,11 @@ grep da * 2> errors.txt
 less < errors.txt
 ```
 
-#### `/dev/null` 文件
+### `/dev/null` 文件
 
 如果希望执行某个命令，但又不希望在屏幕上显示输出结果，那么可以将输出重定向到 /dev/null：
 
-```
+```bash
 $ command > /dev/null
 ```
 
@@ -1285,13 +1559,15 @@ $ command > /dev/null
 
 如果希望屏蔽 stdout 和 stderr，可以这样写：
 
-```
+```bash
 $ command > /dev/null 2>&1
 ```
 
-## Debugging
+## Debug
 
-shell 提供了用于 debugging 脚本的工具。如果我们想以 debug 模式运行某脚本，可以在其 shebang 中使用一个特殊的选项：
+shell 提供了用于 debug 脚本的工具。
+
+如果想采用 debug 模式运行某脚本，可以在其 shebang 中使用一个特殊的选项：
 
 ```
 #!/bin/bash options
@@ -1310,7 +1586,7 @@ options 是一些可以改变 shell 行为的选项。下表是一些可能对�
 
 举个例子，如果我们在脚本中指定了`-x`例如：
 
-```
+```bash
 #!/bin/bash -x
 
 for (( i = 0; i < 3; i++ )); do
@@ -1338,21 +1614,40 @@ $ ./my_script
 + (( i < 3 ))
 ```
 
-有时我们需要 debug 脚本的一部分。这种情况下，使用`set`命令会很方便。这个命令可以启用或禁用选项。使用`-`启用选项，`+`禁用选项：
+有时我们值需要 debug 脚本的一部分。这种情况下，使用`set`命令会很方便。这个命令可以启用或禁用选项。使用`-`启用选项，`+`禁用选项：
+
+**:keyboard: 『示例源码』** [debug-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/debug-demo.sh)
 
 ```bash
-#!/bin/bash
-
-echo "xtrace is turned off"
+# 开启 debug
 set -x
-echo "xtrace is enabled"
+for (( i = 0; i < 3; i++ )); do
+  printf ${i}
+done
+# 关闭 debug
 set +x
-echo "xtrace is turned off again"
+#  Output:
+#  + (( i = 0 ))
+#  + (( i < 3 ))
+#  + printf 0
+#  0+ (( i++  ))
+#  + (( i < 3 ))
+#  + printf 1
+#  1+ (( i++  ))
+#  + (( i < 3 ))
+#  + printf 2
+#  2+ (( i++  ))
+#  + (( i < 3 ))
+#  + set +x
+
+for i in {1..5}; do printf ${i}; done
+printf "\n"
+#  Output: 12345
 ```
 
 ## 更多内容
 
-> :notebook: 本文已归档到：https://github.com/dunwu/notes
+> :notebook: 本文已归档到：[notes](https://github.com/dunwu/notes)
 
 - [awesome-shell](https://github.com/alebcay/awesome-shell)，shell 资源列表
 - [awesome-bash](https://github.com/awesome-lists/awesome-bash)，bash 资源列表
