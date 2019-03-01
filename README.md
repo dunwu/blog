@@ -10,7 +10,7 @@
 
 - [Java](docs/programming/java) - Java 语法、JVM、并发编程、JavaEE、Spring、Spring Boot、Mybatis
 - [Python](docs/programming/python.md)
-- [Shell](docs/programming/shell.md) - 关键词：解释器、注释、变量、Shell 扩展、数组、运算符、语句、函数、流和重定向、Debugging
+- [一篇文章让你彻底掌握 shell 语言](docs/programming/shell.md)
 
 ## [算法和数据结构](docs/algorithm)
 
