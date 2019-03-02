@@ -536,7 +536,7 @@ SELECT * FROM post WHERE post.id IN (123,456,567,9098,8904);
 - **SQL 线程** ：负责读取中继日志并重放其中的 SQL 语句。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/Database/master/images/mysql/master-slave.png" />
+<img src="https://raw.githubusercontent.com/dunwu/images/master/images/database/mysql/master-slave.png" />
 </div>
 
 ### 7.2. 读写分离
@@ -552,7 +552,7 @@ MySQL 读写分离能提高性能的原因在于：
 - 增加冗余，提高可用性。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/Database/master/images/mysql/master-slave-proxy.png" />
+<img src="https://raw.githubusercontent.com/dunwu/images/master/images/database/mysql/master-slave-proxy.png" />
 </div>
 
 ## 8. 参考资料
