@@ -12,13 +12,13 @@
 
 ### 关系型数据库管理系统（RDBMS）
 
-- [Mysql](rdbms/mysql)
+- [Mysql](mysql)
 - Oracle
 - SQL Server
-- [PostgreSQL](rdbms/postgresql.md)
+- [PostgreSQL](postgresql.md)
 - SQLite
 - DB2
-- [H2](rdbms/h2.md)
+- [H2](h2.md)
 
 ### 流行数据库中间件
 
