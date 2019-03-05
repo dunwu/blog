@@ -7,7 +7,7 @@
 - [YARN](YARN.md)
 - [HBase](hbase)
   - [HBase 命令](hbase/hbase-cli.md)
-  - [HBase 配置](hbase/hbase-configuration.md)
+  - [HBase 配置](hbase/hbase-ops.md)
 
 ## :books: 学习资源
 

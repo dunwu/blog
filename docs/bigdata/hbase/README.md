@@ -2,21 +2,22 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
-- [概述](#概述)
-- [数据模型](#数据模型)
-- [HBase 架构](#hbase-架构)
-    - [Regin](#regin)
-    - [Master 服务器](#master-服务器)
-    - [Regin 服务器](#regin-服务器)
-    - [ZooKeeper](#zookeeper)
+- [简介](#简介)
+- [基础](#基础)
+- [原理](#原理)
+  - [数据模型](#数据模型)
+  - [HBase 架构](#hbase-架构)
 - [HBase 和 RDBMS](#hbase-和-rdbms)
+- [API](#api)
+- [附录](#附录)
+  - [命令行](#命令行)
 - [更多内容](#更多内容)
-    - [扩展阅读](#扩展阅读)
-    - [参考资料](#参考资料)
+  - [扩展阅读](#扩展阅读)
+  - [参考资料](#参考资料)
 
 <!-- /TOC -->
 
-## 概述
+## 简介
 
 HBase 是建立在 HDFS 基础上的面向列的分布式数据库。
 
@@ -27,7 +28,13 @@ HBase 适用场景：实时地随机访问超大数据集。
 
 在 [CAP 理论](https://zh.wikipedia.org/wiki/CAP%E5%AE%9A%E7%90%86)中，HBase 属于 CP 类型的系统。
 
-## 数据模型
+## 基础
+
+[HBase 维护](hbase-ops.md)
+
+## 原理
+
+### 数据模型
 
 HBase 是一个面向列的数据库，在表中它由行排序。
 
@@ -46,7 +53,7 @@ HBase 表的单元格（cell）由行和列的坐标交叉决定，是有版本�
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hbase/1551164224778.png"/></div><br>
 
-## HBase 架构
+### HBase 架构
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hbase/1551164744748.png"/></div><br>
 
@@ -57,7 +64,7 @@ HBase 表的单元格（cell）由行和列的坐标交叉决定，是有版本�
 
 HBase 依赖 ZooKeeper 来实现故障恢复。
 
-### Regin
+#### Regin
 
 HBase 表按行键范围水平自动划分为区域（region）。每个区域由表中行的子集构成。每个区域由它所属的表、它所含的第一行及最后一行来表示。
 
@@ -65,7 +72,7 @@ HBase 表按行键范围水平自动划分为区域（region）。每个区域�
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hbase/1551165887616.png"/></div><br>
 
-### Master 服务器
+#### Master 服务器
 
 区域分配、DDL(create、delete)操作由 HBase master 服务器处理。
 
@@ -76,7 +83,7 @@ HBase 表按行键范围水平自动划分为区域（region）。每个区域�
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hbase/1551166513572.png"/></div><br>
 
-### Regin 服务器
+#### Regin 服务器
 
 区域服务器运行在 HDFS 数据节点上，具有以下组件
 
@@ -88,7 +95,7 @@ HBase 表按行键范围水平自动划分为区域（region）。每个区域�
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/hbase/1551166602999.png"/></div><br>
 
-### ZooKeeper
+#### ZooKeeper
 
 HBase 使用 ZooKeeper 作为分布式协调服务来维护集群中的服务器状态。Zookeeper 维护哪些服务器是活动的和可用的，并提供服务器故障通知。集群至少应该有 3 个节点。
 
@@ -104,12 +111,22 @@ HBase 使用 ZooKeeper 作为分布式协调服务来维护集群中的服务器
 | 它反规范化的数据。                                  | 它具有规范化的数据。                       |
 | 它用于半结构以及结构化数据是非常好的。              | 用于结构化数据非常好。                     |
 
+## API
+
+Java API 归纳总结在这里：[Hbase Java API](hbase-api-java.md)
+
+## 附录
+
+### 命令行
+
+HBase 命令行可以参考这里：[HBase 命令行](hbase-cli.md)
+
 ## 更多内容
 
 ### 扩展阅读
 
 - [HBase 命令](hbase-cli.md)
-- [HBase 配置](hbase-configuration.md)
+- [HBase 配置](hbase-ops.md)
 
 ### 参考资料
 
