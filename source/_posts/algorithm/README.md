@@ -1,8 +1,3 @@
----
-title: 算法和数据结构
-date: 2019-03-06
----
-
 # 算法和数据结构
 
 > :dart: 所有配套源码整理归档在 [**algorithm-tutorial**](https://github.com/dunwu/algorithm-tutorial) 项目中。
@@ -90,4 +85,4 @@ date: 2019-03-06
 
 ## :door: 传送门
 
-| [回首頁](https://github.com/dunwu/notes) |
+| [回首頁](https://github.com/dunwu/blog) |

@@ -1,8 +1,3 @@
----
-title: 大数据
-date: 2019-03-06
----
-
 # 大数据
 
 ## :memo: 知识点
@@ -22,4 +17,4 @@ date: 2019-03-06
 
 ## :door: 传送门
 
-| [回首頁](https://github.com/dunwu/notes) |
+| [回首頁](https://github.com/dunwu/blog) |

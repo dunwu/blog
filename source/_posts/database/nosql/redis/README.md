@@ -619,7 +619,7 @@ redis 官方推荐的 Java Redis Client：
 
 ## 更多内容
 
-> :notebook: 本文已归档到：「[notes](https://github.com/dunwu/notes)」
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 ### 官网
 

@@ -1,8 +1,3 @@
----
-title: 前端技术
-date: 2019-03-06
----
-
 # 前端技术
 
 > :dart: 所有配套源码整理归档在 [**frontend-tutorial**](https://github.com/dunwu/frontend-tutorial) 项目中。
@@ -76,4 +71,4 @@ date: 2019-03-06
 
 ## :door: 传送门
 
-| [回首頁](https://github.com/dunwu/notes) |
+| [回首頁](https://github.com/dunwu/blog) |

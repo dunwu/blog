@@ -66,7 +66,7 @@ Sqlite 可在 UNIX（Linux, Mac OS-X, Android, iOS）和 Windows（Win32, WinCE,
 
 > 这里不会详细列举所有 SQL 语法，仅列举 SQLite 除标准 SQL 以外的，一些自身特殊的 SQL 语法。
 >
-> :point_right: 扩展阅读：[标准 SQL 基本语法](https://github.com/dunwu/notes/blob/master/docs/database/sql/sql.md)
+> :point_right: 扩展阅读：[标准 SQL 基本语法](https://github.com/dunwu/blog/blob/master/docs/database/sql/sql.md)
 
 ### 大小写敏感
 
@@ -260,7 +260,7 @@ sqlite>.help
 
 ## 更多内容
 
-> :notebook: 本文已归档到：「[notes](https://github.com/dunwu/notes)」
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 ### 参考资料
 

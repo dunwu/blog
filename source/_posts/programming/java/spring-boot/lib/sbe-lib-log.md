@@ -7,7 +7,7 @@ date: 2019-03-06
 
 > Spring Boot 支持集成 Java 世界主流的日志库。
 >
-> 如果对于 Java 日志库不熟悉，可以参考：[细说 Java 主流日志工具库](https://github.com/dunwu/notes/blob/master/编程语言/Java/javastack/javalib/java-log.md)
+> 如果对于 Java 日志库不熟悉，可以参考：[细说 Java 主流日志工具库](https://github.com/dunwu/blog/blob/master/编程语言/Java/javastack/javalib/java-log.md)
 >
 > 关键词： `log4j`, `log4j2`, `logback`, `slf4j`
 
@@ -199,7 +199,7 @@ logging.register-shutdown-hook=false # Register a shutdown hook for the logging 
 
 **引申**
 
-- [细说 Java 主流日志工具库](https://github.com/dunwu/notes/blob/master/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Java/javastack/javalib/java-log.md)
+- [细说 Java 主流日志工具库](https://github.com/dunwu/blog/blob/master/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/Java/javastack/javalib/java-log.md)
 - [Spring Boot 教程](https://github.com/dunwu/spring-boot-tutorial)
 
 **引用**
