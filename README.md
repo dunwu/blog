@@ -79,3 +79,8 @@
 
 1. 本项目中的文档采用『[Markdown](https://github.com/guodongxiaren/README)』语法书写。
 2. 本项目中的文档遵循『[技术文档规范](source/_posts/style/doc-style.md)』。
+
+## License
+
+[![License: CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
