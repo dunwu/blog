@@ -1,16 +1,14 @@
 ---
-title: List
-date: 2018-06-28
-categories:
-- javacore
-tags:
-- java
-- javacore
-- container
+title: Java 容器之 List
+date: 2018-06-27 23:12
+categories: ['programming', 'java', 'javacore', 'container']
+tags: ['programming', 'java', 'javacore', 'container']
 ---
 
-# List
+# Java 容器之 List
 
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
 > `List` 是 `Collection` 的子接口，其中可以保存各个重复的内容。
 
 <!-- TOC depthFrom:2 depthTo:2 -->

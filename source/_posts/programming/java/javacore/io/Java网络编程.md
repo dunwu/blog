@@ -1,11 +1,24 @@
 ---
 title: Java 网络编程
-date: 2019-03-06
+date: 2018-08-06 17:30
+categories: ['programming', 'java', 'javacore', 'io']
+tags: ['programming', 'java', 'javacore', 'io']
 ---
 
 # Java 网络编程
 
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
 > 关键词：URL、InetAddress
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [InetAddress](#inetaddress)
+- [URL](#url)
+- [Sockets](#sockets)
+- [Datagram](#datagram)
+
+<!-- /TOC -->
 
 Java 中的网络支持：
 

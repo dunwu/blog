@@ -1,9 +1,13 @@
 ---
 title: Java NIO
-date: 2019-03-06
+date: 2018-08-06 22:41
+categories: ['programming', 'java', 'javacore', 'io']
+tags: ['programming', 'java', 'javacore', 'io', 'nio']
 ---
 
 # Java NIO
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

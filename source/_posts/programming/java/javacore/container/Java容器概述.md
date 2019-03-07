@@ -1,15 +1,13 @@
 ---
 title: Java 容器概述
-date: 2018-05-29
-categories:
-- javacore
-tags:
-- java
-- javacore
-- container
+date: 2018-06-29 17:45
+categories: ['programming', 'java', 'javacore', 'container']
+tags: ['programming', 'java', 'javacore', 'container']
 ---
 
 # Java 容器概述
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
