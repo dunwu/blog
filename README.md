@@ -1,6 +1,6 @@
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/others/zpblog.png"/></div>
+<div align="center"><a href="https://dunwu.github.io/blog/"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/others/zpblog.png"/></a></div>
 
-> :gorilla: 程序猿是怎样炼成的？不断的学习，不断的积累，这个进化过程就像一个循环，只是没有 break。。。
+> 本项目用于归档我个人的技术文档。
 
 |      :keyboard:       |            :game_die:             |     :package:     |       :spider_web:        |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
 | :-------------------: | :-------------------------------: | :---------------: | :-----------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
@@ -99,4 +99,4 @@
 
 ## License
 
-[![License: CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+本博客所有文章除特别声明外，均采用 [![License: CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/) 许可协议。
