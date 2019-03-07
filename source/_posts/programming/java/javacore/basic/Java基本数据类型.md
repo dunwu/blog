@@ -165,14 +165,14 @@ System.out.println("x = " + x);
 
 Java 中基本类型的包装类如下：
 
-- Byte <-> byte
-- Short <-> short
-- Integer <-> int
-- Long <-> long
-- Float <-> float
-- Double <-> double
-- Character <-> char
-- Boolean <-> boolean
+- Byte 和 byte
+- Short 和 short
+- Integer 和 int
+- Long 和 long
+- Float 和 float
+- Double 和 double
+- Character 和 char
+- Boolean 和 boolean
 
 ### 装箱
 

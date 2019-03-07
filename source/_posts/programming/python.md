@@ -1,14 +1,11 @@
 ---
-title: Python
-date: 2018-06-28
-categories:
-- linux
-tags:
-- linux
-- python
+title: 一篇文章让你彻底掌握 python 语言
+date: 2018-06-28 16:52
+categories: ['programming']
+tags: ['programming', 'python']
 ---
 
-# Python
+# 一篇文章让你彻底掌握 python 语言
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

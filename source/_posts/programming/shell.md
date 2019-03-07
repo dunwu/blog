@@ -1,6 +1,8 @@
 ---
 title: 一篇文章让你彻底掌握 shell 语言
-date: 2019-03-06
+date: 2017-11-20 17:35
+categories: ['programming']
+tags: ['programming', 'shell', 'bash']
 ---
 
 # 一篇文章让你彻底掌握 shell 语言
