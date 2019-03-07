@@ -1,11 +1,8 @@
 ---
 title: 简单选择排序
-date: 2015-03-07
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-06 14:05
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 简单选择排序

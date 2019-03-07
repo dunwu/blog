@@ -1,11 +1,8 @@
 ---
 title: 插入排序
-date: 2015-03-05
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-05 10:27
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 插入排序

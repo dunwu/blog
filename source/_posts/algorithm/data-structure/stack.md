@@ -1,6 +1,8 @@
 ---
 title: 堆栈
-date: 2019-03-06
+date: 2014-01-25 16:46
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'stack']
 ---
 
 # 堆栈

@@ -1,6 +1,8 @@
 ---
 title: 树
 date: 2019-03-06
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'tree']
 ---
 
 # 树

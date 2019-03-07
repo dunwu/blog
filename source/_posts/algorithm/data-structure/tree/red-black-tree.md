@@ -1,11 +1,8 @@
 ---
 title: 红黑树
 date: 2018-06-01
-categories:
-- algorithm
-tags:
-- algorithm
-- tree
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'tree']
 ---
 
 # 红黑树

@@ -1,11 +1,8 @@
 ---
 title: 希尔排序
-date: 2015-03-06
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-05 17:16
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 希尔排序

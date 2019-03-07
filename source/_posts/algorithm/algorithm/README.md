@@ -1,9 +1,11 @@
 ---
-title: 
-date: 2019-03-06
+title: 算法
+date: 2019-02-19 17:01:00
+categories: ['algorithm','algorithm']
+tags: ['algorithm']
 ---
 
-## 算法
+# 算法
 
 ## 算法思想
 

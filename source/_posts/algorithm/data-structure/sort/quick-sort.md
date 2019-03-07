@@ -1,11 +1,8 @@
 ---
 title: 快速排序
-date: 2015-03-04
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-04 17:12
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 快速排序

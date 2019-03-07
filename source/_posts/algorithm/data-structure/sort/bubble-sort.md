@@ -1,11 +1,8 @@
 ---
 title: 冒泡排序
-date: 2015-03-03
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-03 17:37
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 冒泡排序

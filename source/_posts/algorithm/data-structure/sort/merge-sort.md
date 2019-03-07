@@ -1,11 +1,8 @@
 ---
 title: 归并排序
-date: 2015-03-09
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-09 16:06
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 归并排序

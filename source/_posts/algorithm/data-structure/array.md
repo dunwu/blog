@@ -1,6 +1,8 @@
 ---
 title: 数组
-date: 2019-03-06
+date: 2015-04-10 18:46
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'array']
 ---
 
 # 数组

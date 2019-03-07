@@ -1,6 +1,8 @@
 ---
 title: 线性表
-date: 2019-03-06
+date: 2015-04-09 13:08
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'list']
 ---
 
 # 线性表

@@ -1,6 +1,8 @@
 ---
 title: 哈希表
-date: 2019-03-06
+date: 2015-03-16 14:19
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'hash']
 ---
 
 # 哈希表

@@ -1,6 +1,8 @@
 ---
 title: 队列
-date: 2019-03-06
+date: 2014-06-11 22:01
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'queue']
 ---
 
 # 队列

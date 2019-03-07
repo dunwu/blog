@@ -1,11 +1,8 @@
 ---
 title: 基数排序
-date: 2015-03-10
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-09 17:23
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 基数排序

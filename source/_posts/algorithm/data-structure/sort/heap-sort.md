@@ -1,11 +1,8 @@
 ---
 title: 堆排序
-date: 2015-03-08
-categories:
-- algorithm
-tags:
-- algorithm
-- sort
+date: 2015-03-09 16:01
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'sort']
 ---
 
 # 堆排序

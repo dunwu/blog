@@ -1,6 +1,8 @@
 ---
 title: 线性表的查找
-date: 2019-03-06
+date: 2015-03-10 18:29
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'search']
 ---
 
 # 线性表的查找

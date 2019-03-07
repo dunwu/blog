@@ -1,6 +1,8 @@
 ---
 title: 堆
 date: 2019-03-06
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'heap']
 ---
 
 # 堆

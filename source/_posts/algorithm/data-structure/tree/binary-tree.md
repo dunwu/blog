@@ -1,6 +1,8 @@
 ---
 title: 二叉树
-date: 2019-03-06
+date: 2014-06-15 15:39
+categories: ['algorithm','data-structure']
+tags: ['data-structure', 'tree']
 ---
 
 # 二叉树
