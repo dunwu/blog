@@ -4,7 +4,7 @@
 
 |      :keyboard:       |            :game_die:             |     :package:     |       :spider_web:        |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
 | :-------------------: | :-------------------------------: | :---------------: | :-----------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
-| [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [计算机网络](#计算机网络) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [软件工程](#软件工程)  |
+| [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [软件工程](#软件工程)  |
 
 ## [编程语言](source/_posts/programming)
 
@@ -31,14 +31,21 @@
   - [MongoDB](source/_posts/database/nosql/mongodb)
   - [Cassandra](source/_posts/database/nosql/Cassandra.md)
 
-## [计算机网络](source/_posts/network)
+## [网络通信](source/_posts/communication)
 
-- [计算机网络指南](source/_posts/network/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
-- [物理层](source/_posts/network/physical) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
-- [数据链路层](source/_posts/network/data-link-layer.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-- [网络层](source/_posts/network/network) - 关键词：`IP`、`ICMP`、`ARP`、路由
-- [传输层](source/_posts/network/transport) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
-- [应用层](source/_posts/network/application) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+> 网络通信的学习要点就是：记住网络分层结构，各层级上有哪些主要的网络协议和网络设备，它们的基本工作原理是什么。
+>
+> 如果你是互联网从业者，那么有必要更深入理解一下 HTTP、DNS、Socket。
+
+- [计算机网络指南](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
+- [计算机网络之物理层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+- [计算机网络之数据链路层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+- [计算机网络之网络层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
+- [计算机网络之传输层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- [计算机网络之应用层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [网络协议之 HTTP](https://github.com/dunwu/blog/blob/master/source/_posts/communication/http.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [网络协议之 DNS](https://github.com/dunwu/blog/blob/master/source/_posts/communication/dns.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [网络协议之 ICMP](https://github.com/dunwu/blog/blob/master/source/_posts/communication/icmp.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 
 ## [操作系统](source/_posts/os)
 

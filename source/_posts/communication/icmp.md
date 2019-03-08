@@ -1,9 +1,13 @@
 ---
 title: ICMP
-date: 2019-03-06
+categories: ['communication']
+tags: ['communication', 'network', 'protocol']
+date: 2014-07-02 20:54
 ---
 
 # ICMP
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

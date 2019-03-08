@@ -1,9 +1,13 @@
 ---
-title: DNS
-date: 2019-03-06
+title: 网络协议之 DNS
+categories: ['communication']
+tags: ['communication', 'network', 'application', 'protocol']
+date: 2018-10-17 18:14
 ---
 
-# DNS
+# 网络协议之 DNS
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 > 域名系统（英文：Domain Name System，缩写：DNS）是互联网的一项服务。它作为将域名和 IP 地址相互映射的一个分布式数据库，能够使人更方便地访问互联网。DNS 使用 TCP 和 UDP 端口 53。当前，对于每一级域名长度的限制是 63 个字符，域名总长度则不能超过 253 个字符。
 >
@@ -12,15 +16,15 @@ date: 2019-03-06
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [简介](#简介)
-  - [什么是 DNS？](#什么是-dns)
-  - [什么是域名？](#什么是域名)
-  - [DNS 的分层](#dns-的分层)
-  - [DNS 服务类型](#dns-服务类型)
-  - [记录类型](#记录类型)
+    - [什么是 DNS？](#什么是-dns)
+    - [什么是域名？](#什么是域名)
+    - [DNS 的分层](#dns-的分层)
+    - [DNS 服务类型](#dns-服务类型)
+    - [记录类型](#记录类型)
 - [域名解析](#域名解析)
 - [Linux 上的域名相关命令](#linux-上的域名相关命令)
-  - [hostname](#hostname)
-  - [nslookup](#nslookup)
+    - [hostname](#hostname)
+    - [nslookup](#nslookup)
 - [更多内容](#更多内容)
 
 <!-- /TOC -->

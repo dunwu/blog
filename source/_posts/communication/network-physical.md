@@ -1,9 +1,11 @@
 ---
-title: 物理层
+title: 计算机网络之物理层
+categories: ['communication']
+tags: ['communication', 'network', 'physical']
 date: 2019-03-06
 ---
 
-# 物理层
+# 计算机网络之物理层
 
 > **摘要**
 >

@@ -1,9 +1,11 @@
 ---
-title: 数据链路层
+title: 计算机网络之数据链路层
+categories: ['communication']
+tags: ['communication', 'network', 'data link']
 date: 2019-03-06
 ---
 
-# 数据链路层
+# 计算机网络之数据链路层
 
 > **数据链路层（Data Link Layer）** - 网络层针对的还是主机之间的数据传输服务，而主机之间可以有很多链路，链路层协议就是为同一链路的主机提供数据传输服务。数据链路层把网络层传下来的分组封装成帧。
 >

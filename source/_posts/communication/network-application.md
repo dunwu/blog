@@ -1,9 +1,11 @@
 ---
-title: 应用层
+title: 计算机网络之应用层
+categories: ['communication']
+tags: ['communication', 'network', 'application']
 date: 2019-03-06
 ---
 
-# 应用层
+# 计算机网络之应用层
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -13,15 +15,15 @@ date: 2019-03-06
 - [DHCP](#dhcp)
 - [TELNET](#telnet)
 - [电子邮件协议](#电子邮件协议)
-  - [1. SMTP](#1-smtp)
-  - [2. POP3](#2-pop3)
-  - [3. IMAP](#3-imap)
+    - [1. SMTP](#1-smtp)
+    - [2. POP3](#2-pop3)
+    - [3. IMAP](#3-imap)
 - [常用端口](#常用端口)
 - [Web 页面请求过程](#web-页面请求过程)
-  - [1. DHCP 配置主机信息](#1-dhcp-配置主机信息)
-  - [2. ARP 解析 MAC 地址](#2-arp-解析-mac-地址)
-  - [3. DNS 解析域名](#3-dns-解析域名)
-  - [4. HTTP 请求页面](#4-http-请求页面)
+    - [1. DHCP 配置主机信息](#1-dhcp-配置主机信息)
+    - [2. ARP 解析 MAC 地址](#2-arp-解析-mac-地址)
+    - [3. DNS 解析域名](#3-dns-解析域名)
+    - [4. HTTP 请求页面](#4-http-请求页面)
 
 <!-- /TOC -->
 
