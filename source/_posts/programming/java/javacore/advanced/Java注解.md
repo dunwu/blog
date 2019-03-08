@@ -1,7 +1,29 @@
 ---
-title: 
-date: 2019-03-06
+title: Java 注解
+categories: ['programming', 'java', 'javacore', 'advanced']
+tags: ['programming', 'java', 'javacore', 'annotation']
+date: 2017-08-22 10:30
 ---
+
+# Java 注解
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [什么是注解（Annotation）](#什么是注解annotation)
+- [什么是 metadata（元数据）](#什么是-metadata元数据)
+- [Annotation 和 Annotation 类型](#annotation-和-annotation-类型)
+    - [注解](#注解)
+    - [注解类型](#注解类型)
+- [注解的分类](#注解的分类)
+    - [内置系统注解](#内置系统注解)
+    - [元注解](#元注解)
+- [自定义注解](#自定义注解)
+- [注解处理器](#注解处理器)
+- [资料](#资料)
+
+<!-- /TOC -->
 
 ## 什么是注解（Annotation）
 
@@ -186,10 +208,10 @@ public class FruitService {
 
 Java 5 定义了 4 个标准的元注解类型，它们被用来提供对其它注解类型作说明。Java 5 定义的元注解：
 
-* @Target
-* @Retention
-* @Documented
-* @Inherited
+- @Target
+- @Retention
+- @Documented
+- @Inherited
 
 这些类型和它们所支持的类在 `java.lang.annotation` 包中可以找到。下面我们看一下每个元注解的作用和相应分参数的使用说明。
 
@@ -201,13 +223,13 @@ Java 5 定义了 4 个标准的元注解类型，它们被用来提供对其它�
 
 取值（ElementType）有：
 
-* **CONSTRUCTOR**：用于描述构造器
-* **FIELD**：用于描述域
-* **LOCAL_VARIABLE**：用于描述局部变量
-* **METHOD**：用于描述方法
-* **PACKAGE**：用于描述包
-* **PARAMETER**：用于描述参数
-* **TYPE**：用于描述类、接口(包括注解类型) 或 enum 声明
+- **CONSTRUCTOR**：用于描述构造器
+- **FIELD**：用于描述域
+- **LOCAL_VARIABLE**：用于描述局部变量
+- **METHOD**：用于描述方法
+- **PACKAGE**：用于描述包
+- **PARAMETER**：用于描述参数
+- **TYPE**：用于描述类、接口(包括注解类型) 或 enum 声明
 
 ```java
 @Target(ElementType.TYPE)
@@ -232,11 +254,11 @@ public @interface NoDBColumn {
 
 取值（RetentionPoicy）有：
 
-* **SOURCE**：在源文件中有效（即源文件保留）
+- **SOURCE**：在源文件中有效（即源文件保留）
 
-* **CLASS**：在 class 文件中有效（即 class 保留）
+- **CLASS**：在 class 文件中有效（即 class 保留）
 
-* **RUNTIME**：在运行时有效（即运行时保留）
+- **RUNTIME**：在运行时有效（即运行时保留）
 
 `@Retention` 类型有唯一的 value 作为成员，它的取值来自 `java.lang.annotation.RetentionPolicy` 的枚举类型值。具体实例如下：
 
@@ -296,27 +318,27 @@ public @interface 注解名 {定义体}
 
 #### 注解参数的可支持数据类型
 
-* 所有基本数据类型（byte、char、short、int、long、float、double、boolean）
+- 所有基本数据类型（byte、char、short、int、long、float、double、boolean）
 
-* String 类型
+- String 类型
 
-* Class 类型
+- Class 类型
 
-* enum 类型
+- enum 类型
 
-* Annotation 类型
+- Annotation 类型
 
-* 以上所有类型的数组
+- 以上所有类型的数组
 
 注解类型里面的参数该怎么设定:
 
-* 只能用 public 或默认（default）这两个访问权修饰。
+- 只能用 public 或默认（default）这两个访问权修饰。
 
   例如：`String value();` 这里把方法设为 default 默认类型。
 
-* 参数成员只能用基本类型 byte、char、short、int、long、float、double、boolean 八种基本数据类型和 String、Enum、Class、注解等数据类型，以及这一些类型的数组。例如：`String value();` 这里的参数成员就为 String。
+- 参数成员只能用基本类型 byte、char、short、int、long、float、double、boolean 八种基本数据类型和 String、Enum、Class、注解等数据类型，以及这一些类型的数组。例如：`String value();` 这里的参数成员就为 String。
 
-* 如果只有一个参数成员，最好把参数名称设为"value"，后加小括号。例：下面的例子 FruitName 注解就只有一个参数成员。
+- 如果只有一个参数成员，最好把参数名称设为"value"，后加小括号。例：下面的例子 FruitName 注解就只有一个参数成员。
 
 简单的自定义注解和使用注解实例：
 
@@ -411,11 +433,11 @@ public @interface FruitProvider {
 
 Java 使用 `java.lang.annotation.Annotation` 接口来代表程序元素前面的注解，该接口是所有注解类型的父接口。除此之外，Java 新增了 `java.lang.reflect.AnnotatedElement` 接口，该接口代表程序中可以接受注解的程序元素，该接口主要有如下几个实现类：
 
-* **Class**：类定义
-* **Constructor**：构造器定义
-* **Field**：累的成员变量定义
-* **Method**：类的方法定义
-* **Package**：类的包定义
+- **Class**：类定义
+- **Constructor**：构造器定义
+- **Field**：累的成员变量定义
+- **Method**：类的方法定义
+- **Package**：类的包定义
 
 `java.lang.reflect` 包下主要包含一些实现反射功能的工具类。实际上，`java.lang.reflect` 包所有提供的反射 API 扩充了读取运行时注解信息的能力。当一个注解类型被定义为运行时的注解后，该注解才能是运行时可见，当 class 文件被装载时被保存在 class 文件中的注解才会被虚拟机读取。
 `AnnotatedElement` 接口是所有程序元素（Class、Method 和 Constructor）的父接口，所以程序通过反射获取了某个类的`AnnotatedElement` 对象之后，程序就可以调用该对象的如下四个个方法来访问注解信息：
@@ -541,8 +563,8 @@ public class FruitRun {
 
 ## 资料
 
-* [注解（Annotation）基本概念](http://www.cnblogs.com/peida/archive/2013/04/23/3036035.html) by peida
+- [注解（Annotation）基本概念](http://www.cnblogs.com/peida/archive/2013/04/23/3036035.html) by peida
 
-* [注解（Annotation）自定义注解入门](http://www.cnblogs.com/peida/archive/2013/04/24/3036689.html) by peida
+- [注解（Annotation）自定义注解入门](http://www.cnblogs.com/peida/archive/2013/04/24/3036689.html) by peida
 
-* [注解（Annotation）注解处理器](http://www.cnblogs.com/peida/archive/2013/04/26/3038503.html) by peida
+- [注解（Annotation）注解处理器](http://www.cnblogs.com/peida/archive/2013/04/26/3038503.html) by peida

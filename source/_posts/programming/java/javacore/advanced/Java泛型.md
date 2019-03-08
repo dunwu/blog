@@ -1,13 +1,13 @@
 ---
-title: 泛型
-date: 2018-06-02
-categories:
-- javacore
-tags:
-- javacore
+title: Java 泛型
+categories: ['programming', 'java', 'javacore', 'advanced']
+tags: ['programming', 'java', 'javacore', 'generic']
+date: 2018-06-02 20:51
 ---
 
-# 泛型
+# Java 泛型
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -19,8 +19,7 @@ tags:
     - [擦除的问题](#擦除的问题)
 - [擦除补偿](#擦除补偿)
 - [边界](#边界)
-- [通配符](#通配符)
-- [资料](#资料)
+- [参考资料](#参考资料)
 
 <!-- /TOC -->
 
@@ -161,8 +160,6 @@ Foo<Cat> foo = new Foo<>();
 
 因为擦除移除了类型信息，所以，可以用无界泛型参数调用的方法只是那些可以用 Ojbect 调用的方法。如果能够将这个参数限制为某个类型子集，那么你就可以用这些类型子集来调用方法。为了执行这种限制，Java 泛型重用了 extends 关键字。
 
-## 通配符
+## 参考资料
 
-## 资料
-
-* [Java 编程思想（Thinking in java）](https://item.jd.com/10058164.html)
+- [Java 编程思想（Thinking in java）](https://item.jd.com/10058164.html)

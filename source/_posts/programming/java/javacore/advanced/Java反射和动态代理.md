@@ -1,15 +1,13 @@
 ---
-title: Java 反射
-date: 2018-06-05
-categories:
-  - javacore
-tags:
-  - java
-  - javacore
-  - advanced
+title: Java 反射和动态代理
+categories: ['programming', 'java', 'javacore', 'advanced']
+tags: ['programming', 'java', 'javacore', 'reflect', 'proxy']
+date: 2018-07-16 14:52
 ---
 
 # Java 反射和动态代理
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -482,7 +480,7 @@ After method
 Result is: Over
 ```
 
-我们首先来看看 `com.sun.proxy.$Proxy0` 这东西，我们看到，这个东西是由  `System.out.println(subject.getClass().getName());` 这条语句打印出来的，那么为什么我们返回的这个代理对象的类名是这样的呢？
+我们首先来看看 `com.sun.proxy.$Proxy0` 这东西，我们看到，这个东西是由 `System.out.println(subject.getClass().getName());` 这条语句打印出来的，那么为什么我们返回的这个代理对象的类名是这样的呢？
 
 ```java
 Subject subject = (Subject)Proxy.newProxyInstance(handler.getClass().getClassLoader(), realSubject

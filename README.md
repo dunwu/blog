@@ -11,10 +11,73 @@
 > 任何建筑都是一砖一瓦的堆砌，任何软件都是通过编程语言一行一行编写的。每种编程语言都有自身的优缺点，有适合的应用场景。编程语言那么多，奈何人生苦短，不可能全部掌握。个人认为，作为程序员，至少应该精通一门高级编程语言，一门脚本语言。所谓一通百通，万变不离其宗，精通一两门编程语言后，自然会发现语言之间也有很多相似性。
 >
 > 本人比较熟的编程语言是 Java、JavaScript，也写过 C、C++、C#、Shell 等语言的程序。在我看来，编程语言的学习有许多的共通性，总结在 「[如何学习一门编程语言](source/_posts/programming/programming-guide.md)」 中，如果你是一名程序员新手，推荐一看。
-> 
+>
 > 本篇章重点整理 Java、JavaScript 语言的语法、框架、应用等内容。其他语言介绍时，一般都是 All-In-One 式（一篇速成文章）。
 
-- [Java](source/_posts/programming/java) - Java 语法、JVM、并发编程、JavaEE、Spring、Spring Boot、Mybatis
+### [Java](source/_posts/programming/java)
+
+#### [Java 核心技术教程](source/_posts/programming/java/javacore)
+
+##### Java 基础特性
+
+待整理。。。
+
+##### Java 高级特性
+
+- [Java 反射和动态代理](source/_posts/programming/java/javacore/advanced/Java反射和动态代理.md)
+- [Java 本地化](source/_posts/programming/java/javacore/advanced/Java本地化.md)
+- [Java 正则](source/_posts/programming/java/javacore/advanced/Java正则.md)
+- [Java 泛型](source/_posts/programming/java/javacore/advanced/Java泛型.md)
+- [Java 注解](source/_posts/programming/java/javacore/advanced/Java注解.md)
+- [Java 编码和加密](source/_posts/programming/java/javacore/advanced/Java编码和加密.md)
+
+##### [Java 容器教程](source/_posts/programming/java/javacore/container)
+
+> 并发容器内容会放在 Java 并发编程章节讲解。
+
+- [Java 容器概述](source/_posts/programming/java/javacore/container/java-container.md)
+- [Java 容器之 List](source/_posts/programming/java/javacore/container/java-container-list.md)
+- [Java 容器之 Set](source/_posts/programming/java/javacore/container/java-container-set.md)
+- [Java 容器之 Queue](source/_posts/programming/java/javacore/container/java-container-queue.md)
+- [Java 容器之 Map](source/_posts/programming/java/javacore/container/java-container-map.md)
+
+##### Java 并发编程教程
+
+待整理。。。
+
+##### [Java IO 教程](source/_posts/programming/java/javacore/io)
+
+- [Java 常用 IO 类](source/_posts/programming/java/javacore/io/Java常用IO类.md)
+- [Java 流操作](source/_posts/programming/java/javacore/io/Java流操作.md)
+- [Java 序列化](source/_posts/programming/java/javacore/io/Java序列化.md)
+- [Java 网络编程](source/_posts/programming/java/javacore/io/Java网络编程.md)
+- [Java NIO](source/_posts/programming/java/javacore/io/JavaNIO.md)
+
+##### [Java 虚拟机教程](source/_posts/programming/java/javacore/jvm)
+
+- [运行时数据区域](source/_posts/programming/java/javacore/jvm/运行时数据区域.md)
+- [垃圾收集](source/_posts/programming/java/javacore/jvm/垃圾收集.md)
+- [类加载机制](source/_posts/programming/java/javacore/jvm/类加载机制.md)
+- [JVM 调优](source/_posts/programming/java/javacore/jvm/JVM调优.md)
+
+#### [Java Web 教程](source/_posts/programming/java/javaweb)
+
+待整理。。。
+
+#### [Spring 教程](source/_posts/programming/java/spring)
+
+待整理。。。
+
+#### [Spring Boot 教程](source/_posts/programming/java/spring-boot)
+
+待整理。。。
+
+### JavaScript
+
+待整理。。。
+
+### 其他编程语言
+
 - [一篇文章让你彻底掌握 python 语言](source/_posts/programming/python.md)
 - [一篇文章让你彻底掌握 shell 语言](source/_posts/programming/shell.md)
 
