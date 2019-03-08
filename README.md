@@ -69,13 +69,24 @@
 
 ## [设计](source/_posts/design)
 
-### [UML](source/_posts/design/UML.md)
+### [架构](source/_posts/design/architecture)
 
-> 关键词：类图、对象图、包图、组件图、部署图、复合结构图、活动图、状态图、用例图、通信图、交互概述图、时序图、时间图
+> 软件整体结构与组件的抽象描述，用于指导大型软件系统各个方面的设计。重点是分而治之，先将大型系统抽象为各个组件或模块；然后逐一解决各组件、各模块的功能、性能问题；最后将这些组件、模块整合成对外服务的一个整体。
 
-### [设计模式](source/_posts/design/design-patterns)
-
-> 关键词：简单工厂模式、单例模式、工厂方法模式、抽象工厂模式、建造者模式、原型模式、适配器模式、桥接模式、装饰者模式、组合模式、外观模式、享元模式、代理模式、模板方法模式、命令模式、迭代器模式、观察者模式、解释器模式、中介者模式、职责链模式、备忘录模式、策略模式、访问者模式、状态模式
+- [分布式原理](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式原理.md)
+- [分布式技术实现](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式技术实现.md)
+- [分布式技术面试题](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式技术面试题.md)
+- [分布式架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式架构.md)
+- [大型分布式网站架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/大型分布式网站架构.md)
+- [大型系统设计](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/大型系统设计.md)
+- [大型网站架构概述](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/大型网站架构概述.md)
+- [网站典型故障](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站典型故障.md)
+- [网站的伸缩性架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的伸缩性架构.md)
+- [网站的可扩展架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的可扩展架构.md)
+- [网站的安全架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的安全架构.md)
+- [网站的高可用架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的高可用架构.md)
+- [网站的高性能架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的高性能架构.md)
+- [负载均衡](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/负载均衡.md)
 
 ### [重构](source/_posts/design/refactor)
 
@@ -89,6 +100,14 @@
 - [代码坏味道之变革的障碍](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之变革的障碍.md)
 - [代码坏味道之非必要的](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之非必要的.md)
 - [代码坏味道之耦合](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之耦合.md)
+
+### [UML](source/_posts/design/UML.md)
+
+> 关键词：类图、对象图、包图、组件图、部署图、复合结构图、活动图、状态图、用例图、通信图、交互概述图、时序图、时间图
+
+### [设计模式](source/_posts/design/design-patterns)
+
+> 关键词：简单工厂模式、单例模式、工厂方法模式、抽象工厂模式、建造者模式、原型模式、适配器模式、桥接模式、装饰者模式、组合模式、外观模式、享元模式、代理模式、模板方法模式、命令模式、迭代器模式、观察者模式、解释器模式、中介者模式、职责链模式、备忘录模式、策略模式、访问者模式、状态模式
 
 ## [软件工程](source/_posts/software)
 
