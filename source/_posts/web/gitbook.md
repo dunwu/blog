@@ -1,13 +1,19 @@
 ---
-title: This is a comment
-date: 2019-03-06
+title: 使用 Gitbook 打造你的电子书
+categories: ['web']
+tags: ['web', 'gitbook']
+date: 2017-09-04 08:59
 ---
+
+# 使用 Gitbook 打造你的电子书
 
 > 本文详细讲解了 Gitbook 生成电子书的完整过程，内容包括：安装、命令、配置、文档结构、生成电子书、部署。
 >
 > 限于篇幅，本文不介绍任何 Gitbook 定制化页面的内容。
 >
 > 想看看 Gitbook 在线电子书效果，请猛戳这里：[gitbook-notes](https://dunwu.gitbooks.io/gitbook-notes)
+>
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:2 -->
 
@@ -18,7 +24,7 @@ date: 2019-03-06
 - [Gitbook 配置](#gitbook-配置)
 - [生成电子书](#生成电子书)
 - [Gitbook 部署](#gitbook-部署)
-- [资源](#资源)
+- [参考资料](#参考资料)
 
 <!-- /TOC -->
 
@@ -61,13 +67,13 @@ $ gitbook -V
 
 #### 安装历史版本
 
-`gitbook-cli`  可以轻松下载并安装其他版本的 GitBook 来测试您的书籍：
+`gitbook-cli` 可以轻松下载并安装其他版本的 GitBook 来测试您的书籍：
 
 ```bash
 $ gitbook fetch beta
 ```
 
-使用 `gitbook ls-remote`  会列举可以下载的版本。
+使用 `gitbook ls-remote` 会列举可以下载的版本。
 
 ### 创建一本书
 
@@ -91,7 +97,7 @@ $ gitbook build
 
 ##### Debugging
 
-您可以使用选项  `--log=debug`  和  `--debug`  来获取更好的错误消息（使用堆栈跟踪）。例如：
+您可以使用选项 `--log=debug` 和 `--debug` 来获取更好的错误消息（使用堆栈跟踪）。例如：
 
 ```bash
 $ gitbook build ./ --log=debug --debug
@@ -216,11 +222,11 @@ GitBook 特殊文件的功能：
 
 #### 静态文件和图片
 
-静态文件是在  `SUMMARY.md` 中未列出的文件。除非被忽略，否则所有静态文件都将复制到输出路径。
+静态文件是在 `SUMMARY.md` 中未列出的文件。除非被忽略，否则所有静态文件都将复制到输出路径。
 
 #### 忽略文件和文件夹
 
-GitBook 将读取  `.gitignore`，`.bookignore`  和  `.ignore`  文件，以获取要过滤的文件和文件夹。这些文件中的格式遵循 `.gitignore` 的规则：
+GitBook 将读取 `.gitignore`，`.bookignore` 和 `.ignore` 文件，以获取要过滤的文件和文件夹。这些文件中的格式遵循 `.gitignore` 的规则：
 
 ```
 # This is a comment
@@ -244,7 +250,7 @@ bin/*
     └── SUMMARY.md
 ```
 
-在 `book.json`  中配置以下内容：
+在 `book.json` 中配置以下内容：
 
 ```json
 {
@@ -254,9 +260,9 @@ bin/*
 
 ### Summary
 
-GitBook 使用  `SUMMARY.md`  文件来定义本书的章节和子章节的结构。 `SUMMARY.md` 文件用于生成本书的目录。
+GitBook 使用 `SUMMARY.md` 文件来定义本书的章节和子章节的结构。 `SUMMARY.md` 文件用于生成本书的目录。
 
-`SUMMARY.md`  的格式是一个链接列表。链接的标题将作为章节的标题，链接的目标是该章节文件的路径。
+`SUMMARY.md` 的格式是一个链接列表。链接的标题将作为章节的标题，链接的目标是该章节文件的路径。
 
 向父章节添加嵌套列表将创建子章节。
 
@@ -357,7 +363,7 @@ description: This is a short description of my page
 
 允许您指定要显示为注释的术语及其各自的定义。根据这些术语，GitBook 将自动构建索引并突出显示这些术语。
 
-`GLOSSARY.md`  的格式是 `h2` 标题的列表，以及描述段落：
+`GLOSSARY.md` 的格式是 `h2` 标题的列表，以及描述段落：
 
 ```
 ## Term
@@ -378,13 +384,13 @@ and all other kinds of inline markup ...
 
 | 变量          | 描述                                                                                                 |
 | ------------- | ---------------------------------------------------------------------------------------------------- |
-| `root`        | 包含所有图书文件的根文件夹的路径，除了  `book.json`                                                  |
-| `structure`   | 指定自述文件，摘要，词汇表等的路径，参考  [Structure paragraph](#structure).                         |
+| `root`        | 包含所有图书文件的根文件夹的路径，除了 `book.json`                                                   |
+| `structure`   | 指定自述文件，摘要，词汇表等的路径，参考 [Structure paragraph](#structure).                          |
 | `title`       | 您的书名，默认值是从 README 中提取出来的。在 GitBook.com 上，这个字段是预填的。                      |
 | `description` | 您的书籍的描述，默认值是从 README 中提取出来的。在 GitBook.com 上，这个字段是预填的。                |
 | `author`      | 作者名。在 GitBook.com 上，这个字段是预填的。                                                        |
 | `isbn`        | 国际标准书号 ISBN                                                                                    |
-| `language`    | 本书的语言类型 —— [ISO code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) 。默认值是  `en` |
+| `language`    | 本书的语言类型 —— [ISO code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) 。默认值是 `en`  |
 | `direction`   | 文本阅读顺序。可以是 `rtl` （从右向左）或 `ltr` （从左向右），默认值依赖于 `language` 的值。         |
 | `gitbook`     | 应该使用的 GitBook 版本。使用 [SemVer](http://semver.org/) 规范，并接受类似于 `“> = 3.0.0”` 的条件。 |
 
@@ -508,9 +514,9 @@ title
 
 ### plugins
 
-插件及其配置在  `book.json` 中指定。有关详细信息。
+插件及其配置在 `book.json` 中指定。有关详细信息。
 
-自 3.0.0 版本开始，GitBook 可以使用主题。有关详细信息，请参阅  [the theming section](https://toolchain.gitbook.com/themes/) 。
+自 3.0.0 版本开始，GitBook 可以使用主题。有关详细信息，请参阅 [the theming section](https://toolchain.gitbook.com/themes/) 。
 
 | 变量            | 描述             |
 | --------------- | ---------------- |
@@ -545,18 +551,18 @@ Gitbook 默认带有 5 个插件：
 
 ### structure
 
-除了  `root` 属性之外，您可以指定 Readme，Summary，Glossary 和 Languages 的名称（而不是使用默认名称，如 README.md）。这些文件必须在项目的根目录下（或 `root` 的根目录，如果你在 `book.json` 中配置了  `root` 属性）。不接受的路径，如：`dir / MY_README.md`。
+除了 `root` 属性之外，您可以指定 Readme，Summary，Glossary 和 Languages 的名称（而不是使用默认名称，如 README.md）。这些文件必须在项目的根目录下（或 `root` 的根目录，如果你在 `book.json` 中配置了 `root` 属性）。不接受的路径，如：`dir / MY_README.md`。
 
-| 变量                  | 描述                                        |
-| --------------------- | ------------------------------------------- |
-| `structure.readme`    | Readme 文件名（默认值是  `README.md` ）     |
-| `structure.summary`   | Summary 文件名（默认值是  `SUMMARY.md` ）   |
-| `structure.glossary`  | Glossary 文件名（默认值是  `GLOSSARY.md` ） |
-| `structure.languages` | Languages 文件名（默认值是  `LANGS.md` ）   |
+| 变量                  | 描述                                       |
+| --------------------- | ------------------------------------------ |
+| `structure.readme`    | Readme 文件名（默认值是 `README.md` ）     |
+| `structure.summary`   | Summary 文件名（默认值是 `SUMMARY.md` ）   |
+| `structure.glossary`  | Glossary 文件名（默认值是 `GLOSSARY.md` ） |
+| `structure.languages` | Languages 文件名（默认值是 `LANGS.md` ）   |
 
 ### pdf
 
-可以使用  `book.json` 中的一组选项来定制 PDF 输出：
+可以使用 `book.json` 中的一组选项来定制 PDF 输出：
 
 | Variable            | Description                                                                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -586,11 +592,11 @@ $ gitbook mobi ./ ./mybook.mobi
 
 ### 安装 ebook-convert
 
-`ebook-convert`  可以用来生成电子书（epub，mobi，pdf）。
+`ebook-convert` 可以用来生成电子书（epub，mobi，pdf）。
 
 #### GNU/Linux
 
-安装  [Calibre application](https://calibre-ebook.com/download).
+安装 [Calibre application](https://calibre-ebook.com/download).
 
 ```sh
 $ sudo aptitude install calibre
@@ -604,17 +610,17 @@ $sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 #### OS X
 
-下载  [Calibre application](https://calibre-ebook.com/download)。将 `calibre.app` 移动到应用程序文件夹后，创建一个符号链接到 `ebook-convert` 工具：
+下载 [Calibre application](https://calibre-ebook.com/download)。将 `calibre.app` 移动到应用程序文件夹后，创建一个符号链接到 `ebook-convert` 工具：
 
 ```sh
 $ sudo ln -s ~/Applications/calibre.app/Contents/MacOS/ebook-convert /usr/bin
 ```
 
-您可以使用 $PATH 中的任何目录替换  `/usr/bin` 。
+您可以使用 \$PATH 中的任何目录替换 `/usr/bin` 。
 
 ### 封面
 
-封面用于所有电子书格式。您可以自己提供一个，也可以使用  [autocover plugin](https://plugins.gitbook.com/plugin/autocover) 生成一个。
+封面用于所有电子书格式。您可以自己提供一个，也可以使用 [autocover plugin](https://plugins.gitbook.com/plugin/autocover) 生成一个。
 
 要提供封面，请将 `cover.jpg` 文件放在书本的根目录下。添加一个 `cover_small.jpg` 将指定一个较小版本的封面。封面应为 `JPEG` 文件。
 
@@ -664,8 +670,6 @@ Gitbook.com 会为每本书创建一个 git 仓库。
 如果你不希望使用 Gitbook 的仓库，而是想直接使用 Github 的仓库，也是可以的。
 
 首先，你需要绑定你的 Github 账号。最简单的方式当然就是登录 Gitbook.com 时使用 Github 账号登录方式了。否则，你也可以在 Account Settings 中的 Github 设置选项中去进行绑定。
-
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-settings-github.png"/></div><br>
 
 绑定了 Github 账号后，你可以在新建电子书时，选择从一个指定的 Github 仓库导入电子书项目。参考下图：
 
@@ -738,7 +742,7 @@ git commit -am "Update"
 git push git@github.com:dunwu/gitbook-notes gh-pages --force"
 ```
 
-## 资源
+## 参考资料
 
 ### 官方资源
 

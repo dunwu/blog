@@ -125,7 +125,9 @@
 
 ## [Web](source/_posts/web)
 
+- [Git 从入门到精通](source/_posts/web/git.md) - 关键词：版本控制、分布式
 - [Nginx 极简教程](source/_posts/web/nginx.md) - 关键词：反向代理、负载均衡、缓存、跨域
+- [使用 Gitbook 打造你的电子书](source/_posts/web/gitbook.md)
 
 ## [前端](source/_posts/frontend)
 
