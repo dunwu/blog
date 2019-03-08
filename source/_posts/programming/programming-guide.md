@@ -1,11 +1,13 @@
 ---
 title: 如何学习一门编程语言
-date: 2019-03-06
 categories: ['programming']
 tags: ['programming']
+date: 2018-01-05 09:08
 ---
 
 # 如何学习一门编程语言
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

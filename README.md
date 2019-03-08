@@ -2,14 +2,20 @@
 
 > 本项目用于归档我个人的技术文档。
 
-|      :keyboard:       |            :game_die:             |     :package:     |       :spider_web:        |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
-| :-------------------: | :-------------------------------: | :---------------: | :-----------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
+|      :keyboard:       |            :game_die:             |     :package:     |     :spider_web:      |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
+| :-------------------: | :-------------------------------: | :---------------: | :-------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
 | [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [软件工程](#软件工程)  |
 
 ## [编程语言](source/_posts/programming)
 
+> 任何建筑都是一砖一瓦的堆砌，任何软件都是通过编程语言一行一行编写的。每种编程语言都有自身的优缺点，有适合的应用场景。编程语言那么多，奈何人生苦短，不可能全部掌握。个人认为，作为程序员，至少应该精通一门高级编程语言，一门脚本语言。所谓一通百通，万变不离其宗，精通一两门编程语言后，自然会发现语言之间也有很多相似性。
+>
+> 本人比较熟的编程语言是 Java、JavaScript，也写过 C、C++、C#、Shell 等语言的程序。在我看来，编程语言的学习有许多的共通性，总结在 「[如何学习一门编程语言](source/_posts/programming/programming-guide.md)」 中，如果你是一名程序员新手，推荐一看。
+> 
+> 本篇章重点整理 Java、JavaScript 语言的语法、框架、应用等内容。其他语言介绍时，一般都是 All-In-One 式（一篇速成文章）。
+
 - [Java](source/_posts/programming/java) - Java 语法、JVM、并发编程、JavaEE、Spring、Spring Boot、Mybatis
-- [Python](source/_posts/programming/python.md)
+- [一篇文章让你彻底掌握 python 语言](source/_posts/programming/python.md)
 - [一篇文章让你彻底掌握 shell 语言](source/_posts/programming/shell.md)
 
 ## [算法和数据结构](source/_posts/algorithm)
@@ -55,7 +61,7 @@
 
 ## [Web](source/_posts/web)
 
-- [Nginx](source/_posts/web/nginx) - 关键词：反向代理、负载均衡、缓存、跨域
+- [Nginx 极简教程](source/_posts/web/nginx.md) - 关键词：反向代理、负载均衡、缓存、跨域
 
 ## [前端](source/_posts/frontend)
 

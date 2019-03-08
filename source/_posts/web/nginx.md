@@ -1,22 +1,26 @@
 ---
-title: Nginx
-date: 2019-03-06
+title: Nginx 极简教程
+categories: ['web']
+tags: ['web', 'load balance', 'proxy', 'nginx']
+date: 2016-10-10 11:45
 ---
 
-# Nginx
+# Nginx 极简教程
 
 > 本文是一个 Nginx 极简教程，目的在于帮助新手快速入门 Nginx。
 >
-> 我在 Github 上创建了一个 Nginx 教程项目： [**nginx-tutorial**](https://github.com/dunwu/nginx-tutorial)。
+> 我在 Github 上创建了一个 Nginx 教程项目： [**nginx-tutorial**](https://github.com/dunwu/nginx-tutorial)。教程中提供了一些常用场景的 Nginx 示例，示例可以通过脚本一键式启动，方便新手学习。
 >
-> 教程中提供了一些常用场景的 Nginx 示例，示例可以通过脚本一键式启动，方便新手学习。
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [概述](#概述)
-- [安装与使用](#安装与使用)
-    - [安装](#安装)
-    - [使用](#使用)
+- [安装](#安装)
+    - [Windows 安装](#windows-安装)
+    - [Linux 安装](#linux-安装)
+    - [Linux 开机自启动](#linux-开机自启动)
+- [使用](#使用)
 - [nginx 配置实战](#nginx-配置实战)
     - [http 反向代理配置](#http-反向代理配置)
     - [负载均衡配置](#负载均衡配置)
@@ -25,7 +29,7 @@ date: 2019-03-06
     - [静态站点配置](#静态站点配置)
     - [搭建文件服务器](#搭建文件服务器)
     - [跨域解决方案](#跨域解决方案)
-- [更多内容](#更多内容)
+- [参考资料](#参考资料)
 
 <!-- /TOC -->
 
@@ -43,13 +47,155 @@ date: 2019-03-06
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/reverse-proxy.png"/></div><br>
 
-## 安装与使用
+## 安装
 
-### 安装
+### Windows 安装
 
-详细安装方法请参考：[Nginx 安装](install-nginx.md)
+（1）进入[官方下载地址](https://nginx.org/en/download.html)，选择合适版本（nginx/Windows-xxx）。
 
-### 使用
+（2）解压到本地
+
+（3）启动
+
+下面以 C 盘根目录为例说明下：
+
+```
+cd C:
+cd C:\nginx-0.8.54 start nginx
+```
+
+> 注：Nginx / Win32 是运行在一个控制台程序，而非 windows 服务方式的。服务器方式目前还是开发尝试中。
+
+### Linux 安装
+
+#### rpm 包方式（推荐）
+
+（1）进入[下载页面](http://nginx.org/packages/)，选择合适版本下载。
+
+```bash
+$ wget http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+```
+
+（2）安装 nginx rpm 包
+
+nginx rpm 包实际上安装的是 nginx 的 yum 源。
+
+```bash
+$ rpm -ivh nginx-*.rpm
+```
+
+（3）正式安装 rpm 包
+
+```bash
+$ yum install nginx
+```
+
+（4）关闭防火墙
+
+```bash
+$ firewall-cmd --zone=public --add-port=80/tcp --permanent
+$ firewall-cmd --reload
+```
+
+#### 源码编译方式
+
+##### 安装编译工具及库文件
+
+Nginx 源码的编译依赖于 gcc 以及一些库文件，所以必须提前安装。
+
+```bash
+$ yum -y install make zlib zlib-devel gcc-c++ libtool  openssl openssl-devel
+```
+
+Nginx 依赖 pcre 库，安装步骤如下：
+
+（1）下载解压到本地
+
+进入[pcre 官网下载页面](https://sourceforge.net/projects/pcre/files/pcre/)，选择合适的版本下载。
+
+我选择的是 8.35 版本：
+
+```bash
+wget -O /opt/pcre/pcre-8.35.tar.gz http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz
+cd /opt/pcre
+tar zxvf pcre-8.35.tar.gz
+```
+
+（2）编译安装
+
+执行以下命令：
+
+```bash
+cd /opt/pcre/pcre-8.35
+./configure
+make && make install
+```
+
+（3）检验是否安装成功
+
+执行 `pcre-config --version` 命令。
+
+##### 安装 Nginx
+
+安装步骤如下：
+
+（1）下载解压到本地
+
+进入官网下载地址：http://nginx.org/en/download.html ，选择合适的版本下载。
+
+我选择的是 1.12.2 版本：http://downloads.sourceforge.net/project/pcre/pcre/8.35/pcre-8.35.tar.gz
+
+```
+wget -O /opt/nginx/nginx-1.12.2.tar.gz http://nginx.org/download/nginx-1.12.2.tar.gz
+cd /opt/nginx
+tar zxvf nginx-1.12.2.tar.gz
+```
+
+（2）编译安装
+
+执行以下命令：
+
+```
+cd /opt/nginx/nginx-1.12.2
+./configure --with-http_stub_status_module --with-http_ssl_module --with-pcre=/opt/pcre/pcre-8.35
+```
+
+（3）关闭防火墙
+
+```sh
+$ firewall-cmd --zone=public --add-port=80/tcp --permanent
+$ firewall-cmd --reload
+```
+
+（4） 启动 Nginx
+
+安装成功后，直接执行 `nginx` 命令即可启动 nginx。
+
+启动后，访问站点：
+
+<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181016133223.png"/></div><br>
+
+### Linux 开机自启动
+
+Centos7 以上是用 Systemd 进行系统初始化的，Systemd 是 Linux 系统中最新的初始化系统（init），它主要的设计目标是克服 sysvinit 固有的缺点，提高系统的启动速度。Systemd 服务文件以 .service 结尾。
+
+#### rpm 包方式
+
+如果是通过 rpm 包安装的，会自动创建 nginx.service 文件。
+
+直接用命令：
+
+```sh
+$ systemctl enable nginx.service
+```
+
+设置开机启动即可。
+
+#### 源码编译方式
+
+如果采用源码编译方式，需要手动创建 nginx.service 文件。
+
+## 使用
 
 nginx 的使用比较简单，就是几条命令。
 
@@ -536,7 +682,6 @@ server {
 
 到此，就完成了。
 
-## 更多内容
+## 参考资料
 
 - [Nginx 的中文维基](http://tool.oschina.net/apidocs/apidoc?api=nginx-zh)
-- [Nginx 安装](install-nginx.md)
