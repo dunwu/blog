@@ -30,6 +30,7 @@
 - [Java 泛型](source/_posts/programming/java/javacore/advanced/Java泛型.md)
 - [Java 注解](source/_posts/programming/java/javacore/advanced/Java注解.md)
 - [Java 编码和加密](source/_posts/programming/java/javacore/advanced/Java编码和加密.md)
+- [JDK8 快速指南](source/_posts/programming/java/javacore/advanced/jdk8-quickstart.md)
 
 ##### [Java 容器教程](source/_posts/programming/java/javacore/container)
 
