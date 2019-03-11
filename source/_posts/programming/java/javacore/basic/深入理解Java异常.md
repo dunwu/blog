@@ -35,7 +35,7 @@ date: 2015-04-25 20:43
 
 ## 异常框架
 
-![1552274131681](D:\Codes\ZP\Others\images\snap\1552274131681.png)
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552274131681.png"/></div><br>
 
 ### Throwable
 
