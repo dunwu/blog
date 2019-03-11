@@ -1,14 +1,34 @@
 ---
-title: Java 枚举
-date: 2016-11-24
-categories:
-- javacore
-tags:
-- javacore
-- basics
+title: 深入理解 Java 枚举类型
+categories: ['programming', 'java', 'javacore', 'basic']
+tags: ['programming', 'java', 'javacore', 'basic', 'enum']
+date: 2018-04-24 19:45
 ---
 
-# Java 枚举
+# 深入理解 Java 枚举类型
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [知识点](#知识点)
+- [概念](#概念)
+    - [枚举类型的本质](#枚举类型的本质)
+- [枚举的方法](#枚举的方法)
+- [枚举的特性](#枚举的特性)
+    - [枚举可以添加方法](#枚举可以添加方法)
+    - [枚举可以实现接口](#枚举可以实现接口)
+    - [枚举不可以继承](#枚举不可以继承)
+- [枚举的应用场景](#枚举的应用场景)
+    - [组织常量](#组织常量)
+    - [switch 状态机](#switch-状态机)
+    - [组织枚举](#组织枚举)
+    - [策略枚举](#策略枚举)
+- [EnumSet 和 EnumMap](#enumset-和-enummap)
+- [小结](#小结)
+- [参考资料](#参考资料)
+
+<!-- /TOC -->
 
 ## 知识点
 
@@ -457,3 +477,9 @@ for (Iterator<Map.Entry<StateMachine.Signal, String>> iter = errMap.entrySet().i
     System.out.println(entry.getKey().name() + " : " + entry.getValue());
 }
 ```
+
+## 小结
+
+## 参考资料
+
+- [深入理解Java枚举类型(enum)](https://blog.csdn.net/javazejian/article/details/71333103#enumset%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90)

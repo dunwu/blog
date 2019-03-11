@@ -20,7 +20,8 @@
 
 ##### Java 基础特性
 
-待整理。。。
+- [深入理解 Java 基本数据类型](source/_posts/programming/java/javacore/basic/深入理解Java基本数据类型.md)
+- [深入理解 Java 异常](source/_posts/programming/java/javacore/basic/深入理解Java异常.md)
 
 ##### Java 高级特性
 
