@@ -1,5 +1,7 @@
 ---
 title: 项目规范
+categories: ['method']
+tags: ['method', 'project']
 date: 2019-03-06
 ---
 

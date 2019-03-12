@@ -1,5 +1,7 @@
 ---
-title: 技术文档规范
+title: 合理编排你的技术文档
+categories: ['method']
+tags: ['method', 'doc']
 date: 2019-03-06
 ---
 

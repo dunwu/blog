@@ -1,27 +1,30 @@
 ---
 title: Java 操作符
+categories: ['programming', 'java', 'javacore', 'basic']
+tags: ['programming', 'java', 'javacore', 'basic', 'datatype']
 date: 2015-02-15
-categories:
-- javacore
-tags:
-- javacore
-- basics
 ---
 
 # Java 操作符
 
-## 知识点
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
+> :keyboard: 本文中的示例代码已归档到：「[javacore](https://github.com/dunwu/javacore/tree/master/codes/basics/src/main/java/io/github/dunwu/javacore/operator)」
 
-<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-ceed021ed7c60696.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<!-- TOC depthFrom:2 depthTo:3 -->
 
-计算机的最基本用途之一就是执行数学运算，作为一门计算机语言，Java 也提供了一套丰富的操作符来操纵变量。我们可以把操作符分成以下几组：
+- [算术操作符](#算术操作符)
+- [关系操作符](#关系操作符)
+- [位操作符](#位操作符)
+- [逻辑操作符](#逻辑操作符)
+- [赋值操作符](#赋值操作符)
+- [条件操作符（?:）](#条件操作符)
+- [instanceOf 操作符](#instanceof-操作符)
+- [Java 操作符优先级](#java-操作符优先级)
+- [小结](#小结)
+- [参考资料](#参考资料)
 
-* 算术操作符
-* 关系操作符
-* 位操作符
-* 逻辑操作符
-* 赋值操作符
-* 其他操作符
+<!-- /TOC -->
 
 ## 算术操作符
 
@@ -399,3 +402,10 @@ true
 | 条件     | ？：                                        | 从右到左 |
 | 赋值     | = + = - = \* = / =％= >> = << =＆= ^ = \| = | 从右到左 |
 | 逗号     | ，                                          | 左到右   |
+
+## 小结
+
+## 参考资料
+
+- [Java 编程思想](https://book.douban.com/subject/2130190/)
+- [JAVA 核心技术（卷 1）](https://book.douban.com/subject/3146174/)

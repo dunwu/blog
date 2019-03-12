@@ -1,5 +1,7 @@
 ---
 title: 目录规范
+categories: ['method']
+tags: ['method', 'doc']
 date: 2019-03-06
 ---
 
