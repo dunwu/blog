@@ -1,5 +1,5 @@
 ---
-title: 深入理解Java异常
+title: 深入理解 Java 异常
 categories: ['programming', 'java', 'javacore', 'basic']
 tags: ['programming', 'java', 'javacore', 'basic', 'exception']
 date: 2015-04-25 20:43
@@ -19,13 +19,12 @@ date: 2015-04-25 20:43
     - [Exception](#exception)
     - [RuntimeException](#runtimeexception)
 - [自定义异常](#自定义异常)
-- [异常处理](#异常处理)
-    - [throw 和 throws](#throw-和-throws)
-    - [try、catch 和 finally](#trycatch-和-finally)
+- [抛出异常](#抛出异常)
+- [捕获异常](#捕获异常)
 - [异常链](#异常链)
 - [异常注意事项](#异常注意事项)
-    - [异常覆盖](#异常覆盖)
-    - [异常的继承](#异常的继承)
+    - [finally 覆盖异常](#finally-覆盖异常)
+    - [覆盖抛出异常的方法](#覆盖抛出异常的方法)
     - [异常和线程](#异常和线程)
 - [最佳实践](#最佳实践)
 - [小结](#小结)
@@ -166,11 +165,11 @@ Exception in thread "main" io.github.dunwu.javacore.exception.MyExceptionDemo$My
 	at io.github.dunwu.javacore.exception.MyExceptionDemo.main(MyExceptionDemo.java:9)
 ```
 
-## 异常处理
+## 抛出异常
 
-### throw 和 throws
+如果想在程序中明确地抛出异常，需要用到 `throw` 和 `throws` 。
 
-如果想在程序中明确地引发异常，则需要用到 `throw` 和 `throws` 。
+如果一个方法没有捕获一个检查性异常，那么该方法必须使用 `throws` 关键字来声明。`throws` 关键字放在方法签名的尾部。
 
 `throw` 示例：
 
@@ -195,6 +194,8 @@ public class ThrowDemo {
 ```
 java.lang.RuntimeException: 抛出一个异常
 ```
+
+也可以使用 `throw` 关键字抛出一个异常，无论它是新实例化的还是刚捕获到的。
 
 `throws` 示例：
 
@@ -244,7 +245,7 @@ throw 和 throws 的区别：
 - throws 使用在函数上，throw 使用在函数内。
 - throws 后面跟异常类，可以跟多个，用逗号区别；throw 后面跟的是异常对象。
 
-### try、catch 和 finally
+## 捕获异常
 
 **使用 try 和 catch 关键字可以捕获异常。**try catch 代码块放在异常可能发生的地方。
 
@@ -463,6 +464,8 @@ public class ExceptionOverrideDemo {
 > - [优雅的处理你的 Java 异常](https://my.oschina.net/c5ms/blog/1827907)
 
 ## 小结
+
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552359822097.png"/></div><br>
 
 （1）**`Throwable` 是 Java 语言中所有错误（`Error`）和异常（`Exception`）的超类。**
 

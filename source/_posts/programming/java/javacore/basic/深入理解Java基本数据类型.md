@@ -150,14 +150,17 @@ Boolean <-> boolean
 
 基本数据类型与包装类的转换被称为`装箱`和`拆箱`。
 
-- **`装箱`（boxing）是将值类型转换为引用类型。**例如：`int` 转 `Integer`
+- **`装箱`（boxing）是将值类型转换为引用类型**。例如：`int` 转 `Integer`
   - 装箱过程是通过调用包装类的 `valueOf` 方法实现的。
-- **`拆箱`（unboxing）是将引用类型转换为值类型。**例如：`Integer` 转 `int`
+- **`拆箱`（unboxing）是将引用类型转换为值类型**。例如：`Integer` 转 `int`
   - 拆箱过程是通过调用包装类的 `xxxValue` 方法实现的。（xxx 代表对应的基本数据类型）。
 
 ### 自动装箱、自动拆箱
 
 基本数据（Primitive）型的自动装箱（boxing）拆箱（unboxing）自 JDK 5 开始提供的功能。
+
+自动装箱与拆箱的机制可以让我们在 Java 的变量赋值或者是方法调用等情况下使用原始类型或者对象类型更加简单直接。
+因为自动装箱会隐式地创建对象，如果在一个循环体中，会创建无用的中间对象，这样会增加 GC 压力，拉低程序的性能。所以在写循环时一定要注意代码，避免引入不必要的自动装箱操作。
 
 JDK 5 之前的形式：
 
@@ -226,6 +229,8 @@ System.out.println("i1 == i4 is [" + (i1 == i4) + "]"); // 自动拆箱
 
 ## 小结
 
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552360703402.png"/></div><br>
+
 （1）Java 中的数据类型有两类：
 
 - 值类型（`byte`、`short`、`int`、`long`、`float`、`double`、`char`、`boolean`）
@@ -259,9 +264,9 @@ Boolean <-> boolean
 
 （4）什么是装箱、拆箱
 
-- **`装箱`（boxing）是将值类型转换为引用类型。**例如：`int` 转 `Integer`
+- **`装箱`（boxing）是将值类型转换为引用类型**。例如：`int` 转 `Integer`
   - 装箱过程是通过调用包装类的 `valueOf` 方法实现的。
-- **`拆箱`（unboxing）是将引用类型转换为值类型。**例如：`Integer` 转 `int`
+- **`拆箱`（unboxing）是将引用类型转换为值类型**。例如：`Integer` 转 `int`
   - 拆箱过程是通过调用包装类的 `xxxValue` 方法实现的。（xxx 代表对应的基本数据类型）。
 
 （5）装箱、拆箱的应用场景

@@ -20,6 +20,7 @@
 
 ##### Java 基础特性
 
+- [Java 控制语句](source/_posts/programming/java/javacore/basic/Java控制语句.md)
 - [深入理解 Java 基本数据类型](source/_posts/programming/java/javacore/basic/深入理解Java基本数据类型.md)
 - [深入理解 Java 异常](source/_posts/programming/java/javacore/basic/深入理解Java异常.md)
 
@@ -80,6 +81,7 @@
 
 ### 其他编程语言
 
+- [如何学习一门编程语言](source/_posts/programming/programming-guide.md)
 - [一篇文章让你彻底掌握 python 语言](source/_posts/programming/python.md)
 - [一篇文章让你彻底掌握 shell 语言](source/_posts/programming/shell.md)
 
