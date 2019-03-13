@@ -53,7 +53,7 @@ date: 2015-04-25 20:43
 
 ### Error
 
-`Error` 是 `Throwable` 的一个子类。**`Error` 表示合理的应用程序不应该尝试捕获的严重问题。**大多数此类错误都是异常情况。**编译器不会检查 `Error`。**
+`Error` 是 `Throwable` 的一个子类。**`Error` 表示合理的应用程序不应该尝试捕获的严重问题**。大多数此类错误都是异常情况。**编译器不会检查 `Error`**。
 
 常见 `Error`：
 
@@ -247,7 +247,7 @@ throw 和 throws 的区别：
 
 ## 捕获异常
 
-**使用 try 和 catch 关键字可以捕获异常。**try catch 代码块放在异常可能发生的地方。
+**使用 try 和 catch 关键字可以捕获异常**。try catch 代码块放在异常可能发生的地方。
 
 它的语法形式如下：
 
@@ -469,9 +469,9 @@ public class ExceptionOverrideDemo {
 
 （1）**`Throwable` 是 Java 语言中所有错误（`Error`）和异常（`Exception`）的超类。**
 
-（2）`Error` 是 `Throwable` 的一个子类。**`Error` 表示合理的应用程序不应该尝试捕获的严重问题。**大多数此类错误都是异常情况。**编译器不会检查 `Error`。**
+（2）`Error` 是 `Throwable` 的一个子类。**`Error` 表示合理的应用程序不应该尝试捕获的严重问题**。大多数此类错误都是异常情况。**编译器不会检查 `Error`。**
 
-（3）`Exception` 是 `Throwable` 的一个子类。**`Exception` 表示合理的应用程序可能想要捕获的条件。编译器会检查 `Exception` 异常。**此类异常，要么通过 `throws` 进行声明抛出，要么通过 `try catch` 进行捕获处理，否则不能通过编译。
+（3）`Exception` 是 `Throwable` 的一个子类。**`Exception` 表示合理的应用程序可能想要捕获的条件。编译器会检查 `Exception` 异常**。此类异常，要么通过 `throws` 进行声明抛出，要么通过 `try catch` 进行捕获处理，否则不能通过编译。
 
 （4）`RuntimeException` 是 `Exception` 的一个子类。`RuntimeException` 是那些可能在 Java 虚拟机正常运行期间抛出的异常的超类。**编译器不会检查 `RuntimeException` 异常。**当程序中可能出现这类异常时，倘若既没有通过 `throws` 声明抛出它，也没有用 `try catch` 语句捕获它，程序还是会编译通过。
 

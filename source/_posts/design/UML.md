@@ -1,5 +1,7 @@
 ---
 title: UML 教程
+categories: ['design']
+tags: ['design', 'uml']
 date: 2019-03-06
 ---
 
