@@ -171,10 +171,6 @@ $ firewall-cmd --reload
 
 安装成功后，直接执行 `nginx` 命令即可启动 nginx。
 
-启动后，访问站点：
-
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181016133223.png"/></div><br>
-
 ### Linux 开机自启动
 
 Centos7 以上是用 Systemd 进行系统初始化的，Systemd 是 Linux 系统中最新的初始化系统（init），它主要的设计目标是克服 sysvinit 固有的缺点，提高系统的启动速度。Systemd 服务文件以 .service 结尾。

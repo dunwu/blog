@@ -14,6 +14,8 @@ date: 2019-03-10 22:28
 - [注释](#注释)
 - [基本数据类型](#基本数据类型)
 - [变量](#变量)
+    - [变量修饰符](#变量修饰符)
+- [数组](#数组)
 - [操作符](#操作符)
 - [控制语句](#控制语句)
 - [异常](#异常)
@@ -93,7 +95,7 @@ Boolean <-> boolean
 - 装箱操作会创建对象，频繁的装箱操作会造成不必要的内存消耗，影响性能。所以**应该尽量避免装箱。**
 - 基础数据类型的比较操作使用 `==`，包装类的比较操作使用 `equals` 方法。
 
-> :point_right: 扩展阅读：[深入理解 Java 基本数据类型](深入理解Java基本数据类型.md)
+> :point_right: 扩展阅读：[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/深入理解Java基本数据类型.md)
 
 ## 变量
 
@@ -116,6 +118,67 @@ Java 支持的变量类型有：
 |                                                                                                                            | 实例变量可以直接通过变量名访问。但在静态方法以及其他类中，就应该使用完全限定名：ObejectReference.VariableName。                                         | 静态变量可以通过：ClassName.VariableName 的方式访问。                                                                                                                                           |
 |                                                                                                                            |                                                                                                                                                         | 无论一个类创建了多少个对象，类只拥有类变量的一份拷贝。                                                                                                                                          |
 |                                                                                                                            |                                                                                                                                                         | 类变量除了被声明为常量外很少使用。                                                                                                                                                              |
+
+### 变量修饰符
+
+- 访问级别修饰符
+  - 如果变量是实例变量或类变量，可以添加访问级别修饰符（public/protected/private）
+- 静态修饰符
+  - 如果变量是类变量，需要添加 static 修饰
+- final
+  - 如果变量使用 fianl 修饰符，就表示这是一个常量，不能被修改。
+
+## 数组
+
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552475700514.png"/></div>
+
+（1）数组特性
+
+- **Java 中，数组是一种引用类型。**
+- **Java 中，数组是用来存储固定大小的同类型元素。**
+- **数组的定义和使用需要通过方括号 `[]`。**
+
+（2）数组和容器
+
+- 大多数情况下，应该选择容器存储数据。
+
+- **数组的效率要高于容器**
+- **数组可以持有值类型，而容器则不能**
+
+（3）**Java 数组的本质是对象**。
+
+（4）Java 数组和内存
+
+- 数组对象（数组指针）存储在栈中。
+- 数组元素值存储在堆中。
+
+（5）声明数组有两种方式：
+
+```java
+int[] arr1; // 推荐风格
+int arr2[]; // 效果相同
+```
+
+（6）创建数组有两种方式：
+
+```java
+int[] array1 = new int[2]; // 指定数组维度
+int[] array2 = new int[] { 1, 2 }; // 不指定数组维度
+```
+
+**Java 数组的数组维度可以是常量、变量、表达式，只要转换为整数即可**。
+
+**数组过大，可能会导致栈溢出**。超过一定数值，甚至编译器就会报错。
+
+（7）**Java 中，可以通过在 `[]` 中指定下标，访问数组元素，下标位置从 0 开始。**
+
+（8）数组可以作为函数的入参或返回值。
+
+（9）多维数组可视为数组的数组。
+
+（10）Arrays 类是一个很有用的数组工具类。
+
+> :point_right: 扩展阅读：[深入理解 Java 数组](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/深入理解Java数组.md)
 
 ## 操作符
 
@@ -142,7 +205,7 @@ Java 中控制语句分为三大类：循环语句、选择语句、中断语句
   - `continue` - 跳出本次循环继续下一次循环。
   - `return` - 跳出整个函数体，函数体后面的部分不再执行。
 
-> :point_right: 扩展阅读：[Java 控制语句](Java控制语句.md)
+> :point_right: 扩展阅读：[Java 控制语句](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/Java控制语句.md)
 
 ## 异常
 
@@ -164,4 +227,4 @@ Java 中控制语句分为三大类：循环语句、选择语句、中断语句
 - `catch` - `catch` 语句包含要捕获异常类型的声明。当保护代码块中发生一个异常时，`try` 后面的 `catch` 块就会被检查。
 - `finally` - **`finally` 语句块总是会被执行，无论是否出现异常。**`try catch` 语句后不一定非要`finally` 语句。`finally` 常用于这样的场景：由于`finally` 语句块总是会被执行，所以那些在 `try` 代码块中打开的，并且必须回收的物理资源(如数据库连接、网络连接和文件)，一般会放在`finally` 语句块中释放资源。
 
-> :point_right: 扩展阅读：[深入理解 Java 异常](深入理解Java异常.md)
+> :point_right: 扩展阅读：[深入理解 Java 异常](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/深入理解Java异常.md)

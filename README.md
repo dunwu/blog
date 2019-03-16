@@ -4,7 +4,7 @@
 
 |      :keyboard:       |            :game_die:             |     :package:     |     :spider_web:      |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
 | :-------------------: | :-------------------------------: | :---------------: | :-------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
-| [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |  [方法论](#方法论)  |
+| [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |    [方法论](#方法论)    |
 
 ## [编程语言](source/_posts/programming)
 
@@ -20,8 +20,10 @@
 
 ##### Java 基础特性
 
-- [Java 控制语句](source/_posts/programming/java/javacore/basic/Java控制语句.md)
 - [深入理解 Java 基本数据类型](source/_posts/programming/java/javacore/basic/深入理解Java基本数据类型.md)
+- [Java 类和对象](source/_posts/programming/java/javacore/basic/Java类和对象.md)
+- [深入理解 Java 数组](source/_posts/programming/java/javacore/basic/深入理解Java数组.md)
+- [Java 控制语句](source/_posts/programming/java/javacore/basic/Java控制语句.md)
 - [深入理解 Java 异常](source/_posts/programming/java/javacore/basic/深入理解Java异常.md)
 
 ##### Java 高级特性
@@ -138,7 +140,11 @@
 - [nodejs, npm, yarn](source/_posts/frontend/nodejs) - `nodejs`, `npm`, `yarn`
 - [es6, typescript, babel](source/_posts/frontend/es6) - `es6`, `typescript`, `babel`
 - [webpack](source/_posts/frontend/webpack)
-- [mvc](source/_posts/frontend/mvc) - `react`, `vue`, `angular`
+- [mvc](source/_posts/frontend/mvc)
+  - [React 教程](source/_posts/frontend/mvc/react.md)
+  - [Vue 教程](source/_posts/frontend/mvc/react.md)
+  - [Angular 教程](source/_posts/frontend/mvc/angular.md)
+  - [React vs Vue vs Angular](source/_posts/frontend/mvc/react-vue-angular.md)
 - [qa](source/_posts/frontend/qa) - `eslint`
 - [tool](source/_posts/frontend/tool) - `gitbook`
 

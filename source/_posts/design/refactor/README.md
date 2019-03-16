@@ -196,7 +196,7 @@ _注：功能不全或者不正确，那是残疾代码。就像治病治不了�
 
 ## 扩展阅读
 
-- [代码的坏味道和重构](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码的坏味道和重构.md)
+- [代码的坏味道和重构](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/)
 - [代码坏味道之代码臃肿](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之代码臃肿.md)
 - [代码坏味道之滥用面向对象](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之滥用面向对象.md)
 - [代码坏味道之变革的障碍](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之变革的障碍.md)
