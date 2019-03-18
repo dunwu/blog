@@ -1,12 +1,8 @@
 ---
 title: jsoup 使用小结
+categories: ['programming', 'java', 'javalib']
+tags: ['programming', 'java', 'javalib', 'dom']
 date: 2017/8/18
-categories:
-- javalib
-tags:
-- java
-- javalib
-- html
 ---
 
 # jsoup 使用小结

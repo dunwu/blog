@@ -1,5 +1,7 @@
 ---
 title: JUnit 快速指南
+categories: ['programming', 'java', 'javalib']
+tags: ['programming', 'java', 'javalib', 'test']
 date: 2019-03-06
 ---
 

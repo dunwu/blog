@@ -1,5 +1,7 @@
 ---
 title: Freemark
+categories: ['programming', 'java', 'javalib']
+tags: ['programming', 'java', 'javalib', 'template']
 date: 2019-03-06
 ---
 

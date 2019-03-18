@@ -1,12 +1,8 @@
 ---
 title: Thumbnailator 使用小结
+categories: ['programming', 'java', 'javalib']
+tags: ['programming', 'java', 'javalib', 'image']
 date: 2017-01-17
-categories:
-- javalib
-tags:
-- java
-- javalib
-- image
 ---
 
 # Thumbnailator 使用小结

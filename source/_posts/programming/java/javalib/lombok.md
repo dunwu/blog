@@ -1,12 +1,8 @@
 ---
 title: Lombok 使用小结
+categories: ['programming', 'java', 'javalib']
+tags: ['programming', 'java', 'javalib', 'javabean']
 date: 2017-11-09
-categories:
-- javalib
-tags:
-- java
-- javalib
-- bean
 ---
 
 # Lombok 使用小结

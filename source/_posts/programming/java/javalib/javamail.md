@@ -1,5 +1,7 @@
 ---
 title: JavaMail 使用小结
+categories: ['programming', 'java', 'javalib']
+tags: ['programming', 'java', 'javalib', 'mail']
 date: 2019-03-06
 ---
 

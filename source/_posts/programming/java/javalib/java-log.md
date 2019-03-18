@@ -1,9 +1,19 @@
 ---
 title: 细说 Java 主流日志工具库
-date: 2019-03-06
+categories: ['programming', 'java', 'javalib']
+tags: ['programming', 'java', 'javalib', 'log', 'slf4j', 'logback', 'log4j', 'common-logging']
+date: 2016-10-14 09:06
 ---
 
 # 细说 Java 主流日志工具库
+
+> 在项目开发中，为了跟踪代码的运行情况，常常要使用日志来记录信息。
+>
+> 在 Java 世界，有很多的日志工具库来实现日志功能，避免了我们重复造轮子。
+>
+> 我们先来逐一了解一下主流日志工具。
+>
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -33,12 +43,6 @@ date: 2019-03-06
 - [参考](#参考)
 
 <!-- /TOC -->
-
-在项目开发中，为了跟踪代码的运行情况，常常要使用日志来记录信息。
-
-在 Java 世界，有很多的日志工具库来实现日志功能，避免了我们重复造轮子。
-
-我们先来逐一了解一下主流日志工具。
 
 ## 日志框架
 
@@ -176,7 +180,7 @@ logger.debug("id: {}, name: {} ", id, name);
 
 添加依赖到 pom.xml 中即可。
 
-_logback-classic-1.0.13.jar_ 会自动将 *slf4j-api-1.7.21.jar*  和  *logback-core-1.0.13.jar* 也添加到你的项目中。
+_logback-classic-1.0.13.jar_ 会自动将 _slf4j-api-1.7.21.jar_ 和 _logback-core-1.0.13.jar_ 也添加到你的项目中。
 
 ```xml
 <dependency>
@@ -190,7 +194,7 @@ _logback-classic-1.0.13.jar_ 会自动将 *slf4j-api-1.7.21.jar*  和  *logback-
 
 添加依赖到 pom.xml 中即可。
 
-_slf4j-log4j12-1.7.21.jar_ 会自动将 *slf4j-api-1.7.21.jar*  和  *log4j-1.2.17.jar* 也添加到你的项目中。
+_slf4j-log4j12-1.7.21.jar_ 会自动将 _slf4j-api-1.7.21.jar_ 和 _log4j-1.2.17.jar_ 也添加到你的项目中。
 
 ```xml
 <dependency>
@@ -204,7 +208,7 @@ _slf4j-log4j12-1.7.21.jar_ 会自动将 *slf4j-api-1.7.21.jar*  和  *log4j-1.2.
 
 添加依赖到 pom.xml 中即可。
 
-_slf4j-jdk14-1.7.21.jar_ 会自动将 *slf4j-api-1.7.21.jar*  也添加到你的项目中。
+_slf4j-jdk14-1.7.21.jar_ 会自动将 _slf4j-api-1.7.21.jar_ 也添加到你的项目中。
 
 ```xml
 <dependency>
@@ -387,7 +391,7 @@ log4j2 基本配置形式如下：
     <Property name="filename">target/test.log</Property>
   </Properties>
   <Filter type="ThresholdFilter" level="trace"/>
- 
+
   <Appenders>
     <Appender type="Console" name="STDOUT">
       <Layout type="PatternLayout" pattern="%m MDC%X%n"/>
@@ -409,7 +413,7 @@ log4j2 基本配置形式如下：
       </Layout>
     </Appender>
   </Appenders>
- 
+
   <Loggers>
     <Logger name="org.apache.logging.log4j.test1" level="debug" additivity="false">
       <Filter type="ThreadContextMapFilter">
@@ -417,16 +421,16 @@ log4j2 基本配置形式如下：
       </Filter>
       <AppenderRef ref="STDOUT"/>
     </Logger>
- 
+
     <Logger name="org.apache.logging.log4j.test2" level="debug" additivity="false">
       <AppenderRef ref="File"/>
     </Logger>
- 
+
     <Root level="trace">
       <AppenderRef ref="STDOUT"/>
     </Root>
   </Loggers>
- 
+
 </Configuration>
 ```
 
