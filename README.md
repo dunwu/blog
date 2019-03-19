@@ -2,9 +2,15 @@
 
 > 本项目用于归档我个人的技术文档。
 
-|      :keyboard:       |            :game_die:             |     :package:     |     :spider_web:      |      :computer:       | :globe_with_meridians: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
-| :-------------------: | :-------------------------------: | :---------------: | :-------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
-| [编程语言](#编程语言) | [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |      [Web](#web)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |    [方法论](#方法论)    |
+|       :coffee:        |      :coffee:       |     :leaves:      |          :leaves:          |          :fire:          |          :keyboard:          |
+| :-------------------: | :-----------------: | :---------------: | :------------------------: | :------------------------: | :------------------------: |
+| [JavaCore](#javacore) | [JavaWeb](#JavaWeb) | [spring](#spring) | [SpringBoot](#SpringBoot) | [JavaScript](#JavaScript) | [其他编程语言](#其他编程语言) |
+
+---
+
+|            :game_die:             |     :package:     |     :spider_web:      |      :computer:       | :hammer_and_wrench: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
+| :-------------------------------: | :---------------: | :-------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
+| [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |      [Tools](#tools)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |    [方法](#方法)    |
 
 ## [编程语言](source/_posts/programming)
 
@@ -16,15 +22,17 @@
 
 ### [Java](source/_posts/programming/java)
 
-#### [Java 核心技术教程](source/_posts/programming/java/javacore)
+#### [JavaCore](source/_posts/programming/java/javacore)
 
 ##### Java 基础特性
 
-- [深入理解 Java 基本数据类型](source/_posts/programming/java/javacore/basic/深入理解Java基本数据类型.md)
+- [Java 基础语法特性](source/_posts/programming/java/javacore/basic/Java基础语法特性.md)
+- [Java 基本数据类型](source/_posts/programming/java/javacore/basic/Java基本数据类型.md)
 - [Java 类和对象](source/_posts/programming/java/javacore/basic/Java类和对象.md)
-- [深入理解 Java 数组](source/_posts/programming/java/javacore/basic/深入理解Java数组.md)
+- [Java 方法](source/_posts/programming/java/javacore/basic/Java方法.md)
+- [Java 数组](source/_posts/programming/java/javacore/basic/Java数组.md)
 - [Java 控制语句](source/_posts/programming/java/javacore/basic/Java控制语句.md)
-- [深入理解 Java 异常](source/_posts/programming/java/javacore/basic/深入理解Java异常.md)
+- [Java 异常](source/_posts/programming/java/javacore/basic/Java异常.md)
 
 ##### Java 高级特性
 
@@ -36,7 +44,7 @@
 - [Java 编码和加密](source/_posts/programming/java/javacore/advanced/Java编码和加密.md)
 - [JDK8 快速指南](source/_posts/programming/java/javacore/advanced/jdk8-quickstart.md)
 
-##### [Java 容器教程](source/_posts/programming/java/javacore/container)
+##### [Java 容器](source/_posts/programming/java/javacore/container)
 
 > 并发容器内容会放在 Java 并发编程章节讲解。
 
@@ -46,7 +54,7 @@
 - [Java 容器之 Queue](source/_posts/programming/java/javacore/container/java-container-queue.md)
 - [Java 容器之 Map](source/_posts/programming/java/javacore/container/java-container-map.md)
 
-##### Java 并发编程教程
+##### Java 并发编程
 
 待整理。。。
 
@@ -58,22 +66,22 @@
 - [Java 网络编程](source/_posts/programming/java/javacore/io/Java网络编程.md)
 - [Java NIO](source/_posts/programming/java/javacore/io/JavaNIO.md)
 
-##### [Java 虚拟机教程](source/_posts/programming/java/javacore/jvm)
+##### [Java 虚拟机](source/_posts/programming/java/javacore/jvm)
 
 - [运行时数据区域](source/_posts/programming/java/javacore/jvm/运行时数据区域.md)
 - [垃圾收集](source/_posts/programming/java/javacore/jvm/垃圾收集.md)
 - [类加载机制](source/_posts/programming/java/javacore/jvm/类加载机制.md)
 - [JVM 调优](source/_posts/programming/java/javacore/jvm/JVM调优.md)
 
-#### [Java Web 教程](source/_posts/programming/java/javaweb)
+#### [JavaWeb](source/_posts/programming/java/javaweb)
 
 待整理。。。
 
-#### [Spring 教程](source/_posts/programming/java/spring)
+#### [Spring](source/_posts/programming/java/spring)
 
 待整理。。。
 
-#### [Spring Boot 教程](source/_posts/programming/java/spring-boot)
+#### [SpringBoot](source/_posts/programming/java/spring-boot)
 
 待整理。。。
 
@@ -83,9 +91,9 @@
 
 ### 其他编程语言
 
-- [如何学习一门编程语言](source/_posts/programming/programming-guide.md)
-- [一篇文章让你彻底掌握 python 语言](source/_posts/programming/python.md)
-- [一篇文章让你彻底掌握 shell 语言](source/_posts/programming/shell.md)
+- [如何学习一门编程语言](source/_posts/programming/others/programming-guide.md)
+- [一篇文章让你彻底掌握 python 语言](source/_posts/programming/others/python.md)
+- [一篇文章让你彻底掌握 shell 语言](source/_posts/programming/others/shell.md)
 
 ## [算法和数据结构](source/_posts/algorithm)
 
@@ -112,15 +120,15 @@
 >
 > 如果你是互联网从业者，那么有必要更深入理解一下 HTTP、DNS、Socket。
 
-- [计算机网络指南](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
-- [计算机网络之物理层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
-- [计算机网络之数据链路层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-- [计算机网络之网络层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
-- [计算机网络之传输层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
-- [计算机网络之应用层](https://github.com/dunwu/blog/blob/master/source/_posts/communication/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
-- [网络协议之 HTTP](https://github.com/dunwu/blog/blob/master/source/_posts/communication/http.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
-- [网络协议之 DNS](https://github.com/dunwu/blog/blob/master/source/_posts/communication/dns.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
-- [网络协议之 ICMP](https://github.com/dunwu/blog/blob/master/source/_posts/communication/icmp.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [计算机网络指南](source/_posts/communication/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
+- [计算机网络之物理层](source/_posts/communication/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+- [计算机网络之数据链路层](source/_posts/communication/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+- [计算机网络之网络层](source/_posts/communication/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
+- [计算机网络之传输层](source/_posts/communication/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- [计算机网络之应用层](source/_posts/communication/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [网络协议之 HTTP](source/_posts/communication/http.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [网络协议之 DNS](source/_posts/communication/dns.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [网络协议之 ICMP](source/_posts/communication/icmp.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 
 ## [操作系统](source/_posts/os)
 
@@ -128,11 +136,11 @@
 - [Windows](source/_posts/os/windows)
 - [Docker](source/_posts/os/docker)
 
-## [Web](source/_posts/web)
+## [Tools](source/_posts/tools)
 
-- [Git 从入门到精通](source/_posts/web/git.md) - 关键词：版本控制、分布式
-- [Nginx 极简教程](source/_posts/web/nginx.md) - 关键词：反向代理、负载均衡、缓存、跨域
-- [使用 Gitbook 打造你的电子书](source/_posts/web/gitbook.md)
+- [Git 从入门到精通](source/_posts/tools/git.md) - 关键词：版本控制、分布式
+- [Nginx 极简教程](source/_posts/tools/nginx.md) - 关键词：反向代理、负载均衡、缓存、跨域
+- [使用 Gitbook 打造你的电子书](source/_posts/tools/gitbook.md)
 
 ## [前端](source/_posts/frontend)
 
@@ -161,20 +169,20 @@
 
 > 软件整体结构与组件的抽象描述，用于指导大型软件系统各个方面的设计。重点是分而治之，先将大型系统抽象为各个组件或模块；然后逐一解决各组件、各模块的功能、性能问题；最后将这些组件、模块整合成对外服务的一个整体。
 
-- [分布式原理](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式原理.md)
-- [分布式技术实现](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式技术实现.md)
-- [分布式技术面试题](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式技术面试题.md)
-- [分布式架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/分布式架构.md)
-- [大型分布式网站架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/大型分布式网站架构.md)
-- [大型系统设计](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/大型系统设计.md)
-- [大型网站架构概述](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/大型网站架构概述.md)
-- [网站典型故障](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站典型故障.md)
-- [网站的伸缩性架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的伸缩性架构.md)
-- [网站的可扩展架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的可扩展架构.md)
-- [网站的安全架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的安全架构.md)
-- [网站的高可用架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的高可用架构.md)
-- [网站的高性能架构](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/网站的高性能架构.md)
-- [负载均衡](https://github.com/dunwu/blog/blob/master/source/_posts/design/architecture/负载均衡.md)
+- [分布式原理](source/_posts/design/architecture/分布式原理.md)
+- [分布式技术实现](source/_posts/design/architecture/分布式技术实现.md)
+- [分布式技术面试题](source/_posts/design/architecture/分布式技术面试题.md)
+- [分布式架构](source/_posts/design/architecture/分布式架构.md)
+- [大型分布式网站架构](source/_posts/design/architecture/大型分布式网站架构.md)
+- [大型系统设计](source/_posts/design/architecture/大型系统设计.md)
+- [大型网站架构概述](source/_posts/design/architecture/大型网站架构概述.md)
+- [网站典型故障](source/_posts/design/architecture/网站典型故障.md)
+- [网站的伸缩性架构](source/_posts/design/architecture/网站的伸缩性架构.md)
+- [网站的可扩展架构](source/_posts/design/architecture/网站的可扩展架构.md)
+- [网站的安全架构](source/_posts/design/architecture/网站的安全架构.md)
+- [网站的高可用架构](source/_posts/design/architecture/网站的高可用架构.md)
+- [网站的高性能架构](source/_posts/design/architecture/网站的高性能架构.md)
+- [负载均衡](source/_posts/design/architecture/负载均衡.md)
 
 ### [重构](source/_posts/design/refactor)
 
@@ -182,18 +190,18 @@
 >
 > 关键词：过长函数、过大的类、基本类型偏执、过长参数列、数据泥团、switch 声明、临时字段、被拒绝的馈赠、异曲同工的类、发散式变化、霰弹式修改、平行继承体系、过多的注释、重复代码、冗余类、纯稚的数据类、夸夸其谈未来性、依恋情结、狎昵关系、过度耦合的消息链、中间人、不完美的库类
 
-- [代码的坏味道和重构](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码的坏味道和重构.md)
-- [代码坏味道之代码臃肿](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之代码臃肿.md)
-- [代码坏味道之滥用面向对象](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之滥用面向对象.md)
-- [代码坏味道之变革的障碍](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之变革的障碍.md)
-- [代码坏味道之非必要的](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之非必要的.md)
-- [代码坏味道之耦合](https://github.com/dunwu/blog/blob/master/source/_posts/design/refactor/代码坏味道之耦合.md)
+- [代码的坏味道和重构](source/_posts/design/refactor/代码的坏味道和重构.md)
+- [代码坏味道之代码臃肿](source/_posts/design/refactor/代码坏味道之代码臃肿.md)
+- [代码坏味道之滥用面向对象](source/_posts/design/refactor/代码坏味道之滥用面向对象.md)
+- [代码坏味道之变革的障碍](source/_posts/design/refactor/代码坏味道之变革的障碍.md)
+- [代码坏味道之非必要的](source/_posts/design/refactor/代码坏味道之非必要的.md)
+- [代码坏味道之耦合](source/_posts/design/refactor/代码坏味道之耦合.md)
 
 ### [UML](source/_posts/design/UML.md)
 
 > 关键词：类图、对象图、包图、组件图、部署图、复合结构图、活动图、状态图、用例图、通信图、交互概述图、时序图、时间图
 
-## [方法论](source/_posts/method)
+## [方法](source/_posts/method)
 
 > 方法论，是人们认识世界、改造世界的方法的理论。同样，项目管理、编程、写文档都应该有一定的方式方法，帮助我们合理、高效、快速的达成目标。
 

@@ -1,13 +1,41 @@
 ---
-title: Java 方法
+title: 深入理解Java方法
 categories: ['programming', 'java', 'javacore', 'basic']
 tags: ['programming', 'java', 'javacore', 'basic', 'method']
 date: 2016-02-04 21:12
 ---
 
-# 全面了解 Java 方法
+# 深入理解 Java 方法
 
 > **方法（有的人喜欢叫函数）是一段可重用的代码段。**
+>
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
+> :keyboard: 本文中的示例代码已归档到：「[javacore](https://github.com/dunwu/javacore/tree/master/codes/basics/src/main/java/io/github/dunwu/javacore/array)」
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [方法的使用](#方法的使用)
+    - [方法定义](#方法定义)
+    - [方法的调用](#方法的调用)
+- [方法的注意点](#方法的注意点)
+    - [值传递和引用传递](#值传递和引用传递)
+- [方法修饰符](#方法修饰符)
+    - [访问控制修饰符](#访问控制修饰符)
+    - [static](#static)
+    - [final](#final)
+    - [default](#default)
+    - [abstract](#abstract)
+    - [synchronized](#synchronized)
+- [特殊方法](#特殊方法)
+    - [main 方法](#main-方法)
+    - [构造方法](#构造方法)
+    - [变参方法](#变参方法)
+    - [finalize() 方法](#finalize-方法)
+- [覆写和重载](#覆写和重载)
+- [参考资料](#参考资料)
+
+<!-- /TOC -->
 
 ## 方法的使用
 
