@@ -31,6 +31,7 @@
 - [Java 类和对象](source/_posts/programming/java/javacore/basic/Java类和对象.md)
 - [Java 方法](source/_posts/programming/java/javacore/basic/Java方法.md)
 - [Java 数组](source/_posts/programming/java/javacore/basic/Java数组.md)
+- [Java 枚举](source/_posts/programming/java/javacore/basic/Java枚举.md)
 - [Java 控制语句](source/_posts/programming/java/javacore/basic/Java控制语句.md)
 - [Java 异常](source/_posts/programming/java/javacore/basic/Java异常.md)
 

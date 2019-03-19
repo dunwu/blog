@@ -60,7 +60,7 @@ class 子类 extends 父类 {}
 
 #### 继承类型
 
-![img](http://www.runoob.com/wp-content/uploads/2013/12/types_of_inheritance.png)
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2013/12/types_of_inheritance.png"/></div>
 
 #### 继承的特性
 
