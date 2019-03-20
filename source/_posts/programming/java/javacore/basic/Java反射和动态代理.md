@@ -1,7 +1,7 @@
 ---
 title: Java 反射和动态代理
-categories: ['programming', 'java', 'javacore', 'advanced']
-tags: ['programming', 'java', 'javacore', 'reflect', 'proxy']
+categories: ['programming', 'java', 'javacore', 'basic']
+tags: ['programming', 'java', 'javacore', 'basic', 'reflect', 'proxy']
 date: 2018-07-16 14:52
 ---
 

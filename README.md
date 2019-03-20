@@ -2,15 +2,15 @@
 
 > 本项目用于归档我个人的技术文档。
 
-|       :coffee:        |      :coffee:       |     :leaves:      |          :leaves:          |          :fire:          |          :keyboard:          |
-| :-------------------: | :-----------------: | :---------------: | :------------------------: | :------------------------: | :------------------------: |
+|       :coffee:        |      :coffee:       |     :leaves:      |         :leaves:          |          :fire:           |          :keyboard:           |
+| :-------------------: | :-----------------: | :---------------: | :-----------------------: | :-----------------------: | :---------------------------: |
 | [JavaCore](#javacore) | [JavaWeb](#JavaWeb) | [spring](#spring) | [SpringBoot](#SpringBoot) | [JavaScript](#JavaScript) | [其他编程语言](#其他编程语言) |
 
 ---
 
 |            :game_die:             |     :package:     |     :spider_web:      |      :computer:       | :hammer_and_wrench: |     :art:     |      :cloud:      |    :bulb:     | :building_construction: |
-| :-------------------------------: | :---------------: | :-------------------: | :-------------------: | :--------------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
-| [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |      [Tools](#tools)       | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |    [方法](#方法)    |
+| :-------------------------------: | :---------------: | :-------------------: | :-------------------: | :-----------------: | :-----------: | :---------------: | :-----------: | :---------------------: |
+| [算法和数据结构](#算法和数据结构) | [数据库](#数据库) | [网络通信](#网络通信) | [操作系统](#操作系统) |   [Tools](#tools)   | [前端](#前端) | [大数据](#大数据) | [设计](#设计) |      [方法](#方法)      |
 
 ## [编程语言](source/_posts/programming)
 
@@ -34,16 +34,16 @@
 - [Java 枚举](source/_posts/programming/java/javacore/basic/Java枚举.md)
 - [Java 控制语句](source/_posts/programming/java/javacore/basic/Java控制语句.md)
 - [Java 异常](source/_posts/programming/java/javacore/basic/Java异常.md)
+- [Java 泛型](source/_posts/programming/java/javacore/basic/Java泛型.md)
+- [Java 注解](source/_posts/programming/java/javacore/basic/Java注解.md)
+- [Java 反射和动态代理](source/_posts/programming/java/javacore/basic/Java反射和动态代理.md)
+- [Java JDK8](source/_posts/programming/java/javacore/basic/jdk8-quickstart.md)
 
 ##### Java 高级特性
 
-- [Java 反射和动态代理](source/_posts/programming/java/javacore/advanced/Java反射和动态代理.md)
 - [Java 本地化](source/_posts/programming/java/javacore/advanced/Java本地化.md)
 - [Java 正则](source/_posts/programming/java/javacore/advanced/Java正则.md)
-- [Java 泛型](source/_posts/programming/java/javacore/advanced/Java泛型.md)
-- [Java 注解](source/_posts/programming/java/javacore/advanced/Java注解.md)
 - [Java 编码和加密](source/_posts/programming/java/javacore/advanced/Java编码和加密.md)
-- [JDK8 快速指南](source/_posts/programming/java/javacore/advanced/jdk8-quickstart.md)
 
 ##### [Java 容器](source/_posts/programming/java/javacore/container)
 

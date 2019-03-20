@@ -1,7 +1,7 @@
 ---
 title: Java 注解
-categories: ['programming', 'java', 'javacore', 'advanced']
-tags: ['programming', 'java', 'javacore', 'annotation']
+categories: ['programming', 'java', 'javacore', 'basic']
+tags: ['programming', 'java', 'javacore', 'basic', 'annotation']
 date: 2017-08-22 10:30
 ---
 

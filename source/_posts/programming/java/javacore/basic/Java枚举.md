@@ -99,15 +99,11 @@ public final class io.github.dunwu.javacore.enumeration.ColorEn extends java.lan
 
 在 enum 中，提供了一些基本方法：
 
-`values()`：返回 enum 实例的数组，而且该数组中的元素严格保持在 enum 中声明时的顺序。
-
-`name()`：返回实例名。
-
-`ordinal()`：返回实例声明时的次序，从 0 开始。
-
-`getDeclaringClass()`：返回实例所属的 enum 类型。
-
-`equals()` ：判断是否为同一个对象。
+- `values()`：返回 enum 实例的数组，而且该数组中的元素严格保持在 enum 中声明时的顺序。
+- `name()`：返回实例名。
+- `ordinal()`：返回实例声明时的次序，从 0 开始。
+- `getDeclaringClass()`：返回实例所属的 enum 类型。
+- `equals()` ：判断是否为同一个对象。
 
 可以使用 `==` 来比较`enum`实例。
 
