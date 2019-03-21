@@ -24,26 +24,22 @@
 
 #### [JavaCore](source/_posts/programming/java/javacore)
 
-##### Java 基础特性
-
-- [Java 基础语法特性](source/_posts/programming/java/javacore/basic/Java基础语法特性.md)
-- [Java 基本数据类型](source/_posts/programming/java/javacore/basic/Java基本数据类型.md)
-- [Java 类和对象](source/_posts/programming/java/javacore/basic/Java类和对象.md)
-- [Java 方法](source/_posts/programming/java/javacore/basic/Java方法.md)
-- [Java 数组](source/_posts/programming/java/javacore/basic/Java数组.md)
-- [Java 枚举](source/_posts/programming/java/javacore/basic/Java枚举.md)
-- [Java 控制语句](source/_posts/programming/java/javacore/basic/Java控制语句.md)
-- [Java 异常](source/_posts/programming/java/javacore/basic/Java异常.md)
-- [Java 泛型](source/_posts/programming/java/javacore/basic/Java泛型.md)
-- [Java 注解](source/_posts/programming/java/javacore/basic/Java注解.md)
-- [Java 反射和动态代理](source/_posts/programming/java/javacore/basic/Java反射和动态代理.md)
-- [Java JDK8](source/_posts/programming/java/javacore/basic/jdk8-quickstart.md)
-
-##### Java 高级特性
-
-- [Java 本地化](source/_posts/programming/java/javacore/advanced/Java本地化.md)
-- [Java 正则](source/_posts/programming/java/javacore/advanced/Java正则.md)
-- [Java 编码和加密](source/_posts/programming/java/javacore/advanced/Java编码和加密.md)
+- [Java 基础语法特性](source/_posts/programming/java/javacore/Java基础语法特性.md)
+- [Java 基本数据类型](source/_posts/programming/java/javacore/Java基本数据类型.md)
+- [Java 类和对象](source/_posts/programming/java/javacore/Java类和对象.md)
+- [Java 方法](source/_posts/programming/java/javacore/Java方法.md)
+- [Java 数组](source/_posts/programming/java/javacore/Java数组.md)
+- [Java 枚举](source/_posts/programming/java/javacore/Java枚举.md)
+- [Java 控制语句](source/_posts/programming/java/javacore/Java控制语句.md)
+- [Java 异常](source/_posts/programming/java/javacore/Java异常.md)
+- [Java 泛型](source/_posts/programming/java/javacore/Java泛型.md)
+- [Java 反射和动态代理](source/_posts/programming/java/javacore/Java反射和动态代理.md)
+- [Java 注解](source/_posts/programming/java/javacore/Java注解.md)
+- [Java 序列化](source/_posts/programming/java/javacore/Java序列化.md)
+- [Java JDK8](source/_posts/programming/java/javacore/Java8.md)
+- [Java 正则](source/_posts/programming/java/javacore/Java正则.md)
+- [Java 编码和加密](source/_posts/programming/java/javacore/Java编码和加密.md)
+- [Java 本地化](source/_posts/programming/java/javacore/Java本地化.md)
 
 ##### [Java 容器](source/_posts/programming/java/javacore/container)
 

@@ -1,7 +1,7 @@
 ---
 title: Java 常用工具类
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore']
 date: 2019-03-14 13:02
 ---
 

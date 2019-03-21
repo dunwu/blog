@@ -1,7 +1,7 @@
 ---
 title: 深入理解 Java 基本数据类型
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'datatype']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'datatype']
 date: 2018-04-24 19:45
 ---
 

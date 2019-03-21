@@ -1,7 +1,7 @@
 ---
 title: 深入理解Java方法
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'method']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'method']
 date: 2016-02-04 21:12
 ---
 

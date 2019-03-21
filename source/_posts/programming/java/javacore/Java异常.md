@@ -1,7 +1,7 @@
 ---
 title: 深入理解 Java 异常
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'exception']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'exception']
 date: 2015-04-25 20:43
 ---
 

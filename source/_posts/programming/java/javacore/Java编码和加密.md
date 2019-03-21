@@ -1,6 +1,6 @@
 ---
 title: Java 编码和加密
-categories: ['programming', 'java', 'javacore', 'advanced']
+categories: ['programming', 'java', 'javacore']
 tags: ['programming', 'java', 'javacore', 'encrypt', 'encode']
 date: 2016-07-20 14:46
 ---

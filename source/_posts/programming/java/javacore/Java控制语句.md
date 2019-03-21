@@ -1,7 +1,7 @@
 ---
 title: Java 控制语句
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'datatype']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'datatype']
 date: 2015-05-28 10:58
 ---
 

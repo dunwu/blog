@@ -1,6 +1,6 @@
 ---
 title: Java 正则
-categories: ['programming', 'java', 'javacore', 'advanced']
+categories: ['programming', 'java', 'javacore']
 tags: ['programming', 'java', 'javacore', 'regex']
 date: 2016-11-03 15:43
 ---

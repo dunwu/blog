@@ -1,7 +1,7 @@
 ---
 title: 深入理解 Java 泛型
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'generic']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'generic']
 date: 2018-06-02 20:51
 ---
 

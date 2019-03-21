@@ -1,7 +1,7 @@
 ---
 title: Java 基础语法特性
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore']
 date: 2019-03-10 22:28
 ---
 
@@ -95,7 +95,7 @@ Boolean <-> boolean
 - 装箱操作会创建对象，频繁的装箱操作会造成不必要的内存消耗，影响性能。所以**应该尽量避免装箱。**
 - 基础数据类型的比较操作使用 `==`，包装类的比较操作使用 `equals` 方法。
 
-> :point_right: 扩展阅读：[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/深入理解Java基本数据类型.md)
+> :point_right: 扩展阅读：[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/深入理解Java基本数据类型.md)
 
 ## 变量
 
@@ -178,7 +178,7 @@ int[] array2 = new int[] { 1, 2 }; // 不指定数组维度
 
 （10）Arrays 类是一个很有用的数组工具类。
 
-> :point_right: 扩展阅读：[深入理解 Java 数组](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/深入理解Java数组.md)
+> :point_right: 扩展阅读：[深入理解 Java 数组](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/深入理解Java数组.md)
 
 ## 操作符
 
@@ -205,7 +205,7 @@ Java 中控制语句分为三大类：循环语句、选择语句、中断语句
   - `continue` - 跳出本次循环继续下一次循环。
   - `return` - 跳出整个函数体，函数体后面的部分不再执行。
 
-> :point_right: 扩展阅读：[Java 控制语句](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/Java控制语句.md)
+> :point_right: 扩展阅读：[Java 控制语句](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/Java控制语句.md)
 
 ## 异常
 
@@ -227,4 +227,4 @@ Java 中控制语句分为三大类：循环语句、选择语句、中断语句
 - `catch` - `catch` 语句包含要捕获异常类型的声明。当保护代码块中发生一个异常时，`try` 后面的 `catch` 块就会被检查。
 - `finally` - **`finally` 语句块总是会被执行，无论是否出现异常。**`try catch` 语句后不一定非要`finally` 语句。`finally` 常用于这样的场景：由于`finally` 语句块总是会被执行，所以那些在 `try` 代码块中打开的，并且必须回收的物理资源(如数据库连接、网络连接和文件)，一般会放在`finally` 语句块中释放资源。
 
-> :point_right: 扩展阅读：[深入理解 Java 异常](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/深入理解Java异常.md)
+> :point_right: 扩展阅读：[深入理解 Java 异常](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/深入理解Java异常.md)

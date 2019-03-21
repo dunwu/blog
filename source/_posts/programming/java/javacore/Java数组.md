@@ -1,7 +1,7 @@
 ---
 title: 深入理解 Java 数组
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'array']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'array']
 date: 2014-10-14 10:15
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: 深入理解 Java 枚举
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'enum']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'enum']
 date: 2018-04-24 19:45
 ---
 

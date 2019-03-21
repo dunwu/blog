@@ -1,13 +1,13 @@
 ---
 title: Java 面向对象
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'class', 'object']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'class', 'object']
 date: 2016-02-04 21:12
 ---
 
 # Java 面向对象
 
-> 在[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/basic/深入理解Java基本数据类型.md)中我们了解 Java 中支持的基本数据类型（值类型）。本文开始讲解 Java 中重要的引用类型——类。
+> 在[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/深入理解Java基本数据类型.md)中我们了解 Java 中支持的基本数据类型（值类型）。本文开始讲解 Java 中重要的引用类型——类。
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

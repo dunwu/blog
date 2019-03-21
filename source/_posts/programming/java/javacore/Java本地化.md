@@ -1,6 +1,6 @@
 ---
 title: Java 本地化
-categories: ['programming', 'java', 'javacore', 'advanced']
+categories: ['programming', 'java', 'javacore']
 tags: ['programming', 'java', 'javacore', 'locale']
 date: 2016-01-20 17:46
 ---

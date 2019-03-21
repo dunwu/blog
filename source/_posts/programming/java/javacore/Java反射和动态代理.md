@@ -1,13 +1,15 @@
 ---
 title: Java 反射和动态代理
-categories: ['programming', 'java', 'javacore', 'basic']
-tags: ['programming', 'java', 'javacore', 'basic', 'reflect', 'proxy']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'reflect', 'proxy']
 date: 2018-07-16 14:52
 ---
 
 # Java 反射和动态代理
 
 > :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
+> :keyboard: 本文中的示例代码已归档到：「[javacore](https://github.com/dunwu/javacore/tree/master/codes/basics/src/main/java/io/github/dunwu/javacore/reflect)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -26,35 +28,32 @@ date: 2018-07-16 14:52
     - [InvocationHandler](#invocationhandler)
     - [Proxy](#proxy)
     - [动态代理实例](#动态代理实例)
-- [推荐阅读](#推荐阅读)
 - [参考资料](#参考资料)
 
 <!-- /TOC -->
 
-## 反射
+## 反射简介
 
-### 反射简介
-
-#### 什么是反射
+### 什么是反射
 
 反射(Reflection)是 Java 程序开发语言的特征之一，它允许运行中的 Java 程序获取自身的信息，并且可以操作类或对象的内部属性。
 
 简而言之：**通过反射，我们可以在运行时获得程序或程序集中每一个类的成员和方法。**
 
-#### 反射的主要用途
+### 反射的主要用途
 
 - **开发通用框架** - 反射最重要的用途就是开发各种通用框架。很多框架（比如 Spring）都是配置化的（比如通过 XML 文件配置 JavaBean、Filter 等），为了保证框架的通用性，它们可能需要根据配置文件加载不同的对象或类，调用不同的方法，这个时候就必须用到反射——运行时动态加载需要加载的对象。
 - **可扩展性功能** - 应用程序可以通过使用完全限定名称创建可扩展性对象实例来使用外部的用户定义类。
 - **类浏览器和可视化开发环境** - 类浏览器需要能够枚举类的成员。可视化开发环境可以利用反射中可用的类型信息来帮助开发人员编写正确的代码。
 - **调试器和测试工具** - 调试器需要能够检查类上的私有成员。测试工具可以利用反射来系统地调用在类中定义的可发现集 API，以确保测试套件中的高级代码覆盖率。
 
-#### 反射的缺点
+### 反射的缺点
 
 - **性能开销** - 由于反射涉及动态解析的类型，因此无法执行某些 Java 虚拟机优化。因此，反射操作的性能要比非反射操作的性能要差，应该在性能敏感的应用程序中频繁调用的代码段中避免。
 - **安全限制** - 反射调用方法时可以忽略权限检查，因此可能会破坏封装性而导致安全问题。
 - **内部曝光** - 由于反射允许代码执行在非反射代码中非法的操作，例如访问私有字段和方法，所以反射的使用可能会导致意想不到的副作用，这可能会导致代码功能失常并可能破坏可移植性。反射代码打破了抽象，因此可能会随着平台的升级而改变行为。
 
-### 反射机制
+## 反射机制
 
 反射的本质就是：在运行时，把 Java 类中的各种成分映射成一个个的 Java 对象。
 
@@ -511,15 +510,10 @@ public abstract java.lang.String io.github.dunwu.javacore.reflect.InvocationHand
 
 正好就是我们的 Subject 接口中的两个方法，这也就证明了当我通过代理对象来调用方法的时候，起实际就是委托由其关联到的 handler 对象的 invoke 方法中来调用，并不是自己来真实调用，而是通过代理的方式来调用的。
 
-## 推荐阅读
-
-本文示例代码见：[源码](https://github.com/dunwu/JavaCore/tree/master/codes/advanced/src/main/java/io/github/dunwu/javacore)
-
-本文同步维护在：[Java 系列教程](https://github.com/dunwu/JavaCore)
-
 ## 参考资料
 
-- [Java 编程思想（Thinking in java）](https://item.jd.com/10058164.html)
+- [Java 编程思想](https://book.douban.com/subject/2130190/)
+- [JAVA 核心技术（卷 1）](https://book.douban.com/subject/3146174/)
 - [深入解析 Java 反射（1） - 基础](https://www.sczyh30.com/posts/Java/java-reflection-1/)
 - [Java 基础之—反射（非常重要）](https://blog.csdn.net/sinat_38259539/article/details/71799078)
 - [官方 Reflection API 文档](https://docs.oracle.com/javase/tutorial/reflect/index.html)

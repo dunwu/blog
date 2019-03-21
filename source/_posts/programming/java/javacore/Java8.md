@@ -1,7 +1,7 @@
 ---
 title: JDK8 快速指南
-categories: ['programming', 'java', 'javacore', 'advanced']
-tags: ['programming', 'java', 'javacore', 'jdk8', 'encode']
+categories: ['programming', 'java', 'javacore']
+tags: ['programming', 'java', 'javacore', 'jdk8']
 date: 2017-11-14 17:37
 ---
 
