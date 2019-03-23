@@ -129,8 +129,8 @@
 
 ## [操作系统](source/_posts/os)
 
-- [Linux](source/_posts/os/linux) - 文件目录管理、文件内容查看、文件压缩和解压、用户管理、系统管理、网络管理、硬件管理、软件管理
-- [Windows](source/_posts/os/windows)
+- [Linux](source/_posts/os/linux)
+- [windows](source/_posts/os/windows.md)
 - [Docker](source/_posts/os/docker)
 
 ## [Tools](source/_posts/tools)
