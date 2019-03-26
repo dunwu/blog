@@ -20,65 +20,56 @@
 >
 > 本篇章重点整理 Java、JavaScript 语言的语法、框架、应用等内容。其他语言介绍时，一般都是 All-In-One 式（一篇速成文章）。
 
-### [Java](source/_posts/programming/java)
+### [Java](source/_posts/java)
 
-#### [JavaCore](source/_posts/programming/java/javacore)
+#### [JavaCore](source/_posts/java/javacore)
 
-- [Java 基础语法特性](source/_posts/programming/java/javacore/Java基础语法特性.md)
-- [Java 基本数据类型](source/_posts/programming/java/javacore/Java基本数据类型.md)
-- [Java 类和对象](source/_posts/programming/java/javacore/Java类和对象.md)
-- [Java 方法](source/_posts/programming/java/javacore/Java方法.md)
-- [Java 数组](source/_posts/programming/java/javacore/Java数组.md)
-- [Java 枚举](source/_posts/programming/java/javacore/Java枚举.md)
-- [Java 控制语句](source/_posts/programming/java/javacore/Java控制语句.md)
-- [Java 异常](source/_posts/programming/java/javacore/Java异常.md)
-- [Java 泛型](source/_posts/programming/java/javacore/Java泛型.md)
-- [Java 反射和动态代理](source/_posts/programming/java/javacore/Java反射和动态代理.md)
-- [Java 注解](source/_posts/programming/java/javacore/Java注解.md)
-- [Java 序列化](source/_posts/programming/java/javacore/Java序列化.md)
-- [Java JDK8](source/_posts/programming/java/javacore/Java8.md)
-- [Java 正则](source/_posts/programming/java/javacore/Java正则.md)
-- [Java 编码和加密](source/_posts/programming/java/javacore/Java编码和加密.md)
-- [Java 本地化](source/_posts/programming/java/javacore/Java本地化.md)
+- 「[Java 基础特性专题](source/_posts/java/javacore/basics)」
+  - [Java 基础语法特性](source/_posts/java/javacore/basics/Java基础语法特性.md)
+  - [Java 基本数据类型](source/_posts/java/javacore/basics/Java基本数据类型.md)
+  - [Java 类和对象](source/_posts/java/javacore/basics/Java类和对象.md)
+  - [Java 方法](source/_posts/java/javacore/basics/Java方法.md)
+  - [Java 数组](source/_posts/java/javacore/basics/Java数组.md)
+  - [Java 枚举](source/_posts/java/javacore/basics/Java枚举.md)
+  - [Java 控制语句](source/_posts/java/javacore/basics/Java控制语句.md)
+  - [Java 异常](source/_posts/java/javacore/basics/Java异常.md)
+  - [Java 泛型](source/_posts/java/javacore/basics/Java泛型.md)
+  - [Java 反射和动态代理](source/_posts/java/javacore/basics/Java反射和动态代理.md)
+  - [Java 注解](source/_posts/java/javacore/basics/Java注解.md)
+  - [Java 序列化](source/_posts/java/javacore/basics/Java序列化.md)
+- 「[Java 高级特性专题](source/_posts/java/javacore/advanced)」
+  - [Java 正则](source/_posts/java/javacore/advanced/Java正则.md)
+  - [Java 编码和加密](source/_posts/java/javacore/advanced/Java编码和加密.md)
+  - [Java 本地化](source/_posts/java/javacore/advanced/Java本地化.md)
+  - [Java JDK8](source/_posts/java/javacore/advanced/Java8.md)
+- 「[Java 容器专题](source/_posts/java/javacore/container)」
+  - [Java 容器概述](source/_posts/java/javacore/container/java-container.md)
+  - [Java 容器之 List](source/_posts/java/javacore/container/java-container-list.md)
+  - [Java 容器之 Set](source/_posts/java/javacore/container/java-container-set.md)
+  - [Java 容器之 Queue](source/_posts/java/javacore/container/java-container-queue.md)
+  - [Java 容器之 Map](source/_posts/java/javacore/container/java-container-map.md)
+- 「[Java IO 专题](source/_posts/java/javacore/io)」
+  - [Java 常用 IO 类](source/_posts/java/javacore/io/Java常用IO类.md)
+  - [Java 流操作](source/_posts/java/javacore/io/Java流操作.md)
+  - [Java 序列化](source/_posts/java/javacore/io/Java序列化.md)
+  - [Java 网络编程](source/_posts/java/javacore/io/Java网络编程.md)
+  - [Java NIO](source/_posts/java/javacore/io/JavaNIO.md)
+- 「[Java 并发专题](source/_posts/java/javacore/concurrent)」
+- 「[Java 虚拟机专题](source/_posts/java/javacore/jvm)」
+  - [运行时数据区域](source/_posts/java/javacore/jvm/运行时数据区域.md)
+  - [垃圾收集](source/_posts/java/javacore/jvm/垃圾收集.md)
+  - [类加载机制](source/_posts/java/javacore/jvm/类加载机制.md)
+  - [JVM 调优](source/_posts/java/javacore/jvm/JVM调优.md)
 
-##### [Java 容器](source/_posts/programming/java/javacore/container)
-
-> 并发容器内容会放在 Java 并发编程章节讲解。
-
-- [Java 容器概述](source/_posts/programming/java/javacore/container/java-container.md)
-- [Java 容器之 List](source/_posts/programming/java/javacore/container/java-container-list.md)
-- [Java 容器之 Set](source/_posts/programming/java/javacore/container/java-container-set.md)
-- [Java 容器之 Queue](source/_posts/programming/java/javacore/container/java-container-queue.md)
-- [Java 容器之 Map](source/_posts/programming/java/javacore/container/java-container-map.md)
-
-##### Java 并发编程
-
-待整理。。。
-
-##### [Java IO 教程](source/_posts/programming/java/javacore/io)
-
-- [Java 常用 IO 类](source/_posts/programming/java/javacore/io/Java常用IO类.md)
-- [Java 流操作](source/_posts/programming/java/javacore/io/Java流操作.md)
-- [Java 序列化](source/_posts/programming/java/javacore/io/Java序列化.md)
-- [Java 网络编程](source/_posts/programming/java/javacore/io/Java网络编程.md)
-- [Java NIO](source/_posts/programming/java/javacore/io/JavaNIO.md)
-
-##### [Java 虚拟机](source/_posts/programming/java/javacore/jvm)
-
-- [运行时数据区域](source/_posts/programming/java/javacore/jvm/运行时数据区域.md)
-- [垃圾收集](source/_posts/programming/java/javacore/jvm/垃圾收集.md)
-- [类加载机制](source/_posts/programming/java/javacore/jvm/类加载机制.md)
-- [JVM 调优](source/_posts/programming/java/javacore/jvm/JVM调优.md)
-
-#### [JavaWeb](source/_posts/programming/java/javaweb)
+#### [JavaWeb](source/_posts/java/javaweb)
 
 待整理。。。
 
-#### [Spring](source/_posts/programming/java/spring)
+#### [Spring](source/_posts/java/spring)
 
 待整理。。。
 
-#### [SpringBoot](source/_posts/programming/java/spring-boot)
+#### [SpringBoot](source/_posts/java/spring-boot)
 
 待整理。。。
 
@@ -88,9 +79,9 @@
 
 ### 其他编程语言
 
-- [如何学习一门编程语言](source/_posts/programming/others/programming-guide.md)
-- [一篇文章让你彻底掌握 python 语言](source/_posts/programming/others/python.md)
-- [一篇文章让你彻底掌握 shell 语言](source/_posts/programming/others/shell.md)
+- [如何学习一门编程语言](source/_posts/programming/programming-guide.md)
+- [一篇文章让你彻底掌握 python 语言](source/_posts/programming/python.md)
+- [一篇文章让你彻底掌握 shell 语言](source/_posts/programming/shell.md)
 
 ## [算法和数据结构](source/_posts/algorithm)
 

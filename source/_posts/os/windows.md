@@ -10,17 +10,15 @@ date: 2019-03-22 15:53
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [软件](#软件)
-    - [图像音频](#图像音频)
+    - [视频音频](#视频音频)
     - [压缩](#压缩)
     - [文件管理](#文件管理)
     - [开发](#开发)
     - [编辑器](#编辑器)
     - [文档](#文档)
+    - [效率提升](#效率提升)
+    - [办公](#办公)
     - [个性化](#个性化)
-    - [效率类](#效率类)
-    - [3. 开发类](#3-开发类)
-    - [4. 设计类](#4-设计类)
-    - [5. 娱乐类](#5-娱乐类)
 - [参考资料](#参考资料)
 
 <!-- /TOC -->
@@ -76,7 +74,7 @@ date: 2019-03-22 15:53
 - [Eclipse](https://eclipse.org/downloads/) - 一款功能强大的 IDE。
 - [Visual Studio](https://www.visualstudio.com/vs/) - 微软官方的 IDE，通过插件可支持大量编程语言。
 - [NetBeans IDE](https://netbeans.org/) - 免费开源的 IDE。
-- Typora -  个人觉得最好用的 Markdown 编辑器。
+- [Typora](https://www.typora.io/) -  个人觉得最好用的 Markdown 编辑器。
 - [Cmd Markdown](https://www.zybuluo.com/cmd/) - 跨平台优秀 Markdown 编辑器，本文即用其所写。
 - [Notepad++](https://notepad-plus-plus.org/) - 一款支持多种编程语言的源码编辑器。
 - [Notepad2](http://www.flos-freeware.ch/notepad2.html) - 用于替代默认文本编辑器的轻量快速的编辑器，拥有众多有用的功能。
@@ -113,6 +111,7 @@ date: 2019-03-22 15:53
 
 - [TranslucentTB](https://github.com/TranslucentTB/TranslucentTB) - 透明化你的 Windows 任务栏。
 - [QTTabBar](http://qttabbar.wikidot.com/) - 通过多标签和额外的文件夹视图扩展资源管理器的功能。
+- [Fences](https://www.stardock.com/products/fences/) - 管理桌面快捷方式。
 
 ## 参考资料
 
