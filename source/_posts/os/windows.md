@@ -52,6 +52,7 @@ date: 2019-03-22 15:53
 - [Listary](http://www.listary.com/) - 非常优秀的 Windows 文件浏览和搜索增强工具。
 - Beyond Compare - 好用又万能的文件对比工具。
 - [CCleaner](https://www.piriform.com/ccleaner/download) - 如果你有系统洁癖，那一定要选择一款干净、良心、老牌的清洁软件。
+- [chocolatey](https://chocolatey.org/) - 包管理器
 - [Ninite](https://ninite.com/) - 最简单，最快速的更新或安装软件的方式。
 - [Recuva](http://www.piriform.com/RECUVA) - 来自 piriform 梨子公司产品，免费的数据恢复工具。
 - [Launchy](http://www.launchy.net/)：自由的跨平台工具，帮助你忘记开始菜单、桌面图标甚至文件管理器。
@@ -64,8 +65,8 @@ date: 2019-03-22 15:53
 - [TortoiseSVN](https://tortoisesvn.net/) - Subversion(SVN)的图形客户端
 - [Wireshark](https://www.wireshark.org/) - 一个网络协议分析工具。
 - Switchhosts
+- [Cmder](https://github.com/cmderdev/cmder) - 控制台模拟器包。扩展阅读：[Win 下必备神器之 Cmder](https://www.jeffjade.com/2016/01/13/2016-01-13-windows-software-cmder/)
 - [Babun](http://babun.github.io/) - 基于 Cygwin，用于替代 Windows shell。
-- [Cmder](https://github.com/cmderdev/cmder) - 控制台模拟器包。
 
 ### 编辑器
 
@@ -74,7 +75,7 @@ date: 2019-03-22 15:53
 - [Eclipse](https://eclipse.org/downloads/) - 一款功能强大的 IDE。
 - [Visual Studio](https://www.visualstudio.com/vs/) - 微软官方的 IDE，通过插件可支持大量编程语言。
 - [NetBeans IDE](https://netbeans.org/) - 免费开源的 IDE。
-- [Typora](https://www.typora.io/) -  个人觉得最好用的 Markdown 编辑器。
+- [Typora](https://www.typora.io/) - 个人觉得最好用的 Markdown 编辑器。
 - [Cmd Markdown](https://www.zybuluo.com/cmd/) - 跨平台优秀 Markdown 编辑器，本文即用其所写。
 - [Notepad++](https://notepad-plus-plus.org/) - 一款支持多种编程语言的源码编辑器。
 - [Notepad2](http://www.flos-freeware.ch/notepad2.html) - 用于替代默认文本编辑器的轻量快速的编辑器，拥有众多有用的功能。
@@ -90,14 +91,23 @@ date: 2019-03-22 15:53
 
 ### 效率提升
 
+**【笔记】**
+
 - [XMind](http://www.xmind.net/) - 优秀的思维导图。
-- 有道笔记
 - [OneNote](https://www.onenote.com/) - Windows 下综合评价非常高的笔记应用。
-- [ShareX](https://getsharex.com/) - 你要的所有与截图、录屏相关的功能，这里都有了。
-- [AutoHotkey](https://autohotkey.com/) - Windows平台的终极自动化脚本语言。
 - [印象笔记](http://www.yinxiang.com/) - 老牌跨平台笔记工具，国际版 Evernote。一家立志于做百年公司的企业，安全、可靠。
 - [为知笔记](http://www.wiz.cn/index.html) - 越来越好的笔记应用，记录、查阅一切有价值的信息，同样跨平台支持。
 - [有道云笔记](http://note.youdao.com/) - 网易旗下笔记工具，同样跨主流平台支持，文字、手写、录音、拍照多种记录方式，支持任意附件格式。
+- [ShareX](https://getsharex.com/) - 你要的所有与截图、录屏相关的功能，这里都有了。
+
+【快捷键】
+
+- [AutoHotkey](https://autohotkey.com/) - Windows 平台的终极自动化脚本语言。
+
+> 技巧：
+>
+> - https://www.jeffjade.com/2016/03/11/2016-03-11-autohotkey/
+> - https://www.autohotkey.com/boards/viewtopic.php?f=29&t=4296
 
 ### 办公
 
