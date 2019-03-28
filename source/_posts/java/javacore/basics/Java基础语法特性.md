@@ -16,9 +16,12 @@ date: 2019-03-10 22:28
 - [变量](#变量)
     - [变量修饰符](#变量修饰符)
 - [数组](#数组)
+- [枚举](#枚举)
 - [操作符](#操作符)
 - [控制语句](#控制语句)
 - [异常](#异常)
+- [泛型](#泛型)
+- [反射](#反射)
 
 <!-- /TOC -->
 
@@ -46,56 +49,9 @@ public class HelloWorld {
 
 ## 基本数据类型
 
-（1）Java 中的数据类型有两类：
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553754196283.png"/></div><br>
 
-- 值类型（`byte`、`short`、`int`、`long`、`float`、`double`、`char`、`boolean`）
-- 引用类型（除值类型以外，都是引用类型，包括 `String`、数组）
-
-（2）Java 中，数据类型转换有两种方式：
-
-- 自动换行
-- 强制转换
-
-强制转换使用括号 `()` 。
-
-基础数据类型可以自动转换，转换原则如下：
-
-- 由小数据转换为大数据
-- 转换前后的数据类型要兼容
-- 整型类型和浮点型进行计算后，结果会转为浮点类型
-
-（3）包装类有如下种类：
-
-```
-Byte <-> byte
-Short <-> short
-Integer <-> int
-Long <-> long
-Float <-> float
-Double <-> double
-Character <-> char
-Boolean <-> boolean
-```
-
-（4）什么是装箱、拆箱
-
-- **`装箱`（boxing）是将值类型转换为引用类型。**例如：`int` 转 `Integer`
-  - 装箱过程是通过调用包装类的 `valueOf` 方法实现的。
-- **`拆箱`（unboxing）是将引用类型转换为值类型。**例如：`Integer` 转 `int`
-  - 拆箱过程是通过调用包装类的 `xxxValue` 方法实现的。（xxx 代表对应的基本数据类型）。
-
-（5）装箱、拆箱的应用场景
-
-- 含类型为 `Object` 参数的方法
-- 非泛型的容器
-- 当 `==` 运算符的两个操作，一个操作数是包装类，另一个操作数是表达式（即包含算术运算）则比较的是数值（即会触发自动拆箱的过程）。
-
-（6）装箱、拆箱的应用注意点
-
-- 装箱操作会创建对象，频繁的装箱操作会造成不必要的内存消耗，影响性能。所以**应该尽量避免装箱。**
-- 基础数据类型的比较操作使用 `==`，包装类的比较操作使用 `equals` 方法。
-
-> :point_right: 扩展阅读：[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/深入理解Java基本数据类型.md)
+> :point_right: 扩展阅读：[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/深入理解Java基本数据类型.md)
 
 ## 变量
 
@@ -130,55 +86,15 @@ Java 支持的变量类型有：
 
 ## 数组
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552475700514.png"/></div>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553753908349.png"/></div><br>
 
-（1）数组特性
+> :point_right: 扩展阅读：[深入理解 Java 数组](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java数组.md)
 
-- **Java 中，数组是一种引用类型。**
-- **Java 中，数组是用来存储固定大小的同类型元素。**
-- **数组的定义和使用需要通过方括号 `[]`。**
+## 枚举
 
-（2）数组和容器
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553002212154.png"/></div>
 
-- 大多数情况下，应该选择容器存储数据。
-
-- **数组的效率要高于容器**
-- **数组可以持有值类型，而容器则不能**
-
-（3）**Java 数组的本质是对象**。
-
-（4）Java 数组和内存
-
-- 数组对象（数组指针）存储在栈中。
-- 数组元素值存储在堆中。
-
-（5）声明数组有两种方式：
-
-```java
-int[] arr1; // 推荐风格
-int arr2[]; // 效果相同
-```
-
-（6）创建数组有两种方式：
-
-```java
-int[] array1 = new int[2]; // 指定数组维度
-int[] array2 = new int[] { 1, 2 }; // 不指定数组维度
-```
-
-**Java 数组的数组维度可以是常量、变量、表达式，只要转换为整数即可**。
-
-**数组过大，可能会导致栈溢出**。超过一定数值，甚至编译器就会报错。
-
-（7）**Java 中，可以通过在 `[]` 中指定下标，访问数组元素，下标位置从 0 开始。**
-
-（8）数组可以作为函数的入参或返回值。
-
-（9）多维数组可视为数组的数组。
-
-（10）Arrays 类是一个很有用的数组工具类。
-
-> :point_right: 扩展阅读：[深入理解 Java 数组](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/深入理解Java数组.md)
+> :point_right: 扩展阅读：[深入理解 Java 数组](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java枚举.md)
 
 ## 操作符
 
@@ -186,45 +102,32 @@ Java 中支持的操作符类型如下：
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552382318465.png"/></div><br>
 
-> :point_right: 扩展阅读：[Java 运算符](http://www.runoob.com/java/java-operators.html)
+> :point_right: 扩展阅读：[Java 操作符](http://www.runoob.com/java/java-operators.html)
 
 ## 控制语句
 
-Java 中控制语句分为三大类：循环语句、选择语句、中断语句
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552361630220.png"/></div><br>
 
-- 循环
-  - `while` - 只要条件成立，则一直循环。
-  - `do...while` - do…while 循环和 while 循环相似，不同的是，do…while 循环至少会执行一次。
-  - `for` - 最先执行初始化步骤。可以声明一种类型，但可初始化一个或多个循环控制变量，也可以是空语句。然后，检测布尔表达式的值。如果为 true，循环体被执行。如果为 false，循环终止，开始执行循环体后面的语句。执行一次循环后，更新循环控制变量。再次检测布尔表达式。循环执行上面的过程。
-  - `foreach` - 声明新的局部变量，该变量的类型必须和数组元素的类型匹配。其作用域限定在循环语句块，其值与此时数组元素的值相等。
-- 选择
-  - `if...else-if...else` - if 语句至多有 1 个 else 语句，else 语句在所有的 elseif 语句之后。if 语句可以有若干个 else if 语句，它们必须在 else 语句之前。一旦其中一个 else if 语句检测为 true，其他的 else if 以及 else 语句都将跳过执行。
-  - `switch` - 判断一个变量与一系列值中某个值是否相等，每个值称为一个分支。
-- 中断
-  - `break` - 跳出循环体，继续执行循环外的函数体。
-  - `continue` - 跳出本次循环继续下一次循环。
-  - `return` - 跳出整个函数体，函数体后面的部分不再执行。
-
-> :point_right: 扩展阅读：[Java 控制语句](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/Java控制语句.md)
+> :point_right: 扩展阅读：[Java 控制语句](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java控制语句.md)
 
 ## 异常
 
-（1）**`Throwable` 是 Java 语言中所有错误（`Error`）和异常（`Exception`）的超类。**
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752019030.png"/></div><br>
 
-（2）`Error` 是 `Throwable` 的一个子类。**`Error` 表示合理的应用程序不应该尝试捕获的严重问题。**大多数此类错误都是异常情况。**编译器不会检查 `Error`。**
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752795010.png"/></div><br>
 
-（3）`Exception` 是 `Throwable` 的一个子类。**`Exception` 表示合理的应用程序可能想要捕获的条件。编译器会检查 `Exception` 异常。**此类异常，要么通过 `throws` 进行声明抛出，要么通过 `try catch` 进行捕获处理，否则不能通过编译。
+> :point_right: 扩展阅读：[深入理解 Java 异常](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java异常.md)
 
-（4）`RuntimeException` 是 `Exception` 的一个子类。`RuntimeException` 是那些可能在 Java 虚拟机正常运行期间抛出的异常的超类。**编译器不会检查 `RuntimeException` 异常。**当程序中可能出现这类异常时，倘若既没有通过 `throws` 声明抛出它，也没有用 `try catch` 语句捕获它，程序还是会编译通过。
+## 泛型
 
-（5）**自定义一个异常类，只需要继承 `Exception` 或 `RuntimeException` 即可。**
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553162401292.png"/></div>
 
-（6）如果想在程序中明确地引发异常，则需要用到 `throw` 和 `throws` 。
+> :point_right: 扩展阅读：[深入理解 Java 泛型](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java泛型.md)
 
-（7）**使用 try 和 catch 关键字可以捕获异常。**
+## 反射
 
-- `try` - **`try` 语句用于监听。将要被监听的代码(可能抛出异常的代码)放在 `try` 语句块之内，当 `try` 语句块内发生异常时，异常就被抛出。**
-- `catch` - `catch` 语句包含要捕获异常类型的声明。当保护代码块中发生一个异常时，`try` 后面的 `catch` 块就会被检查。
-- `finally` - **`finally` 语句块总是会被执行，无论是否出现异常。**`try catch` 语句后不一定非要`finally` 语句。`finally` 常用于这样的场景：由于`finally` 语句块总是会被执行，所以那些在 `try` 代码块中打开的，并且必须回收的物理资源(如数据库连接、网络连接和文件)，一般会放在`finally` 语句块中释放资源。
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615203764.png"/></div><br>
 
-> :point_right: 扩展阅读：[深入理解 Java 异常](https://github.com/dunwu/blog/blob/master/source/_posts/programming/java/javacore/深入理解Java异常.md)
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615153731.png"/></div><br>
+
+> :point_right: 扩展阅读：[深入理解 Java 反射和动态代理](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java反射.md)

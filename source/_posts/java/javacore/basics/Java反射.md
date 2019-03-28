@@ -684,8 +684,6 @@ public abstract java.lang.String io.github.dunwu.javacore.reflect.InvocationHand
 
 ## 小结
 
-反射应用
-
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615203764.png"/></div><br>
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615153731.png"/></div><br>

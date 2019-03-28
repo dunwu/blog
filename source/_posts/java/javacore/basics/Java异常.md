@@ -465,39 +465,9 @@ public class ExceptionOverrideDemo {
 
 ## 小结
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552359822097.png"/></div><br>
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752019030.png"/></div><br>
 
-（1）**`Throwable` 是 Java 语言中所有错误（`Error`）和异常（`Exception`）的超类。**
-
-（2）`Error` 是 `Throwable` 的一个子类。**`Error` 表示合理的应用程序不应该尝试捕获的严重问题**。大多数此类错误都是异常情况。**编译器不会检查 `Error`。**
-
-（3）`Exception` 是 `Throwable` 的一个子类。**`Exception` 表示合理的应用程序可能想要捕获的条件。编译器会检查 `Exception` 异常**。此类异常，要么通过 `throws` 进行声明抛出，要么通过 `try catch` 进行捕获处理，否则不能通过编译。
-
-（4）`RuntimeException` 是 `Exception` 的一个子类。`RuntimeException` 是那些可能在 Java 虚拟机正常运行期间抛出的异常的超类。**编译器不会检查 `RuntimeException` 异常。**当程序中可能出现这类异常时，倘若既没有通过 `throws` 声明抛出它，也没有用 `try catch` 语句捕获它，程序还是会编译通过。
-
-（5）**自定义一个异常类，只需要继承 `Exception` 或 `RuntimeException` 即可。**
-
-（6）如果想在程序中明确地引发异常，则需要用到 `throw` 和 `throws` 。
-
-（7）**使用 try 和 catch 关键字可以捕获异常。**
-
-- `try` - **`try` 语句用于监听。将要被监听的代码(可能抛出异常的代码)放在 `try` 语句块之内，当 `try` 语句块内发生异常时，异常就被抛出。**
-- `catch` - `catch` 语句包含要捕获异常类型的声明。当保护代码块中发生一个异常时，`try` 后面的 `catch` 块就会被检查。
-- `finally` - **`finally` 语句块总是会被执行，无论是否出现异常。**`try catch` 语句后不一定非要`finally` 语句。`finally` 常用于这样的场景：由于`finally` 语句块总是会被执行，所以那些在 `try` 代码块中打开的，并且必须回收的物理资源(如数据库连接、网络连接和文件)，一般会放在`finally` 语句块中释放资源。
-- `try`、`catch`、`finally` 三个代码块中的局部变量不可共享使用。
-- `catch` 块尝试捕获异常时，是按照 `catch` 块的声明顺序从上往下寻找的，一旦匹配，就不会再向下执行。因此，如果同一个 `try` 块下的多个 `catch` 异常类型有父子关系，应该将子类异常放在前面，父类异常放在后面。
-
-语法示例：
-
-```java
-try {
-    // 可能会发生异常的代码块
-} catch (Exception | Exception2 e) {
-    // 捕获并处理try抛出的异常类型
-} finally {
-    // 无论是否发生异常，都将执行的代码块
-}
-```
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752795010.png"/></div><br>
 
 ## 参考资料
 

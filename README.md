@@ -34,7 +34,7 @@
   - [Java 控制语句](source/_posts/java/javacore/basics/Java控制语句.md)
   - [Java 异常](source/_posts/java/javacore/basics/Java异常.md)
   - [Java 泛型](source/_posts/java/javacore/basics/Java泛型.md)
-  - [Java 反射和动态代理](source/_posts/java/javacore/basics/Java反射和动态代理.md)
+  - [Java 反射](source/_posts/java/javacore/basics/Java反射.md)
   - [Java 注解](source/_posts/java/javacore/basics/Java注解.md)
   - [Java 序列化](source/_posts/java/javacore/basics/Java序列化.md)
 - 「[Java 高级特性专题](source/_posts/java/javacore/advanced)」

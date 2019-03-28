@@ -514,21 +514,6 @@ public class ReturnDemo {
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552361630220.png"/></div><br>
 
-Java 中控制语句分为三大类：循环语句、选择语句、中断语句
-
-- 循环
-  - `while` - 只要条件成立，则一直循环。
-  - `do...while` - do…while 循环和 while 循环相似，不同的是，do…while 循环至少会执行一次。
-  - `for` - 最先执行初始化步骤。可以声明一种类型，但可初始化一个或多个循环控制变量，也可以是空语句。然后，检测布尔表达式的值。如果为 true，循环体被执行。如果为 false，循环终止，开始执行循环体后面的语句。执行一次循环后，更新循环控制变量。再次检测布尔表达式。循环执行上面的过程。
-  - `foreach` - 声明新的局部变量，该变量的类型必须和数组元素的类型匹配。其作用域限定在循环语句块，其值与此时数组元素的值相等。
-- 选择
-  - `if...else-if...else` - if 语句至多有 1 个 else 语句，else 语句在所有的 elseif 语句之后。if 语句可以有若干个 else if 语句，它们必须在 else 语句之前。一旦其中一个 else if 语句检测为 true，其他的 else if 以及 else 语句都将跳过执行。
-  - `switch` - 判断一个变量与一系列值中某个值是否相等，每个值称为一个分支。
-- 中断
-  - `break` - 跳出循环体，继续执行循环外的函数体。
-  - `continue` - 跳出本次循环继续下一次循环。
-  - `return` - 跳出整个函数体，函数体后面的部分不再执行。
-
 ## 参考资料
 
 - [Java 编程思想](https://book.douban.com/subject/2130190/)

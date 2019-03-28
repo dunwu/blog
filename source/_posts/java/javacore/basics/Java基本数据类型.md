@@ -229,58 +229,11 @@ System.out.println("i1 == i4 is [" + (i1 == i4) + "]"); // 自动拆箱
 
 ## 小结
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552360703402.png"/></div><br>
-
-（1）Java 中的数据类型有两类：
-
-- 值类型（`byte`、`short`、`int`、`long`、`float`、`double`、`char`、`boolean`）
-- 引用类型（除值类型以外，都是引用类型，包括 `String`、数组）
-
-（2）Java 中，数据类型转换有两种方式：
-
-- 自动换行
-- 强制转换
-
-强制转换使用括号 `()` 。
-
-基础数据类型可以自动转换，转换原则如下：
-
-- 由小数据转换为大数据
-- 转换前后的数据类型要兼容
-- 整型类型和浮点型进行计算后，结果会转为浮点类型
-
-（3）包装类有如下种类：
-
-```
-Byte <-> byte
-Short <-> short
-Integer <-> int
-Long <-> long
-Float <-> float
-Double <-> double
-Character <-> char
-Boolean <-> boolean
-```
-
-（4）什么是装箱、拆箱
-
-- **`装箱`（boxing）是将值类型转换为引用类型**。例如：`int` 转 `Integer`
-  - 装箱过程是通过调用包装类的 `valueOf` 方法实现的。
-- **`拆箱`（unboxing）是将引用类型转换为值类型**。例如：`Integer` 转 `int`
-  - 拆箱过程是通过调用包装类的 `xxxValue` 方法实现的。（xxx 代表对应的基本数据类型）。
-
-（5）装箱、拆箱的应用场景
-
-- 含类型为 `Object` 参数的方法
-- 非泛型的容器
-- 当 `==` 运算符的两个操作，一个操作数是包装类，另一个操作数是表达式（即包含算术运算）则比较的是数值（即会触发自动拆箱的过程）。
-
-（6）装箱、拆箱的应用注意点
-
-- 装箱操作会创建对象，频繁的装箱操作会造成不必要的内存消耗，影响性能。所以**应该尽量避免装箱。**
-- 基础数据类型的比较操作使用 `==`，包装类的比较操作使用 `equals` 方法。
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553754196283.png"/></div><br>
 
 ## 参考资料
 
+- [Java 编程思想](https://book.douban.com/subject/2130190/)
+- [JAVA 核心技术（卷 1）](https://book.douban.com/subject/3146174/)
 - [Java 基本数据类型和引用类型](https://juejin.im/post/59cd71835188255d3448faf6)
 - [深入剖析 Java 中的装箱和拆箱](https://www.cnblogs.com/dolphin0520/p/3780005.html)
