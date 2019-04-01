@@ -11,15 +11,14 @@ date: 2016-02-04 21:12
 >
 > :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 >
-> :keyboard: 本文中的示例代码已归档到：「[javacore](https://github.com/dunwu/javacore/tree/master/codes/basics/src/main/java/io/github/dunwu/javacore/array)」
+> :keyboard: 本文中的示例代码已归档到：「[javacore](https://github.com/dunwu/javacore/tree/master/codes/basics/src/main/java/io/github/dunwu/javacore/method)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [方法的使用](#方法的使用)
     - [方法定义](#方法定义)
     - [方法的调用](#方法的调用)
-- [方法的注意点](#方法的注意点)
-    - [值传递和引用传递](#值传递和引用传递)
+- [方法参数](#方法参数)
 - [方法修饰符](#方法修饰符)
     - [访问控制修饰符](#访问控制修饰符)
     - [static](#static)
@@ -33,6 +32,7 @@ date: 2016-02-04 21:12
     - [变参方法](#变参方法)
     - [finalize() 方法](#finalize-方法)
 - [覆写和重载](#覆写和重载)
+- [小结](#小结)
 - [参考资料](#参考资料)
 
 <!-- /TOC -->
@@ -63,7 +63,7 @@ public static void main(String[] args) {
 方法包含一个方法头和一个方法体。下面是一个方法的所有部分：
 
 - **修饰符** - 修饰符是可选的，它告诉编译器如何调用该方法。定义了该方法的访问类型。
-- **返回值类型 ** - 返回值类型表示方法执行结束后，返回结果的数据类型。如果没有返回值，应设为 void。
+- **返回值类型** - 返回值类型表示方法执行结束后，返回结果的数据类型。如果没有返回值，应设为 void。
 - **方法名** - 是方法的实际名称。方法名和参数表共同构成方法签名。
 - **参数类型** - 参数像是一个占位符。当方法被调用时，传递值给参数。参数列表是指方法的参数类型、顺序和参数的个数。参数是可选的，方法可以不包含任何参数。
 - **方法体** - 方法体包含具体的语句，定义该方法的功能。
@@ -116,9 +116,7 @@ public class RecursionMethodDemo {
 }
 ```
 
-## 方法的注意点
-
-### 值传递和引用传递
+## 方法参数
 
 在 C/C++ 等编程语言中，方法的参数传递一般有两种形式：
 
@@ -419,7 +417,9 @@ public class VarargsDemo {
 
 ### finalize() 方法
 
-Java 允许定义这样的方法，它在对象被垃圾收集器析构(回收)之前调用，这个方法叫做 `finalize()`，它用来清除回收对象。`finalize()` 是在 `java.lang.Object` 里定义的，也就是说每一个对象都有这么个方法。这个方法在 GC 启动，该对象被回收的时候被调用。
+`finalize` 在对象被垃圾收集器析构(回收)之前调用，用来清除回收对象。
+
+`finalize` 是在 `java.lang.Object` 里定义的，也就是说每一个对象都有这么个方法。这个方法在 GC 启动，该对象被回收的时候被调用。
 
 finalizer() 通常是不可预测的，也是很危险的，一般情况下是不必要的。使用终结方法会导致行为不稳定、降低性能，以及可移植性问题。
 
@@ -465,7 +465,7 @@ public class MethodOverrideDemo {
 // 会跑
 ```
 
-**方法的重载是指方法名称相同，但参数的类型或参数的个数不同。通过传递参数的个数及类型的不同可以完成不同功能的方法调用。**
+**方法的重载（Overload）是指方法名称相同，但参数的类型或参数的个数不同。通过传递参数的个数及类型的不同可以完成不同功能的方法调用。**
 
 > 注意：
 >
@@ -492,6 +492,10 @@ public class MethodOverloadDemo {
 // x + y = 30
 // x + y = 3.0
 ```
+
+## 小结
+
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553767582595.png"/></div><br>
 
 ## 参考资料
 

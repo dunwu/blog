@@ -18,8 +18,10 @@ date: 2019-03-10 22:28
 - [数组](#数组)
 - [枚举](#枚举)
 - [操作符](#操作符)
+- [方法](#方法)
 - [控制语句](#控制语句)
 - [异常](#异常)
+- [序列化](#序列化)
 - [泛型](#泛型)
 - [反射](#反射)
 
@@ -104,6 +106,12 @@ Java 中支持的操作符类型如下：
 
 > :point_right: 扩展阅读：[Java 操作符](http://www.runoob.com/java/java-operators.html)
 
+## 方法
+
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553767582595.png"/></div><br>
+
+> :point_right: 扩展阅读：[深入理解 Java 方法](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java方法.md)
+
 ## 控制语句
 
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552361630220.png"/></div><br>
@@ -117,6 +125,12 @@ Java 中支持的操作符类型如下：
 <br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752795010.png"/></div><br>
 
 > :point_right: 扩展阅读：[深入理解 Java 异常](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java异常.md)
+
+## 序列化
+
+<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553227663192.png"/></div><br>
+
+> :point_right: 扩展阅读：[深入理解 Java 序列化](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java序列化.md)
 
 ## 泛型
 
