@@ -212,6 +212,6 @@ header 和 headerValues 对象用来访问信息头，通过使用 request.getHe
 
 运行结果如下：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp-expression-language.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp-expression-language.jpg"/></div>
 
 header 对象返回单一值，而 headerValues 则返回一个字符串数组。

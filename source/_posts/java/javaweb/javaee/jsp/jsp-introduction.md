@@ -61,7 +61,7 @@ JSP 容器与 Web 服务器协同合作，为 JSP 的正常运行提供必要的
 
 下图显示了 JSP 容器和 JSP 文件在 Web 应用中所处的位置。
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp-arch.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp-arch.jpg"/></div>
 
 ### 工作步骤
 
@@ -94,7 +94,7 @@ JSP 生命周期就是从创建到销毁的整个过程，类似于 servlet 生�
 
 很明显，JSP 生命周期的四个主要阶段和 servlet 生命周期非常相似，下面给出图示：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp_life_cycle.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp_life_cycle.jpg"/></div>
 
 ## JSP 编译
 

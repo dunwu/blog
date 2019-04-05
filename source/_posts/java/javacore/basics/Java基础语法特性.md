@@ -51,7 +51,7 @@ public class HelloWorld {
 
 ## 基本数据类型
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553754196283.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553754196283.png"/></div>
 
 > :point_right: 扩展阅读：[深入理解 Java 基本数据类型](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/深入理解Java基本数据类型.md)
 
@@ -88,7 +88,7 @@ Java 支持的变量类型有：
 
 ## 数组
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553753908349.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553753908349.png"/></div>
 
 > :point_right: 扩展阅读：[深入理解 Java 数组](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java数组.md)
 
@@ -102,33 +102,33 @@ Java 支持的变量类型有：
 
 Java 中支持的操作符类型如下：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552382318465.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552382318465.png"/></div>
 
 > :point_right: 扩展阅读：[Java 操作符](http://www.runoob.com/java/java-operators.html)
 
 ## 方法
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553767582595.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553767582595.png"/></div>
 
 > :point_right: 扩展阅读：[深入理解 Java 方法](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java方法.md)
 
 ## 控制语句
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552361630220.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552361630220.png"/></div>
 
 > :point_right: 扩展阅读：[Java 控制语句](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java控制语句.md)
 
 ## 异常
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752019030.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752019030.png"/></div>
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752795010.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752795010.png"/></div>
 
 > :point_right: 扩展阅读：[深入理解 Java 异常](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java异常.md)
 
 ## 序列化
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553227663192.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553227663192.png"/></div>
 
 > :point_right: 扩展阅读：[深入理解 Java 序列化](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java序列化.md)
 
@@ -140,8 +140,8 @@ Java 中支持的操作符类型如下：
 
 ## 反射
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615203764.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615203764.png"/></div>
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615153731.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553615153731.png"/></div>
 
 > :point_right: 扩展阅读：[深入理解 Java 反射和动态代理](https://github.com/dunwu/blog/blob/master/source/_posts/java/javacore/basics/Java反射.md)

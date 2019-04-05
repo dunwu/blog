@@ -29,7 +29,7 @@ tags: ['data-structure', 'search']
 
 由于查找算法的主要运算是关键字的比较过程，所以通常把查找过程中对关键字需要执行的**平均比较长度**（也称为**平均比较次数**）作为衡量一个查找算法效率优劣的比较标准。
 
-<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-a38f84148d091364.gif?imageMogr2/auto-orient/strip"/></div><br>
+<div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-a38f84148d091364.gif?imageMogr2/auto-orient/strip"/></div>
 
 **选取查找算法的因素**
 
@@ -157,7 +157,7 @@ public int binarySearch(int[] list, int length, int key) {
 
 下图就是一个分块查找表的存储结构示意图
 
-<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-b7ad44c68d0c3c75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-b7ad44c68d0c3c75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 **基本思想**
 
@@ -175,7 +175,7 @@ public int binarySearch(int[] list, int length, int key) {
 
 **代码范例**
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-2737612c781e66e8.gif?imageMogr2/auto-orient/strip"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-2737612c781e66e8.gif?imageMogr2/auto-orient/strip"/></div>
 
 ```java
 class BlockSearch {

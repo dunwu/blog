@@ -176,7 +176,7 @@ vue ui
 
 上述命令会打开一个浏览器窗口，并以图形化界面将你引导至项目创建的流程。
 
-<br><div align="center"><img src="https://cli.vuejs.org/ui-new-project.png"/></div><br>
+<div align="center"><img src="https://cli.vuejs.org/ui-new-project.png"/></div>
 
 ## 插件
 
@@ -335,7 +335,7 @@ npm run serve
 yarn serve
 ```
 
-<br><div align="center"><img src="https://cli.vuejs.org/ui-analyzer.png"/></div><br>
+<div align="center"><img src="https://cli.vuejs.org/ui-analyzer.png"/></div>
 
 ## 开发
 

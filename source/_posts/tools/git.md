@@ -69,11 +69,11 @@ Git 是一个开源的分布式版本控制系统。
 
 这么做最显而易见的缺点是中央服务器的单点故障。如果宕机一小时，那么在这一小时内，谁都无法提交更新，也就无法协同工作。要是中央服务器的磁盘发生故障，碰巧没做备份，或者备份不够及时，就会有丢失数据的风险。最坏的情况是彻底丢失整个项目的所有历史更改记录。
 
-<br><div align="center"><img src="https://git-scm.com/figures/18333fig0102-tn.png"/></div><br>
+<div align="center"><img src="https://git-scm.com/figures/18333fig0102-tn.png"/></div>
 
 **分布式版本控制系统**的客户端并不只提取最新版本的文件快照，而是把代码仓库完整地镜像下来。这么一来，任何一处协同工作用的服务器发生故障，事后都可以用任何一个镜像出来的本地仓库恢复。因为每一次的提取操作，实际上都是一次对代码仓库的完整备份。
 
-<br><div align="center"><img src="https://git-scm.com/figures/18333fig0103-tn.png"/></div><br>
+<div align="center"><img src="https://git-scm.com/figures/18333fig0103-tn.png"/></div>
 
 ### 为什么使用 Git？
 
@@ -199,7 +199,7 @@ Git 中使用这种哈希值的情况很多，你将经常看到这种哈希值�
 - **本地仓库（local）** - 提交更新，找到暂存区域的文件，将快照永久性存储到 Git 本地仓库。
 - **远程仓库（remote）** - 以上几个工作区都是在本地。为了让别人可以看到你的修改，你需要将你的更新推送到远程仓库。同理，如果你想同步别人的修改，你需要从远程仓库拉取更新。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-theory.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-theory.png"/></div>
 
 ## 命令
 
@@ -207,7 +207,7 @@ Git 中使用这种哈希值的情况很多，你将经常看到这种哈希值�
 
 本节选择性介绍 git 中比较常用的命令行场景。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-cheat-sheet.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-cheat-sheet.png"/></div>
 
 ### 创建仓库
 
@@ -473,7 +473,7 @@ HTTPS 这种方式要求你每次 push 时都要输入用户名、密码，有�
 
 而 SSH 要求你本地生成证书，然后在你的 Github 账户中注册。第一次配置麻烦是麻烦了点，但是以后就免去了每次 push 需要输入用户名、密码的繁琐。
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-66f60822aeb2c21c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-66f60822aeb2c21c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 以下介绍以下，如何生成证书，以及在 Github 中注册。
 
@@ -1395,7 +1395,7 @@ $ git reset --hard 0254ea7
 
 最后，放一张我总结的脑图总结一下以上的知识点。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-summary.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-summary.png"/></div>
 
 ## 参考资料
 

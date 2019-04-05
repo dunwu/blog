@@ -29,7 +29,7 @@ date: 2019-03-06
 
 进入[官方下载地址](https://www.sonatype.com/download-oss-sonatype)，选择合适版本下载。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127203029.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127203029.png"/></div>
 
 本人希望将 Nexus 部署在 Linux 机器，所以选用的是 Unix 版本。
 
@@ -61,13 +61,13 @@ Usage: ./nexus {start|stop|run|run-redirect|status|restart|force-reload}
 
 启动成功后，在浏览器中访问 `http://<ip>:8081`，欢迎页面如下图所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127203131.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127203131.png"/></div>
 
 点击右上角 Sign in 登录，默认用户名/密码为：admin/admin123。
 
 有必要提一下的是，在 Nexus 的 Repositories 管理页面，展示了可用的 maven 仓库，如下图所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127203156.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127203156.png"/></div>
 
 > 说明：
 >

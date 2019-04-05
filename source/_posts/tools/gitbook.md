@@ -36,7 +36,7 @@ GitBook 可以将您的内容作为网站（可定制和可扩展）或电子书
 
 [GitBook.com](https://www.gitbook.com/) 是使用 GitBook 格式创建和托管图书的在线平台。它提供托管，协作功能和易于使用的编辑器。
 
-<br><div align="center"><img src="https://camo.githubusercontent.com/c1b6c55fca8e171120ce1fd73afcee699cc2a98f/68747470733a2f2f7261772e6769746875622e636f6d2f476974626f6f6b494f2f676974626f6f6b2f6d61737465722f707265766965772e706e67"/></div><br>
+<div align="center"><img src="https://camo.githubusercontent.com/c1b6c55fca8e171120ce1fd73afcee699cc2a98f/68747470733a2f2f7261772e6769746875622e636f6d2f476974626f6f6b494f2f676974626f6f6b2f6d61737465722f707265766965772e706e67"/></div>
 
 ## GitBook 安装
 
@@ -641,11 +641,11 @@ $ sudo ln -s ~/Applications/calibre.app/Contents/MacOS/ebook-convert /usr/bin
 
 如下图所示，根据个人需求，选择一个模板创建你的电子书。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-new-book.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-new-book.png"/></div>
 
 **设置书的基本信息**
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-settings.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-settings.png"/></div>
 
 **clone 到本地**
 
@@ -653,7 +653,7 @@ Gitbook.com 会为每本书创建一个 git 仓库。
 
 如下图所示，拷贝 git 地址，然后 `git clone` 到本地。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-clone.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-clone.png"/></div>
 
 **发布**
 
@@ -673,7 +673,7 @@ Gitbook.com 会为每本书创建一个 git 仓库。
 
 绑定了 Github 账号后，你可以在新建电子书时，选择从一个指定的 Github 仓库导入电子书项目。参考下图：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-new-book-with-github.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/gitbook-notes/master/assets/images/gitbook-new-book-with-github.png"/></div>
 
 只要你指定的 Github 仓库中的文档内容符合 Gitbook 规范，Gitbook 就会自动根据你的每次更新去构建生成电子书网站。
 

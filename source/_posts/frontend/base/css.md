@@ -175,7 +175,7 @@ div {
 
 背景图片可以放置于 content-box、padding-box 或 border-box 区域。
 
-<br><div align="center"><img src="../assets/images/css3/background-origin.gif"/></div><br>
+<div align="center"><img src="../assets/images/css3/background-origin.gif"/></div>
 
 **实例：在 content-box 中定位背景图片**
 

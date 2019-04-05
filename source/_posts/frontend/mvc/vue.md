@@ -38,7 +38,7 @@ var app = new Vue({
 
 ### vue 生命周期
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/front/mvc/vue/vue-lifecycle.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/front/mvc/vue/vue-lifecycle.png"/></div>
 
 ## 更多内容
 

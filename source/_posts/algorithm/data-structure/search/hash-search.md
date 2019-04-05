@@ -27,7 +27,7 @@ tags: ['data-structure', 'search']
 
 构造哈希表这个场景就像汽车找停车位，如果车位被人占了，只能找空的地方停。
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-4f4e0c3def86f7bb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240 "点击查看源网页""/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-4f4e0c3def86f7bb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240 "点击查看源网页""/></div>
 
 ## 构造哈希表
 
@@ -88,7 +88,7 @@ tags: ['data-structure', 'search']
 
 不妨设选取的p和m为13，由 f(key) = key % 13 可以得到下表。
 
-<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-06a789e7f9b31da6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-06a789e7f9b31da6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 需要注意的是，在上图中有两个关键字的探查次数为 2 ，其他都是1。
 
@@ -112,7 +112,7 @@ b. 35 % 13 结果是 9，而它的前面有个 9，9 % 13也是 9，存在冲突
 
 如果对开放定址法示例中提到的序列使用拉链法，得到的结果如下图所示：
 
-<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-c14e03882e8a0f3a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-c14e03882e8a0f3a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 ## 实现一个哈希表
 

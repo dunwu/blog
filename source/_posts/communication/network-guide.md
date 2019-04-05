@@ -9,7 +9,7 @@ date: 2019-02-20 22:26
 
 > 计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/network.jpg"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/network.jpg"/></div>
 
 ## :bulb: 指南
 
@@ -53,7 +53,7 @@ date: 2019-02-20 22:26
 
 计算机网络的拓扑结构可分为：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/overview/network-topological-structure.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/overview/network-topological-structure.gif"/></div>
 
 - 网型拓扑网型网（Mesh network）
 - 环型拓扑环型网（Ring network）
@@ -80,7 +80,7 @@ date: 2019-02-20 22:26
 
 ### 体系结构
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/overview/network-layers.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/overview/network-layers.png"/></div>
 
 - [物理层](physical) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
 - [数据链路层](data-link-layer.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机

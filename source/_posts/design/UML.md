@@ -36,7 +36,7 @@ date: 2019-03-06
 
 UML 图类型如下图所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-diagrams.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-diagrams.png"/></div>
 
 #### [结构式建模图](UML结构建模图.md)
 
@@ -76,25 +76,25 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 > **部署图（Deployment Diagram）用于对系统的物理结构建模**。部署图将显示系统中的软件组件和硬件组件之间的关系以及处理工作的物理分布。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-deployment-diagram-example.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-deployment-diagram-example.png"/></div>
 
 ### 节点
 
 节点既可以是硬件元素，也可以是软件元素。它显示为一个立方体，如下图所示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-node.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-node.gif"/></div>
 
 ### 节点实例
 
 图可以显示节点实例，实例与节点的区分是：实例的名称带下划线，冒号放在它的基本节点类型之前。实例在冒号之前可以有名称，也可以没有名称。下图显示了一个具名的计算机实例。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-node-instance.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-node-instance.gif"/></div>
 
 ### 节点构造型
 
 为节点提供了许多标准的构造型，分别命名为 «cdrom»， «cd-rom»， «computer»， «disk array»， «pc»， «pc client»， «pc server»， «secure»， «server»， «storage»， «unix server»， «user pc»。 并在节点符号的右上角显示适当的图标。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-node-stereotype.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-node-stereotype.gif"/></div>
 
 ### 工件
 
@@ -102,25 +102,25 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 工件表示为带有工件名称的矩形，并显示«artifact»关键字和文档符号。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-artifact.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-artifact.gif"/></div>
 
 ### 关联
 
 在部署图的上下文联系中，关联代表节点间的联系通道。下图显示了一个网络系统的部署图，描述了网络协议为构造型和关联终端的多重性，
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-network-model.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-network-model.gif"/></div>
 
 ### 作为容器的节点
 
 节点可以包含其他元素，如组件和工件。下图显示了一个嵌入式系统某个部分的部署图。描写了一个被主板节点包含的可执行工件。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-embedded-model.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-embedded-model.gif"/></div>
 
 ## 组件图
 
 > **组件图（Component Diagram）描绘了组成一个软件系统的模块和嵌入控件**。组件图比类图具有更高层次的抽象－通常运行时一个组件被一个或多个类（或对象）实现。它们象积木那样使得组件能最终构成系统的绝大部分。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-component-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-component-diagram.gif"/></div>
 
 上图演示了一些组件和它们的内部关系。装配连接器（Assembly connectors）“连接”由"Product"和"Customer"的提供接口到由 "Order"指定的需求接口。 一个依赖关系映射了客户相关的帐户信息到“Order”需要的 "Payment"需求接口。
 
@@ -130,19 +130,19 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 组件可表示为带关键字 «component»的矩形类元；也可用右上角有组件图标的矩形表示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-representing-components.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-representing-components.gif"/></div>
 
 ### 装配连接器
 
 装配连接器在组件 “Component1”的需求接口和另一个组件 “Component2”的提供接口之间建立桥梁; 这个桥梁使得一个组件能提供另一个组件所需要的服务。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-required-interfaces.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-required-interfaces.gif"/></div>
 
 ### 带端口组件
 
 使用端口的组件图允许在它的环境指定一个服务和行为，同时这个服务和行为也是组件需要的。当端口进行双向操作的时候，它可以指定输入和输出。下图详述了用于在线服务的带端口组件，它有两个提供接口 “order entry”和 “tracking”，也有 “payment” 需求接口。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-component-with-ports.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-component-with-ports.gif"/></div>
 
 ## 包图
 
@@ -150,13 +150,13 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 下面是一个包图的例子。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-package-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-package-diagram.gif"/></div>
 
 包中的元素共享相同的命名空间，因此，一个指定命名空间的元素必须有唯一的名称。
 
 包可以用来代表物理或逻辑关系。选择把类包括在指定的包里，有助于在同一个包里赋予这些类相同继承层次。通常认为把通过复合相关联的类，以及与它们相协作的类放在同一个包里。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-package.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-package.gif"/></div>
 
 在 UML2.5 中，包用文件夹来表示，包中的元素共享同一个命名空间，并且必须是可识别的，因此要有唯一的名称或类型。包必须显示包名，在附属方框部分有选择的显示包内的元素。
 
@@ -170,7 +170,7 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 下面的图显示了类之间的聚合关系。弱聚合（浅色箭头）表现在类 "Account" 使用 "AddressBook"，但是不必要包含它的一个实例。强聚合（图中的黑色箭头）表示了目标类包含源类，例如，"Contact" 和 "ContactGroup"值被包含在 "AddressBook"中。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-class-diagram.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-class-diagram.png"/></div>
 
 ### 类（Classes）
 
@@ -182,39 +182,39 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 在下面图中，类的类名显示在最上面的分栏，它下面的分栏显示详细属性，如："center" 属性显示初始化的值。最后面的分栏显示操作，如： setWidth，setLength 和 setPosition 以及他们的参数。 属性和操作名前的标注表示了该属性或操作的可见性: 如果使用 "+"号，这个属性或操作是公共的 ; "-" 号则代表这个属性或操作是私有的。 "#"号是这个属性或操作被定义为保护的，" \~" 号代表包的可见性。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-class.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-class.gif"/></div>
 
 ### 接口（Interfaces）
 
 接口是实施者同意满足的行为规范，是一种约定。实现一个接口，类必需支持其要求的行为，使系统按照同样的方式，即公共的接口，处理不相关的元素。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-class-interface.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-class-interface.gif"/></div>
 
 接口有相似于类的外形风格，含有指定的操作，如下图所示。如果没有明确的详细操作，也可以画成一个圆环。当画成圆环的时候，到这个环形标柱的实现连接没有目标箭头。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interface.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interface.gif"/></div>
 
 ### 表（Tables）
 
 表尽管不是基本 UML 的一部分，仍然是“图型”能完成的实例用。在右上角画一个表的小图标来表示。表属性用“图型” «column»表示。 绝大多数表单有一个主键，是由一个或几个字段组成的一个唯一的字码组合加主键操作来访问表格，主键操作“图型”为«PK»。 一些表有一个或多个外键，使用一个或多个字段加一个外键操作，映射到相关表的主键上去，外键操作“图型”为«FK»。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-table.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-table.gif"/></div>
 
 ### 关联（Associations）
 
 关联表明两个模型元素之间有关系，通常用在一个类中被实现为一个实例变量。连接符可以包含两端的命名的角色，基数性，方向和约束。关联是元素之间普通的关系。如果多于两个元素，也可以使用菱形的关联关系。当从类图生成代码时，关联末端的对象将变成目标类中实例变量。见下图示例 "playsFor" 将变成"Player"类中的实例变量。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-associations.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-associations.gif"/></div>
 
 ### 泛化（Generalizations）
 
 泛化被用来说明继承关系。连接从特定类元到一般类元。泛化的含义是源类继承了目标类的特性。下图的图显示了一个父类泛化一个子类， 类“Circle”的一个实例将会有属性 “ x_position”，“ y_position” ， “radius” 和 方法 “display()”。 注意：类 "Shape" 是抽象的，类名显示为斜体。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-generalizations.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-generalizations.gif"/></div>
 
 下图显示了与上图相同信息的视图。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-generalizations-02.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-generalizations-02.gif"/></div>
 
 ### 聚合（Aggregations）
 
@@ -224,13 +224,13 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 下面的图示：显示了弱聚合和强聚合的不同。“ address book” 由许多 “contacts” 和 “contact groups”组成。 “contact group” 是一个“contacts”的虚分组; “contact”可以被包含在不止一个 “ contact group”。 如果你删除一个“ address book”，所有的 “contacts” 和 “contact groups” 也将会被删除；如果你删除“ contact group”， 没有 “contacts”会被删除。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-aggregations.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-aggregations.gif"/></div>
 
 ### 关联类（Association Classes）
 
 关联类是一个允许关联连接有属性和操作的构造。下面的示例：显示了远不止简单连接两个类的连接，如给“employee”分配项目。“ employee”在项目中所起的作用是一个复杂的实体，既有自身的也有不属于“employee” 或 “project” 类的细节。 例如，“ employee”可以同时为几个项目工作，有不同的职务头衔和对应的安全权限。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-association-classes.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-association-classes.gif"/></div>
 
 ### 依赖（Dependencies）
 
@@ -244,13 +244,13 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 是源对象执行或实现目标，实现被用来表达模型的可跟踪性和完整性－业务模型或需求被一个或多个用例实现，用例则被类实现，类被组件实现，等等。这种实现贯穿于系统设计的映射需求和类等，直至抽象建模水平级。从而确保整个系统的一张宏图，它也反映系统的所有微小组成，以及约束和定义它的细节。实现关系用带虚线的实箭头表示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-realizations.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-realizations.gif"/></div>
 
 ### 嵌套（Nestings）
 
 嵌套连接符用来表示源元素嵌套在目标元素中。下图显示“ inner class”的定义，尽管在 EA 中，更多地按照着他们在项目层次视图中的位置来显示这种关系。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-nestings.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-nestings.gif"/></div>
 
 ## 复合结构图
 
@@ -258,63 +258,63 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 类元素已经在类图部分被详细地阐述，这部分用来说明类表现复合元素的方式，如：暴露接口，包含端口和部件。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-composite-structure-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-composite-structure-diagram.gif"/></div>
 
 ### 部件
 
 部件是代表一组（一个或多个）实例的元素，这组实例的拥有者是一类元实例，例如：如果一个图的实例有一组图形元素，则这些图形元素可以被表示为部件，并可以对他们之间的某种关系建模。注意：一个部件可以在它的父类被删除之前从父类中被去掉，这样部件就不会被同时删除了。
 部件在类或组件内部显示为不加修饰的方框。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-part.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-part.gif"/></div>
 
 ### 端口
 
 端口是类型化的元素，代表一个包含类元实例的外部可视的部分。端口定义了类元和它的环境之间的交互。端口显示在包含它的部件，类或组合结构的边缘上。端口指定了类元提供的服务，以及类元要求环境提供的服务。
 端口显示为所属类元边界指定的方框。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-port.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-port.gif"/></div>
 
 ### 接口
 
 接口与类相似，但是有一些限制，所有的接口操作都是公共和抽象的，不提供任何默认的实现。所有的接口属性都必须是常量。然而，当一个类从一个单独的超级类继承而来，它可以实现多个接口。
 当一个接口在图中单列出来，它既可以显示为类元素的方框，带 «interface» 关键字和表明它是抽象的斜体名称，也可以显示为圆环。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interface.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interface.gif"/></div>
 
 注意：圆环标注不显示接口操作。当接口显示为类所有的接口，它们会被当作暴露接口引用。暴露接口可以定义为是提供的，还是需求的。提供接口确认包含它的类元提供指定接口元素定义的操作，可通过类和接口间实现的连接来定义。需求接口说明该类元能与其他类元进行通信，这些类元提供了指定接口元素所定义的操作。需求接口可通过在类和接口间建立依赖连接来定义。
 提供接口显示为“带棒球体”，依附在类元边缘。需求接口显示为“带棒杯体”，也是依附在类元边缘。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interface-02.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interface-02.gif"/></div>
 
 ### 委托
 
 委托连接器用来定义组件外部端口和接口的内部工作方式。委托连接器表示为带有 «delegate» 关键字的箭头。它连接组件的外部约定，表现为它的端口，到组件部件行为的内部实现。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-delegate.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-delegate.gif"/></div>
 
 ### 协作
 
 协作定义了一系列共同协作的角色，它们集体展示一个指定的设计功能。协作图应仅仅显示完成指定任务或功能的角色与属性。隔离主要角色是用来简化结构和澄清行为，也用于重用。一个协作通常实现一个模式。
 协作元素显示为椭圆。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-collaboration.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-collaboration.gif"/></div>
 
 ### 角色绑定
 
 角色绑定连接器是一条从连接协作到所要完成该任务类元的连线。它显示为虚线，并在类元端显示作用名。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-role-binding.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-role-binding.gif"/></div>
 
 ### 表现
 
 表现连接器用于连接协作到类元来表示此类元中使用了该协作。显示为带关键字 «represents»的虚线箭头。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-represent.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-represent.gif"/></div>
 
 发生
 发生连接器用于连接协作到类元来表示此协作表现了（同原文）该类元；显示为带关键字«occurrence»的虚线箭头。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-occurrence.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-occurrence.gif"/></div>
 
 ## 对象图
 
@@ -324,26 +324,26 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 下面的图显示了类元素和对象元素外观上的不同。注意：类元素包括三个部分，分别是名字栏，属性栏和操作栏；对象元素默认为没有分栏。名称显示也有不同：对象名称有下划线，并可能显示该对象实例化所用类元的名称。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object.gif"/></div>
 
 ### 运行状态
 
 类元元素可以有任意数量的属性和操作。在对象实例中不会被显示出来。但可能定义对象的运行状态，显示特殊实例的属性设置值。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-run-time-state.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-run-time-state.gif"/></div>
 
 ### 类和对象图示例
 
 下图是一个对象图，其中插入了类定义图。它例示如何用对象图来测试类图中任务多重性的方法。“car” 类对 “wheel” 类有“1 对多” 的多重性，但是如果已经选择用“1 对 4” 来替代，那样就不会在对象图显示“3 个轮子”的汽车。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-diagram.gif"/></div>
 
 ## 活动图
 
 > UML 中，活动图用来展示活动的顺序。**显示了从起始点到终点的工作流，描述了活动图中存在于事件进程的判断路径**。活动图可以用来详细阐述某些活动执行中发生并行处理的情况。活动图对业务建模也比较有用，用来详细描述发生在业务活动中的过程。
 > 一个活动图的示例如下所示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-diagram.gif"/></div>
 
 下面描述组成活动图的元素。
 
@@ -351,41 +351,41 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 活动是行为参数化顺序的规范。活动被表示为圆角矩形，内含全部的动作，工作流和其他组成活动的元素。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity.gif"/></div>
 
 ### 动作
 
 一个动作代表活动中的一个步骤。动作用圆角矩形表示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-action.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-action.gif"/></div>
 
 ### 动作约束
 
 动作可以附带约束，下图显示了一个带前置条件和后置条件的动作。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-conditions.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-conditions.gif"/></div>
 
 ### 控制流
 
 控制流显示一个动作到下一个动作的流。表示为带箭头实线
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-edge.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-edge.gif"/></div>
 
 ### 初始节点
 
 一个开始或起始点用大黑圆点表示，如下图。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-initial.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-initial.gif"/></div>
 
 ### 结束节点
 
 结束节点有两种类型：活动结束节点和流结束节点。活动结束节点表示为中心带黑点的圆环。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-final.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-final.gif"/></div>
 
 流结束节点表示为内部为叉号的圆环。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-flow-final.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-flow-final.gif"/></div>
 
 这两种不同类型节点的区别为：流结束节点表明单独的控制流的终点。活动结束终点是活动图内所有控制流的结束。
 
@@ -393,31 +393,31 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 对象流是对象和数据转递的通道。对象显示为矩形。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-object.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-object.gif"/></div>
 
 对象流显示为带箭头的连接器，表明方向和通过的对象。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-flow.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-flow.gif"/></div>
 
 一个对象流在它的至少一个终端有一个对象。在上图中，可以采用带输入输出引脚的速记标柱表示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-flow-alt.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-object-flow-alt.gif"/></div>
 
 数据存储显示为带 «datastore» 关键字的对象。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-data-store.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-data-store.gif"/></div>
 
 ### 判断节点和合并节点
 
 判断节点和合并节点是相同标注：菱形。它们可以被命名。从判断节点出来的控制流有监护条件，当监护条件满足时，可以对流控制。下图显示了判断节点和合并节点的使用。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-decision-or-merge.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-decision-or-merge.gif"/></div>
 
 ### 分叉和结合节点
 
 分叉和结合节点有同样的标柱：垂直或水平条（方向取决于工作流从左到右，还是从上到下）。它们说明了控制的并发线程的起始和终点，下图显示他们的使用示例。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-fork-and-join.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-fork-and-join.gif"/></div>
 
 结合节点与合并节点不同之处在于：结合节点同步两个输入量，产生一个单独的输出量。来自结合节点的输出量要接收到所有的输入量后才能执行。合并节点直接将控制流传递通过。如果两个或更多的输入量到达合并节点。则它的输出流指定的动作会被执行两次或更多次。
 
@@ -425,25 +425,25 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 扩展域是会执行多次的结构活动域。输入输出扩展节点表示为一组“3 厢” ，代表多个选择项。关键词 "iterative"， "parallel" 或 "stream"显示在区域的左上角
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-expansion-region.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-expansion-region.gif"/></div>
 
 ### 异常处理器
 
 异常处理器在活动图中可以建模。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-exception-handler.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-exception-handler.gif"/></div>
 
 ### 可中断活动区
 
 可中断活动区环绕一组可以中断的动作。在下面非常简单的例子中： 当控制被传递到结束订单 "Close Order" 动作，定单处理"Process Order" 动作会执行直到完成，除非"Cancel Request"取消请求中断被接受，这会将控制传递给"Cancel Order"动作。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interruptible-activity-region.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interruptible-activity-region.gif"/></div>
 
 ### 分割
 
 一个活动分割显示为垂直或水平泳道。在下图中，分割被用来在活动图中分隔动作，有在 "accounting department"中执行的，有在 "customer"中执行的。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-partitions.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-activity-partitions.gif"/></div>
 
 ## 状态机图
 
@@ -451,7 +451,7 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 如下示例， 下列的状态机图显示了门在它的整个生命周期里如何运作。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-diagram.gif"/></div>
 
 门可以处于以下的三种状态之一： "Opened"打开状态， "Closed"关闭状态，或者"Locked"锁定状态。 它分别响应事件：“Open”开门， “Close”关门， “Lock”锁门 和 “Unlock”解锁。 注意：不是所有的事件，在所有的状态下都是有效的。如：一个门打开的时候是不可能锁定的，除非你关上门。并且，状态转移可能有附加监护条件：假设门是开的，如果“doorWay->isEmpty”（门是空的）被满足，那么它只能响应关门事件。状态机图使用的语法和约定将在下面的部分进行讨论。
 
@@ -459,19 +459,19 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 状态被表示为圆角矩形，状态名写在里面。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state.gif"/></div>
 
 ### 起始和结束状态
 
 初始状态表示为实心黑圆环，可以标注名称。结束状态表示为中心带黑点圆环，也可以被标注名称。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-initial-and-final.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-initial-and-final.gif"/></div>
 
 ### 转移
 
 一个状态到下一个状态的转移表示为带箭头实线。转移可以有一个“Trigger”触发器，一个“Guard”监护条件和一个“effect”效果。如下所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-transition.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-transition.gif"/></div>
 
 "Trigger"触发器是转移的起因，它可以是某个条件下的一个信号，一个事件，一个变化或一个时间通路。"Guard"监护是一个条件，而且必须为真，以便于让触发器引起转移。效果"Effect"是直接作用到对象上的一个动作，该对象具有做为转移结果的状态机。
 
@@ -479,7 +479,7 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 在上面的状态转移示例中，一个效果与该转移相关联。如果目标状态有多个转移到达，并且每一个转移都有相同的效果与它相关联，那最好将该效果与目标状态相关联，而不与转移相关联。你可以通过为这个状态定义初始动作来实现。下图显示了一个带入口动作和出口动作的状态。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-and-exit.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-and-exit.gif"/></div>
 
 可以定义发生在事件上的动作或一直发生的动作。每一种类型的动作是可以定义任意数量的。
 
@@ -487,17 +487,17 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 一个状态可能有一个返回到自身的转移，如下图。效果与转移关联是十分有帮助。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-self-transition.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-self-transition.gif"/></div>
 
 ### 复合状态
 
 一个状态机图可以有子状态机图，如下图所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-compound.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-compound.gif"/></div>
 
 可选择不同方式显示相同信息，如下图所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-composite.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-composite.gif"/></div>
 
 上面版本的标注说明"Check PIN"的子状态机图显示在单独的图中。
 
@@ -505,35 +505,35 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 有时，你不想在正常的初始状态进入子状态机。例如下面的子状态机，它通常从"初始化"状态开始，但是如果因为某些原因，它不必执行初始化，可能靠转移到指定的入口点来从 "Ready" 状态开始。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-point.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-point.gif"/></div>
 
 下图显示了状态机的上一层。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-point-higher.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-entry-point-higher.gif"/></div>
 
 ### 出口点
 
 有与入口点相类似的方式，它可能也指定可选择的出口点。下图给出了主处理状态执行后，所执行状态的去向将取决于该状态转移时所使用的路径。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-exit-point.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-exit-point.gif"/></div>
 
 ### 选择伪状态
 
 选择伪状态显示为菱形，有一个转移输入，两个或多个输出。下图显示不管到达哪一个状态，经过选择伪状态后的去向，取决于在伪状态中执行时所选择的消息格式。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-choice.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-choice.gif"/></div>
 
 ### 连接伪状态
 
 连接伪状态用来将多个状态转移链接在一起。一个单独的连接伪状态可以有一个或多个输入和一个或多个输出，监护可能应用于每一个转移，连接是没有语义的。连接可以把一个输入转移分成多个输出转移来实现一个静态分支。与之对照的是选择伪状态实现一个动态条件分支。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-junction.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-junction.gif"/></div>
 
 ### 终止伪状态
 
 进入终止伪状态是指状态机生命线已经终止。终止伪状态表示为叉号。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-terminate.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-terminate.gif"/></div>
 
 ### 历史状态
 
@@ -545,7 +545,7 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 一个状态可以被分成几个不同的区，包含同时存在和执行的子状态。下面的例子显示状态 "Applying Brakes"， "front brake"和"rear brakes" 将同时独立运作。注意使用了分叉和结合伪状态而不是选择和合并伪状态。这些符号用来同步并发的线程。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-concurrent-regions.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-concurrent-regions.gif"/></div>
 
 ## 用例图
 
@@ -555,25 +555,25 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 用例图显示了系统和系统外实体之间的交互。这些实体被引用为执行者。执行者代表角色，可以包括：用户，外部硬件和其他系统。执行者往往被画成简笔画小人。也可以用带«actor»关键字的类矩形表示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-actor.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-actor.gif"/></div>
 
 在下图中，执行者可以详细的泛化其他执行者:
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-generalize.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-generalize.gif"/></div>
 
 ### 用例
 
 用例是有意义的单独工作单元。它向系统外部的人或事提供一个易于观察的高层次行为视图。 用例的标注符号是一个椭圆。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case.gif"/></div>
 
 使用用例的符号是带可选择箭头的连接线，箭头显示控制的方向。下图说明执行者 "Customer"使用 "Withdraw"用例。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-use.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-use.gif"/></div>
 
 用途连接器（uses connector）可以有选择性的在每一个端点有多重性值，如下图，显示客户一次可能只执行一次取款交易。但是银行可以同时执行许多取款交易。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-multiplicity-use.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-multiplicity-use.gif"/></div>
 
 ### 用例定义
 
@@ -590,7 +590,7 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 用例可能包含其他用例的功能来作为它正常处理的一部分。通常它假设，任何被包含的用例在基本程序运行时每一次都会被调用。下面例子：用例“卡的确认”<Card Identification> 在运行时，被用例“取钱”<Withdraw>当作一个子部分。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-include.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-include.gif"/></div>
 
 用例可以被一个或多个用例包含。通过提炼通用的行为，将它变成可以多次重复使用的用例。有助于降低功能重复级别。
 
@@ -598,15 +598,15 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 一个用例可以被用来扩展另一个用例的行为，通常使用在特别情况下。例如：假设在修改一个特别类型的客户订单之前，用户必须得到某种更高级别的许可，然后“获得许可”<Get Approval>用例将有选择的扩展常规的“修改订单”<Modify Order>用例。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-extend.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-extend.gif"/></div>
 
 **扩展点** - 扩展用例的加入点被定义为扩展点。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-extend-with-condition.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-extend-with-condition.gif"/></div>
 
 **系统边界** - 它用来显示用例在系统内部，执行者在系统的外部。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-system-boundary.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-use-case-system-boundary.gif"/></div>
 
 ## 通信图
 
@@ -616,9 +616,9 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 下面的两个图用通信图和时序图分别显示相同的信息。尽管我们可能从通信图的编号码得到消息顺序，但它不是立即可见的。通信图十分清楚的显示了邻近对象间全部完整的消息传递。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-communications-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-communications-diagram.gif"/></div>
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-diagram.gif"/></div>
 
 ## 交互概述图
 
@@ -628,19 +628,19 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 交互发生引用现有的交互图。显示为一个引用框，左上角显示 "ref" 。被引用的图名显示在框的中央。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-01.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-01.gif"/></div>
 
 ### 交互元素
 
 交互元素与交互发生相似之处在于都是在一个矩形框中显示一个现有的交互图。不同之处在内部显示参考图的内容不同。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-02.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-02.gif"/></div>
 
 ### 将它们放在一起
 
 所有的活动图控件，都可以相同地被使用于交互概览图，如：分叉，结合，合并等等。它把控制逻辑放入较低一级的图中。下面的例子就说明了一个典型的销售过程。子过程是从交互发生抽象而来。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-interaction-overview-diagram.gif"/></div>
 
 ## 时序图
 
@@ -650,17 +650,17 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 一条生命线在时序图中代表一个独立的参与者。表示为包含对象名的矩形，如果它的名字是"self"，则说明该生命线代表控制带时序图的类元。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lifelines.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lifelines.gif"/></div>
 
 有时，时序图会包含一个顶端是执行者的生命线。这情况说明掌握这个时序图的是用例。健壮图中的边界，控制和实体元素也可以有生命线。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-more-lifelines.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-more-lifelines.gif"/></div>
 
 ### 消息
 
 消息显示为箭头。消息可以完成传输，也可能丢失和找回，它可以是同步的，也可以是异步的，即可以是调用，也可以是信号。在下图中，第一条消息是同步消息(标为实箭头)完成传输，并隐含一条返回消息。第二条消息是异步消息 (标为实线箭头)，第三条是异步返回消息(标为虚线)。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-messages.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-messages.gif"/></div>
 
 ### 执行发生
 
@@ -670,25 +670,25 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 内部消息表现为一个操作的递归调用，或一个方法调用属于同一个对象的其他方法。显示为生命线上执行事件的嵌套控制焦点。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-recursion.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-recursion.gif"/></div>
 
 ### 迷路消息和拾取消息
 
 迷路消息是那些发送了却没有到达指定接收者，或者到达的接收者不再当前图中。拾取消息是收到来自那些未知的发送者，或者来自没有显示在当前图的发送者的消息。它们都表明是去往或来自一个终点元素。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lost-and-found.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lost-and-found.gif"/></div>
 
 ### 生命线开始与结束
 
 生命线可以在时序图时间刻度范围内创建和销毁，在下面的例子中，生命线被停止符号（叉号）终止。在前面的例子中，生命线顶端的符号（Child）显示在比创建它的对象符号（parent）沿页面要低的位置上。下图显示创建和终止对象。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lost-and-found.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-lost-and-found.gif"/></div>
 
 ### 时间和期限约束
 
 消息默认显示为水平线。因为生命线显示为沿屏幕向下的时间通道，所以当给实时系统建模，或是有时间约束的业务过程建模，考虑执行动作所需时间长度是很重要的。因此可以给消息设置一个期限约束，这样的消息显示为下斜线。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-time.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-time.gif"/></div>
 
 ### 复合片段
 
@@ -709,7 +709,7 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 下图显示的是循环片段：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-fragment.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-fragment.gif"/></div>
 
 这也是一个类似于复合片段的交互发生。 交互发生被其他图参考，显示为左上角带"ref"，将被参考图名显示在方框的中间。
 
@@ -717,21 +717,21 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 门是连接片段内消息和片段外消息的连接点。 在 EA 中，门显示为片段框架上的小正方形。作用为时序图与页面外的连接器。 用来表示进来的消息源，或者出去消息的终点。下面两个图显示它们在实践中的使用。注意：" top level diagram"中的门用消息箭头指向参考片段，在这里没有必要把它画成方块。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-top-level-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-top-level-diagram.gif"/></div>
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-nested-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-nested-diagram.gif"/></div>
 
 ### 部分分解
 
 一个对象可以引出多条生命线，使得对象内部和对象之间的消息显示在同一图上。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-part-decomposition.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-part-decomposition.gif"/></div>
 
 ### 状态常量/延续
 
 状态常量是生命线的约束，运行时始终为"真"。显示为两侧半圆的矩形，如下图：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-state-invariant.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-sequence-state-invariant.gif"/></div>
 
 延续虽与状态常量有同样的标注，但是被用于复合片段，并可以延伸跨越多条生命线。
 
@@ -743,19 +743,19 @@ UML 从来源中使用相当多的概念。我们将之定义于统一建模语�
 
 状态生命线显示随时间变化，一个单项状态的改变。不论时间单位如何选择，X 轴显示经过的时间，Y 轴被标为给出状态的列表。状态生命线如下所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-lifeline.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-state-lifeline.gif"/></div>
 
 ### 值生命线
 
 值生命线显示随时间变化，一个单项的值的变化。X 轴显示经过的时间，时间单位为任意，和状态生命线一样。平行线之间显示值，每次值变化，平行线交叉。如下图所示。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-value-lifeline.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-value-lifeline.gif"/></div>
 
 ### 将它们放在一起
 
 状态和值的生命线能叠加组合。它们必须有相同的 X 轴。 消息可以从一个生命线传递到另一个。每一个状态和值的变换能有一个定义的事件，一个时间限制是指一个事件何时必须发生，和一个期限限制说明状态或值多长时间必须有效。一旦这些已经被应用，其时间图可能显示如下。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-timing-diagram.gif"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/design/uml/uml-timing-diagram.gif"/></div>
 
 ## UML 工具
 
@@ -767,7 +767,7 @@ UML 工具非常多，到底哪种工具好，真的是仁者见仁智者见智�
 >
 > [亿图官网](http://www.edrawsoft.cn/)
 
-<br><div align="center"><img src="http://www.edrawsoft.cn/images/software/createsoftware.png"/></div><br>
+<div align="center"><img src="http://www.edrawsoft.cn/images/software/createsoftware.png"/></div>
 
 ### Visio
 
@@ -775,7 +775,7 @@ UML 工具非常多，到底哪种工具好，真的是仁者见仁智者见智�
 >
 > [Visio 官网](https://products.office.com/zh-cn/visio/flowchart-software)
 
-<br><div align="center"><img src="https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE2jMC4?ver=5361&q=90&h=675&w=830&b=%23FFFFFFFF&aim=true"/></div><br>
+<div align="center"><img src="https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE2jMC4?ver=5361&q=90&h=675&w=830&b=%23FFFFFFFF&aim=true"/></div>
 
 ### StarUML
 
@@ -783,7 +783,7 @@ UML 工具非常多，到底哪种工具好，真的是仁者见仁智者见智�
 >
 > [StarUML 官网](http://staruml.io/)
 
-<br><div align="center"><img src="http://staruml.io/image/screenshot_jumbotron.png"/></div><br>
+<div align="center"><img src="http://staruml.io/image/screenshot_jumbotron.png"/></div>
 
 ### Astah
 
@@ -791,7 +791,7 @@ UML 工具非常多，到底哪种工具好，真的是仁者见仁智者见智�
 >
 > [Astah 官网](http://astah.net/)
 
-<br><div align="center"><img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1539757904141&di=7e4f71d0a00ffcd87e0e5aa62f0ed168&imgtype=jpg&src=http%3A%2F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D3525476819%2C2924170461%26fm%3D214%26gp%3D0.jpg"/></div><br>
+<div align="center"><img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1539757904141&di=7e4f71d0a00ffcd87e0e5aa62f0ed168&imgtype=jpg&src=http%3A%2F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D3525476819%2C2924170461%26fm%3D214%26gp%3D0.jpg"/></div>
 
 ### ArgoUML
 
@@ -799,7 +799,7 @@ UML 工具非常多，到底哪种工具好，真的是仁者见仁智者见智�
 >
 > [ArgoUML 官网](https://argouml.en.softonic.com/?ex=CAT-759.2)
 
-<br><div align="center"><img src="https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=f4e8a7c6923df8dcb23087c3ac7819ee/8b13632762d0f70315a83ced05fa513d2697c5ed.jpg"/></div><br>
+<div align="center"><img src="https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=f4e8a7c6923df8dcb23087c3ac7819ee/8b13632762d0f70315a83ced05fa513d2697c5ed.jpg"/></div>
 
 ### ProcessOn
 

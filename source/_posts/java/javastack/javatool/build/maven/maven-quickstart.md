@@ -104,13 +104,13 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 2．添加环境变量 MAVEN_HOME，值为 apache-maven-3.3.9 的安装路径
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195009.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195009.png"/></div>
 
 3．在 Path 环境变量的变量值末尾添加%MAVEN_HOME%\bin
 
 4．在 cmd 输入 mvn –version，如果出现 maven 的版本信息，说明配置成功。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195046.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195046.png"/></div>
 
 ### 本地仓储配置
 
@@ -120,7 +120,7 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 可以参照下图配置本地仓储位置。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195104.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195104.png"/></div>
 
 ## 第一个 Maven 工程
 
@@ -134,7 +134,7 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 点击 Help -> Eclipse Marketplace，搜索 maven 关键字，选择安装红框对应的 Maven 插件。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195117.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195117.png"/></div>
 
 #### Maven 环境配置
 
@@ -142,7 +142,7 @@ maven 在版本管理时候可以使用几个特殊的字符串  SNAPSHOT，LATE
 
 如下图所示，配置 settings.xml 文件的位置
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195128.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195128.png"/></div>
 
 #### 创建 Maven 工程
 
@@ -150,7 +150,7 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 接下来设置项目的参数，如下：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195151.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195151.png"/></div>
 
 **groupId**是项目组织唯一的标识符，实际对应 JAVA 的包的结构，是 main 目录里 java 的目录结构。
 
@@ -164,11 +164,11 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 在 Elipse 项目上右击  -> Run As  就能看到很多 Maven 操作。这些操作和 maven 命令是等效的。例如 Maven clean，等同于 mvn clean 命令。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195208.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195208.png"/></div>
 
 你也可以点击 Maven build，输入组合命令，并保存下来。如下图：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195219.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195219.png"/></div>
 
 **Maven 命令构建方式**
 
@@ -176,7 +176,7 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 进入工程所在目录，输入 maven 命令就可以了。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195243.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195243.png"/></div>
 
 ## 使用指导
 
@@ -234,7 +234,7 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 例如，想要使用 log4j，可以找到需要的版本号，然后拷贝对应的 maven 标签信息，将其添加到 pom .xml 文件中。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-10.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-10.png"/></div>
 
 ### 如何使用 Maven 插件(Plugin)
 
@@ -264,15 +264,15 @@ File -> New -> Maven Project -> Next，在接下来的窗口中会看到一大�
 
 1.创建 maven 父工程步骤：new-->other-->选择 maven project-->next-->勾选 create a simple project-->next-->填写 Group Id、Artifact Id、Version --> packaging 选择 pom-->finish。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-11.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-11.png"/></div>
 
 2.创建 maven 子工程步骤：选中刚才创建的父工程右键-->new-->other-->选择 maven module-->next-->勾选 create a simple project-->填写 module name（其实就是 artifact id）-->next-->GAV 继承父工程-->packaging 选择你需要的-->finish。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-12.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-12.png"/></div>
 
 3.完成，刷新父工程；如有多个子工程，继续按照第二步骤创建。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-13.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/maven/maven-quickstart-13.png"/></div>
 
 这时打开 XXX 中的 pom.xml 可以看到其中有以下标签
 

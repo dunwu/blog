@@ -60,7 +60,7 @@ date: 2019-03-06
 
 组件间依赖关系：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/test/junit/junit5-components.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/javalib/test/junit/junit5-components.png"/></div>
 
 ## 2. JUnit 注解
 

@@ -392,7 +392,7 @@ Java 中，提供了一个很有用的数组工具类：Arrays。
 
 ## 小结
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553753908349.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553753908349.png"/></div>
 
 ## 参考资料
 

@@ -18,7 +18,7 @@ tags: ['data-structure', 'sort']
 
 在讲解直接插入排序之前，先让我们脑补一下我们打牌的过程。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/insert-sort.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/insert-sort.png"/></div>
 
 - 先拿一张5在手里，
 

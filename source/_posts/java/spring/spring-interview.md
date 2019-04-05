@@ -108,7 +108,7 @@ tags:
 
 ### 1.5. Spring Framework 中有多少个模块，它们分别是什么？
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/introduction/spring-framework.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/introduction/spring-framework.png"/></div>
 
 - **Spring 核心容器** – 该层基本上是 Spring Framework 的核心。它包含以下模块：
   - Spring Core
@@ -162,7 +162,7 @@ Spring 应用一般有以下组件：
 
 Spring 框架的核心是 Spring 容器。容器创建对象，将它们装配在一起，配置它们并管理它们的完整生命周期。Spring 容器使用依赖注入来管理组成应用程序的组件。容器通过读取提供的配置元数据来接收对象进行实例化，配置和组装的指令。该元数据可以通过 XML，Java 注解或 Java 代码提供。
 
-<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-33099411d16ca051.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-33099411d16ca051.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 ### 2.2. 什么是依赖注入？
 
@@ -328,7 +328,7 @@ spring bean 容器的生命周期流程如下：
 8.  如果 bean 实现 DisposableBean 接口，当 spring 容器关闭时，会调用 destory()。
 9.  如果为 bean 指定了 destroy 方法（`<bean>` 的 destroy-method 属性），那么将调用它。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/core/spring-bean-life.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/core/spring-bean-life.png"/></div>
 
 ### 3.5. 什么是 spring 的内部 bean？
 
@@ -498,7 +498,7 @@ Spring DAO 使得 JDBC，Hibernate 或 JDO 这样的数据访问技术更容易�
 
 ### 5.2. 列举 Spring DAO 抛出的异常。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/data-access/spring-data-access-exception.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/data-access/spring-data-access-exception.png"/></div>
 
 ### 5.3. spring JDBC API 中存在哪些类？
 
@@ -539,7 +539,7 @@ AOP(Aspect-Oriented Programming), 即 **面向切面编程**, 它与 OOP( Object
 
 ### 6.2. AOP 中的 Aspect、Advice、Pointcut、JointPoint 和 Advice 参数分别是什么？
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/core/spring-aop.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/core/spring-aop.png"/></div>
 
 - **Aspect** - Aspect 是一个实现交叉问题的类，例如事务管理。方面可以是配置的普通类，然后在 Spring Bean 配置文件中配置，或者我们可以使用 Spring AspectJ 支持使用 @Aspect 注解将类声明为 Aspect。
 - **Advice** - Advice 是针对特定 JoinPoint 采取的操作。在编程方面，它们是在应用程序中达到具有匹配切入点的特定 JoinPoint 时执行的方法。您可以将 Advice 视为 Spring 拦截器（Interceptor）或 Servlet 过滤器（filter）。
@@ -593,7 +593,7 @@ Advice + Target Object = Proxy
 
 为了创建一个 advice 对象而链接一个 aspect 和其它应用类型或对象，称为编织（Weaving）。在 Spring AOP 中，编织在运行时执行。请参考下图：
 
-<br><div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-cfaa92f0e4115b4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="https://upload-images.jianshu.io/upload_images/3101171-cfaa92f0e4115b4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 ## 7. MVC
 
@@ -605,7 +605,7 @@ Spring Web MVC 框架提供 **模型-视图-控制器** 架构和随时可用的
 
 DispatcherServlet 的工作流程可以用一幅图来说明：
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/web/spring-dispatcher-servlet.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/web/spring-dispatcher-servlet.png"/></div>
 
 1.  向服务器发送 HTTP 请求，请求被前端控制器 `DispatcherServlet` 捕获。
 2.  `DispatcherServlet` 根据 **<servlet-name>-servlet.xml** 中的配置对请求的 URL 进行解析，得到请求资源标识符（URI）。然后根据该 URI，调用 `HandlerMapping` 获得该 Handler 配置的所有相关的对象（包括 Handler 对象以及 Handler 对象对应的拦截器），最后以`HandlerExecutionChain` 对象的形式返回。

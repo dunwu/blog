@@ -34,7 +34,7 @@ date: 2015-04-25 20:43
 
 ## 异常框架
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552274131681.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552274131681.png"/></div>
 
 ### Throwable
 
@@ -465,9 +465,9 @@ public class ExceptionOverrideDemo {
 
 ## 小结
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752019030.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752019030.png"/></div>
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752795010.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553752795010.png"/></div>
 
 ## 参考资料
 

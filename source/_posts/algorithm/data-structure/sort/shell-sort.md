@@ -23,7 +23,7 @@ tags: ['data-structure', 'sort']
 
 我们来通过演示图，更深入的理解一下这个过程。 
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/shell-sort.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/shell-sort.png"/></div>
 
 在上面这幅图中：
 

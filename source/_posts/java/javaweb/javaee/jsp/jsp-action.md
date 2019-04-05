@@ -211,7 +211,7 @@ $ javac TestBean.java
 
 下面是一个 Eclipse 中目录结构图：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/6AC33FBA-0B76-4BFD-A690-E856E9E01900.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/6AC33FBA-0B76-4BFD-A690-E856E9E01900.jpg"/></div>
 
 下面是一个很简单的例子，它的功能是装载一个 Bean，然后设置/读取它的 message 属性。
 
@@ -245,7 +245,7 @@ $ javac TestBean.java
 
 浏览器访问，执行以上文件，输出如下所示：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/D7AD87A8-3392-4D4E-8731-18806B0644CD.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/D7AD87A8-3392-4D4E-8731-18806B0644CD.jpg"/></div>
 
 ---
 
@@ -361,7 +361,7 @@ plugin 动作有多个对应 HTML 元素的属性用于格式化 Java 组件。p
 
 浏览器访问以下页面，输出结果如下所示：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/7D8C47F0-0DDE-4F1D-8BE1-B2C9C955683E.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/7D8C47F0-0DDE-4F1D-8BE1-B2C9C955683E.jpg"/></div>
 
 ---
 

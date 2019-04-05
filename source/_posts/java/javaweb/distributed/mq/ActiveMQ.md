@@ -37,7 +37,7 @@ JMS 有两种消息模型：
 
 #### P2P 的特点
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/activemq/jms-pointToPoint.gif"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/activemq/jms-pointToPoint.gif"/></div>
 
 在点对点的消息系统中，消息分发给一个单独的使用者。点对点消息往往与队列 `javax.jms.Queue` 相关联。
 
@@ -51,7 +51,7 @@ JMS 有两种消息模型：
 
 #### Pub/Sub 的特点
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/activemq/jms-publishSubscribe.gif"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/activemq/jms-publishSubscribe.gif"/></div>
 
 发布/订阅消息系统支持一个事件驱动模型，消息生产者和消费者都参与消息的传递。生产者发布事件，而使用者订阅感兴趣的事件，并使用事件。该类型消息一般与特定的主题 `javax.jms.Topic` 关联。
 
@@ -65,7 +65,7 @@ JMS 有两种消息模型：
 
 ### 1.2. JMS 编程模型
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/activemq/jms-publishSubscribe.gif"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/java/libs/activemq/jms-publishSubscribe.gif"/></div>
 
 #### ConnectionFactory
 

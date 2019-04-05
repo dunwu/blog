@@ -42,7 +42,7 @@ date: 2019-03-06
 
 可以在官方下载安装文件：[https://nodejs.org/en/download/](https://nodejs.org/en/download/)。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106200239.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106200239.png"/></div>
 
 ### Linux / Ubuntu / Debian
 

@@ -17,7 +17,7 @@ tags:
 
 Ant是纯Java语言编写的，所以具有很好的跨平台性。
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-d9da2a06160103d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-d9da2a06160103d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 ## 下载和安装
 
@@ -27,7 +27,7 @@ ant的官方下载地址：http://ant.apache.org/bindownload.cgi
 
 进入页面后，在下图的红色方框中可以下载最新版本。笔者下载的版本是 **apache-ant-1.9.4。**
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-72d3bc81cd29e68d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-72d3bc81cd29e68d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 ### 配置环境变量
 
@@ -37,15 +37,15 @@ ant的官方下载地址：http://ant.apache.org/bindownload.cgi
 
 **ANT_HOME**    C:/ apache-ant-1.9.4
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-682a8e16b82a7532.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-682a8e16b82a7532.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 **path **              C:/ apache-ant-1.9.4/bin
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-ea61070f97b5a7cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-ea61070f97b5a7cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 **classpath**        C:/apache-ant-1.9.4/lib
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-5bc45dbe64602bc7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-5bc45dbe64602bc7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 ### 验证
 
@@ -68,7 +68,7 @@ ant的官方下载地址：http://ant.apache.org/bindownload.cgi
 
 输入 **ant  -version**，可以查看版本信息。 
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-920e94f33b4d7dd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-920e94f33b4d7dd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 但如果出现 'ant' 不是内部或外部命令，也不是可运行的程序或批处理文件，说明安装失败：（可以重复前述步骤，直至安装成功。）
 
@@ -127,27 +127,27 @@ ant的官方下载地址：http://ant.apache.org/bindownload.cgi
 
 **ant init**
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-0d37a1be0ef4238a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-0d37a1be0ef4238a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 在 D:\Temp\ant_test 路径下创建了一个build目录，执行成功。
 
 **ant compile** 
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-6f35ed13331c87c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-6f35ed13331c87c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 提示错误，原来是在build.xml的所在目录下找不到src目录。好的，我们直接创建一个src目录，然后再次尝试。这次，执行成功。
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-9e84af99a8e952e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-9e84af99a8e952e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 **ant dist **
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-daeaf201bf05e097.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-daeaf201bf05e097.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 在 D:\Temp\ant_test 路径下创建了一个dist目录，执行成功。
 
 **ant clean**
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-be427613f7867513.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-be427613f7867513.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 清除创建的build和dist目录，执行成功。 
 
@@ -157,7 +157,7 @@ ant的官方下载地址：http://ant.apache.org/bindownload.cgi
 
 请留意一下build.xml中的内容。有部分 **target** 标签中含有 **depends** 关键字。 
 
-<br><div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-746a2156fbfb8d54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div><br>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-746a2156fbfb8d54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
 
 这表明，当前的 target 在执行时需要依赖其他的target，必须先执行依赖的target，然后再执行。 
 

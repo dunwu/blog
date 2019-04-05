@@ -100,7 +100,7 @@ Angular 的基本构造块是 **NgModule**，它为**组件**提供了编译的�
 - 组件定义**视图**。视图是一组可见的屏幕元素，Angular 可以根据你的程序逻辑和数据来选择和修改它们。 每个应用都至少有一个根组件。
 - 组件使用**服务**。服务会提供那些与视图不直接相关的功能。服务提供商可以作为**依赖**被**注入**到组件中， 这能让你的代码更加模块化、可复用，而且高效。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/front/mvc/angular/Angular架构.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/front/mvc/angular/Angular架构.png"/></div>
 
 组件和模板共同定义了 Angular 的视图。
 

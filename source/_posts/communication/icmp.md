@@ -34,7 +34,7 @@ ICMP 的协议号为**1**。
 
 ICMP 报文就像是 IP 报文的小弟，总顶着 IP 报文的名头出来混。因为 ICMP 报文是在 IP 报文内部的，如图：
 
-<br><div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201606/318837-20160617091834260-1410966672.png"/></div><br>
+<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201606/318837-20160617091834260-1410966672.png"/></div>
 
 图：IP 数据报
 
@@ -244,7 +244,7 @@ Code
 
 **图：ICMP 知识点思维导图**
 
-<br><div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201606/318837-20160617091835838-1982473379.png"/></div><br>
+<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201606/318837-20160617091835838-1982473379.png"/></div>
 
 ## 参考
 

@@ -38,11 +38,11 @@ HTTP 是由 **IETF**(Internet Engineering Task Force，互联网工程工作小�
 
 以下是使用 wireshark 抓取的一个实际访问百度首页的 HTTP GET 报文：
 
-<br><div align="center"><img src="http://images2015.cnblogs.com/blog/318837/201601/318837-20160108221137996-786139964.png"/></div><br>
+<div align="center"><img src="http://images2015.cnblogs.com/blog/318837/201601/318837-20160108221137996-786139964.png"/></div>
 
 可以清楚的看到它的层级结构如下图，经过了层层的包装。
 
-<br><div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221140731-222242798.png"/></div><br>
+<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221140731-222242798.png"/></div>
 
 ## 工作原理
 
@@ -78,19 +78,19 @@ HTTP 使用统一资源标识符（Uniform Resource Identifiers, URI）来传输
 
 一旦建立连接后，数据消息就通过类似 Internet 邮件所使用的格式[RFC5322]和多用途 Internet 邮件扩展（MIME）[RFC2045]来传送。
 
-<br><div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221141668-2097587842.png"/></div><br>
+<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221141668-2097587842.png"/></div>
 
 ## 客户端请求消息
 
 客户端发送一个 HTTP 请求到服务器的请求消息包括以下格式：请求行（request line）、请求头部（header）、空行和请求数据四个部分组成，下图给出了请求报文的一般格式。
 
-<br><div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221142028-743579086.png"/></div><br>
+<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221142028-743579086.png"/></div>
 
 ## 服务器响应消息
 
 HTTP 响应也由四个部分组成，分别是：状态行、消息报头、空行和响应正文。
 
-<br><div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221142606-879279999.jpg"/></div><br>
+<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221142606-879279999.jpg"/></div>
 
 # HTTP 请求
 

@@ -18,7 +18,7 @@ tags: ['data-structure', 'tree']
 - 每一个非根节点有且只有一个父节点；
 - 除了根节点外，每个子节点可以分为多个不相交的子树；
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/tree/tree.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/tree/tree.png"/></div>
 
 ### 树的术语
 

@@ -12,7 +12,7 @@ tags:
 ## SpringMVC 工作流程描述
 
 Spring MVC的工作流程可以用一幅图来说明：
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/web/spring-dispatcher-servlet.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/web/spring-dispatcher-servlet.png"/></div>
 
 1. 向服务器发送HTTP请求，请求被前端控制器 `DispatcherServlet` 捕获。
 2. `DispatcherServlet` 根据 **<servlet-name>-servlet.xml** 中的配置对请求的URL进行解析，得到请求资源标识符（URI）。然后根据该URI，调用 `HandlerMapping` 获得该Handler配置的所有相关的对象（包括Handler对象以及Handler对象对应的拦截器），最后以`HandlerExecutionChain` 对象的形式返回。

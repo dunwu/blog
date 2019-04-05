@@ -26,7 +26,7 @@ tags: ['data-structure', 'sort']
 
 **核心代码**
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/selection-sort.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/selection-sort.png"/></div>
 
 ## 算法分析
 

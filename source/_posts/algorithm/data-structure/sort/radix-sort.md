@@ -23,7 +23,7 @@ tags: ['data-structure', 'sort']
 
 我们先根据序列的个位数的数字来进行分类，将其分到指定的桶中。例如：R[0] = 50，个位数上是0，将这个数存入编号为 0 的桶中。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/radix-sort.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/radix-sort.png"/></div>
 
 分类后，我们在从各个桶中，将这些数按照从编号0到编号9的顺序依次将所有数取出来。
 

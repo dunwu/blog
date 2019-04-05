@@ -148,7 +148,7 @@ $ vi /etc/sysconfig/svnserve
 
 在新的窗口，输入地址 `svn://<你的 IP>` 即可，不出意外输入用户名和密码就能连接成功了（这里的用户、密码必须在 passwd 配置文件的清单中）。默认端口 3690，如果你修改了端口，那么要记得加上端口号。如下图所示：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20190129175443.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20190129175443.png"/></div>
 
 ## 2. 更多内容
 

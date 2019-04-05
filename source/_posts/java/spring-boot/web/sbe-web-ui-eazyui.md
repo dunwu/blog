@@ -30,7 +30,7 @@ date: 2019-03-06
 
 <!-- /TOC -->
 
-<br><div align="center"><img src="http://www.jeasyui.cn/images/easyui.png"/></div><br>
+<div align="center"><img src="http://www.jeasyui.cn/images/easyui.png"/></div>
 
 ## 简介
 

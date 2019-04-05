@@ -345,7 +345,7 @@ React DOM 会将元素及其子元素与之前版本逐一对比, 并只对有�
 
 你可以用浏览器工具对  [上一个例子](http://codepen.io/gaearon/pen/gwoJZk?editors=0010)  进行检查来验证这一点:
 
-<br><div align="center"><img src="http://www.css88.com/react/img/docs/granular-dom-updates.gif"/></div><br>
+<div align="center"><img src="http://www.css88.com/react/img/docs/granular-dom-updates.gif"/></div>
 
 即使我们我们每隔 1 秒都重建了整个元素, 但实际上 React DOM 只更新了修改过的文本节点.
 

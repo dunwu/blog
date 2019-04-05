@@ -23,7 +23,7 @@ tags: ['data-structure', 'sort']
 
 假设有一个大小为 N 的无序序列。冒泡排序就是要每趟排序过程中通过两两比较，找到第 i 个小（大）的元素，将其往上排。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/bubble-sort.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/bubble-sort.png"/></div>
 
 以上图为例，演示一下冒泡排序的实际流程：
 

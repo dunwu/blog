@@ -27,13 +27,13 @@ a. 进入 [Java 官网下载页面](https://www.oracle.com/technetwork/java/java
 
 b. 选择需要的版本：
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181010164121.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181010164121.png"/></div>
 
 c. 选择对应操作系统的安装包：
 
 Windows 系统选择 exe 安装包；Mac 系统选择 dmp 安装包；Linux 系统选择 tar.gz 压缩包（RedHat 发行版可以安装 rpm 包）。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181010164308.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/images/20180920181010164308.png"/></div>
 
 （2）运行安装包，按提示逐步安装
 
@@ -56,11 +56,11 @@ Windows 系统选择 exe 安装包；Mac 系统选择 dmp 安装包；Linux 系�
 
 a. 安装完成后，右击"我的电脑"，点击"属性"，选择"高级系统设置"；
 
-<br><div align="center"><img src="https://www.runoob.com/wp-content/uploads/2013/12/win-java1.png"/></div><br>
+<div align="center"><img src="https://www.runoob.com/wp-content/uploads/2013/12/win-java1.png"/></div>
 
 b. 选择"高级"选项卡，点击"环境变量"；
 
-<br><div align="center"><img src="https://www.runoob.com/wp-content/uploads/2013/12/java-win2.png"/></div><br>
+<div align="center"><img src="https://www.runoob.com/wp-content/uploads/2013/12/java-win2.png"/></div>
 
 然后就会出现如下图所示的画面：
 
@@ -83,7 +83,7 @@ a. "开始"->"运行"，键入"cmd"；
 
 b. 键入命令: **java -version**、**java**、**javac** 几个命令，出现以下信息，说明环境变量配置成功；
 
-<br><div align="center"><img src="https://www.runoob.com/wp-content/uploads/2013/12/java-win9.png"/></div><br>
+<div align="center"><img src="https://www.runoob.com/wp-content/uploads/2013/12/java-win9.png"/></div>
 
 ## Linux 系统安装方法
 

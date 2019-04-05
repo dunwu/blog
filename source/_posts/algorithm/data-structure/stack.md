@@ -11,7 +11,7 @@ tags: ['data-structure', 'stack']
 >
 > 由于堆栈数据结构只允许在一端进行操作，因而按照后进先出（LIFO, Last In First Out）的原理运作。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/stack/stack.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/stack/stack.png"/></div>
 
 <!-- TOC depthFrom:2 depthTo:2 -->
 

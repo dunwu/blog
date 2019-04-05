@@ -146,7 +146,7 @@ NIO 实现了 IO 多路复用中的 Reactor 模型，一个线程 Thread 使用�
 
 应该注意的是，只有套接字 Channel 才能配置为非阻塞，而 FileChannel 不能，为 FileChannel 配置非阻塞也没有意义。
 
-<div align="center"> <img src="../pics//4d930e22-f493-49ae-8dff-ea21cd6895dc.png"/> </div><br>
+<div align="center"> <img src="../pics//4d930e22-f493-49ae-8dff-ea21cd6895dc.png"/> </div>
 
 ### 创建选择器
 

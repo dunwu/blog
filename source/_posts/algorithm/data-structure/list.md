@@ -13,7 +13,7 @@ tags: ['data-structure', 'list']
 
 下面是一个单链表的例子：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/list/单链表.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/list/单链表.png"/></div>
 
 蓝色箭头显示单个链接列表中的结点是如何组合在一起的。
 
@@ -25,6 +25,6 @@ tags: ['data-structure', 'list']
 
 让我们看一个例子：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/list/双链表.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/list/双链表.png"/></div>
 
 绿色箭头表示我们的“prev”字段是如何工作的。

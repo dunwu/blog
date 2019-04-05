@@ -50,7 +50,7 @@ out.println("Your IP address is " + request.getRemoteAddr());
 
 将以上代码保存在 hello.jsp 中，然后将它放置在 C:\apache-tomcat-7.0.2\webapps\ROOT 目录下，打开浏览器并在地址栏中输入http://localhost:8080/hello.jsp。运行后得到以下结果：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp_hello_world.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/jsp_hello_world.jpg"/></div>
 
 ### 中文编码问题
 
@@ -316,7 +316,7 @@ SWITCH...CASE 实例
 
 运行后得到以下结果：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/7B4B85CF-FE4B-43CB-AAFF-F8594AD4342C.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/7B4B85CF-FE4B-43CB-AAFF-F8594AD4342C.jpg"/></div>
 
 将上例改用 while 循环来写：
 
@@ -344,7 +344,7 @@ SWITCH...CASE 实例
 
 浏览器访问，输出结果为（fontSize 初始化为 0，所以多输出了一行）：
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/4F744CC9-E484-45BA-AF18-27AFCF4AD45C.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/01/4F744CC9-E484-45BA-AF18-27AFCF4AD45C.jpg"/></div>
 
 JSP 运算符
 

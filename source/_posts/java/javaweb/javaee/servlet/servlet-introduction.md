@@ -26,7 +26,7 @@ Java Servlet 通常情况下与使用 CGI（Common Gateway Interface，公共网
 
 下图显示了 Servlet 在 Web 应用程序中的位置。
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/07/servlet-arch.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/07/servlet-arch.jpg"/></div>
 
 ## Servlet 任务
 
@@ -138,4 +138,4 @@ destroy() 方法只会被调用一次，在 Servlet 生命周期结束时被调�
 - Servlet 容器在调用 service() 方法之前加载 Servlet。
 - 然后 Servlet 容器处理由多个线程产生的多个请求，每个线程执行一个单一的 Servlet 实例的 service() 方法。
 
-<br><div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/07/Servlet-LifeCycle.jpg"/></div><br>
+<div align="center"><img src="http://www.runoob.com/wp-content/uploads/2014/07/Servlet-LifeCycle.jpg"/></div>

@@ -25,7 +25,7 @@ tags: ['data-structure', 'sort']
 
 其中 i=1,2,…,n/2 向下取整; 
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/heap-sort.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/heap-sort.png"/></div>
 
 如上图所示，序列 R{3, 8,15, 31, 25} 是一个典型的小根堆。
 
@@ -68,13 +68,13 @@ tags: ['data-structure', 'sort']
 
 设有一个无序序列 { 1, 3,4, 5, 2, 6, 9, 7, 8, 0 }。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/heap-sort-02.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/heap-sort-02.png"/></div>
 
 构造了初始堆后，我们来看一下完整的堆排序处理：
 
 还是针对前面提到的无序序列 { 1,3, 4, 5, 2, 6, 9, 7, 8, 0 } 来加以说明。
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/heap-sort-03.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/heap-sort-03.png"/></div>
 
 相信，通过以上两幅图，应该能很直观的演示堆排序的操作处理。 
 

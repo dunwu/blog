@@ -18,7 +18,7 @@ Beats 是安装在服务器上的数据中转代理。
 
 Beats 可以将数据直接传输到 Elasticsearch 或传输到 Logstash 。
 
-<br><div align="center"><img src="https://www.elastic.co/guide/en/beats/libbeat/current/images/beats-platform.png"/></div><br>
+<div align="center"><img src="https://www.elastic.co/guide/en/beats/libbeat/current/images/beats-platform.png"/></div>
 
 Beats 有多种类型，可以根据实际应用需要选择合适的类型。
 
@@ -47,7 +47,7 @@ Filebeat带有内部模块（auditd，Apache，Nginx，System和MySQL），可�
 
 FileBeat 不会让你的管道超负荷。FileBeat 如果是向 Logstash 传输数据，当 Logstash 忙于处理数据，会通知 FileBeat 放慢读取速度。一旦拥塞得到解决，FileBeat 将恢复到原来的速度并继续传播。
 
-<br><div align="center"><img src="https://www.elastic.co/guide/en/beats/filebeat/current/images/filebeat.png"/></div><br>
+<div align="center"><img src="https://www.elastic.co/guide/en/beats/filebeat/current/images/filebeat.png"/></div>
 
 ## 安装
 

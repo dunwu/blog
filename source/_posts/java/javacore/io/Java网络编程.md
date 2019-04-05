@@ -69,7 +69,7 @@ public static void main(String[] args) throws IOException {
 - Socket：客户端类
 - 服务器和客户端通过 InputStream 和 OutputStream 进行输入输出。
 
-<div align="center"> <img src="../pics//ClienteServidorSockets1521731145260.jpg"/> </div><br>
+<div align="center"> <img src="../pics//ClienteServidorSockets1521731145260.jpg"/> </div>
 
 ## Datagram
 

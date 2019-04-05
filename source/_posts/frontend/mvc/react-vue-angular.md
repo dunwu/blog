@@ -5,7 +5,7 @@ date: 2019-03-06
 
 # ngular、React、Vue
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106151530.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106151530.png"/></div>
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -34,7 +34,7 @@ date: 2019-03-06
 Github Star 数：React > Vue > Angular
 贡献者数：React > Angular > Vue
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106151737.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106151737.png"/></div>
 
 ## React，Angular 和 Vue 的比较
 

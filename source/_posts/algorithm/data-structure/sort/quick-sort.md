@@ -23,7 +23,7 @@ tags: ['data-structure', 'sort']
 
 详细的图解往往比大堆的文字更有说明力，所以直接上图：
 
-<br><div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/quick-sort.png"/></div><br>
+<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com//image/algorithm/sort/quick-sort.png"/></div>
 
 上图中，演示了快速排序的处理过程：
 

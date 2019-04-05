@@ -512,7 +512,7 @@ public class ReturnDemo {
 
 ## 小结
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552361630220.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552361630220.png"/></div>
 
 ## 参考资料
 

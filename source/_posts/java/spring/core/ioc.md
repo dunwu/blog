@@ -50,13 +50,13 @@ IoC 不是什么技术，而是一种设计思想。在 Java 开发中，IoC 意
 
 用图例说明一下，传统程序设计如图 2-1，都是主动去创建相关对象然后再组合起来：
 
-<br><div align="center"><img src="http://sishuok.com/forum/upload/2012/2/19/a02c1e3154ef4be3f15fb91275a26494__1.JPG"/></div><br>
+<div align="center"><img src="http://sishuok.com/forum/upload/2012/2/19/a02c1e3154ef4be3f15fb91275a26494__1.JPG"/></div>
 
 图 2-1 传统应用程序示意图
 
 当有了 IoC/DI 的容器后，在客户端类中不再主动去创建这些对象了，如图 2-2 所示:
 
-<br><div align="center"><img src="http://sishuok.com/forum/upload/2012/2/19/6fdf1048726cc2edcac4fca685f050ac__2.JPG"/></div><br>
+<div align="center"><img src="http://sishuok.com/forum/upload/2012/2/19/6fdf1048726cc2edcac4fca685f050ac__2.JPG"/></div>
 
 图 2-2 有 IoC/DI 容器后程序结构示意图
 

@@ -49,7 +49,7 @@ public interface PlatformTransactionManager {
 
 从这里可知具体的具体的事务管理机制对 Spring 来说是透明的，它并不关心那些，那些是对应各个平台需要关心的，所以Spring 事务管理的一个优点就是为不同的事务 API 提供一致的编程模型，如 JTA、JDBC、Hibernate、JPA。下面分别介绍各个平台框架实现事务管理的机制。
 
-<br><div align="center"><img src="assets/images/spring-tx-manager.png"/></div><br>
+<div align="center"><img src="assets/images/spring-tx-manager.png"/></div>
 
 #### JDBC事务
 
@@ -104,7 +104,7 @@ Hibernate 多年来一直是事实上的 Java 持久化标准，但是现在 Jav
 上面讲到的事务管理器接口 `PlatformTransactionManager` 通过 `getTransaction(TransactionDefinition definition)` 方法来得到事务，这个方法里面的参数是 `TransactionDefinition` 类，这个类就定义了一些基本的事务属性。 
 那么什么是事务属性呢？事务属性可以理解成事务的一些基本配置，描述了事务策略如何应用到方法上。事务属性包含了5个方面，如图所示：
 
-<br><div align="center"><img src="http://img.blog.csdn.net/20160325003448793"/></div><br>
+<div align="center"><img src="http://img.blog.csdn.net/20160325003448793"/></div>
 
 而 `TransactionDefinition` 接口内容如下：
 

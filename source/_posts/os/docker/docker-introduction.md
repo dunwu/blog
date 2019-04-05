@@ -37,7 +37,7 @@ REST API 指定程序可用于与守护进程进行通信并指示其执行操�
 
 命令行客户端。
 
-<br><div align="center"><img src="https://docs.docker.com/engine/images/engine-components-flow.png"/></div><br>
+<div align="center"><img src="https://docs.docker.com/engine/images/engine-components-flow.png"/></div>
 
 CLI 使用 Docker REST API 通过脚本或直接 CLI 命令来控制 Docker 守护进程或与其进行交互。许多其他 Docker 应用程序使用底层的 API 和 CLI。
 
@@ -45,7 +45,7 @@ CLI 使用 Docker REST API 通过脚本或直接 CLI 命令来控制 Docker 守�
 
 ### 传统虚拟机和 Docker
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/os/docker/containers-and-vm.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/os/docker/containers-and-vm.png"/></div>
 
 ## 概念
 

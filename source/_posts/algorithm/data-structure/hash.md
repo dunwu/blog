@@ -43,7 +43,7 @@ tags: ['data-structure', 'hash']
 
 ### 哈希函数示例
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/hash/哈希函数.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/hash/哈希函数.png"/></div>
 
 在示例中，我们使用 y = x ％ 5 作为哈希函数。让我们使用这个例子来完成插入和搜索策略：
 
@@ -63,7 +63,7 @@ tags: ['data-structure', 'hash']
 
 下面是一些哈希函数的示例：
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/hash/哈希函数示例.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/hash/哈希函数示例.png"/></div>
 
 哈希函数的设计是一个开放的问题。其思想是尽可能将键分配到桶中，理想情况下，完美的哈希函数将是键和桶之间的一对一映射。然而，在大多数情况下，哈希函数并不完美，它需要在桶的数量和桶的容量之间进行权衡。
 

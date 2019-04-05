@@ -9,7 +9,7 @@ tags: ['data-structure', 'graph']
 
 在计算机科学中，一个图就是一些*顶点*的集合，这些顶点通过一系列*边*结对（连接）。顶点用圆圈表示，边就是这些圆圈之间的连线。顶点之间通过边连接。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/graph/graph.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/data-structure/graph/graph.png"/></div>
 
 ## 术语
 

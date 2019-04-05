@@ -32,7 +32,7 @@ date: 2019-03-06
 
 如果在 Eclipse 中使用过 Maven 插件，想必会有这个经验：配置 settings.xml 文件的路径。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195810.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181127195810.png"/></div>
 
 **settings.xml 文件有什么用，为什么要配置它？**
 

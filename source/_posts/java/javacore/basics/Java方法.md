@@ -495,7 +495,7 @@ public class MethodOverloadDemo {
 
 ## 小结
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553767582595.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1553767582595.png"/></div>
 
 ## 参考资料
 

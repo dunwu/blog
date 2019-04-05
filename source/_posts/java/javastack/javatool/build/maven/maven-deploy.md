@@ -31,7 +31,7 @@ date: 2019-03-06
 
 注册账号成功后，根据你 Java 包的功能分别写上`Summary`、`Description`、`Group Id`、`SCM url`以及`Project URL`等必要信息，可以参见我之前创建的 Issue：[OSSRH-36187](https://issues.sonatype.org/browse/OSSRH-36187)。
 
-<br><div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106143734.png"/></div><br>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20181106143734.png"/></div>
 
 创建完之后需要等待 Sonatype 的工作人员审核处理，审核时间还是很快的，我的审核差不多等待了两小时。当 Issue 的 Status 变为`RESOLVED`后，就可以进行下一步操作了。
 
