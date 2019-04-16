@@ -48,7 +48,7 @@ date: 2016-02-04 21:12
 
 狗和鸟都是动物。如果将狗、鸟作为类，它们可以继承动物类。
 
-<div align="center"><img src="D:\Codes\ZP\Others\images\snap\1552641712126.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1552641712126.png"/></div>
 
 类的继承形式：
 

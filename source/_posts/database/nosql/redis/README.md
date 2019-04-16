@@ -98,7 +98,7 @@ Redis 与 Memcached 因为都可以用于缓存，所以常常被拿来做比较
 
 Redis 可以存储键与 5 种不同数据结构类型之间的映射，这 5 种数据结构类型分别为`STRING`（字符串）、`LIST`（列表）、`SET`（集合）、`HASH`（散列）和`ZSET`（有序集合）。
 
-![1554544262008](D:\Codes\ZP\Others\images\snap\1554544262008.png)
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/1554544262008.png"/></div>
 
 ## 命令
 
