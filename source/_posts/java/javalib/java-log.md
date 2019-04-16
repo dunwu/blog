@@ -1,7 +1,7 @@
 ---
 title: 细说 Java 主流日志工具库
-categories: ['programming', 'java', 'javalib']
-tags: ['programming', 'java', 'javalib', 'log', 'slf4j', 'logback', 'log4j', 'common-logging']
+categories: ['java', 'javalib']
+tags: ['java', 'javalib', 'log']
 date: 2016-10-14 09:06
 ---
 

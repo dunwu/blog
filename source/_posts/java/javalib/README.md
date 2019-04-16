@@ -1,7 +1,7 @@
 ---
 title: Java 库
-categories: ['programming', 'java', 'javalib']
-tags: ['programming', 'java', 'javalib']
+categories: ['java', 'javalib']
+tags: ['java', 'javalib']
 date: 2017-11-09
 ---
 

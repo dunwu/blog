@@ -1,7 +1,7 @@
 ---
 title: Java 中的 JSON 应用
-categories: ['programming', 'java', 'javalib']
-tags: ['programming', 'java', 'javalib', 'json', 'fastjson', 'jackson']
+categories: ['java', 'javalib']
+tags: ['java', 'javalib', 'json']
 date: 2019-03-18 11:10
 ---
 
