@@ -108,7 +108,7 @@ tags:
 
 ### 1.5. Spring Framework 中有多少个模块，它们分别是什么？
 
-<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/introduction/spring-framework.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/spring/spring-framework.png"/></div>
 
 - **Spring 核心容器** – 该层基本上是 Spring Framework 的核心。它包含以下模块：
   - Spring Core
@@ -605,7 +605,7 @@ Spring Web MVC 框架提供 **模型-视图-控制器** 架构和随时可用的
 
 DispatcherServlet 的工作流程可以用一幅图来说明：
 
-<div align="center"><img src="http://oyz7npk35.bkt.clouddn.com/image/spring/web/spring-dispatcher-servlet.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/spring/web/spring-dispatcher-servlet.png"/></div>
 
 1.  向服务器发送 HTTP 请求，请求被前端控制器 `DispatcherServlet` 捕获。
 2.  `DispatcherServlet` 根据 **<servlet-name>-servlet.xml** 中的配置对请求的 URL 进行解析，得到请求资源标识符（URI）。然后根据该 URI，调用 `HandlerMapping` 获得该 Handler 配置的所有相关的对象（包括 Handler 对象以及 Handler 对象对应的拦截器），最后以`HandlerExecutionChain` 对象的形式返回。
