@@ -63,7 +63,10 @@
 
 #### [JavaWeb](source/_posts/java/javaweb)
 
-待整理。。。
+- [JavaEE](source/_posts/java/javaweb/javaee)
+- [Spring](source/_posts/java/javaweb/spring)
+- [Spring Boot](source/_posts/java/javaweb/spring-boot)
+- [Mybatis](source/_posts/java/javaweb/orm/mybatis.md)
 
 #### [Spring](source/_posts/java/spring)
 

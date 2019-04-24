@@ -1,15 +1,11 @@
 ---
-title: Spring IoC
+title: Spring IOC
+categories: ['java', 'spring']
+tags: ['java', 'spring', 'ioc']
 date: 2017-11-08
-categories:
-- spring
-tags:
-- spring
-- core
-- ioc
 ---
 
-# IoC
+# Spring IOC
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -29,6 +25,7 @@ tags:
     - [Xml 配置](#xml-配置)
     - [注解配置](#注解配置)
     - [Java 配置](#java-配置)
+- [参考资料](#参考资料)
 
 <!-- /TOC -->
 
@@ -113,8 +110,8 @@ Spring IoC 容器如何知道哪些是它管理的对象呢？这就需要配置
 
 在 Spring 中，有两种 IoC 容器：`BeanFactory` 和 `ApplicationContext`。
 
-- `BeanFactory`：Spring 实例化、配置和管理对象的最基本接口。
-- `ApplicationContext`：BeanFactory 的子接口。它还扩展了其他一些接口，以支持更丰富的功能，如：国际化、访问资源、事件机制、更方便的支持 AOP、在 web 应用中指定应用层上下文等。
+- `BeanFactory`：**Spring 实例化、配置和管理对象的最基本接口**。
+- `ApplicationContext`：**BeanFactory 的子接口。它还扩展了其他一些接口，以支持更丰富的功能**，如：国际化、访问资源、事件机制、更方便的支持 AOP、在 web 应用中指定应用层上下文等。
 
 实际开发中，更推荐使用 `ApplicationContext` 作为 IoC 容器，因为它的功能远多于 `FactoryBean`。
 
@@ -841,3 +838,7 @@ public class AppConfig {
 ```
 
 用 `AnnotationConfigApplicationContext` 实例化 IoC 容器。
+
+## 参考资料
+
+- [Spring 官方文档之 The IoC Container](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans)

@@ -1,14 +1,13 @@
 ---
 title: Spring 常见面试问题
+categories: ['java', 'spring']
+tags: ['java', 'spring', 'interview']
 date: 2018-08-02
-categories:
-- spring
-tags:
-- java
-- spring
 ---
 
 # Spring 常见面试问题
+
+> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -328,7 +327,7 @@ spring bean 容器的生命周期流程如下：
 8.  如果 bean 实现 DisposableBean 接口，当 spring 容器关闭时，会调用 destory()。
 9.  如果为 bean 指定了 destroy 方法（`<bean>` 的 destroy-method 属性），那么将调用它。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/core/spring-bean-life.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/spring/core/spring-bean-life.png"/></div>
 
 ### 3.5. 什么是 spring 的内部 bean？
 
@@ -498,7 +497,7 @@ Spring DAO 使得 JDBC，Hibernate 或 JDO 这样的数据访问技术更容易�
 
 ### 5.2. 列举 Spring DAO 抛出的异常。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/data-access/spring-data-access-exception.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/spring/data-access/spring-data-access-exception.png"/></div>
 
 ### 5.3. spring JDBC API 中存在哪些类？
 
@@ -539,7 +538,7 @@ AOP(Aspect-Oriented Programming), 即 **面向切面编程**, 它与 OOP( Object
 
 ### 6.2. AOP 中的 Aspect、Advice、Pointcut、JointPoint 和 Advice 参数分别是什么？
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/spring-notes/master/images/spring/core/spring-aop.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/java/spring/core/spring-aop.png"/></div>
 
 - **Aspect** - Aspect 是一个实现交叉问题的类，例如事务管理。方面可以是配置的普通类，然后在 Spring Bean 配置文件中配置，或者我们可以使用 Spring AspectJ 支持使用 @Aspect 注解将类声明为 Aspect。
 - **Advice** - Advice 是针对特定 JoinPoint 采取的操作。在编程方面，它们是在应用程序中达到具有匹配切入点的特定 JoinPoint 时执行的方法。您可以将 Advice 视为 Spring 拦截器（Interceptor）或 Servlet 过滤器（filter）。
@@ -624,13 +623,13 @@ DispatcherServlet 的工作流程可以用一幅图来说明：
 
 WebApplicationContext 是 ApplicationContext 的扩展。它具有 Web 应用程序所需的一些额外功能。它与普通的 ApplicationContext 在解析主题和决定与哪个 servlet 关联的能力方面有所不同。
 
-（完）
-
----
-
-:point_right: 想学习更多 Spring 内容可以访问我的 Spring 教程：**[spring-notes](https://github.com/dunwu/spring-notes)**
-
 ## 8. 资料
 
 - [Top 50 Spring Interview Questions You Must Prepare In 2018](https://www.edureka.co/blog/interview-questions/spring-interview-questions/)
 - [Spring Interview Questions and Answers](https://www.journaldev.com/2696/spring-interview-questions-and-answers)
+
+（完）
+
+---
+
+:point_right: 想学习更多 Spring 内容可以访问我的 Spring 教程：**[spring-tutorial](https://github.com/dunwu/spring-tutorial)**

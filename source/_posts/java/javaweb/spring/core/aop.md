@@ -1,12 +1,8 @@
 ---
 title: Spring AOP
+categories: ['java', 'spring']
+tags: ['java', 'spring', 'aop']
 date: 2017-11-08
-categories:
-- spring
-tags:
-- spring
-- core
-- aop
 ---
 
 # AOP
