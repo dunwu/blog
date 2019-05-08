@@ -12,7 +12,7 @@ tags: ['programming', 'shell', 'bash']
 > 本文主要介绍 bash 的语法，对于 linux 指令不做任何介绍。
 >
 > :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
-> :keyboard: 本文的源码已归档到 [os-tutorial](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos)
+> :keyboard: 本文的源码已归档到 [linux-tutorial](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos)
 
 ```
 ███████╗██╗  ██╗███████╗██╗     ██╗
@@ -180,7 +180,7 @@ chmod +x /path/to/script.sh #使脚本具有执行权限
 
 这种方式要求脚本文件的第一行必须指明运行该脚本的程序，比如：
 
-**:keyboard: 『示例源码』** [helloworld.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/helloworld.sh)
+**:keyboard: 『示例源码』** [helloworld.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos/helloworld.sh)
 
 ```bash
 #!/usr/bin/env bash
@@ -214,7 +214,7 @@ shell 语法中，注释是特殊的语句，会被 shell 解释器忽略。
 - 单行注释 - 以 `#` 开头，到行尾结束。
 - 多行注释 - 以 `:<<EOF` 开头，到 `EOF` 结束。
 
-**:keyboard: 『示例源码』** [comment-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/comment-demo.sh)
+**:keyboard: 『示例源码』** [comment-demo.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos/comment-demo.sh)
 
 ```bash
 #--------------------------------------------
@@ -300,7 +300,7 @@ echo `pwd`
 #  Output:(当前目录路径)
 ```
 
-**:keyboard: 『示例源码』** [echo-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/echo-demo.sh)
+**:keyboard: 『示例源码』** [echo-demo.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos/echo-demo.sh)
 
 ### 2.4. printf
 
@@ -308,7 +308,7 @@ printf 用于格式化输出字符串。
 
 默认，printf 不会像 echo 一样自动添加换行符，如果需要换行可以手动添加 `\n`。
 
-**:keyboard: 『示例源码』** [printf-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/printf-demo.sh)
+**:keyboard: 『示例源码』** [printf-demo.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos/printf-demo.sh)
 
 ```bash
 # 单引号
@@ -440,7 +440,7 @@ echo ${dword}
 
 ### 3.6. 变量示例源码
 
-**⌨️ 『示例源码』** [variable-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/variable-demo.sh)
+**⌨️ 『示例源码』** [variable-demo.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos/variable-demo.sh)
 
 ## 4. 字符串
 
@@ -514,7 +514,7 @@ echo `expr index "${text}" ll`
 
 ### 4.6. 字符串示例源码
 
-**⌨️ 『示例源码』** [string-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/string-demo.sh)
+**⌨️ 『示例源码』** [string-demo.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos/string-demo.sh)
 
 ## 5. 数组
 
@@ -626,7 +626,7 @@ echo ${nums[@]}
 
 ### 5.6. 数组示例源码
 
-**:keyboard: 『示例源码』** [array-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos/array-demo.sh)
+**:keyboard: 『示例源码』** [array-demo.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos/array-demo.sh)
 
 ## 6. 运算符
 
@@ -647,7 +647,7 @@ echo ${nums[@]}
 
 **注意：**条件表达式要放在方括号之间，并且要有空格，例如: `[$x==$y]` 是错误的，必须写成 `[ $x == $y ]`。
 
-**:keyboard: 『示例源码』** [operator-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo.sh)
+**:keyboard: 『示例源码』** [operator-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/operator/operator-demo.sh)
 
 ```bash
 x=10
@@ -705,7 +705,7 @@ fi
 | `-ge`  | 检测左边的数是否大于等于右边的，如果是，则返回 true。 | `[ $a -ge $b ]` 返回 false。 |
 | `-le`  | 检测左边的数是否小于等于右边的，如果是，则返回 true。 | `[ $a -le $b ]`返回 true。   |
 
-**:keyboard: 『示例源码』** [operator-demo2.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo2.sh)
+**:keyboard: 『示例源码』** [operator-demo2.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/operator/operator-demo2.sh)
 
 ```bash
 x=10
@@ -770,7 +770,7 @@ fi
 | `-o`   | 或运算，有一个表达式为 true 则返回 true。           | `[ $a -lt 20 -o $b -gt 100 ]` 返回 true。  |
 | `-a`   | 与运算，两个表达式都为 true 才返回 true。           | `[ $a -lt 20 -a $b -gt 100 ]` 返回 false。 |
 
-**:keyboard: 『示例源码』** [operator-demo3.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo3.sh)
+**:keyboard: 『示例源码』** [operator-demo3.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/operator/operator-demo3.sh)
 
 ```bash
 x=10
@@ -820,7 +820,7 @@ fi
 | `&&`   | 逻辑的 AND | `[[ ${x} -lt 100 && ${y} -gt 100 ]]` 返回 false |
 | `||`   | 逻辑的 OR  | `[[ ${x} -lt 100 || ${y} -gt 100 ]]` 返回 true  |
 
-**:keyboard: 『示例源码』** [operator-demo4.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo4.sh)
+**:keyboard: 『示例源码』** [operator-demo4.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/operator/operator-demo4.sh)
 
 ```bash
 x=10
@@ -861,7 +861,7 @@ fi
 | `-n`   | 检测字符串长度是否为 0，不为 0 返回 true。 | `[ -n $a ]` 返回 true。    |
 | `str`  | 检测字符串是否为空，不为空返回 true。      | `[ $a ]` 返回 true。       |
 
-**:keyboard: 『示例源码』** [operator-demo5.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo5.sh)
+**:keyboard: 『示例源码』** [operator-demo5.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/operator/operator-demo5.sh)
 
 ```bash
 x="abc"
@@ -932,7 +932,7 @@ fi
 | -s file | 检测文件是否为空（文件大小是否大于 0），不为空返回 true。                   | `[ -s $file ]` 返回 true。  |
 | -e file | 检测文件（包括目录）是否存在，如果是，则返回 true。                         | `[ -e $file ]` 返回 true。  |
 
-**:keyboard: 『示例源码』** [operator-demo6.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/operator/operator-demo6.sh)
+**:keyboard: 『示例源码』** [operator-demo6.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/operator/operator-demo6.sh)
 
 ```bash
 file="/etc/hosts"
@@ -1043,13 +1043,13 @@ fi
 # Output: 10 < 20
 ```
 
-**:keyboard: 『示例源码』** [if-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/if-demo.sh)
+**:keyboard: 『示例源码』** [if-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/if-demo.sh)
 
 #### `case`
 
 如果你需要面对很多情况，分别要采取不同的措施，那么使用`case`会比嵌套的`if`更有用。使用`case`来解决复杂的条件判断，看起来像下面这样：
 
-**:keyboard: 『示例源码』** [case-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/case-demo.sh)
+**:keyboard: 『示例源码』** [case-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/case-demo.sh)
 
 ```bash
 exec
@@ -1121,7 +1121,7 @@ done
 # 将 /home/zp 目录下所有 sh 文件拷贝到 /home/zp/scripts
 ```
 
-**:keyboard: 『示例源码』** [for-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/for-demo.sh)
+**:keyboard: 『示例源码』** [for-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/for-demo.sh)
 
 #### `while`循环
 
@@ -1158,7 +1158,7 @@ done
 #  81
 ```
 
-**:keyboard: 『示例源码』** [while-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/while-demo.sh)
+**:keyboard: 『示例源码』** [while-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/while-demo.sh)
 
 #### `until`循环
 
@@ -1178,7 +1178,7 @@ done
 #  4
 ```
 
-**:keyboard: 『示例源码』** [until-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/until-demo.sh)
+**:keyboard: 『示例源码』** [until-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/until-demo.sh)
 
 #### `select`循环
 
@@ -1226,7 +1226,7 @@ Choose the package manager: 2
 Enter the package name: gitbook-cli
 ```
 
-**:keyboard: 『示例源码』** [select-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/select-demo.sh)
+**:keyboard: 『示例源码』** [select-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/select-demo.sh)
 
 #### `break` 和 `continue`
 
@@ -1236,7 +1236,7 @@ Enter the package name: gitbook-cli
 >
 > `continue`语句用来跳过某次迭代。
 
-**:keyboard: 『示例源码』** [break-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/break-demo.sh)
+**:keyboard: 『示例源码』** [break-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/break-demo.sh)
 
 ```bash
 # 查找 10 以内第一个能整除 2 和 3 的正整数
@@ -1251,7 +1251,7 @@ done
 # Output: 6
 ```
 
-**:keyboard: 『示例源码』** [continue-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/statement/continue-demo.sh)
+**:keyboard: 『示例源码』** [continue-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/statement/continue-demo.sh)
 
 ```bash
 # 打印10以内的奇数
@@ -1287,7 +1287,7 @@ bash 函数定义语法如下：
 > 3. 函数返回值在调用该函数后通过 `$?` 来获得。
 > 4. 所有函数在使用前必须定义。这意味着必须将函数放在脚本开始部分，直至 shell 解释器首次发现它时，才可以使用。调用函数仅使用其函数名即可。
 
-**:keyboard: 『示例源码』** [function-demo.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos//function/function-demo.sh)
+**:keyboard: 『示例源码』** [function-demo.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos//function/function-demo.sh)
 
 ```bash
 #!/usr/bin/env bash
@@ -1353,7 +1353,7 @@ the result is: 100
 | `$#`           | 不包括`$0`在内的位置参数的个数 |
 | `$FUNCNAME`    | 函数名称（仅在函数内部有值）   |
 
-**:keyboard: 『示例源码』** [function-demo2.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos//function/function-demo2.sh)
+**:keyboard: 『示例源码』** [function-demo2.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos//function/function-demo2.sh)
 
 ```bash
 #!/usr/bin/env bash
@@ -1413,7 +1413,7 @@ $ ./function-demo2.sh 10 20
 | `$-`     | 返回 Shell 使用的当前选项，与 set 命令功能相同。 |
 | `$?`     | 函数返回值                                       |
 
-**:keyboard: 『示例源码』** [function-demo3.sh](https://github.com/dunwu/os-tutorial/tree/master/codes/shell/demos//function/function-demo3.sh)
+**:keyboard: 『示例源码』** [function-demo3.sh](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos//function/function-demo3.sh)
 
 ```bash
 runner() {
@@ -1651,7 +1651,7 @@ $ ./my_script
 
 有时我们值需要 debug 脚本的一部分。这种情况下，使用`set`命令会很方便。这个命令可以启用或禁用选项。使用`-`启用选项，`+`禁用选项：
 
-**:keyboard: 『示例源码』** [debug-demo.sh](https://github.com/dunwu/os-tutorial/blob/master/codes/shell/demos/debug-demo.sh)
+**:keyboard: 『示例源码』** [debug-demo.sh](https://github.com/dunwu/linux-tutorial/blob/master/codes/shell/demos/debug-demo.sh)
 
 ```bash
 # 开启 debug

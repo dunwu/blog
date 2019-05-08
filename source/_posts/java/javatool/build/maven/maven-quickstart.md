@@ -106,7 +106,7 @@ maven 在版本管理时候可以使用几个特殊的字符串 SNAPSHOT，LATES
 
 > [官网下载地址](http://maven.apache.org/download.cgi)
 >
-> Linux 环境安装可以使用我写一键安装脚本：https://github.com/dunwu/os-tutorial/tree/master/codes/linux/ops/service/maven
+> Linux 环境安装可以使用我写一键安装脚本：https://github.com/dunwu/linux-tutorial/tree/master/codes/linux/ops/service/maven
 
 ### 配置环境变量
 

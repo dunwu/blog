@@ -32,23 +32,61 @@ nameserver 8.8.8.8
 >
 > 8.8.8.8 是 Google DNS
 >
-> 👉 参考：[公共 DNS 哪家强](https://www.zhihu.com/question/32229915)
+> :point_right: 参考：[公共 DNS 哪家强](https://www.zhihu.com/question/32229915)
 
 （3）测试一下能否 ping 通 www.baidu.com
 
 ### 开启、关闭防火墙
 
-```bash
-# 开启防火墙 22 端口
-iptables -I INPUT -p tcp --dport 22 -j accept
+firewalld 的基本使用
 
-# 彻底关闭防火墙
-sudo systemctl status firewalld.service
-sudo systemctl stop firewalld.service
-sudo systemctl disable firewalld.service
+```sh
+启动：systemctl start firewalld
+关闭：systemctl stop firewalld
+查看状态：systemctl status firewalld
+开机禁用：systemctl disable firewalld
+开机启用：systemctl enable firewalld
 ```
 
-> :point_right: 参考：https://www.cnblogs.com/moxiaoan/p/5683743.html
+systemctl 是 CentOS7 的服务管理工具中主要的工具，它融合之前 service 和 chkconfig 的功能于一体。
+
+```
+启动一个服务：systemctl start firewalld.service
+关闭一个服务：systemctl stop firewalld.service
+重启一个服务：systemctl restart firewalld.service
+显示一个服务的状态：systemctl status firewalld.service
+在开机时启用一个服务：systemctl enable firewalld.service
+在开机时禁用一个服务：systemctl disable firewalld.service
+查看服务是否开机启动：systemctl is-enabled firewalld.service
+查看已启动的服务列表：systemctl list-unit-files|grep enabled
+查看启动失败的服务列表：systemctl --failed
+```
+
+配置 firewalld-cmd
+
+```
+查看版本：firewall-cmd --version
+查看帮助：firewall-cmd --help
+显示状态：firewall-cmd --state
+查看所有打开的端口：firewall-cmd --zone=public --list-ports
+更新防火墙规则：firewall-cmd --reload
+查看区域信息:  firewall-cmd --get-active-zones
+查看指定接口所属区域：firewall-cmd --get-zone-of-interface=eth0
+拒绝所有包：firewall-cmd --panic-on
+取消拒绝状态：firewall-cmd --panic-off
+查看是否拒绝：firewall-cmd --query-panic
+```
+
+开启防火墙端口
+
+```
+添加：firewall-cmd --zone=public --add-port=80/tcp --permanent    （--permanent永久生效，没有此参数重启后失效）
+重新载入：firewall-cmd --reload
+查看：firewall-cmd --zone= public --query-port=80/tcp
+删除：firewall-cmd --zone= public --remove-port=80/tcp --permanent
+```
+
+> :point_right: 参考：[CentOS7 使用 firewalld 打开关闭防火墙与端口](https://www.cnblogs.com/moxiaoan/p/5683743.html)
 
 ## 系统维护
 
@@ -144,7 +182,7 @@ Linux 开机的时候，会加载运行 `/etc/rc.d/init.d` 目录下的程序，
 
 这些级别在 `/etc/inittab` 文件里指定，这个文件是 init 程序寻找的主要文件，最先运行的服务是放在/etc/rc.d 目录下的文件。
 
-在 `/etc` 目录下面有这么几个目录值得注意：rcS.d rc0.d rc1.d ... rc6.d  (0，1... 6 代表启动级别 0 代表停止，1 代表单用户模式，2-5 代表多用户模式，6 代表重启)  它们的作用就相当于 redhat 下的 rc.d ，你可以把脚本放到 rcS.d，然后修改文件名，给它一个启动序号，如: S88mysql
+在 `/etc` 目录下面有这么几个目录值得注意：rcS.d rc0.d rc1.d ... rc6.d (0，1... 6 代表启动级别 0 代表停止，1 代表单用户模式，2-5 代表多用户模式，6 代表重启) 它们的作用就相当于 redhat 下的 rc.d ，你可以把脚本放到 rcS.d，然后修改文件名，给它一个启动序号，如: S88mysql
 
 不过，最好的办法是放到相应的启动级别下面。具体作法:
 
@@ -179,14 +217,15 @@ $ update-rc.d mysql start 98 2 .
 3. 如果 update-rc.d 命令你不熟悉，还可以试试看 rcconf 这个命令，也很方便。
 
 > :point_right: 参考：
+>
 > - https://blog.csdn.net/linuxshine/article/details/50717272
 > - https://www.cnblogs.com/ssooking/p/6094740.html
 
 ### 定时执行脚本
 
-（1）安装crontab
+（1）安装 crontab
 
-（2）开启crontab服务
+（2）开启 crontab 服务
 
 开机自动启动 crond 服务：`chkconfig crond on`
 
@@ -210,7 +249,7 @@ systemctl status crond.service
 有两种方法：
 
 - 在命令行输入：`crontab -e` 然后添加相应的任务，存盘退出。
-- 直接编辑 `/etc/crontab` 文件，即 `vi /etc/crontab`，添加相应的任务。 
+- 直接编辑 `/etc/crontab` 文件，即 `vi /etc/crontab`，添加相应的任务。
 
 示例：
 
@@ -232,12 +271,12 @@ MAILTO=root
 
 # 每天早上3点时钟同步
 * 3 * * * /usr/sbin/ntpdate ntp.sjtu.edu.cn
- 
+
 # 每两个小时以root身份执行 /home/hello.sh 脚本
-0 */2 * * * root /home/hello.sh  
+0 */2 * * * root /home/hello.sh
 ```
 
-> 👉 参考：https://blog.csdn.net/z_yong_cool/article/details/79288397
+> :point_right: 参考：[linux 定时执行脚本](https://blog.csdn.net/z_yong_cool/article/details/79288397)
 
 ## 配置
 
@@ -257,3 +296,8 @@ MAILTO=root
 $ sed -i 's/id:5:initdefault:/id:3:initdefault:/' /etc/inittab
 ```
 
+## 参考资料
+
+- [CentOS7 使用 firewalld 打开关闭防火墙与端口](https://www.cnblogs.com/moxiaoan/p/5683743.html)
+
+- [linux 定时执行脚本](https://blog.csdn.net/z_yong_cool/article/details/79288397)
