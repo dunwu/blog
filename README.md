@@ -22,61 +22,18 @@
 
 ### [Java](source/_posts/java)
 
-#### [JavaCore](source/_posts/java/javacore)
+- [JavaCore 教程](https://dunwu.github.io/javacore/)
 
-- 「[Java 基础特性专题](source/_posts/java/javacore/basics)」
-  - [Java 基础语法特性](source/_posts/java/javacore/basics/Java基础语法特性.md)
-  - [Java 基本数据类型](source/_posts/java/javacore/basics/Java基本数据类型.md)
-  - [Java 类和对象](source/_posts/java/javacore/basics/Java类和对象.md)
-  - [Java 方法](source/_posts/java/javacore/basics/Java方法.md)
-  - [Java 数组](source/_posts/java/javacore/basics/Java数组.md)
-  - [Java 枚举](source/_posts/java/javacore/basics/Java枚举.md)
-  - [Java 控制语句](source/_posts/java/javacore/basics/Java控制语句.md)
-  - [Java 异常](source/_posts/java/javacore/basics/Java异常.md)
-  - [Java 泛型](source/_posts/java/javacore/basics/Java泛型.md)
-  - [Java 反射](source/_posts/java/javacore/basics/Java反射.md)
-  - [Java 注解](source/_posts/java/javacore/basics/Java注解.md)
-  - [Java 序列化](source/_posts/java/javacore/basics/Java序列化.md)
-- 「[Java 高级特性专题](source/_posts/java/javacore/advanced)」
-  - [Java 正则](source/_posts/java/javacore/advanced/Java正则.md)
-  - [Java 编码和加密](source/_posts/java/javacore/advanced/Java编码和加密.md)
-  - [Java 本地化](source/_posts/java/javacore/advanced/Java本地化.md)
-  - [Java JDK8](source/_posts/java/javacore/advanced/Java8.md)
-- 「[Java 容器专题](source/_posts/java/javacore/container)」
-  - [Java 容器概述](source/_posts/java/javacore/container/java-container.md)
-  - [Java 容器之 List](source/_posts/java/javacore/container/java-container-list.md)
-  - [Java 容器之 Set](source/_posts/java/javacore/container/java-container-set.md)
-  - [Java 容器之 Queue](source/_posts/java/javacore/container/java-container-queue.md)
-  - [Java 容器之 Map](source/_posts/java/javacore/container/java-container-map.md)
-- 「[Java IO 专题](source/_posts/java/javacore/io)」
-  - [Java 常用 IO 类](source/_posts/java/javacore/io/Java常用IO类.md)
-  - [Java 流操作](source/_posts/java/javacore/io/Java流操作.md)
-  - [Java 序列化](source/_posts/java/javacore/io/Java序列化.md)
-  - [Java 网络编程](source/_posts/java/javacore/io/Java网络编程.md)
-  - [Java NIO](source/_posts/java/javacore/io/JavaNIO.md)
-- 「[Java 并发专题](source/_posts/java/javacore/concurrent)」
-- 「[Java 虚拟机专题](source/_posts/java/javacore/jvm)」
-  - [运行时数据区域](source/_posts/java/javacore/jvm/运行时数据区域.md)
-  - [垃圾收集](source/_posts/java/javacore/jvm/垃圾收集.md)
-  - [类加载机制](source/_posts/java/javacore/jvm/类加载机制.md)
-  - [JVM 调优](source/_posts/java/javacore/jvm/JVM调优.md)
+> JavaCore 是对 Java 核心技术的经验总结。包含对Java各种语法特性的深入细致的讲解，此外，针对并发编程、IO/NIO、容器、JVM 以专题形式深入讲解。
 
 #### [JavaWeb](source/_posts/java/javaweb)
 
 - [JavaEE](source/_posts/java/javaweb/javaee)
 - [Spring](source/_posts/java/javaweb/spring)
-- [Spring Boot](source/_posts/java/javaweb/spring-boot)
+- [Spring Boot 教程](https://dunwu.github.io/spring-boot-tutorial/)
 - [Mybatis](source/_posts/java/javaweb/orm/mybatis.md)
 
-#### [Spring](source/_posts/java/spring)
-
-待整理。。。
-
-#### [SpringBoot](source/_posts/java/spring-boot)
-
-待整理。。。
-
-### JavaScript
+## JavaScript
 
 待整理。。。
 
@@ -91,19 +48,11 @@
 - [数据结构](source/_posts/algorithm/data-structure) - 关键词：数组、线性表、栈、队列、哈希、树、图、查找、排序
 - 算法（:construction: 待整理补充）
 
-## [数据库](source/_posts/database)
+## 数据库
 
-- [关系型数据库](source/_posts/database/sql)
-  - [关系型数据库 SQL 基本语法](source/_posts/database/sql/sql.md)
-  - [关系型数据库基本原理](source/_posts/database/sql/关系型数据库基本原理.md)
-  - [关系型数据库面试题](source/_posts/database/sql/关系型数据库面试题.md)
-  - [Mysql](source/_posts/database/sql/mysql)
-  - [PostgreSQL](source/_posts/database/sql/postgresql.md)
-  - [H2](source/_posts/database/sql/h2.md)
-- [非关系型数据库](source/_posts/database/nosql)
-  - [Redis](source/_posts/database/nosql/redis)
-  - [MongoDB](source/_posts/database/nosql/mongodb)
-  - [Cassandra](source/_posts/database/nosql/Cassandra.md)
+- [数据库教程](https://dunwu.github.io/db-tutorial/)
+
+> 总结关系型数据库和 Nosql 数据库原理、面试题。重点介绍 Mysql、Redis 数据库使用、原理、运维、调优，并介绍一些其他常见数据库知识。
 
 ## [网络通信](source/_posts/communication)
 
