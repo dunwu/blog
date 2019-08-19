@@ -4,7 +4,7 @@
 
 {% block title %}{{ page.title }} | {{ title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
+{% block page_class %}page-post-template{% endblock %}
 
 {% block content %}
 

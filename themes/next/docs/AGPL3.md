@@ -550,7 +550,7 @@ but the work with which it is combined will remain governed by version
 
 The Free Software Foundation may publish revised and/or new versions of
 the GNU Affero General Public License from time to time.  Such new versions
-will be similar in spirit to the present version, but may differ in detail to
+will be similar in spirit to the present version, but may differ in template to
 address new problems or concerns.
 
 Each version is given a distinguishing version number.  If the
