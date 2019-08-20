@@ -46,7 +46,7 @@ date: 2018-01-05 09:08
 
 ## 学习编程语言的步骤
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/programming/learn-programming-language.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/programming/learn-programming-language.png"/></div>
 
 ### 基本语法
 

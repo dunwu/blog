@@ -1,4 +1,4 @@
-<div align="center"><a href="https://dunwu.github.io/blog/"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/others/zpblog.png"/></a></div>
+<div align="center"><a href="https://dunwu.github.io/blog/"><img src="http://dunwu.test.upcdn.net/images/others/zpblog.png"/></a></div>
 
 > 本项目用于归档我个人的技术文档。
 

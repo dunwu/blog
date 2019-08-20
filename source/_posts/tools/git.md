@@ -199,7 +199,7 @@ Git 中使用这种哈希值的情况很多，你将经常看到这种哈希值�
 - **本地仓库（local）** - 提交更新，找到暂存区域的文件，将快照永久性存储到 Git 本地仓库。
 - **远程仓库（remote）** - 以上几个工作区都是在本地。为了让别人可以看到你的修改，你需要将你的更新推送到远程仓库。同理，如果你想同步别人的修改，你需要从远程仓库拉取更新。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-theory.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/web/git/git-theory.png"/></div>
 
 ## 命令
 
@@ -207,7 +207,7 @@ Git 中使用这种哈希值的情况很多，你将经常看到这种哈希值�
 
 本节选择性介绍 git 中比较常用的命令行场景。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-cheat-sheet.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/web/git/git-cheat-sheet.png"/></div>
 
 ### 创建仓库
 
@@ -473,7 +473,7 @@ HTTPS 这种方式要求你每次 push 时都要输入用户名、密码，有�
 
 而 SSH 要求你本地生成证书，然后在你的 Github 账户中注册。第一次配置麻烦是麻烦了点，但是以后就免去了每次 push 需要输入用户名、密码的繁琐。
 
-<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-66f60822aeb2c21c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
+<div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-66f60822aeb2c21c.png"/></div>
 
 以下介绍以下，如何生成证书，以及在 Github 中注册。
 
@@ -1395,7 +1395,7 @@ $ git reset --hard 0254ea7
 
 最后，放一张我总结的脑图总结一下以上的知识点。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/web/git/git-summary.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/web/git/git-summary.png"/></div>
 
 ## 参考资料
 

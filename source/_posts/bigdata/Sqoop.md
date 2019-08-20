@@ -48,7 +48,7 @@ tags:
 
 #### Sqoop 1 优缺点
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/Sqoop/sqoop-architecture.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-architecture.png"/></div>
 
 优点
 
@@ -66,7 +66,7 @@ tags:
 
 #### Sqoop 2 优缺点
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/Sqoop/sqoop-v2-architecture.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-v2-architecture.png"/></div>
 
 优点
 
@@ -86,8 +86,8 @@ tags:
 
 ### 导入
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/Sqoop/sqoop-import.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-import.png"/></div>
 
 ### 导出
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/bigdata/Sqoop/sqoop-export.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/bigdata/Sqoop/sqoop-export.png"/></div>

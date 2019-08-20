@@ -51,7 +51,7 @@ date: 2019-03-06
 
 为了提高传输效率，应该让数据部分长度尽可能大于首部和尾部。但是，每种链路层协议都限制了帧的数据部分长度上线——最大传送单元 MTU（Maximum Transfer Unit）
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/data-link/数据链路帧.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/network/data-link/数据链路帧.png"/></div>
 
 ### 透明传输
 
@@ -59,7 +59,7 @@ date: 2019-03-06
 
 帧使用首部和尾部进行定界，如果帧的数据部分含有和首部尾部相同的内容，那么帧的开始和结束位置就会被错误的判定。需要在数据部分出现首部尾部相同的内容前面插入转义字符。如果数据部分出现转义字符，那么就在转义字符前面再加个转义字符。在接收端进行处理之后可以还原出原始数据。这个过程透明传输的内容是转义字符，用户察觉不到转义字符的存在。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/data-link/经过字节填充后发送的数据.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/network/data-link/经过字节填充后发送的数据.png"/></div>
 
 ### 差错检测
 
@@ -75,11 +75,11 @@ date: 2019-03-06
 
 互联网用户通常都要连接到某个 ISP 之后才能接入到互联网，PPP 协议是用户计算机和 ISP 进行通信时所使用的数据链路层协议。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/data-link/PPP协议.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/network/data-link/PPP协议.png"/></div>
 
 PPP（点到点协议）是为在同等单元之间传输数据包这样的简单链路设计的链路层协议。这种链路提供全双工操作，并按照顺序传递数据包。设计目的主要是用来通过拨号或专线方式建立点对点连接发送数据，使其成为各种主机、网桥和路由器之间简单连接的一种共通的解决方案。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/data-link/PPP帧.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/network/data-link/PPP帧.png"/></div>
 
 PPP 的帧格式：
 
@@ -128,7 +128,7 @@ MAC 地址长度为 6 字节（48 位），用于唯一标识网络适配器（�
 
 一台主机拥有多少个网络适配器就有多少个 MAC 地址。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/master/images/network/data-link/MAC帧.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/images/network/data-link/MAC帧.png"/></div>
 
 ## 设备
 
