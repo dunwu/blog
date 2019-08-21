@@ -42,7 +42,7 @@ date: 2018-07-05 15:50
 > 缺点：可能成为系统瓶颈
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/代理自动配置.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/代理自动配置.jpg!zp" width="640"/>
 </div>
 
 ### HTTP 重定向
@@ -55,7 +55,7 @@ date: 2018-07-05 15:50
 > - 如果负载均衡器宕机，就无法访问该站点。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/Http重定向.png!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/Http重定向.png!zp" width="640"/>
 </div>
 
 ### DNS 重定向
@@ -80,7 +80,7 @@ date: 2018-07-05 15:50
 > - 将 DNS 作为第一级负载均衡，A 记录对应着内部负载均衡的 IP 地址，通过内部负载均衡将请求分发到真实的 Web 服务器上。一般用于互联网公司，复杂的业务系统不合适使用。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/Dns重定向.png!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/Dns重定向.png!zp" width="640"/>
 </div>
 
 ### 修改 IP 地址
@@ -99,7 +99,7 @@ date: 2018-07-05 15:50
 > 缺点：所有请求响应都需要经过负载均衡服务器，集群最大吞吐量受限于负载均衡服务器网卡带宽；
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/修改IP地址.png!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/修改IP地址.png!zp" width="640"/>
 </div>
 
 ### 修改 MAC 地址
@@ -115,7 +115,7 @@ date: 2018-07-05 15:50
 > 建议：DR 模式是目前使用最广泛的一种负载均衡方式。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/修改Mac地址.png!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/修改Mac地址.png!zp" width="640"/>
 </div>
 
 ### 混合负载均衡
@@ -152,13 +152,13 @@ date: 2018-07-05 15:50
 下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。最后，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之轮询-01.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之轮询-01.jpg!zp" width="640"/>
 </div>
 
 该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之轮询-02.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之轮询-02.jpg!zp" width="640"/>
 </div>
 
 算法示例：
@@ -189,7 +189,7 @@ public void roundRobin() {
 加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值。例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之加权轮询.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之加权轮询.jpg!zp" width="640"/>
 </div>
 
 算法示例：
@@ -227,13 +227,13 @@ public void weightRoundRobin() {
 由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开。该系统继续运行时，服务器 2 会承担过大的负载。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之最少连接-01.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之最少连接-01.jpg!zp" width="640"/>
 </div>
 
 最少连接算法就是将请求发送给当前最少连接数的服务器上。例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之最少连接-02.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之最少连接-02.jpg!zp" width="640"/>
 </div>
 
 #### 加权最少连接
@@ -241,7 +241,7 @@ public void weightRoundRobin() {
 > 加权最少连接（Weighted Least Connection）在最少连接的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之加权最少连接.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之加权最少连接.jpg!zp" width="640"/>
 </div>
 ### 随机
 
@@ -253,7 +253,7 @@ public void weightRoundRobin() {
 和轮询算法类似，该算法比较适合服务器性能差不多的场景。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之随机.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之随机.jpg!zp" width="640"/>
 </div>
 
 ### 哈希（Hash）
@@ -266,7 +266,7 @@ public void weightRoundRobin() {
 > - 缺点：目标服务器宕机后，会话会丢失；
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/负载均衡算法之IpHash.jpg!zp" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/负载均衡算法之IpHash.jpg!zp" width="640"/>
 </div>
 
 算法示例：

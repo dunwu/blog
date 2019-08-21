@@ -94,7 +94,7 @@ Distributed Hash Table（DHT）：对于哈希空间 [0, 2<sup>n</sup>-1]，将�
 **分布式系统不可能同时满足一致性（C：Consistency）、可用性（A：Availability）和分区容忍性（P：Partition Tolerance），最多只能同时满足其中两项。**
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/分布式理论-CAP.jpg!zp" width="450"/>
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/分布式理论-CAP.jpg!zp" width="450"/>
 </div>
 
 **（一）一致性**
@@ -132,7 +132,7 @@ Distributed Hash Table（DHT）：对于哈希空间 [0, 2<sup>n</sup>-1]，将�
 BASE 理论是对 CAP 中一致性和可用性权衡的结果，它的理论的核心思想是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/分布式理论-BASE.png!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/分布式理论-BASE.png!zp" />
 </div>
 
 - **基本可用** - **指分布式系统在出现故障的时候，保证核心可用，允许损失部分可用性**。例如，电商在做促销时，为了保证购物系统的稳定性，部分消费者可能会被引导到一个降级的页面。
@@ -213,25 +213,25 @@ _注：此处 log 并非是指日志消息，而是各种事件的发生记录�
 - 下图表示一个分布式系统的最初阶段，此时只有 Follower，没有 Leader。Follower A 等待一个随机的竞选超时时间之后，没收到 Leader 发来的心跳包，因此进入竞选阶段。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-candidate-01.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-candidate-01.gif!zp" />
 </div>
 
 - 此时 A 发送投票请求给其它所有节点。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-candidate-02.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-candidate-02.gif!zp" />
 </div>
 
 - 其它节点会对请求进行回复，如果超过一半的节点回复了，那么该 Candidate 就会变成 Leader。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-candidate-03.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-candidate-03.gif!zp" />
 </div>
 
 - 之后 Leader 会周期性地发送心跳包给 Follower，Follower 接收到心跳包，会重新开始计时。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-candidate-04.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-candidate-04.gif!zp" />
 </div>
 
 #### 多个 Candidate 竞选
@@ -239,13 +239,13 @@ _注：此处 log 并非是指日志消息，而是各种事件的发生记录�
 - 如果有多个 Follower 成为 Candidate，并且所获得票数相同，那么就需要重新开始投票，例如下图中 Candidate B 和 Candidate D 都获得两票，因此需要重新开始投票。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-multi-candidate-01.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-multi-candidate-01.gif!zp" />
 </div>
 
 - 当重新开始投票时，由于每个节点设置的随机竞选超时时间不同，因此能下一次再次出现多个 Candidate 并获得同样票数的概率很低。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-multi-candidate-02.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-multi-candidate-02.gif!zp" />
 </div>
 
 #### 同步日志
@@ -253,25 +253,25 @@ _注：此处 log 并非是指日志消息，而是各种事件的发生记录�
 - 来自客户端的修改都会被传入 Leader。注意该修改还未被提交，只是写入日志中。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-sync-log-01.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-sync-log-01.gif!zp" />
 </div>
 
 - Leader 会把修改复制到所有 Follower。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-sync-log-02.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-sync-log-02.gif!zp" />
 </div>
 
 - Leader 会等待大多数的 Follower 也进行了修改，然后才将修改提交。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-sync-log-03.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-sync-log-03.gif!zp" />
 </div>
 
 - 此时 Leader 会通知的所有 Follower 让它们也提交修改，此时所有节点的值达成一致。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/raft-sync-log-04.gif!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/raft-sync-log-04.gif!zp" />
 </div>
 
 ## 参考资料

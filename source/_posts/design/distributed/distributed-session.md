@@ -34,7 +34,7 @@ session 是啥？浏览器有个 cookie，在一段时间内这个 cookie 都存
 > 缺点：当服务器节点宕机时，将丢失该服务器节点上的所有 Session。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/MultiNode-StickySessions.jpg!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/MultiNode-StickySessions.jpg!zp" />
 </div>
 
 ## session 复制共享
@@ -44,7 +44,7 @@ session 是啥？浏览器有个 cookie，在一段时间内这个 cookie 都存
 > 缺点：占用过多内存；同步过程占用网络带宽以及服务器处理器时间。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/MultiNode-SessionReplication.jpg!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/MultiNode-SessionReplication.jpg!zp" />
 </div>
 
 ## 基于缓存的 session 共享
@@ -54,7 +54,7 @@ session 是啥？浏览器有个 cookie，在一段时间内这个 cookie 都存
 > 缺点：需要去实现存取 Session 的代码。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/MultiNode-SpringSession.jpg!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/MultiNode-SpringSession.jpg!zp" />
 </div>
 
 ## 具体实现

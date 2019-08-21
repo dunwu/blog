@@ -30,7 +30,7 @@ date: 2019-06-21 11:30
 协调者询问参与者事务是否执行成功，参与者发回事务执行结果。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/分布式事务两阶段提交-01.jpg!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/分布式事务两阶段提交-01.jpg!zp" />
 </div>
 
 #### 提交阶段
@@ -38,7 +38,7 @@ date: 2019-06-21 11:30
 如果事务在每个参与者上都执行成功，事务协调者发送通知让参与者提交事务；否则，协调者发送通知让参与者回滚事务。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/分布式事务两阶段提交-02.jpg!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/分布式事务两阶段提交-02.jpg!zp" />
 </div>
 需要注意的是，在准备阶段，参与者执行了事务，但是还未提交。只有在提交阶段接收到协调者发来的通知后，才进行提交或者回滚。
 
@@ -94,7 +94,7 @@ date: 2019-06-21 11:30
 > 3.  在分布式事务操作的另一方从消息队列中读取一个消息，并执行消息中的操作。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/images/java/javaweb/distributed/architecture/分布式事务本地消息.jpg!zp" />
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/architecture/分布式事务本地消息.jpg!zp" />
 </div>
 
 这种方案遵循 BASE 理论，采用的是最终一致性。
