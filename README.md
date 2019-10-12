@@ -10,28 +10,28 @@
 
 > :coffee: Java Tutorial 是本人在 Java 技术领域的十年积累。
 >
-> - :repeat: 项目同步维护：[Github](https://github.com/dunwu/java-tutorial/) | [Gitee](https://gitee.com/turnon/java-tutorial/)
-> - :book: 电子书阅读：[Github Pages](https://dunwu.github.io/java-tutorial/) | [Gitee Pages](https://turnon.gitee.io/java-tutorial/)
+> - 🔁 项目同步维护：[Github](https://github.com/dunwu/java-tutorial/) | [Gitee](https://gitee.com/turnon/java-tutorial/)
+> - 📖 电子书阅读：[Github Pages](https://dunwu.github.io/java-tutorial/) | [Gitee Pages](https://turnon.gitee.io/java-tutorial/)
 
 ### 数据库教程
 
 > :1234: 数据库经验总结
 >
-> - :repeat: 项目同步维护：[Github](https://github.com/dunwu/db-tutorial/) | [Gitee](https://gitee.com/turnon/db-tutorial/)
-> - :book: 电子书阅读：[Github Pages](https://dunwu.github.io/db-tutorial/) | [Gitee Pages](https://turnon.gitee.io/db-tutorial/)
+> - 🔁 项目同步维护：[Github](https://github.com/dunwu/db-tutorial/) | [Gitee](https://gitee.com/turnon/db-tutorial/)
+> - 📖 电子书阅读：[Github Pages](https://dunwu.github.io/db-tutorial/) | [Gitee Pages](https://turnon.gitee.io/db-tutorial/)
 
 ### Frontend Tutorial
 
 > :coffee: frontend-tutorial 是对 Java 核心技术的经验总结。
 >
-> - :repeat: 项目同步维护：[Github](https://github.com/dunwu/frontend-tutorial/) | [Gitee](https://gitee.com/turnon/frontend-tutorial/)
-> - :book: 电子书阅读：[Github Pages](https://dunwu.github.io/frontend-tutorial/) | [Gitee Pages](http://turnon.gitee.io/frontend-tutorial/)
+> - 🔁 项目同步维护：[Github](https://github.com/dunwu/frontend-tutorial/) | [Gitee](https://gitee.com/turnon/frontend-tutorial/)
+> - 📖 电子书阅读：[Github Pages](https://dunwu.github.io/frontend-tutorial/) | [Gitee Pages](http://turnon.gitee.io/frontend-tutorial/)
 
 ### Linux 教程
 
 > :keyboard: 项目同步维护在 [github](https://github.com/dunwu/linux-tutorial) | [gitee](https://gitee.com/turnon/linux-tutorial)
 >
-> :book: [电子书](https://dunwu.github.io/linux-tutorial/) | [电子书（国内）](http://turnon.gitee.io/linux-tutorial/)
+> 📖 [电子书](https://dunwu.github.io/linux-tutorial/) | [电子书（国内）](http://turnon.gitee.io/linux-tutorial/)
 
 ## [网络通信](source/_posts/communication)
 
