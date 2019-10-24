@@ -9,7 +9,7 @@ date: 2019-03-06
 
 > 文档采用 Markdown 语法书写。
 >
-> :books: 「参考」Markdown 语法可以参考：
+> 📚 「参考」Markdown 语法可以参考：
 >
 > - https://github.com/guodongxiaren/README
 > - https://github.com/tchapi/markdown-cheatsheet
@@ -270,11 +270,11 @@ One man’s constant is another man’s variable. — Alan Perlis
 
 一些特殊的强调内容可以按照如下方式书写：
 
-> :bell: 『注意』
+> 🔔 『注意』
 
-> :bulb: 『提示』
+> 💡 『提示』
 
-> :books: 『参考』
+> 📚 『参考』
 
 ## 4. 数值
 
@@ -556,13 +556,15 @@ $1,000
 
 这里，将一些比较约定俗成的 emoji 表情使用场景列举一下：
 
-- :bulb: 提示 - [推荐]
-- :bell: 注意、警告 - [推荐]
-- :heavy_check_mark: 正确 - [推荐]
-- :x: 错误 - [推荐]
-- :construction: 未完待续、有待补充 - [推荐]
-- :books: 参考、参考资料 - [可选]
-- :keyboard: 源码 - [可选]
+- 💡 提示 - [推荐]
+- 🔔 注意、警告 - [推荐]
+- ⭕ 正确 - [推荐]
+- ❌ 错误 - [推荐]
+- ❓ 问题 - [推荐]
+- ⛔ 禁止 - [推荐]
+- 🚧 未完待续、有待补充 - [推荐]
+- 📚 参考、参考资料 - [可选]
+- ⌨ 源码 - [可选]
 
 ## 8. 参考
 

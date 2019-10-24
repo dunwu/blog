@@ -11,7 +11,7 @@ date: 2019-02-20 22:26
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/network.jpg"/></div>
 
-## :bulb: 指南
+## 💡 指南
 
 学习之前，先看一下入门三问：
 
@@ -108,7 +108,7 @@ date: 2019-02-20 22:26
   - 主要协议：`HTTP`、`DNS`、`SMTP`、`Telnet`、`FTP`、`SNMP` 等。
   - 数据单元：报文（message）。
 
-## :books: 学习资源
+## 📚 学习资源
 
 ### 书
 
