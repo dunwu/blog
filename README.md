@@ -1,41 +1,19 @@
 <div align="center"><a href="https://dunwu.github.io/blog/"><img src="http://dunwu.test.upcdn.net/cs/others/zpblog.png"/></a></div>
+
 > 本项目用于整理、归档我个人的技术文档。
->
-> 限于篇幅、内容太多，知识点较多的大类，会整理成独立项目。
 
 ## 教程
 
-部分技术领域由于内容较多，故而已整理成教程，维护在 Github / Gitee
+> 部分技术领域由于内容较多，故而已整理成教程，维护在 Github / Gitee
 
-### Java 教程
-
-Java 知识点比较多，根据内容已经分别整理成不同教程：
-
-- [java-tutorial](https://turnon.gitee.io/java-tutorial/#/)
+- [Java 教程](https://turnon.gitee.io/java-tutorial/)
   - [javacore](https://dunwu.github.io/javacore/) -  Java 核心技术教程。内容包含：Java 基础特性、Java 高级特性、Java 并发、JVM、Java IO 等。 
   - [javaweb](https://dunwu.github.io/javaweb/) -  Java Web 技术教程。内容包含：JavaEE、分布式应用技术及原理等。 
   - [spring](https://dunwu.github.io/spring-tutorial/) - Spring 教程。
   - [spring-boot](https://dunwu.github.io/spring-boot-tutorial/) - Spring Boot 教程。
-
-### 数据库教程
-
-> :1234: 数据库经验总结
->
-> - 🔁 项目同步维护：[Github](https://github.com/dunwu/db-tutorial/) | [Gitee](https://gitee.com/turnon/db-tutorial/)
-> - 📖 电子书阅读：[Github Pages](https://dunwu.github.io/db-tutorial/) | [Gitee Pages](https://turnon.gitee.io/db-tutorial/)
-
-### Frontend Tutorial
-
-> ☕ frontend-tutorial 是对 Java 核心技术的经验总结。
->
-> - 🔁 项目同步维护：[Github](https://github.com/dunwu/frontend-tutorial/) | [Gitee](https://gitee.com/turnon/frontend-tutorial/)
-> - 📖 电子书阅读：[Github Pages](https://dunwu.github.io/frontend-tutorial/) | [Gitee Pages](http://turnon.gitee.io/frontend-tutorial/)
-
-### Linux 教程
-
-> 🔁 项目同步维护在 [github](https://github.com/dunwu/linux-tutorial) | [gitee](https://gitee.com/turnon/linux-tutorial)
->
-> 📖 [电子书](https://dunwu.github.io/linux-tutorial/) | [电子书（国内）](http://turnon.gitee.io/linux-tutorial/)
+- [数据库教程](https://dunwu.github.io/db-tutorial/)
+- [前端教程](https://dunwu.github.io/frontend-tutorial/)
+- [Linux 教程](https://dunwu.github.io/linux-tutorial/)
 
 ## [网络通信](source/_posts/communication)
 
