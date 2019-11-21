@@ -1,67 +1,23 @@
 ---
 title: Git 从入门到精通
-categories: ['tools']
-tags: ['tools', 'git']
+categories: ['工具']
+tags: ['工具', '版本控制']
 date: 2017-12-09 11:39
 ---
 
-# Git 从入门到精通
-
 > :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
-
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-- [简介](#简介)
-    - [Git 是什么？](#git-是什么)
-    - [什么是版本控制？](#什么是版本控制)
-    - [什么是分布式版本控制系统？](#什么是分布式版本控制系统)
-    - [为什么使用 Git？](#为什么使用-git)
-- [安装](#安装)
-- [配置](#配置)
-    - [用户信息](#用户信息)
-    - [.gitignore](#gitignore)
-- [原理](#原理)
-    - [版本库](#版本库)
-    - [哈希值](#哈希值)
-    - [文件状态](#文件状态)
-    - [工作区域](#工作区域)
-- [命令](#命令)
-    - [创建仓库](#创建仓库)
-    - [添加修改](#添加修改)
-    - [撤销修改](#撤销修改)
-    - [更新与推送](#更新与推送)
-    - [查看信息](#查看信息)
-    - [分支](#分支)
-    - [标签](#标签)
-    - [合并与重置](#合并与重置)
-    - [Github](#github)
-- [最佳实践 Git Flow](#最佳实践-git-flow)
-- [常见问题](#常见问题)
-    - [编辑提交(editting commits)](#编辑提交editting-commits)
-    - [暂存(Staging)](#暂存staging)
-    - [未暂存(Unstaged)的内容](#未暂存unstaged的内容)
-    - [分支(Branches)](#分支branches)
-    - [Rebasing 和合并(Merging)](#rebasing-和合并merging)
-    - [杂项(Miscellaneous Objects)](#杂项miscellaneous-objects)
-    - [跟踪文件(Tracking Files)](#跟踪文件tracking-files)
-    - [配置(Configuration)](#配置configuration)
-    - [我不知道我做错了些什么](#我不知道我做错了些什么)
-- [小结](#小结)
-- [参考资料](#参考资料)
-
-<!-- /TOC -->
 
 ## 简介
 
-### Git 是什么？
+### Git 是什么
 
 Git 是一个开源的分布式版本控制系统。
 
-### 什么是版本控制？
+### 什么是版本控制
 
 版本控制是一种记录一个或若干文件内容变化，以便将来查阅特定版本修订情况的系统。
 
-### 什么是分布式版本控制系统？
+### 什么是分布式版本控制系统
 
 介绍分布式版本控制系统前，有必要先了解一下传统的集中式版本控制系统。
 
@@ -75,7 +31,7 @@ Git 是一个开源的分布式版本控制系统。
 
 <div align="center"><img src="https://git-scm.com/figures/18333fig0103-tn.png"/></div>
 
-### 为什么使用 Git？
+### 为什么使用 Git
 
 Git 是分布式的。这是 Git 和其它非分布式的版本控制系统，例如 svn，cvs 等，最核心的区别。分布式带来以下好处：
 

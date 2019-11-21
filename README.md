@@ -7,8 +7,8 @@
 > 部分技术领域由于内容较多，故而已整理成教程，维护在 Github / Gitee
 
 - [Java 教程](https://turnon.gitee.io/java-tutorial/)
-  - [javacore](https://dunwu.github.io/javacore/) -  Java 核心技术教程。内容包含：Java 基础特性、Java 高级特性、Java 并发、JVM、Java IO 等。 
-  - [javaweb](https://dunwu.github.io/javaweb/) -  Java Web 技术教程。内容包含：JavaEE、分布式应用技术及原理等。 
+  - [javacore](https://dunwu.github.io/javacore/) - Java 核心技术教程。内容包含：Java 基础特性、Java 高级特性、Java 并发、JVM、Java IO 等。
+  - [javaweb](https://dunwu.github.io/javaweb/) - Java Web 技术教程。内容包含：JavaEE、分布式应用技术及原理等。
   - [spring](https://dunwu.github.io/spring-tutorial/) - Spring 教程。
   - [spring-boot](https://dunwu.github.io/spring-boot-tutorial/) - Spring Boot 教程。
 - [数据库教程](https://dunwu.github.io/db-tutorial/)
@@ -38,12 +38,6 @@
   - [网络协议之 ICMP](source/_posts/communication/icmp.md)
   - [网络协议之 WebSocket](source/_posts/communication/websocket.md)
   - [网络通信之 CDN](source/_posts/communication/cdn.md)
-
-## [Tools](source/_posts/tools)
-
-- [Git 从入门到精通](source/_posts/tools/git.md) - 关键词：版本控制、分布式
-- [Nginx 极简教程](source/_posts/tools/nginx.md) - 关键词：反向代理、负载均衡、缓存、跨域
-- [使用 Gitbook 打造你的电子书](source/_posts/tools/gitbook.md)
 
 ## [大数据](source/_posts/bigdata)
 
@@ -85,11 +79,14 @@
 - [代码坏味道之非必要的](source/_posts/design/refactor/代码坏味道之非必要的.md)
 - [代码坏味道之耦合](source/_posts/design/refactor/代码坏味道之耦合.md)
 
-### [UML](source/_posts/design/UML.md)
+## 工具
 
-> 关键词：类图、对象图、包图、组件图、部署图、复合结构图、活动图、状态图、用例图、通信图、交互概述图、时序图、时间图
+- [Git 从入门到精通](source/_posts/tools/git.md) - Git 的特性、原理、配置、命令、最佳实践、常见问题。学习 Git，基本上这篇文章就够了。
+- [UML 教程](source/_posts/tools/uml.md) - 全面介绍 UML 各种图：类图、对象图、包图、组件图、部署图、复合结构图、活动图、状态图、用例图、通信图、交互概述图、时序图、时间图
+- [正则教程](source/_posts/tools/regex.md) - 正则语义很晦涩，但是一旦掌握，编程绝对是一件神兵利器。
+- [使用 Gitbook 打造你的电子书](source/_posts/tools/gitbook.md)
 
-## [方法](source/_posts/method)
+## 方法
 
 > 方法论，是人们认识世界、改造世界的方法的理论。同样，项目管理、编程、写文档都应该有一定的方式方法，帮助我们合理、高效、快速的达成目标。
 

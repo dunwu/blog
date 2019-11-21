@@ -1,7 +1,7 @@
 ---
 title: 使用 Gitbook 打造你的电子书
-categories: ['tools']
-tags: ['tools', 'gitbook']
+categories: ['工具']
+tags: ['工具', '电子书']
 date: 2017-09-04 08:59
 ---
 
