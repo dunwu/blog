@@ -1,13 +1,5 @@
 /**
- * group-pictures.js
- *
- * Usage:
- *
- * {% grouppicture [group]-[layout] %}{% endgrouppicture %}
- * {% gp [group]-[layout] %}{% endgp %}
- *
- * [group]  : Total number of pictures to add in the group.
- * [layout] : Default picture under the group to show.
+ * group-pictures.js | https://theme-next.org/docs/tag-plugins/group-pictures
  */
 
 /* global hexo */
@@ -106,7 +98,7 @@ var templates = {
    */
   defaults: function(pictures) {
     var ROW_SIZE = 3;
-    var rows = pictures.length / (ROW_SIZE + 1);
+    var rows = pictures.length / ROW_SIZE;
     var pictureArr = [];
 
     for (var i = 0; i < rows; i++) {
