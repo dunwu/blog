@@ -1,47 +1,27 @@
 ---
 title: 网络协议之 DNS
-categories: ['communication']
-tags: ['communication', 'network', 'application', 'protocol']
+categories: ['通信']
+tags: ['通信', '网络', '协议']
 date: 2018-10-17 18:14
 ---
-
-# 网络协议之 DNS
-
-> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 > 域名系统（英文：Domain Name System，缩写：DNS）是互联网的一项服务。它作为将域名和 IP 地址相互映射的一个分布式数据库，能够使人更方便地访问互联网。DNS 使用 TCP 和 UDP 端口 53。当前，对于每一级域名长度的限制是 63 个字符，域名总长度则不能超过 253 个字符。
 >
 > 关键词：DNS, 域名解析
 
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-- [简介](#简介)
-    - [什么是 DNS？](#什么是-dns)
-    - [什么是域名？](#什么是域名)
-    - [DNS 的分层](#dns-的分层)
-    - [DNS 服务类型](#dns-服务类型)
-    - [记录类型](#记录类型)
-- [域名解析](#域名解析)
-- [Linux 上的域名相关命令](#linux-上的域名相关命令)
-    - [hostname](#hostname)
-    - [nslookup](#nslookup)
-- [更多内容](#更多内容)
-
-<!-- /TOC -->
-
 ## 简介
 
-### 什么是 DNS？
+### 什么是 DNS
 
 DNS 是一个应用层协议。
 
 域名系统 (DNS) 的作用是将人类可读的域名 (如，www.example.com) 转换为机器可读的 IP 地址 (如，192.0.2.44)。
 
-### 什么是域名？
+### 什么是域名
 
 域名是由一串用点分隔符 `.` 组成的互联网上某一台计算机或计算机组的名称，用于在数据传输时标识计算机的方位。域名可以说是一个 IP 地址的代称，目的是为了便于记忆后者。例如，wikipedia.org 是一个域名，和 IP 地址 208.80.152.2 相对应。人们可以直接访问 wikipedia.org 来代替 IP 地址，然后域名系统（DNS）就会将它转化成便于机器识别的 IP 地址。这样，人们只需要记忆 wikipedia.org 这一串带有特殊含义的字符，而不需要记忆没有含义的数字。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/application/dns/dns-domain.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/application/dns/dns-domain.png!zp"/></div>
 
 ### DNS 的分层
 
@@ -76,7 +56,7 @@ DNS 中，常见的资源记录类型有：
 
 通过域名去查询域名服务器，得到 IP 地址的过程叫做域名解析。在解析域名时，一般先静态域名解析，再动态解析域名。可以将一些常用的域名放入静态域名解析表中，这样可以大大提高域名解析效率。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/application/dns/dns-resolve.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/application/dns/dns-resolve.png!zp"/></div>
 
 上图展示了一个动态域名解析的流程，步骤如下：
 
@@ -108,7 +88,7 @@ DNS 中，常见的资源记录类型有：
 
 示例：
 
-```sh
+```bash
 $ hostname
 AY1307311912260196fcZ
 ```
@@ -121,7 +101,7 @@ AY1307311912260196fcZ
 
 示例：
 
-```sh
+```bash
 [root@localhost ~]# nslookup www.jsdig.com
 Server:         202.96.104.15
 Address:        202.96.104.15#53

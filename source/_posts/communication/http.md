@@ -1,30 +1,13 @@
 ---
 title: 网络协议之 HTTP
-categories: ['communication']
-tags: ['communication', 'network', 'application', 'protocol']
+categories: ['通信']
+tags: ['通信', '网络', '协议']
 date: 2016-01-08 22:14
 ---
 
-# 网络协议之 HTTP
+## HTTP 是什么
 
-> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
-
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-- [HTTP 是什么？](#http-是什么)
-- [实例](#实例)
-- [工作原理](#工作原理)
-- [特点](#特点)
-- [客户端请求消息](#客户端请求消息)
-- [服务器响应消息](#服务器响应消息)
-- [HTTP 状态码](#http-状态码)
-- [更多内容](#更多内容)
-
-<!-- /TOC -->
-
-## HTTP 是什么？
-
-HTTP（HyperText Transfer Protocol，超文本传输协议）是 WWW (World Wide Web)实现数据通信的基石。
+HTTP（HyperText Transfer Protocol）即超文本传输协议，是互联网上应用最为广泛的一种网络协议。所有的 WWW（万维网） 文件都必须遵守这个标准。设计 HTTP 最初的目的是为了提供一种发布和接收 HTML 页面的方法。
 
 HTTP 是由 **IETF**(Internet Engineering Task Force，互联网工程工作小组) 和 **W3C**(World Wide Web Consortium，万维网协会) 共同合作制订的，它们发布了一系列的**RFC**(Request For Comments)，其中最著名的是 RFC 2616，它定义了**HTTP /1.1**。
 
@@ -216,6 +199,8 @@ HTTP 状态码由三个十进制数字组成，第一个十进制数字定义了
 
 ## 更多内容
 
+- [图解 HTTP](https://book.douban.com/subject/25863515/)
 - http://blog.csdn.net/gueter/article/details/1524447
 - http://www.runoob.com/http/http-intro.html
 - https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol
+- https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS

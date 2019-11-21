@@ -1,15 +1,13 @@
 ---
-title: 计算机网络概述
-categories: ['communication']
-tags: ['communication', 'network']
+title: 计算机网络指南
+categories: ['通信']
+tags: ['通信', '网络']
 date: 2019-02-20 22:26
 ---
 
-# 计算机网络概述
-
 > 计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/network.jpg"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/network.jpg!zp"/></div>
 
 ## 💡 指南
 
@@ -53,7 +51,7 @@ date: 2019-02-20 22:26
 
 计算机网络的拓扑结构可分为：
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/overview/network-topological-structure.gif"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/overview/network-topological-structure.gif!zp"/></div>
 
 - 网型拓扑网型网（Mesh network）
 - 环型拓扑环型网（Ring network）
@@ -78,49 +76,98 @@ date: 2019-02-20 22:26
 - **时延（delay）**
   - 总时延 = 排队时延 + 处理时延 + 传输时延 + 传播时延
 
-### 体系结构
+## 网络分层
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/overview/network-layers.png"/></div>
+> 计算机网络如何分层？各层的作用是什么？各层的主要协议、设备分别是什么？
+>
+> 这是学习计算机网络知识宏观层面必须要了解的核心点。知道了这些，对于网络的体系结构就基本上了解了。
 
-- [物理层](physical) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
-- [数据链路层](data-link-layer.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-- [网络层](network) - 关键词：`IP`、`ICMP`、`ARP`、路由
-- [传输层](transport) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
-- [应用层](application) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/overview/network-layers.png!zp"/></div>
 
-- **[物理层（Physical Layer）](network-physical.md)** - 物理层只接收和发送一串比特(bit)流，不考虑信息的意义和信息结构。
-  - 数据单元：比特流。
-  - 典型设备：光纤、同轴电缆、双绞线、中继器和集线器。
-- **[数据链路层（Data Link Layer）](network-data-link.md)** - 网络层针对的还是主机之间的数据传输服务，而主机之间可以有很多链路，链路层协议就是为同一链路的主机提供数据传输服务。数据链路层把网络层传下来的分组封装成帧。
-  - 主要协议：`PPP`、`CSMA/CD` 等。
-  - 数据单元：帧（frame）。
-  - 典型设备：二层交换机、网桥、网卡。
-- **[网络层（network layer）](network-network.md)** - 为分组交换网上的不同主机提供通信服务。在发送数据时，网络层把运输层产生的报文段或用户数据报封装成分组或包进行传送。
-  - 主要协议：`IP`。
-  - 数据单元：IP 数据报（packet）。
-  - 典型设备：网关、路由器。
-- **[传输层（transport layer）](network-transport.md)** - 为两台主机中进程间的通信提供通用的数据传输服务。
-  - 主要协议：`TCP`、`UDP`。
-  - 数据单元：报文段（segment）或用户数据报。
-- **会话层（Session Layer）** - 会话层不参与具体的传输，它提供包括访问验证和会话管理在内的建立和维护应用之间通信的机制。
-- **表示层（Presentation Layer）** - 表示层是为在应用过程之间传送的信息提供表示方法的服务，它关心的只是发出信息的语法与语义。表示层要完成某些特定的功能，主要有不同数据编码格式的转换，提供数据压缩、解压缩服务，对数据进行加密、解密。
-- **[应用层（application layer）](network-application.md)** - 通过应用进程间的交互来完成特定网络应用。应用层协议定义的是应用进程间通信和交互的规则。
-  - 主要协议：`HTTP`、`DNS`、`SMTP`、`Telnet`、`FTP`、`SNMP` 等。
-  - 数据单元：报文（message）。
+计算机网络分层一般有三种划分体系：OSI 分层；五层协议分层；TCP/IP 协议分层。
 
-## 📚 学习资源
+- OSI 的七层体系结构概念清楚，理论完整，但是比较复杂且不实用，所以并不流行。
+- 五层协议分层是一种折中方案，在现实中更为流行。
 
-### 书
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/overview/网络分层架构图.png!zp"/></div>
 
-- 谢希仁, 计算机网络 - 国内很多大学将其作为计算机网络课程的指定教材，通俗易懂，适合作为入门教材。
-- W·Richard Stevens, [TCP/IP 详解 卷 1：协议](https://book.douban.com/subject/1088054/) - TCP/IP 详解三部曲，适合作为进阶教材
-- W·Richard Stevens, [TCP/IP 详解 卷 2：实现](https://book.douban.com/subject/1087767/)
-- W·Richard Stevens, [TCP/IP 详解 卷 3：TCP 事务协议、HTTP、NNTP 和 UNIX 域协议](https://book.douban.com/subject/1088054/)
+### 物理层
 
-### 站点
+> 物理层（Physical Layer）只接收和发送一串比特(bit)流，不考虑信息的意义和信息结构。
+>
+> 扩展阅读：[计算机网络之物理层](network-physical.md)
 
-- https://www.rfc-editor.org/ - 在线查阅、下载 RFC 文档
+- 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+- 数据单元：比特流。
+- 典型设备：光纤、同轴电缆、双绞线、中继器和集线器。
 
+### 数据链路层
+
+> 网络层针对的还是主机之间的数据传输服务，而主机之间可以有很多链路，数据链路层（Data Link Layer）就是为同一链路的主机提供数据传输服务。数据链路层把网络层传下来的分组封装成帧。
+>
+> 扩展阅读：[计算机网络之数据链路层](network-data-link.md)
+
+- 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+- 主要协议：`PPP`、`CSMA/CD` 等。
+- 数据单元：帧（frame）。
+- 典型设备：二层交换机、网桥、网卡。
+
+### 网络层
+
+> 网络层（network layer）为分组交换网上的不同主机提供通信服务。在发送数据时，网络层把运输层产生的报文段或用户数据报封装成分组或包进行传送。
+>
+> 扩展阅读：[计算机网络之网络层](network-network.md)
+
+- 关键词：`IP`、`ICMP`、`ARP`、路由
+- 主要协议：`IP`。
+- 数据单元：IP 数据报（packet）。
+- 典型设备：网关、路由器。
+
+### 传输层
+
+> 传输层（transport layer）为两台主机中进程间的通信提供通用的数据传输服务。
+>
+> 扩展阅读：[计算机网络之网络层](network-network.md)
+
+- 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- 主要协议：`TCP`、`UDP`。
+- 数据单元：报文段（segment）或用户数据报。
+
+### \~~会话层\~~
+
+> \~~会话层（Session Layer）不参与具体的传输，它提供包括访问验证和会话管理在内的建立和维护应用之间通信的机制。\~~
+
+### \~~表示层\~~
+
+> \~~表示层（Presentation Layer）是为在应用过程之间传送的信息提供表示方法的服务，它关心的只是发出信息的语法与语义。表示层要完成某些特定的功能，主要有不同数据编码格式的转换，提供数据压缩、解压缩服务，对数据进行加密、解密。\~~
+
+### 应用层
+
+> 应用层（application layer）通过应用进程间的交互来完成特定网络应用。应用层协议定义的是应用进程间通信和交互的规则。
+>
+> 扩展阅读：[计算机网络之应用层](network-application.md)
+
+- 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- 主要协议：`HTTP`、`DNS`、`SMTP`、`Telnet`、`FTP`、`SNMP` 等。
+- 数据单元：报文（message）。
+
+## 资源
+
+- 书
+  - [HTTP 权威指南](https://book.douban.com/subject/10746113/)
+  - [TCP/IP 详解 卷 1：协议](https://book.douban.com/subject/1088054/)
+  - [TCP/IP 详解 卷 2：实现](https://book.douban.com/subject/1087767/)
+  - [TCP/IP 详解 卷 3：TCP 事务协议、HTTP、NNTP 和 UNIX 域协议](https://book.douban.com/subject/1058634/)
+  - [Web性能权威指南](https://book.douban.com/subject/25856314/)
+  - [图解 HTTP](https://book.douban.com/subject/25863515/)
+  - [图解TCP/IP](https://book.douban.com/subject/24737674/)
+  - [计算机网络（第7版）](https://book.douban.com/subject/26960678/) - 谢希仁
+- 站点
+  - https://www.rfc-editor.org/ - 在线查阅、下载 RFC 文档
+- 工具
+  - [WireShark](https://www.wireshark.org/)
+  - [Postman](https://www.getpostman.com/)
+ 
 ## :door: 传送门
 
 | [回首頁](https://github.com/dunwu/blog) |

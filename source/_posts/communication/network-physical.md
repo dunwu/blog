@@ -1,11 +1,9 @@
 ---
 title: 计算机网络之物理层
-categories: ['communication']
-tags: ['communication', 'network', 'physical']
+categories: ['通信']
+tags: ['通信', '网络']
 date: 2019-03-06
 ---
-
-# 计算机网络之物理层
 
 > **摘要**
 >
@@ -14,21 +12,9 @@ date: 2019-03-06
 > - 数据单元：比特流。
 > - 典型设备：光纤、同轴电缆、双绞线、中继器和集线器。
 
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-- [通信系统模型](#通信系统模型)
-- [通信方式](#通信方式)
-- [通信信号](#通信信号)
-- [调制解调](#调制解调)
-    - [基本带通调制方法](#基本带通调制方法)
-- [通信媒介](#通信媒介)
-- [信道复用](#信道复用)
-
-<!-- /TOC -->
-
 ## 通信系统模型
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/physical/数据通信系统的模型.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/physical/数据通信系统的模型.png!zp"/></div>
 
 通信系统模型分为三大部分：源系统（包括信源和发送器）、传输系统、目的系统（包括信宿接收器）。
 
@@ -41,7 +27,7 @@ date: 2019-03-06
 
 ## 通信方式
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/physical/通信方式.jpg"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/physical/通信方式.jpg!zp"/></div>
 
 有三种通信方式：
 
@@ -74,7 +60,7 @@ date: 2019-03-06
 
 ### 基本带通调制方法
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/physical/基本调制方法.png"/></div>
+<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/physical/基本调制方法.png!zp"/></div>
 
 如果你收听过广播，一定经常听到 AM、FM 这两个关键词，这是什么意思呢？答案如下：
 

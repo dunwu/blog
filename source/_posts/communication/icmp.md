@@ -1,30 +1,9 @@
 ---
-title: ICMP
-categories: ['communication']
-tags: ['communication', 'network', 'protocol']
+title: 网络协议之 ICMP
+categories: ['通信']
+tags: ['通信', '网络', '协议']
 date: 2014-07-02 20:54
 ---
-
-# ICMP
-
-> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
-
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-- [ICMP 简介](#icmp-简介)
-- [ICMP 类型](#icmp-类型)
-- [目的不可达(Destination Unreachable Message)](#目的不可达destination-unreachable-message)
-- [超时(Time Exceeded Message)](#超时time-exceeded-message)
-- [参数错误报文(Parameter Problem Message)](#参数错误报文parameter-problem-message)
-- [源冷却(Source Quench Message)](#源冷却source-quench-message)
-- [重定向(Redirect Message)](#重定向redirect-message)
-- [请求回显或回显应答(Echo or Echo Reply Message)](#请求回显或回显应答echo-or-echo-reply-message)
-- [时间戳或时间戳请求(Timestamp or Timestamp Reply Message)](#时间戳或时间戳请求timestamp-or-timestamp-reply-message)
-- [信息请求或信息响应](#信息请求或信息响应)
-- [总结](#总结)
-- [参考](#参考)
-
-<!-- /TOC -->
 
 ## ICMP 简介
 
@@ -35,8 +14,6 @@ ICMP 的协议号为**1**。
 ICMP 报文就像是 IP 报文的小弟，总顶着 IP 报文的名头出来混。因为 ICMP 报文是在 IP 报文内部的，如图：
 
 <div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201606/318837-20160617091834260-1410966672.png"/></div>
-
-图：IP 数据报
 
 ## ICMP 类型
 
