@@ -1,35 +1,13 @@
 ---
 title: 软件工程与项目管理
-categories: ['method', '软件工程']
-tags: ['method', '软件工程', '项目管理', '方法论']
+categories: ['效率提升']
+tags: ['效率提升', '软件工程', '管理']
 date: 2017-11-20 17:35
 ---
 
-# 软件工程与项目管理
-
 > :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
-
+>
 > 软件工程是一门研究用工程化方法构建和维护有效的、实用的和高质量的软件的学科。它涉及程序设计语言、数据库、软件开发工具、系统平台、标准、设计模式等方面。
-
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-- [软件工程的目标](#软件工程的目标)
-- [软件工程的原理](#软件工程的原理)
-- [软件工程的方法](#软件工程的方法)
-- [软件需求](#软件需求)
-    - [软件需求说明书（ SRS ）](#软件需求说明书-srs-)
-- [软件生命周期](#软件生命周期)
-- [软件生命周期模型](#软件生命周期模型)
-    - [瀑布模型](#瀑布模型)
-    - [螺旋模型](#螺旋模型)
-- [软件工程术语](#软件工程术语)
-- [更多内容](#更多内容)
-    - [书](#书)
-    - [文章](#文章)
-    - [工具](#工具)
-    - [文档模板](#文档模板)
-
-<!-- /TOC -->
 
 ## 软件工程的目标
 
@@ -180,23 +158,16 @@ date: 2017-11-20 17:35
 - **人月** - 软件开发的工作量单位。如 200 人月，10 个人开发，那算来就是花 20 个月就可完工。
 - **基线** - 基线是项目储存库中每个工件版本在特定时期的一个“快照”。它提供一个正式标准，随后的工作基于此标准，并且只有经过授权后才能变更这个标准。建立一个初始基线后，以后每次对其进行的变更都将记录为一个差值，直到建成下一个基线。
 
-## 更多内容
+## 资源
 
-### 书
-
-- [人月神话](https://book.douban.com/subject/2230248/)
-- [代码大全](https://book.douban.com/subject/1477390/)
-
-### 文章
-
-- [使用甘特图做项目管理](https://juejin.im/post/5a4991e151882574d23cafbf)
-- [使用燃尽图监控项目整体进度](https://juejin.im/post/5c1f6a1e6fb9a04a03793573)
-
-### 工具
-
-- [10 大开源免费的项目管理软件推荐](https://my.oschina.net/editorial-story/blog/1559395)
-- [http://www.ruanyifeng.com/blog/2017/08/issue.html](http://www.ruanyifeng.com/blog/2017/08/issue.html)
-
-### 文档模板
-
-- [软件工程文档标准模板百度网盘下载](https://pan.baidu.com/s/1sXTOs1PSDyw9P2zWtzbsmw) - 下载密码：uu1f
+- **书籍**
+  - [人月神话](https://book.douban.com/subject/2230248/)
+  - [代码大全](https://book.douban.com/subject/1477390/)
+- **文章**
+  - [使用甘特图做项目管理](https://juejin.im/post/5a4991e151882574d23cafbf)
+  - [使用燃尽图监控项目整体进度](https://juejin.im/post/5c1f6a1e6fb9a04a03793573)
+- **工具**
+  - [10 大开源免费的项目管理软件推荐](https://my.oschina.net/editorial-story/blog/1559395)
+  - [http://www.ruanyifeng.com/blog/2017/08/issue.html](http://www.ruanyifeng.com/blog/2017/08/issue.html)
+- **文档模板**
+  - [软件工程文档标准模板百度网盘下载](https://pan.baidu.com/s/1sXTOs1PSDyw9P2zWtzbsmw) - 下载密码：uu1f
