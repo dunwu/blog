@@ -7,7 +7,7 @@ tags: ['','']
 
 # Title
 
-> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+> 📓 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

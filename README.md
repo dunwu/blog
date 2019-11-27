@@ -1,11 +1,14 @@
 <div align="center"><a href="https://dunwu.github.io/blog/"><img src="http://dunwu.test.upcdn.net/cs/others/zpblog.png"/></a></div>
 <div align="center"><h1>Blog</h1></div>
+
 ## 计算机科学
 
 - **数据库**
-  - [数据库教程](https://dunwu.github.io/db-tutorial/) 📚
+  - [数据库教程 📚](https://dunwu.github.io/db-tutorial/)
 - **操作系统**
-  - [Linux 教程](https://dunwu.github.io/linux-tutorial/) 📚
+  - [Linux 教程 📚](https://dunwu.github.io/linux-tutorial/)
+  - [Windows 常用技巧总结](source/_posts/os/windows.md)
+  - [Mac 常用技巧总结](source/_posts/os/mac.md)
 - **网络通信**
   - **面试**
     - [网络通信面经](source/_posts/communication/network-interview.md)
@@ -36,9 +39,8 @@
 
 > 软件整体结构与组件的抽象描述，用于指导大型软件系统各个方面的设计。重点是分而治之，先将大型系统抽象为各个组件或模块；然后逐一解决各组件、各模块的功能、性能问题；最后将这些组件、模块整合成对外服务的一个整体。
 
-- [分布式原理](source/_posts/design/architecture/分布式原理.md)
-- [分布式技术实现](source/_posts/design/architecture/分布式技术实现.md)
 - [分布式技术面试题](source/_posts/design/architecture/分布式技术面试题.md)
+- [分布式技术实现](source/_posts/design/architecture/分布式技术实现.md)
 - [分布式架构](source/_posts/design/architecture/分布式架构.md)
 - [大型分布式网站架构](source/_posts/design/architecture/大型分布式网站架构.md)
 - [大型网站架构概述](source/_posts/design/architecture/大型网站架构概述.md)
@@ -48,7 +50,21 @@
 - [网站的安全架构](source/_posts/design/architecture/网站的安全架构.md)
 - [网站的高可用架构](source/_posts/design/architecture/网站的高可用架构.md)
 - [网站的高性能架构](source/_posts/design/architecture/网站的高性能架构.md)
-- [负载均衡](source/_posts/design/architecture/负载均衡.md)
+
+### 系统原理
+
+- [系统原理面试题](source/_posts/design/theory/system-theory-interview.md)
+- [分布式基本原理](source/_posts/design/theory/distributed-base-theory.md)
+- [负载均衡基本原理](source/_posts/design/theory/load-balance-theory.md)
+- [缓存基本原理](source/_posts/design/theory/cache-theory.md)
+- [消息队列基本原理](source/_posts/design/theory/mq-theory.md)
+- [分布式锁基本原理](source/_posts/design/theory/distributed-lock-theory.md)
+- [分布式会话基本原理](source/_posts/design/theory/distributed-session-theory.md)
+- [分布式存储基本原理](source/_posts/design/theory/distributed-storage-theory.md)
+- [分布式 ID 基本原理](source/_posts/design/theory/distributed-id-theory.md)
+- [分布式事务基本原理](source/_posts/design/theory/distributed-transaction-theory.md)
+- [分库分表基本原理](source/_posts/design/theory/sharding-theory.md)
+- [常见安全手段基本原理](source/_posts/design/theory/security-theory.md)
 
 ### 重构
 
@@ -66,7 +82,7 @@
 ## 开发
 
 - **编程**
-  - [如何学习一门编程语言](blog/source/_posts/coding/programming-guide.md)
+  - [如何学习一门编程语言](source/_posts/coding/programming-guide.md)
   - [一篇文章让你彻底掌握 Python](source/_posts/coding/python.md)
   - [一篇文章让你彻底掌握 Shell](source/_posts/coding/shell.md)
   - [Java 教程](https://turnon.gitee.io/java-tutorial/) 📚 - 本人作为一名 Java 程序员，十年的技术积累，汇总与此。
@@ -91,10 +107,6 @@
 - [合理规划项目](source/_posts/efficiency/style/project-style.md)
 - [合理对文档进行归类](source/_posts/efficiency/style/dir-style.md)
 - [合理编排技术文档](source/_posts/efficiency/style/doc-style.md)
-
-## 说明
-
-- 本项目中的文档遵循『[合理编排你的技术文档](source/_posts/method/doc-style.md)』。
 
 ## License
 

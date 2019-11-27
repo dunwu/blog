@@ -9,7 +9,7 @@ date: 2017-11-17 18:16
 >
 > 本文主要介绍 bash 的语法，对于 linux 指令不做任何介绍。
 >
-> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+> 📓 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 > 🔁 本文的源码已归档到 [linux-tutorial](https://github.com/dunwu/linux-tutorial/tree/master/codes/shell/demos)
 
 ```
@@ -1880,7 +1880,7 @@ printf "\n"
 
 ## 12. 更多内容
 
-> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+> 📓 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 - [awesome-shell](https://github.com/alebcay/awesome-shell)，shell 资源列表
 - [awesome-bash](https://github.com/awesome-lists/awesome-bash)，bash 资源列表

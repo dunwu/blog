@@ -5,7 +5,7 @@ tags: ['工具', '正则']
 date: 2016-10-10 11:45
 ---
 
-> :notebook: 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+> 📓 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 ## 简介
 
