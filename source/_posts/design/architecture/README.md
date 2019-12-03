@@ -9,18 +9,20 @@ date: 2019-03-08 13:16:53
 
 ## 内容
 
-- [分布式技术实现](分布式技术实现.md)
-- [分布式技术面试题](分布式技术面试题.md)
-- [分布式架构](分布式架构.md)
-- [大型分布式网站架构](大型分布式网站架构.md)
-- [大型网站架构概述](大型网站架构概述.md)
-- [网站典型故障](网站典型故障.md)
-- [网站的伸缩性架构](网站的伸缩性架构.md)
-- [网站的可扩展架构](网站的可扩展架构.md)
-- [网站的安全架构](网站的安全架构.md)
-- [网站的高可用架构](网站的高可用架构.md)
-- [网站的高性能架构](网站的高性能架构.md)
+- [系统架构面试题](system-architecture-interview.md)
+- [系统架构概述](system-architecture-overview.md)
+- [高性能架构](high-performance-architecture.md)
+- [高可用架构](high-availability-architecture.md)
+- [伸缩性架构](scalable-architecture.md)
+- [扩展性架构](extensible-architecture.md)
+- [安全性架构](secure-architecture.md)
+- [大型系统核心技术](system-core-technologies.md)
 
-## 参考资料
+## 学习资料
 
-- [系统设计入门](https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md)
+- **书籍**
+  - [企业 IT 架构转型之道：阿里巴巴中台战略思想与架构实战](https://item.jd.com/12176278.html)
+  - [大型网站系统与 Java 中间件实践](https://item.jd.com/11449803.html)
+  - [大型网站技术架构：核心原理与案例分析](https://item.jd.com/11322972.html)
+  - [亿级流量网站架构核心技术：跟开涛学搭建高可用高并发系统](https://item.jd.com/12153914.html)
+  - [逆流而上：阿里巴巴技术成长之路](https://item.jd.com/12238227.html)

@@ -1,32 +1,19 @@
 ---
-title: 分布式技术实现
+title: 大型系统核心技术
 date: 2018-07-09
 categories: ['设计', '架构']
 tags: ['设计', '架构', '分布式']
 ---
 
-# 分布式技术实现
+# 大型系统核心技术
 
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-- [1. 分布式事务](#1-分布式事务)
-- [2. 分布式锁](#2-分布式锁)
-    - [2.1. 基于数据库实现分布式锁](#21-基于数据库实现分布式锁)
-    - [2.2. 基于 Redis 实现分布式锁](#22-基于-redis-实现分布式锁)
-    - [2.3. 基于 ZooKeeper 实现分布式锁](#23-基于-zookeeper-实现分布式锁)
-- [3. 分布式 Session](#3-分布式-session)
-    - [3.1. Sticky Sessions](#31-sticky-sessions)
-    - [3.2. Session Replication](#32-session-replication)
-    - [3.3. Session Server](#33-session-server)
-- [4. 分布式存储](#4-分布式存储)
-- [5. 分布式缓存](#5-分布式缓存)
-- [6. 分布式计算](#6-分布式计算)
-- [7. 负载均衡](#7-负载均衡)
-    - [7.1. 算法](#71-算法)
-    - [7.2. 实现](#72-实现)
-- [8. 资料](#8-资料)
-
-<!-- /TOC -->
+> 大型系统的设计目标就是为了快速、高效、稳定的处理海量的数据以及高并发的请求。
+>
+> 单机服务受限于硬件，客观存在着资源瓶颈，难以应对不断增长的数据量和请求量，为了打破瓶颈，大型系统基本上都被设计为分布式系统。
+>
+> 分布式系统由于其面临的共性问题，在很多场景下的解决方案往往也存在着共性。因此，我们会发现，很多优秀的大型系统在设计方案上存在着很多的共同点。
+>
+> 本文主要讨论应对分布式系统共性问题的解决方案，这既可以加深对分布式系统运作原理的理解，也可以作为设计大型分布式系统时的借鉴。
 
 ## 1. 分布式事务
 
@@ -163,7 +150,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 缺点：当服务器节点宕机时，将丢失该服务器节点上的所有 Session。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/MultiNode-StickySessions.jpg" />
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-StickySessions.jpg" />
 </div>
 
 ### 3.2. Session Replication
@@ -173,7 +160,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 缺点：占用过多内存；同步过程占用网络带宽以及服务器处理器时间。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/MultiNode-SessionReplication.jpg" />
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-SessionReplication.jpg" />
 </div>
 
 ### 3.3. Session Server
@@ -183,7 +170,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 缺点：需要去实现存取 Session 的代码。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/MultiNode-SpringSession.jpg" />
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-SpringSession.jpg" />
 </div>
 
 ## 4. 分布式存储
@@ -227,13 +214,13 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 轮询算法把每个请求轮流发送到每个服务器上。下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。最后，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之轮询-01.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之轮询-01.jpg" width="640"/>
 </div>
 
 该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之轮询-02.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之轮询-02.jpg" width="640"/>
 </div>
 
 #### 加权轮询（Weighted Round Robbin）
@@ -241,7 +228,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值。例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之加权轮询.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之加权轮询.jpg" width="640"/>
 </div>
 
 #### 最少连接（least Connections）
@@ -249,13 +236,13 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开。该系统继续运行时，服务器 2 会承担过大的负载。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之最少连接-01.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之最少连接-01.jpg" width="640"/>
 </div>
 
 最少连接算法就是将请求发送给当前最少连接数的服务器上。例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之最少连接-02.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之最少连接-02.jpg" width="640"/>
 </div>
 
 #### 加权最少连接（Weighted Least Connection）
@@ -263,7 +250,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 在最少连接的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之加权最少连接.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之加权最少连接.jpg" width="640"/>
 </div>
 
 #### 随机算法（Random）
@@ -271,7 +258,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 把请求随机发送到服务器上。和轮询算法类似，该算法比较适合服务器性能差不多的场景。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之随机.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之随机.jpg" width="640"/>
 </div>
 
 #### 源地址哈希法 (IP Hash)
@@ -282,7 +269,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 - 缺点：不利于集群扩展，后台服务器数量变更都会影响 hash 结果。可以采用一致性 Hash 改进。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/负载均衡算法之IpHash.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之IpHash.jpg" width="640"/>
 </div>
 
 ### 7.2. 实现
@@ -297,7 +284,7 @@ HTTP 重定向负载均衡服务器收到 HTTP 请求之后会返回服务器的
 - 如果负载均衡器宕机，就无法访问该站点。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/Http重定向.png" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/Http重定向.png" width="640"/>
 </div>
 
 #### DNS 重定向
@@ -309,7 +296,7 @@ HTTP 重定向负载均衡服务器收到 HTTP 请求之后会返回服务器的
 - DNS 查找表可能会被客户端缓存起来，那么之后的所有请求都会被重定向到同一个服务器。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/Dns重定向.png" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/Dns重定向.png" width="640"/>
 </div>
 
 #### 修改 MAC 地址
@@ -317,7 +304,7 @@ HTTP 重定向负载均衡服务器收到 HTTP 请求之后会返回服务器的
 使用 LVS（Linux Virtual Server）这种链路层负载均衡器，根据负载情况修改请求的 MAC 地址。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/修改Mac地址.png" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/修改Mac地址.png" width="640"/>
 </div>
 
 #### 修改 IP 地址
@@ -325,7 +312,7 @@ HTTP 重定向负载均衡服务器收到 HTTP 请求之后会返回服务器的
 在网络层修改请求的目的 IP 地址。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/修改IP地址.png" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/修改IP地址.png" width="640"/>
 </div>
 
 #### 代理自动配置
@@ -338,7 +325,7 @@ HTTP 重定向负载均衡服务器收到 HTTP 请求之后会返回服务器的
 PAC 服务器是用来判断一个请求是否要经过代理。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/distributed/architecture/代理自动配置.jpg" width="640"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/代理自动配置.jpg" width="640"/>
 </div>
 
 ## 8. 资料

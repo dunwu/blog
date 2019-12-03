@@ -39,17 +39,14 @@
 
 > 软件整体结构与组件的抽象描述，用于指导大型软件系统各个方面的设计。重点是分而治之，先将大型系统抽象为各个组件或模块；然后逐一解决各组件、各模块的功能、性能问题；最后将这些组件、模块整合成对外服务的一个整体。
 
-- [分布式技术面试题](source/_posts/design/architecture/分布式技术面试题.md)
-- [分布式技术实现](source/_posts/design/architecture/分布式技术实现.md)
-- [分布式架构](source/_posts/design/architecture/分布式架构.md)
-- [大型分布式网站架构](source/_posts/design/architecture/大型分布式网站架构.md)
-- [大型网站架构概述](source/_posts/design/architecture/大型网站架构概述.md)
-- [网站典型故障](source/_posts/design/architecture/网站典型故障.md)
-- [网站的伸缩性架构](source/_posts/design/architecture/网站的伸缩性架构.md)
-- [网站的可扩展架构](source/_posts/design/architecture/网站的可扩展架构.md)
-- [网站的安全架构](source/_posts/design/architecture/网站的安全架构.md)
-- [网站的高可用架构](source/_posts/design/architecture/网站的高可用架构.md)
-- [网站的高性能架构](source/_posts/design/architecture/网站的高性能架构.md)
+- [系统架构面试题](source/_posts/design/architecture/system-architecture-interview.md)
+- [系统架构概述](source/_posts/design/architecture/system-architecture-overview.md)
+- [高性能架构](source/_posts/design/architecture/high-performance-architecture.md)
+- [高可用架构](source/_posts/design/architecture/high-availability-architecture.md)
+- [伸缩性架构](source/_posts/design/architecture/scalable-architecture.md)
+- [扩展性架构](source/_posts/design/architecture/extensible-architecture.md)
+- [安全性架构](source/_posts/design/architecture/secure-architecture.md)
+- [大型系统核心技术](source/_posts/design/architecture/system-core-technologies.md)
 
 ### 系统原理
 
