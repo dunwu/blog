@@ -952,7 +952,16 @@ IPv6 地址可以表示为以下形式：
 
 ## 参考资料
 
-- [正则表达式 30 分钟入门教程](http://deerchao.net/tutorials/regex/regex.htm)
-- [msdn 正则表达式教程](<https://msdn.microsoft.com/zh-cn/library/d9eze55x(v=vs.80).aspx>)
-- [正则应用之——日期正则表达式](http://blog.csdn.net/lxcnn/article/details/4362500)
-- [http://www.regexlib.com/](http://www.regexlib.com/)
+- **教程**
+  - [正则表达式 30 分钟入门教程](http://deerchao.net/tutorials/regex/regex.htm)
+  - [msdn 正则表达式教程](<https://msdn.microsoft.com/zh-cn/library/d9eze55x(v=vs.80).aspx>)
+  - [正则应用之——日期正则表达式](http://blog.csdn.net/lxcnn/article/details/4362500)
+  - [learn-regex](https://github.com/ziishaned/learn-regex)
+  - [http://www.regexlib.com/](http://www.regexlib.com/)
+- **文章/常用正则表达式**
+  - [ChinaMobilePhoneNumberRegex](https://github.com/VincentSit/ChinaMobilePhoneNumberRegex/blob/master/README-CN.md)
+  - https://github.com/cdoco/common-regex
+- **正则测试**
+  -  [https://regex101.com](https://regex101.com/)
+  -  [https://regexr.com](https://regexr.com/)
+  -  [https://www.debuggex.com](https://www.debuggex.com/)
