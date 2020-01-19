@@ -83,19 +83,19 @@ Token 的意思是“令牌”，是服务端生成的一串字符串，作为�
 
 ### 2.1. 粘性 Session
 
-> 粘性 Session（Sticky Sessions）需要配置负载均衡器，使得一个用户的所有请求都路由到一个服务器节点上，这样就可以把用户的 Session 存放在该服务器节点中。
+> 粘性 Session（Sticky Sessions）**需要配置负载均衡器，使得一个用户的所有请求都路由到一个服务器节点上**，这样就可以把用户的 Session 存放在该服务器节点中。
 >
-> 缺点：当服务器节点宕机时，将丢失该服务器节点上的所有 Session。
+> 缺点：**当服务器节点宕机时，将丢失该服务器节点上的所有 Session**。
 
 <div align="center">
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-StickySessions.jpg!zp" />
 </div>
 
-### 2.2. session 复制共享
+### 2.2. Session 复制共享
 
-> Session 复制共享（Session Replication）在服务器节点之间进行 Session 同步操作，这样的话用户可以访问任何一个服务器节点。
+> Session 复制共享（Session Replication）**在服务器节点之间进行 Session 同步操作**，这样的话用户可以访问任何一个服务器节点。
 >
-> 缺点：占用过多内存；同步过程占用网络带宽以及服务器处理器时间。
+> 缺点：**占用过多内存**；**同步过程占用网络带宽以及服务器处理器时间**。
 
 <div align="center">
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-SessionReplication.jpg!zp" />
@@ -103,7 +103,7 @@ Token 的意思是“令牌”，是服务端生成的一串字符串，作为�
 
 ### 2.3. 基于缓存的 session 共享
 
-> 使用一个单独的存储服务器存储 Session 数据，可以存在 MySQL 数据库上，也可以存在 Redis 或者 Memcached 这种内存型数据库。
+> **使用一个单独的存储服务器存储 Session 数据**，可以存在 MySQL 数据库上，也可以存在 Redis 或者 Memcached 这种内存型数据库。
 >
 > 缺点：需要去实现存取 Session 的代码。
 

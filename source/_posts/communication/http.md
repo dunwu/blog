@@ -5,27 +5,60 @@ tags: ['通信', '网络', '协议']
 date: 2016-01-08 22:14
 ---
 
-## HTTP 是什么
+# 网络协议之 HTTP
 
-HTTP（HyperText Transfer Protocol）即超文本传输协议，是互联网上应用最为广泛的一种网络协议。所有的 WWW（万维网） 文件都必须遵守这个标准。设计 HTTP 最初的目的是为了提供一种发布和接收 HTML 页面的方法。
+> **超文本传输协议（HTTP）**是一个用于传输超媒体文档（例如 HTML）的[应用层](https://en.wikipedia.org/wiki/Application_Layer)协议。
+
+<!-- TOC depthFrom:2 depthTo:2 -->
+
+- [HTTP 简介](#http-简介)
+- [工作原理](#工作原理)
+- [HTTP 报文](#http-报文)
+- [HTTPS](#https)
+- [Cookie 和 Session](#cookie-和-session)
+- [参考资料](#参考资料)
+
+<!-- /TOC -->
+
+## HTTP 简介
+
+### HTTP 是什么
+
+**超文本传输协议（HTTP）**是一个用于传输超媒体文档（例如 HTML）的[应用层](https://en.wikipedia.org/wiki/Application_Layer)协议。它是为 Web 浏览器与 Web 服务器之间的通信而设计的，但也可以用于其他目的。HTTP 遵循经典的[客户端-服务端模型](https://en.wikipedia.org/wiki/Client–server_model)，客户端打开一个连接以发出请求，然后等待它收到服务器端响应。HTTP 是[无状态协议](http://en.wikipedia.org/wiki/Stateless_protocol)，这意味着服务器不会在两个请求之间保留任何数据（状态）。该协议虽然通常基于 TCP/IP 层，但可以在任何可靠的[传输层](https://zh.wikipedia.org/wiki/传输层)上使用；也就是说，不像 UDP，它是一个不会静默丢失消息的协议。
 
 HTTP 是由 **IETF**(Internet Engineering Task Force，互联网工程工作小组) 和 **W3C**(World Wide Web Consortium，万维网协会) 共同合作制订的，它们发布了一系列的**RFC**(Request For Comments)，其中最著名的是 RFC 2616，它定义了**HTTP /1.1**。
 
-它是一种应用层协议（OSI 七层模型的最顶层），它基于 TCP/IP 通信协议来传递数据（HTML 文件, 图片文件, 查询结果等）。
+![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119131949.png)
 
-## 实例
+### HTTP 协议特点
 
-如果你学习过计算机网络，熟悉 OSI 模型，那么你可以跳过这个实例了。
+- **无连接的** - 无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。
+- **无状态的** - HTTP 协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。
+- **媒体独立的** - 这意味着，只要客户端和服务器知道如何处理的数据内容，任何类型的数据都可以通过 HTTP 发送。客户端以及服务器指定使用适合的 MIME-type 内容类型。
+- **C/S 模型的** - 基于 Client/Server 模型工作。
 
-而不了解 OSI 模型的朋友，不妨通过一个实例来对 HTTP 报文有一个感性的认识。
+### HTTP 版本特性
 
-以下是使用 wireshark 抓取的一个实际访问百度首页的 HTTP GET 报文：
+#### HTTP 1.1
 
-<div align="center"><img src="http://images2015.cnblogs.com/blog/318837/201601/318837-20160108221137996-786139964.png"/></div>
+HTTP1.0 和 HTTP 1.1 主要区别如下：
 
-可以清楚的看到它的层级结构如下图，经过了层层的包装。
+- **缓存处理**，在 HTTP1.0 中主要使用 header 里的 If-Modified-Since,Expires 来做为缓存判断的标准，HTTP1.1 则引入了更多的缓存控制策略例如 Entity tag，If-Unmodified-Since, If-Match, If-None-Match 等更多可供选择的缓存头来控制缓存策略。
+- **带宽优化及网络连接的使用**
+- **错误通知的管理** - HTTP1.1 中新增了 24 个错误状态响应码。
+- **Host 头处理**
+  - HTTP1.0 中认为每台服务器都绑定一个唯一的 IP 地址，因此，请求消息中的 URL 并没有传递主机名（hostname）。
+  - 随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机，并且它们共享一个 IP 地址。HTTP1.1 的请求消息和响应消息都应支持 Host 头域，且请求消息中如果没有 Host 头域会报告一个错误（400 Bad Request）。
+- **长连接**，HTTP 1.1 支持长连接（PersistentConnection）和请求的流水线（Pipelining）处理，在一个 TCP 连接上可以传送多个 HTTP 请求和响应，减少了建立和关闭连接的消耗和延迟，在 HTTP1.1 中默认开启 Connection： keep-alive，一定程度上弥补了 HTTP1.0 每次请求都要创建连接的缺点。
 
-<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221140731-222242798.png"/></div>
+#### HTTP 2.0
+
+HTTP/2 在 HTTP/1.1 有几处基本的不同:
+
+- HTTP/2 是二进制协议而不是文本协议。不再可读，也不可无障碍的手动创建，改善的优化技术现在可被实施。
+- 这是一个复用协议。并行的请求能在同一个链接中处理，移除了 HTTP/1.x 中顺序和阻塞的约束。
+- 压缩了 headers。因为 headers 在一系列请求中常常是相似的，其移除了重复和传输重复数据的成本。
+- 其允许服务器在客户端缓存中填充数据，通过一个叫服务器推送的机制来提前请求。
 
 ## 工作原理
 
@@ -42,14 +75,19 @@ HTTP 工作于 **Client/Server** 模型上。
 3. **发送响应信息** - 服务器监听指定接口是否收到请求，一旦发现请求，处理后，返回响应结果给客户端。其格式为一个状态行包括信息的协议版本号、一个成功或错误的代码，后边是 MIME 信息包括服务器信息、实体信息和可能的内容。
 4. **关闭连接** - 客户端根据响应，显示结果给用户，最后关闭连接。
 
-## 特点
+### HTTP 优化
 
-- **无连接的** - 无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。
-- **无状态的** - HTTP 协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。
-- **媒体独立的** - 这意味着，只要客户端和服务器知道如何处理的数据内容，任何类型的数据都可以通过 HTTP 发送。客户端以及服务器指定使用适合的 MIME-type 内容类型。
-- **C/S 模型的** - 基于 Client/Server 模型工作。
+影响一个 HTTP 网络请求的因素主要有两个：**带宽和延迟。**
 
-# HTTP 消息结构
+- **带宽：**如果说我们还停留在拨号上网的阶段，带宽可能会成为一个比较严重影响请求的问题，但是现在网络基础建设已经使得带宽得到极大的提升，我们不再会担心由带宽而影响网速，那么就只剩下延迟了。
+
+- **延迟：**
+
+- - 浏览器阻塞（HOL blocking）：浏览器会因为一些原因阻塞请求。浏览器对于同一个域名，同时只能有 4 个连接（这个根据浏览器内核不同可能会有所差异），超过浏览器最大连接数限制，后续请求就会被阻塞。
+  - DNS 查询（DNS Lookup）：浏览器需要知道目标服务器的 IP 才能建立连接。将域名解析为 IP 的这个系统就是 DNS。这个通常可以利用 DNS 缓存结果来达到减少这个时间的目的。
+  - 建立连接（Initial connection）：HTTP 是基于 TCP 协议的，浏览器最快也要在第三次握手时才能捎带 HTTP 请求报文，达到真正的建立连接，但是这些连接无法复用会导致每次请求都经历三次握手和慢启动。三次握手在高延迟的场景下影响较明显，慢启动则对文件类大请求影响较大。
+
+## HTTP 报文
 
 HTTP 是基于客户端/服务端（C/S）的架构模型，通过一个可靠的链接来交换信息，是一个无状态的请求/响应协议。
 
@@ -62,26 +100,31 @@ HTTP 使用统一资源标识符（Uniform Resource Identifiers, URI）来传输
 一旦建立连接后，数据消息就通过类似 Internet 邮件所使用的格式[RFC5322]和多用途 Internet 邮件扩展（MIME）[RFC2045]来传送。
 
 <div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221141668-2097587842.png"/></div>
+以下是使用 wireshark 抓取的一个实际访问百度首页的 HTTP GET 报文：
 
-## 客户端请求消息
+<div align="center"><img src="http://images2015.cnblogs.com/blog/318837/201601/318837-20160108221137996-786139964.png"/></div>
+可以清楚的看到它的层级结构如下图，经过了层层的包装。
+
+<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221140731-222242798.png"/></div>
+### HTTP 请求报文
 
 客户端发送一个 HTTP 请求到服务器的请求消息包括以下格式：请求行（request line）、请求头部（header）、空行和请求数据四个部分组成，下图给出了请求报文的一般格式。
 
-<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221142028-743579086.png"/></div>
+![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119132129.png)
 
-## 服务器响应消息
+HTTP 请求报文由以下元素组成：
 
-HTTP 响应也由四个部分组成，分别是：状态行、消息报头、空行和响应正文。
-
-<div align="center"><img src="https://images2015.cnblogs.com/blog/318837/201601/318837-20160108221142606-879279999.jpg"/></div>
-
-# HTTP 请求
+- 一个 HTTP 的[method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)，经常是由一个动词像[`GET`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/GET), [`POST`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/POST) 或者一个名词像[`OPTIONS`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/OPTIONS)，[`HEAD`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/HEAD)来定义客户端的动作行为。通常客户端的操作都是获取资源（GET 方法）或者发送[HTML form](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms)表单值（POST 方法），虽然在一些情况下也会有其他操作。
+- 要获取的资源的路径，通常是上下文中就很明显的元素资源的 URL，它没有[protocol](https://developer.mozilla.org/en-US/docs/Glossary/protocol) （`http://`），[domain](https://developer.mozilla.org/en-US/docs/Glossary/domain)（`developer.mozilla.org`），或是 TCP 的[port](https://developer.mozilla.org/en-US/docs/Glossary/port)（HTTP 一般在 80 端口）。
+- HTTP 协议版本号。
+- 为服务端表达其他信息的可选头部[headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers)。
+- 对于一些像 POST 这样的方法，报文的 body 就包含了发送的资源，这与响应报文的 body 类似。
 
 根据 HTTP 标准，HTTP 请求可以使用多种请求方法。
 
-**HTTP1.0**定义了三种请求方法： **GET**, **POST** 和 **HEAD**方法。
+**HTTP1.0** 定义了三种请求方法： **GET**, **POST** 和 **HEAD**方法。
 
-**HTTP1.1**新增了五种请求方法：**OPTIONS**, **PUT**, **DELETE**, **TRACE** 和 **CONNECT**方法。
+**HTTP1.1** 新增了五种请求方法：**OPTIONS**, **PUT**, **DELETE**, **TRACE** 和 **CONNECT**方法。
 
 | 方法    | 描述                                                                                                                                     |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -109,7 +152,19 @@ HTTP 响应也由四个部分组成，分别是：状态行、消息报头、空
 | Content-Length  | 内容长度                                     |
 | Content-Type    | 内容类型                                     |
 
-# HTTP 响应
+### HTTP 响应报文
+
+![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119132311.png)
+
+HTTP 响应报文包含了下面的元素：
+
+- HTTP 协议版本号。
+- 一个状态码（[status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)），来告知对应请求执行成功或失败，以及失败的原因。
+- 一个状态信息，这个信息是非权威的状态码描述信息，可以由服务端自行设定。
+- HTTP [headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers)，与请求头部类似。
+- 可选项，比起请求报文，响应报文中更常见地包含获取的资源 body。
+
+#### 响应消息头
 
 | **响应消息头**   | **说明**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -126,80 +181,145 @@ HTTP 响应也由四个部分组成，分别是：状态行、消息报头、空
 | Set-Cookie       | 设置和页面关联的 Cookie。Servlet 不应使用`response.setHeader("Set-Cookie", ...)`，而是应使用 HttpServletResponse 提供的专用方法 addCookie。参见下文有关 Cookie 设置的讨论。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | WWW-Authenticate | 客户应该在 Authorization 头中提供什么类型的授权信息？在包含 401（Unauthorized）状态行的应答中这个头是必需的。例如，`response.setHeader("WWW-Authenticate", "BASIC realm=＼"executives＼"")`。 注意 Servlet 一般不进行这方面的处理，而是让 Web 服务器的专门机制来控制受密码保护页面的访问（例如.htaccess）。                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
-## HTTP 状态码
+#### HTTP 响应状态码
 
 当浏览者访问一个网页时，浏览者的浏览器会向网页所在服务器发出请求。当浏览器接收并显示网页前，此网页所在的服务器会返回一个包含 HTTP 状态码的信息头（server header）用以响应浏览器的请求。
 
-HTTP 状态码的英文为 HTTP Status Code。
+HTTP 状态码的英文为 **`HTTP Status Code`**。
 
 下面是常见的 HTTP 状态码：
 
-- 200 - 请求成功
-- 301 - 资源（网页等）被永久转移到其它 URL
-- 404 - 请求的资源（网页等）不存在
-- 500 - 内部服务器错误
+- **200** - 请求成功
+- **301** - 资源（网页等）被永久转移到其它 URL
+- **404** - 请求的资源（网页等）不存在
+- **500** - 内部服务器错误
 
 HTTP 状态码分类
 
 HTTP 状态码由三个十进制数字组成，第一个十进制数字定义了状态码的类型，后两个数字没有分类的作用。HTTP 状态码共分为 5 种类型：
 
-| **分类** | **分类描述**                                   |
-| -------- | ---------------------------------------------- |
-| 1        | 信息，服务器收到请求，需要请求者继续执行操作   |
-| 2        | 成功，操作被成功接收并处理                     |
-| 3        | 重定向，需要进一步的操作以完成请求             |
-| 4        | 客户端错误，请求包含语法错误或无法完成请求     |
-| 5        | 服务器错误，服务器在处理请求的过程中发生了错误 |
+| **分类** | **分类描述**                                         |
+| -------- | ---------------------------------------------------- |
+| 1xx      | **信息响应**。服务器收到请求，需要请求者继续执行操作 |
+| 2xx      | **成功响应**。操作被成功接收并处理                   |
+| 3xx      | **重定向**。需要进一步的操作以完成请求               |
+| 4xx      | **客户端错误**。请求包含语法错误或无法完成请求       |
+| 5xx      | **服务器错误**。服务器在处理请求的过程中发生了错误   |
 
-**HTTP 状态列表：**
+> :bell: 更详细的 HTTP 状态码可以参考：
+>
+> - [MDN HTTP 响应代码](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status)
+> - [Wiki List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
 
-| 状态码 | 状态码英文名称                  |
-| ------ | ------------------------------- |
-| 100    | Continue                        |
-| 101    | Switching Protocols             |
-| 200    | OK                              |
-| 201    | Created                         |
-| 202    | Accepted                        |
-| 203    | Non-Authoritative Information   |
-| 204    | No Content                      |
-| 205    | Reset Content                   |
-| 206    | Partial Content                 |
-| 300    | Multiple Choices                |
-| 301    | Moved Permanently               |
-| 302    | Found                           |
-| 303    | See Other                       |
-| 304    | Not Modified                    |
-| 305    | Use Proxy                       |
-| 306    | Unused                          |
-| 307    | Temporary Redirect              |
-| 400    | Bad Request                     |
-| 401    | Unauthorized                    |
-| 402    | Payment Required                |
-| 403    | Forbidden                       |
-| 404    | Not Found                       |
-| 405    | Method Not Allowed              |
-| 406    | Not Acceptable                  |
-| 407    | Proxy Authentication Required   |
-| 408    | Request Time-out                |
-| 409    | Conflict                        |
-| 410    | Gone                            |
-| 411    | Length Required                 |
-| 412    | Precondition Failed             |
-| 413    | Request Entity Too Large        |
-| 414    | Request-URI Too Large           |
-| 415    | Unsupported Media Type          |
-| 416    | Requested range not satisfiable |
-| 417    | Expectation Failed              |
-| 500    | Internal Server Error           |
-| 501    | Not Implemented                 |
-| 502    | Bad Gateway                     |
-| 503    | Service Unavailable             |
-| 504    | Gateway Time-out                |
-| 505    | HTTP Version not supported      |
+## HTTPS
 
-## 更多内容
+HTTP 是明文传输，HTTPS 通过 SSL\TLS 进行了加密
 
-- [图解 HTTP](https://book.douban.com/subject/25863515/)
+HTTP 的端口号是 80，HTTPS 是 443
+
+HTTPS 需要到 CA 申请证书，一般免费证书很少，需要交费
+
+HTTPS 的连接很简单，是无状态的；HTTPS 协议是由 SSL+HTTP 协议构建的可进行加密传输、身份认证的网络协议，比 HTTP 协议安全。
+
+## Cookie 和 Session
+
+> 由于 Http 是一种无状态的协议，服务器单从网络连接上无从知道客户身份。
+>
+> 会话跟踪是 Web 程序中常用的技术，用来跟踪用户的整个会话。常用会话跟踪技术是 Cookie 与 Session。
+
+### Cookie
+
+HTTP Cookie（也叫 Web Cookie 或浏览器 Cookie）是服务器发送到用户浏览器并保存在本地的一小块数据，它会在浏览器下次向同一服务器再发起请求时被携带并发送到服务器上。通常，它用于告知服务端两个请求是否来自同一浏览器，如保持用户的登录状态。Cookie 使基于[无状态](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview#HTTP_is_stateless_but_not_sessionless)的 HTTP 协议记录稳定的状态信息成为了可能。
+
+Cookie 主要用于以下三个方面：
+
+- 会话状态管理（如用户登录状态、购物车、游戏分数或其它需要记录的信息）
+- 个性化设置（如用户自定义设置、主题等）
+- 浏览器行为跟踪（如跟踪分析用户行为等）
+
+Cookie 工作步骤：
+
+1. 客户端请求服务器，如果服务器需要记录该用户的状态，就是用 response 向客户端浏览器颁发一个 Cookie。
+2. 客户端浏览器会把 Cookie 保存下来。
+3. 当浏览器再请求该网站时，浏览器把该请求的网址连同 Cookie 一同提交给服务器。服务器检查该 Cookie，以此来辨认用户状态。
+
+**_注：Cookie 功能需要浏览器的支持，如果浏览器不支持 Cookie 或者 Cookie 禁用了，Cookie 功能就会失效。_**
+
+Java 中把 Cookie 封装成了 `javax.servlet.http.Cookie` 类。
+
+Cookie 和 Http 消息：
+
+`Cookies` 通常设置在 HTTP 头信息中（虽然 JavaScript 也可以直接在浏览器上设置一个 Cookie）。
+
+设置 Cookie 的 Servlet 会发送如下的头信息：
+
+```
+HTTP/1.1 200 OK
+Date: Fri, 04 Feb 2000 21:03:38 GMT
+Server: Apache/1.3.9 (UNIX) PHP/4.0b3
+Set-Cookie: name=xyz; expires=Friday, 04-Feb-07 22:03:38 GMT;
+                 path=/; domain=w3cschool.cc
+Connection: close
+Content-Type: text/html
+```
+
+正如您所看到的，`Set-Cookie` 头包含了一个名称值对、一个 GMT 日期、一个路径和一个域。名称和值会被 URL 编码。`expires` 字段是一个指令，告诉浏览器在给定的时间和日期之后"忘记"该 Cookie。
+
+如果浏览器被配置为存储 Cookies，它将会保留此信息直到到期日期。如果用户的浏览器指向任何匹配该 Cookie 的路径和域的页面，它会重新发送 Cookie 到服务器。浏览器的头信息可能如下所示：
+
+```
+GET / HTTP/1.0
+Connection: Keep-Alive
+User-Agent: Mozilla/4.6 (X11; I; Linux 2.2.6-15apmac ppc)
+Host: zink.demon.co.uk:1126
+Accept: image/gif, */*
+Accept-Encoding: gzip
+Accept-Language: en
+Accept-Charset: iso-8859-1,*,utf-8
+Cookie: name=xyz
+```
+
+### Session
+
+不同于 **Cookie 保存在客户端浏览器中**，**Session 保存在服务器上**。
+
+如果说 Cookie 机制是通过检查客户身上的“通行证”来确定客户身份的话，那么 Session 机制就是通过检查服务器上的“客户明细表”来确认客户身份。
+
+#### Session 对浏览器的要求
+
+HTTP 协议是无状态的，`Session` 不能依据 HTTP 连接来判断是否为同一客户。因此服务器向客户端浏览器发送一个名为 `JESSIONID` 的 Cookie，他的值为该 Session 的 id（也就是 HttpSession.getId()的返回值）。Session 依据该 Cookie 来识别是否为同一用户。
+
+该 Cookie 为服务器自动生成的，它的`maxAge`属性一般为-1，表示仅当前浏览器内有效，并且各浏览器窗口间不共享，关闭浏览器就会失效。
+
+### Cookie vs. Session
+
+Cookie vs. Session 对比如下：
+
+- **存储位置**
+  - Cookie 存储在浏览器。
+    - 不占用服务器资源。
+    - 一些客户端的程序可能会窥探、复制或修改 Cookie 内容，安全风险更大。
+  - Session 存储在服务器。
+    - 每个用户都会产生一个 Session，如果并发访问的用户非常多，会产生很多的 Session，消耗大量的内存。
+    - 对客户端是透明的，不存在敏感信息泄露的危险。
+- **存取方式**
+  - Cookie 只能保存 `ASCII` 字符串，如果需要存取 `Unicode` 字符或二进制数据，需要进行`UTF-8`、`GBK`或`BASE64`等方式的编码。
+  - Session 可以存取任何类型的数据，甚至是任何 Java 类。可以将 Session 看成是一个 Java 容器类。
+- **有效期**
+  - 使用 Cookie 可以保证长时间登录有效，只要设置 Cookie 的 `maxAge` 属性为一个很大的数字。
+  - 而 Session 虽然理论上也可以通过设置很大的数值来保持长时间登录有效，但是，由于 Session 依赖于名为 `JESSIONID` 的 Cookie，而 Cookie `JESSIONID`的 `maxAge` 默认为-1，只要关闭了浏览器该 Session 就会失效，因此，Session 不能实现信息永久有效的效果。使用 URL 地址重写也不能实现。
+- **浏览器的支持**
+  - 浏览器如果禁用 Cookie，则 Cookie 不能使用。
+  - 浏览器如果禁用 Cookie，需要使用 Session 以及 URL 地址重写。需要注意的是：所有的用到 Session 程序的 URL 都要使用`response.encodeURL(StringURL)` 或`response.encodeRediretURL(String URL)`进行 URL 地址重写，否则导致 Session 会话跟踪失效。
+- **跨域名**
+  - Cookie 支持跨域名。
+  - Session 不支持跨域名。
+
+## 参考资料
+
+- [《图解 HTTP》](https://book.douban.com/subject/25863515/)
+- [MDN HTTP 教程](https://developer.mozilla.org/zh-CN/docs/Web/HTTP)
+- [HTTP1.0、HTTP1.1 和 HTTP2.0 的区别](https://juejin.im/entry/5981c5df518825359a2b9476)
 - http://blog.csdn.net/gueter/article/details/1524447
 - http://www.runoob.com/http/http-intro.html
 - https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol

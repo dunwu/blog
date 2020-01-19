@@ -15,7 +15,7 @@ date: 2019-03-08 13:16:53
 - [高可用架构](high-availability-architecture.md)
 - [伸缩性架构](scalable-architecture.md)
 - [扩展性架构](extensible-architecture.md)
-- [安全性架构](secure-architecture.md)
+- [系统安全性架构](security-architecture.md)
 - [大型系统核心技术](system-core-technologies.md)
 
 ## 学习资料
@@ -26,6 +26,5 @@ date: 2019-03-08 13:16:53
   - [亿级流量网站架构核心技术：跟开涛学搭建高可用高并发系统](https://item.jd.com/12153914.html)
   - [企业 IT 架构转型之道：阿里巴巴中台战略思想与架构实战](https://item.jd.com/12176278.html) - 阐述阿里巴巴中台系统发展，更多的是讲解应用场景和能力，没有讲解技术细节。
   - [逆流而上：阿里巴巴技术成长之路](https://item.jd.com/12238227.html) - 主要以运维的视角阐述系统运维中遇到的困难，定位思路以及解决方法。
-
 - **教程**
   - [system-design-primer](https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md)
