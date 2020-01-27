@@ -1,5 +1,4 @@
-<div align="center"><a href="https://dunwu.github.io/blog/"><img src="http://dunwu.test.upcdn.net/cs/others/zpblog.png"/></a></div>
-<div align="center"><h1>Blog</h1></div>
+# BLOG
 
 ## 计算机科学
 
@@ -104,6 +103,7 @@
 - [合理规划项目](source/_posts/efficiency/style/project-style.md)
 - [合理对文档进行归类](source/_posts/efficiency/style/dir-style.md)
 - [合理编排技术文档](source/_posts/efficiency/style/doc-style.md)
+- [Markdown Cheat Sheet](source/_posts/efficiency/style/markdown-cheatsheet.md)
 
 ## License
 

@@ -137,7 +137,6 @@ date: 2019-06-21 11:30
 如果你要操作别人的服务的库，你必须是通过**调用别的服务的接口**来实现，绝对不允许交叉访问别人的数据库。
 
 <div align="center"><img src="https://github.com/doocs/advanced-java/blob/master/images/distributed-transaction-XA.png"/></div>
-
 ### 4.3. 本地消息表
 
 本地消息表其实是国外的 ebay 搞出来的这么一套思想。
@@ -154,7 +153,6 @@ date: 2019-06-21 11:30
 这个方案说实话最大的问题就在于**严重依赖于数据库的消息表来管理事务**啥的，如果是高并发场景咋办呢？咋扩展呢？所以一般确实很少用。
 
 <div align="center"><img src="https://github.com/doocs/advanced-java/blob/master/images/distributed-transaction-local-message-table.png"/></div>
-
 ### 4.4. 可靠消息最终一致性方案
 
 这个的意思，就是干脆不要用本地的消息表了，直接基于 MQ 来实现事务。比如阿里的 RocketMQ 就支持消息事务。
@@ -169,7 +167,6 @@ date: 2019-06-21 11:30
 6. 这个还是比较合适的，目前国内互联网公司大都是这么玩儿的，要不你举用 RocketMQ 支持的，要不你就自己基于类似 ActiveMQ？RabbitMQ？自己封装一套类似的逻辑出来，总之思路就是这样子的。
 
 <div align="center"><img src="https://github.com/doocs/advanced-java/blob/master/images/distributed-transaction-reliable-message.png"/></div>
-
 ### 4.5. 最大努力通知方案
 
 这个方案的大致意思就是：
