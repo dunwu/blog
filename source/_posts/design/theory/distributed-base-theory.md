@@ -372,6 +372,13 @@ _注：此处 log 并非是指日志消息，而是各种事件的发生记录�
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-sync-log-04.gif" />
 </div>
 
+
+
+> 参考资料：
+>
+> - [Raft 一致性算法论文原文](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf)
+> - [Raft 一致性算法论文译文](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
+
 ## 5. 参考资料
 
 - 杨传辉. 大规模分布式存储系统: 原理解析与架构实战[M]. 机械工业出版社, 2013.
