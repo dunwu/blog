@@ -7,6 +7,8 @@ date: 2020-01-20 11:06
 
 # 限流基本原理
 
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [限流方法](#限流方法)

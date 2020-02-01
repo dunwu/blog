@@ -7,6 +7,8 @@ date: 2018-07-05 15:50
 
 # 负载均衡基本原理
 
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [1. 负载均衡简介](#1-负载均衡简介)

@@ -7,6 +7,8 @@ date: 2019-06-27 15:36
 
 # 缓存基本原理
 
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [1. 缓存概述](#1-缓存概述)

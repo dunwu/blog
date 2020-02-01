@@ -5,7 +5,7 @@ tags: ['编程', 'python']
 date: 2018-06-28 16:52
 ---
 
-> 📓 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
 # Python 编程
 

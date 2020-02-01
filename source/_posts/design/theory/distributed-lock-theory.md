@@ -7,6 +7,8 @@ date: 2019-06-04 23:42
 
 # 分布式锁基本原理
 
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [1. 分布式锁思路](#1-分布式锁思路)

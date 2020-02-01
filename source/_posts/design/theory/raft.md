@@ -1,13 +1,15 @@
 ---
 title: 深入剖析一致性算法 Raft
 categories: ['设计', '系统原理']
-tags: ['设计', '系统原理', '分布式']
+tags: ['设计', '系统原理', '分布式', '一致性']
 date: 2020-02-01 22:07
 ---
 
 # 深入剖析一致性算法 Raft
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200201221202.png)
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200201221202.png)
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 

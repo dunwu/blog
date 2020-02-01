@@ -7,6 +7,8 @@ date: 2018-07-09 17:43
 
 # 分布式系统基本原理
 
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
 <!-- TOC depthFrom:2 depthTo:3 -->
 
 - [1. 分布式术语](#1-分布式术语)
