@@ -15,7 +15,7 @@ date: 2019-03-08 13:16:53
 - [高可用架构](high-availability-architecture.md)
 - [伸缩性架构](scalable-architecture.md)
 - [扩展性架构](extensible-architecture.md)
-- [系统安全性架构](security-architecture.md)
+- [安全性架构](security-architecture.md)
 - [大型系统核心技术](system-core-technologies.md)
 
 ## 学习资料

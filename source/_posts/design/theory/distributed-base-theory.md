@@ -241,7 +241,7 @@ ACID 要求强一致性，通常运用在传统的数据库系统上。而 BASE 
 - 优点：实现了最终一致性，不需要依赖本地数据库事务。
 - 缺点：实现难度大，主流 MQ 不支持。
 
-## 4. 共识性问题
+## 4. 分布式一致性算法
 
 ### 4.1. Paxos
 
@@ -295,89 +295,9 @@ Paxos 能保证在超过 $1/2$ 的正常节点存在时，系统能达成共识�
 
 ### 4.2. Raft
 
-Raft 算法是 Paxos 算法的一种简化实现。
+![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200201221202.png)
 
-包括三种角色：leader、candidate 和 follower，其基本过程为：
-
-- **Leader 选举** - 每个 candidate 随机经过一定时间都会提出选举方案，最近阶段中得票最多者被选为 leader；
-- **同步 log** - leader 会找到系统中 log 最新的记录，并强制所有的 follower 来刷新到这个记录；
-
-_注：此处 log 并非是指日志消息，而是各种事件的发生记录。_
-
-#### 单个 Candidate 的竞选
-
-有三种节点：Follower、Candidate 和 Leader。Leader 会周期性的发送心跳包给 Follower。每个 Follower 都设置了一个随机的竞选超时时间，一般为 150ms\~300ms，如果在这个时间内没有收到 Leader 的心跳包，就会变成 Candidate，进入竞选阶段。
-
-- 下图表示一个分布式系统的最初阶段，此时只有 Follower，没有 Leader。Follower A 等待一个随机的竞选超时时间之后，没收到 Leader 发来的心跳包，因此进入竞选阶段。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-candidate-01.gif" />
-</div>
-
-- 此时 A 发送投票请求给其它所有节点。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-candidate-02.gif" />
-</div>
-
-- 其它节点会对请求进行回复，如果超过一半的节点回复了，那么该 Candidate 就会变成 Leader。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-candidate-03.gif" />
-</div>
-
-- 之后 Leader 会周期性地发送心跳包给 Follower，Follower 接收到心跳包，会重新开始计时。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-candidate-04.gif" />
-</div>
-
-#### 多个 Candidate 竞选
-
-- 如果有多个 Follower 成为 Candidate，并且所获得票数相同，那么就需要重新开始投票，例如下图中 Candidate B 和 Candidate D 都获得两票，因此需要重新开始投票。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-multi-candidate-01.gif" />
-</div>
-
-- 当重新开始投票时，由于每个节点设置的随机竞选超时时间不同，因此能下一次再次出现多个 Candidate 并获得同样票数的概率很低。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-multi-candidate-02.gif" />
-</div>
-
-#### 同步日志
-
-- 来自客户端的修改都会被传入 Leader。注意该修改还未被提交，只是写入日志中。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-sync-log-01.gif" />
-</div>
-
-- Leader 会把修改复制到所有 Follower。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-sync-log-02.gif" />
-</div>
-
-- Leader 会等待大多数的 Follower 也进行了修改，然后才将修改提交。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-sync-log-03.gif" />
-</div>
-
-- 此时 Leader 会通知的所有 Follower 让它们也提交修改，此时所有节点的值达成一致。
-
-<div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/raft-sync-log-04.gif" />
-</div>
-
-
-
-> 参考资料：
->
-> - [Raft 一致性算法论文原文](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf)
-> - [Raft 一致性算法论文译文](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
+> :bulb: Raft 详尽剖析，请参考：[深入剖析一致性算法 Raft](raft.md)
 
 ## 5. 参考资料
 

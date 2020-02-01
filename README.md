@@ -44,7 +44,7 @@
 - [高可用架构](source/_posts/design/architecture/high-availability-architecture.md)
 - [伸缩性架构](source/_posts/design/architecture/scalable-architecture.md)
 - [扩展性架构](source/_posts/design/architecture/extensible-architecture.md)
-- [安全性架构](source/_posts/design/architecture/secure-architecture.md)
+- [安全性架构](source/_posts/design/architecture/security-architecture.md)
 - [大型系统核心技术](source/_posts/design/architecture/system-core-technologies.md)
 
 ### 系统原理
@@ -60,7 +60,7 @@
 - [分布式 ID 基本原理](source/_posts/design/theory/distributed-id-theory.md)
 - [分布式事务基本原理](source/_posts/design/theory/distributed-transaction-theory.md)
 - [分库分表基本原理](source/_posts/design/theory/sharding-theory.md)
-- [常见安全手段基本原理](source/_posts/design/theory/security-theory.md)
+- [深入剖析一致性算法 Raft](source/_posts/design/theory/raft.md)
 
 ### 重构
 
