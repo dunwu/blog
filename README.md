@@ -15,17 +15,22 @@
 ## 分布式系统
 
 - [系统原理面试题](source/_posts/distributed/system-theory-interview.md)
-- [分布式基本原理](source/_posts/distributed/distributed-base-theory.md)
-- [负载均衡基本原理](source/_posts/distributed/load-balance-theory.md)
-- [缓存基本原理](source/_posts/distributed/cache-theory.md)
-- [消息队列基本原理](source/_posts/distributed/mq-theory.md)
-- [分布式锁基本原理](source/_posts/distributed/distributed-lock-theory.md)
-- [分布式会话基本原理](source/_posts/distributed/distributed-session-theory.md)
-- [分布式存储基本原理](source/_posts/distributed/distributed-storage-theory.md)
-- [分布式 ID 基本原理](source/_posts/distributed/distributed-id-theory.md)
-- [分布式事务基本原理](source/_posts/distributed/distributed-transaction-theory.md)
-- [分库分表基本原理](source/_posts/distributed/sharding-theory.md)
-- [深入剖析共识性算法 Raft](source/_posts/distributed/raft.md)
+- 分布式基础理论
+  - [CAP](source/_posts/distributed/cap-and-base.md#一cap)
+  - [BASE](source/_posts/distributed/cap-and-base.md#二base)
+- 共识性算法
+  - [拜占庭将军问题](source/_posts/distributed/byzantine.md)
+  - [Paxos](source/_posts/distributed/paxos.md)
+  - [Raft](source/_posts/distributed/raft.md)
+- [负载均衡](source/_posts/distributed/load-balance-theory.md)
+- [缓存](source/_posts/distributed/cache-theory.md)
+- [消息队列](source/_posts/distributed/mq-theory.md)
+- [分布式锁](source/_posts/distributed/distributed-lock-theory.md)
+- [分布式会话](source/_posts/distributed/distributed-session-theory.md)
+- [分布式存储](source/_posts/distributed/distributed-storage-theory.md)
+- [分布式 ID](source/_posts/distributed/distributed-id-theory.md)
+- [分布式事务](source/_posts/distributed/distributed-transaction-theory.md)
+- [分库分表](source/_posts/distributed/sharding-theory.md)
 
 ## 编程语言
 
