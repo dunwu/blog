@@ -1,20 +1,24 @@
 ---
 title: 关于我
-date: 2019-03-06 17:30:18
-type: "about"
+date: 2020-02-01 22:53
+type: 'about'
 comments: false
 ---
 
-# 关于我
+本人老司机，钢铁直男
 
-## 简介
+硕士，毕业于南京大学。现坐标：南京
 
-本人已过而立之年，算是一名老程序员吧。
+二手架构师 + 全栈攻城狮 + 杂工（哪里需要点哪里）
 
-2012 年，研究生毕业于南京大学。
+信仰技术，热衷分享。
 
-## 工作篇
+技能清单：
 
-以前从事过通信领域、互联网领域的研发工作。目前，开始涉足大数据领域。
-
-略懂 Java、JavaScript、C、C#、Shell 等语言，热爱技术，喜欢钻研。
+- 编程语言：Java、JavaScript、Shell、C、C++、C#
+- 数据库：Mysql、Redis、OracleDB、Hbase
+- 框架：Spring、SpringBoot、Mybatis、Dubbo、Shiro、Quartz、Ehcache、jdbc-sharding
+- 分布式服务：ZooKeeper、Kafka、Elasticsearch、FastDFS
+- 容器：Nginx、Tomcat、Jetty、Resin、Docker
+- 前端：React、Vue、Angular、Webpack、Nodejs、jQuery、JSP、Freemark、Velocity、EazyUI
+- 研发工具：Git、Svn、Maven、Gitlab、Jenkins、Nexus
