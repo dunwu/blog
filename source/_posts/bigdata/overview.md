@@ -1,10 +1,8 @@
 ---
 title: 大数据简介
+categories: ['大数据']
+tags: ['大数据']
 date: 2018-09-03
-categories:
-- bigdata
-tags:
-- bigdata
 ---
 
 # 大数据简介

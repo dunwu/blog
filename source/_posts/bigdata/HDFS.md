@@ -1,11 +1,8 @@
 ---
 title: HDFS
+categories: ['大数据']
+tags: ['大数据', 'Hadoop']
 date: 2018-09-03
-categories:
-  - bigdata
-tags:
-  - bigdata
-  - hadoop
 ---
 
 # HDFS

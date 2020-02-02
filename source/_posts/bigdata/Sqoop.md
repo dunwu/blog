@@ -1,11 +1,8 @@
 ---
 title: Sqoop
+categories: ['大数据']
+tags: ['大数据', 'Hadoop']
 date: 2018-09-04
-categories:
-  - bigdata
-tags:
-  - bigdata
-  - hadoop
 ---
 
 # Sqoop

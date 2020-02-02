@@ -14,18 +14,18 @@
 
 ## 分布式系统
 
-- [系统原理面试题](source/_posts/design/theory/system-theory-interview.md)
-- [分布式基本原理](source/_posts/design/theory/distributed-base-theory.md)
-- [负载均衡基本原理](source/_posts/design/theory/load-balance-theory.md)
-- [缓存基本原理](source/_posts/design/theory/cache-theory.md)
-- [消息队列基本原理](source/_posts/design/theory/mq-theory.md)
-- [分布式锁基本原理](source/_posts/design/theory/distributed-lock-theory.md)
-- [分布式会话基本原理](source/_posts/design/theory/distributed-session-theory.md)
-- [分布式存储基本原理](source/_posts/design/theory/distributed-storage-theory.md)
-- [分布式 ID 基本原理](source/_posts/design/theory/distributed-id-theory.md)
-- [分布式事务基本原理](source/_posts/design/theory/distributed-transaction-theory.md)
-- [分库分表基本原理](source/_posts/design/theory/sharding-theory.md)
-- [深入剖析一致性算法 Raft](source/_posts/design/theory/raft.md)
+- [系统原理面试题](source/_posts/distributed/system-theory-interview.md)
+- [分布式基本原理](source/_posts/distributed/distributed-base-theory.md)
+- [负载均衡基本原理](source/_posts/distributed/load-balance-theory.md)
+- [缓存基本原理](source/_posts/distributed/cache-theory.md)
+- [消息队列基本原理](source/_posts/distributed/mq-theory.md)
+- [分布式锁基本原理](source/_posts/distributed/distributed-lock-theory.md)
+- [分布式会话基本原理](source/_posts/distributed/distributed-session-theory.md)
+- [分布式存储基本原理](source/_posts/distributed/distributed-storage-theory.md)
+- [分布式 ID 基本原理](source/_posts/distributed/distributed-id-theory.md)
+- [分布式事务基本原理](source/_posts/distributed/distributed-transaction-theory.md)
+- [分库分表基本原理](source/_posts/distributed/sharding-theory.md)
+- [深入剖析共识性算法 Raft](source/_posts/distributed/raft.md)
 
 ## 编程语言
 
@@ -51,22 +51,22 @@
 ## 计算机网络
 
 - **面试**
-  - [网络通信面经](source/_posts/communication/network-interview.md)
+  - [网络通信面经](source/_posts/network/network-interview.md)
 - **网络分层**
-  - [计算机网络指南](source/_posts/communication/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
-  - [计算机网络之物理层](source/_posts/communication/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
-  - [计算机网络之链路层](source/_posts/communication/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-  - [计算机网络之网络层](source/_posts/communication/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
-  - [计算机网络之传输层](source/_posts/communication/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
-  - [计算机网络之应用层](source/_posts/communication/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+  - [计算机网络指南](source/_posts/network/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
+  - [计算机网络之物理层](source/_posts/network/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+  - [计算机网络之链路层](source/_posts/network/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+  - [计算机网络之网络层](source/_posts/network/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
+  - [计算机网络之传输层](source/_posts/network/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+  - [计算机网络之应用层](source/_posts/network/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 - **重要技术**
-  - [HTTP](source/_posts/communication/http.md)
-  - [DNS](source/_posts/communication/dns.md)
-  - [TCP](source/_posts/communication/tcp.md)
-  - [UDP](source/_posts/communication/udp.md)
-  - [ICMP](source/_posts/communication/icmp.md)
-  - [WebSocket](source/_posts/communication/websocket.md)
-  - [CDN](source/_posts/communication/cdn.md)
+  - [HTTP](source/_posts/network/http.md)
+  - [DNS](source/_posts/network/dns.md)
+  - [TCP](source/_posts/network/tcp.md)
+  - [UDP](source/_posts/network/udp.md)
+  - [ICMP](source/_posts/network/icmp.md)
+  - [WebSocket](source/_posts/network/websocket.md)
+  - [CDN](source/_posts/network/cdn.md)
 
 ## 大数据
 
