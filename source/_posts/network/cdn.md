@@ -5,6 +5,28 @@ tags: ['网络', '通信']
 date: 2019-05-29 23:19
 ---
 
+# 网络通信之 CDN
+
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [简介](#简介)
+  - [CDN 是什么](#cdn-是什么)
+  - [CDN 的优缺点](#cdn-的优缺点)
+- [CDN 原理](#cdn-原理)
+  - [分布式存储](#分布式存储)
+  - [内容管理](#内容管理)
+  - [负载均衡](#负载均衡)
+  - [网络请求的重定向](#网络请求的重定向)
+- [CDN 访问流程](#cdn-访问流程)
+- [推送和拉取](#推送和拉取)
+  - [CDN 推送](#cdn-推送)
+  - [CDN 拉取](#cdn-拉取)
+- [资源](#资源)
+
+<!-- /TOC -->
+
 <div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559138689425.png!zp"/></div>
 
 ## 简介

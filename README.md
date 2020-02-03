@@ -1,8 +1,46 @@
 # BLOG
 
+## 编程语言
+
+> 作为程序员，职业生涯的第一步，当然是掌握并精通至少一门编程语言。
+>
+> 本人是一名 Java 后端程序员，刚毕业时做过两年 C/C++ 程序员，此外，还略懂几门其他编程语言。
+
+### Java
+
+> Java 领域的知识点非常庞杂，我整理成了多个教程项目，每个项目都包含大量文档和代码。
+
+[Java 教程](https://turnon.gitee.io/java-tutorial/) 📚 - 本人作为一名 Java 程序员，十年的技术积累，汇总与此。
+
+- [JavaCore 教程](https://dunwu.github.io/javacore/) 📚 - Java 核心技术教程。内容包含：Java 语法基础特性、Java 语法高级特性、Java 并发、JVM、Java IO/NIO 、Java 容器等。
+- [JavaWeb 教程](https://dunwu.github.io/javaweb/) 📚 - 内容包含：JavaEE（Servlet、Jsp 等）、JavaWeb 主流技术及框架（Mybatis、Ehcache、Shiro、Quartz 等）。
+- [Spring 教程](https://dunwu.github.io/spring-tutorial/) 📚 - Spring 框架实战教程。
+- [Spring Boot 教程](https://dunwu.github.io/spring-boot-tutorial/) 📚 - Spring Boot 框架实战教程。
+- Spring Cloud 教程 [TODO]
+
+### 其他语言
+
+- [如何学习编程语言](source/_posts/coding/programming-guide.md)
+- [Python Cheat Sheet](source/_posts/coding/python.md)
+- [Shell Cheat Sheet](source/_posts/coding/shell.md)
+
 ## 数据结构和算法
 
-> [数据结构和算法教程](https://dunwu.github.io/algorithm-tutorial/)
+> 如果说编程语言好比是武功招式，那么数据结构和算法就相当于是内功。要想成为编程高手，必须具备一定的数据结构和算法功底。
+>
+> 要想学好数据结构和算法，在我看来，就是多刷题。
+
+[数据结构和算法教程](https://dunwu.github.io/algorithm-tutorial/) 📚 - 包含基本数据结构和算法的讲解和示例，以及平时在 leetcode 上刷题的代码。
+
+## 数据库
+
+> 数据库大体上可以分为关系型数据库和 Nosql 数据库。
+>
+> 关系型数据库的特性和原理，基本上大同小异。
+>
+> Nosql 数据库就真的是各有各的不同了。
+
+[数据库教程](https://dunwu.github.io/db-tutorial/) 📚 - 本人接触的最多的数据库就是 Mysql、Redis，本教程内对于这两种数据库的特性和原理讲解比较细致，其他数据库内容没那么细致。
 
 ## 操作系统
 
@@ -14,66 +52,70 @@
 
 ## 分布式系统
 
+> 大型软件为了应对海量数据、高并发，一般都会被设计为分布式系统。
+>
+> 分布式系统需要解决很多不同领域的问题。
+
 - [系统原理面试题](source/_posts/distributed/system-theory-interview.md)
 - 分布式基础理论
   - [CAP](source/_posts/distributed/cap-and-base.md#一cap)
   - [BASE](source/_posts/distributed/cap-and-base.md#二base)
-- 共识性算法
+- 共识性算法 - 解决分布式副本一致性问题
   - [拜占庭将军问题](source/_posts/distributed/byzantine.md)
   - [Paxos](source/_posts/distributed/paxos.md)
   - [Raft](source/_posts/distributed/raft.md)
-- [负载均衡](source/_posts/distributed/load-balance-theory.md)
-- [缓存](source/_posts/distributed/cache-theory.md)
-- [消息队列](source/_posts/distributed/mq-theory.md)
+- [分布式事务](source/_posts/distributed/distributed-transaction.md)
+  - 两阶段提交（2PC）
+  - 补偿事务（TCC）
+  - 本地消息表
+  - MQ 事务消息
+- [负载均衡](source/_posts/distributed/load-balance-theory.md) - 详细介绍常见负载均衡算法（轮询、随机、最少连接、源地址哈希、一致性哈希）和技术。
+- [缓存](source/_posts/distributed/cache-theory.md) - 详细介绍进程内缓存、分布式缓存常见技术、框架，以及应用缓存所经常面对的问题和解决方案。
+- [消息队列](source/_posts/distributed/mq-theory.md) - 详细介绍消息队列的特性、原理，以及消息安全性、顺序性问题。
 - [分布式锁](source/_posts/distributed/distributed-lock-theory.md)
 - [分布式会话](source/_posts/distributed/distributed-session-theory.md)
 - [分布式存储](source/_posts/distributed/distributed-storage-theory.md)
 - [分布式 ID](source/_posts/distributed/distributed-id-theory.md)
-- [分布式事务](source/_posts/distributed/distributed-transaction-theory.md)
 - [分库分表](source/_posts/distributed/sharding-theory.md)
-
-## 编程语言
-
-### Java
-
-[Java 教程](https://turnon.gitee.io/java-tutorial/) 📚 - 本人作为一名 Java 程序员，十年的技术积累，汇总与此。
-
-- [JavaCore 教程](https://dunwu.github.io/javacore/) 📚 - 内容包含：Java 基础特性、Java 高级特性、Java 并发、JVM、Java IO 等。
-- [JavaWeb 教程](https://dunwu.github.io/javaweb/) 📚 - 内容包含：JavaEE、分布式应用技术及原理等。
-- [Spring 教程](https://dunwu.github.io/spring-tutorial/) 📚 - Spring 各种实战。
-- [Spring Boot 教程](https://dunwu.github.io/spring-boot-tutorial/) 📚 - Spring Boot 各种实战。
-
-### 其他语言
-
-- [如何学习一门编程语言](source/_posts/coding/programming-guide.md)
-- [一篇文章让你彻底掌握 Python](source/_posts/coding/python.md)
-- [一篇文章让你彻底掌握 Shell](source/_posts/coding/shell.md)
-
-## 数据库
-
-[数据库教程 📚](https://dunwu.github.io/db-tutorial/)
+- RPC
 
 ## 计算机网络
 
-- **面试**
-  - [网络通信面经](source/_posts/network/network-interview.md)
-- **网络分层**
-  - [计算机网络指南](source/_posts/network/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
-  - [计算机网络之物理层](source/_posts/network/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
-  - [计算机网络之链路层](source/_posts/network/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-  - [计算机网络之网络层](source/_posts/network/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
-  - [计算机网络之传输层](source/_posts/network/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
-  - [计算机网络之应用层](source/_posts/network/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
-- **重要技术**
-  - [HTTP](source/_posts/network/http.md)
-  - [DNS](source/_posts/network/dns.md)
-  - [TCP](source/_posts/network/tcp.md)
-  - [UDP](source/_posts/network/udp.md)
-  - [ICMP](source/_posts/network/icmp.md)
-  - [WebSocket](source/_posts/network/websocket.md)
-  - [CDN](source/_posts/network/cdn.md)
+> 如果你是做通信领域的开发，或者是 Web 应用的开发，那就或多或少需要了解一些计算机网络的知识 。
+>
+> 本人做 C 程序员时，从事过两年通信领域的开发，整理了一些基本的计算机网络知识点，汇总于此。
+
+[计算机网络面试题](source/_posts/network/network-interview.md) 💯
+
+### 网络分层
+
+> 理解计算机网络，首先需要从宏观层面了解计算机网络通信的分层结构。最有代表性的是 OSI 七层结构模型，但现实中更流行的是五层结构模型（本人也比较倾向于这种模型）。
+>
+> 了解网络分层结构，需要了解每个网络层级在网络通信中的定位，以及这个层级主要的通信设备、通信协议。
+
+- [计算机网络指南](source/_posts/network/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
+- [物理层](source/_posts/network/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+- [链路层](source/_posts/network/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+- [网络层](source/_posts/network/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
+- [传输层](source/_posts/network/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- [应用层](source/_posts/network/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+
+### 重要技术
+
+> 对计算机网络分层有了基本的认知后，可以根据个人的工作、学习需要，针对性的会接触到的协议或技术加深理解。
+
+- [HTTP](source/_posts/network/http.md)
+- [DNS](source/_posts/network/dns.md)
+- [TCP](source/_posts/network/tcp.md)
+- [UDP](source/_posts/network/udp.md)
+- [ICMP](source/_posts/network/icmp.md)
+- [WebSocket](source/_posts/network/websocket.md)
+- [CDN](source/_posts/network/cdn.md)
+- [VPN](source/_posts/network/vpn.md)
 
 ## 大数据
+
+> TODO：有待完善，不断补充。。。
 
 - [HDFS](source/_posts/bigdata/HDFS.md)
 - [YARN](source/_posts/bigdata/YARN.md)
@@ -82,15 +124,11 @@
 
 ## 计算机安全和密码学
 
-TODO
+> TODO：有待完善，不断补充。。。
 
 ## 计算机体系结构
 
-TODO
-
-## 人工智能
-
-TODO
+> TODO：有待完善，不断补充。。。
 
 ## 设计
 

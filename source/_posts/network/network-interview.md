@@ -7,19 +7,23 @@ date: 2019-06-02
 
 # 网络通信知识点面经
 
-<!-- TOC depthFrom:2 depthTo:4 -->
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
+> 如果你不是从事于通信领域，面试时问及计算机网络的知识，一般也就限定在：HTTP（含 HTTPS、Cookie、Session）、TCP、UDP、Socket 这些
+
+<!-- TOC depthFrom:2 depthTo:3 -->
 
 - [1. 综合](#1-综合)
-    - [1.1. 计算机网络如何分层？](#11-计算机网络如何分层)
+  - [1.1. 计算机网络如何分层？](#11-计算机网络如何分层)
 - [2. HTTP](#2-http)
 - [3. DNS](#3-dns)
 - [4. TCP/UDP](#4-tcpudp)
-    - [4.1. 什么是 TCP？](#41-什么是-tcp)
-    - [4.2. TCP 的特性是什么？](#42-tcp-的特性是什么)
-    - [4.3. TCP 三次握手](#43-tcp-三次握手)
-    - [4.4. TCP 四次挥手](#44-tcp-四次挥手)
-    - [4.5. TCP 滑动窗口](#45-tcp-滑动窗口)
-    - [4.6. TCP 重传机制](#46-tcp-重传机制)
+  - [4.1. 什么是 TCP？](#41-什么是-tcp)
+  - [4.2. TCP 的特性是什么？](#42-tcp-的特性是什么)
+  - [4.3. TCP 三次握手](#43-tcp-三次握手)
+  - [4.4. TCP 四次挥手](#44-tcp-四次挥手)
+  - [4.5. TCP 滑动窗口](#45-tcp-滑动窗口)
+  - [4.6. TCP 重传机制](#46-tcp-重传机制)
 
 <!-- /TOC -->
 
@@ -32,14 +36,12 @@ date: 2019-06-02
 > 这是学习计算机网络知识宏观层面必须要了解的核心点。知道了这些，对于网络的体系结构就基本上了解了。
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/overview/network-layers.png!zp"/></div>
-
 计算机网络分层一般有三种划分体系：OSI 分层；五层协议分层；TCP/IP 协议分层。
 
 - OSI 的七层体系结构概念清楚，理论完整，但是比较复杂且不实用，所以并不流行。
 - 五层协议分层是一种折中方案，在现实中更为流行。
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/overview/网络分层架构图.png!zp"/></div>
-
 **物理层**
 
 > 物理层（Physical Layer）只接收和发送一串比特(bit)流，不考虑信息的意义和信息结构。
@@ -139,7 +141,6 @@ date: 2019-06-02
 （2）什么是三次握手？
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/三次握手.gif!zp"/></div>
-
 如上图所示，三次握手流程如下：
 
 1. 第一次握手 - 客户端向服务端发送带有 SYN 标志的数据包。
@@ -171,7 +172,6 @@ date: 2019-06-02
 如上图所示，四次挥手流程如下：
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/四次挥手.gif!zp"/></div>
-
 1. 第一次挥手 - 客户端向服务端发送一个 FIN 包，用来关闭客户端到服务端的数据传送。
 2. 第二次挥手 - 服务端收到这个 FIN 包，向客户端发送一个 ACK 包，确认序号为收到的序号加 1。和 SYN 一样，一个 FIN 将占用一个序号。
 3. 第三次挥手 - 服务端关闭与客户端的连接，向客户端发送一个 FIN 包。
@@ -197,14 +197,12 @@ TCP 头里有一个字段叫 Window，又叫 Advertised-Window，这个字段是
 滑动窗口原理是什么？
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559265819762.png!zp"/></div>
-
 1. 已发送已确认 - 数据流中最早的字节已经发送并得到确认。这些数据是站在发送端的角度来看的。上图中的 31 个字节已经发送并确认。
 2. 已发送但尚未确认 - 已发送但尚未得到确认的字节。发送方在确认之前，不认为这些数据已经被处理。上图中的 32 \~ 45 字节为第 2 类。
 3. 未发送而接收方已 Ready - 设备尚未将数据发出 ，但接收方根据最近一次关于发送方一次要发送多少字节确认自己有足够空间。发送方会立即尝试发送。上图中的 46 \~ 51 字节为第 3 类。
 4. 未发送而接收方 Not Ready - 由于接收方 not ready，还不允许将这部分数据发出。上图中的 52 以后的字节为第 4 类。
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559265927658.png!zp"/></div>
-
 这张图片相对于上一张图片，滑动窗口偏移了 5 个字节，意味着有 5 个已发送的字节得到了确认。
 
 ### 4.6. TCP 重传机制

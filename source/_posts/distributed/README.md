@@ -20,7 +20,7 @@ date: 2019-03-08 13:16:53
 - [分布式会话基本原理](distributed-session-theory.md)
 - [分布式存储基本原理](distributed-storage-theory.md)
 - [分布式 ID 基本原理](distributed-id-theory.md)
-- [分布式事务基本原理](distributed-transaction-theory.md)
+- [分布式事务基本原理](distributed-transaction.md)
 - [分库分表基本原理](sharding-theory.md)
 - [深入剖析共识性算法 Raft](raft.md)
 

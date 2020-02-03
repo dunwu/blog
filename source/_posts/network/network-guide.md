@@ -5,9 +5,33 @@ tags: ['网络', '通信']
 date: 2019-02-20 22:26
 ---
 
+# 计算机网络指南
+
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
 > 计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/network.jpg!zp"/></div>
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [💡 指南](#💡-指南)
+  - [核心概念](#核心概念)
+  - [拓扑结构](#拓扑结构)
+  - [作用范围](#作用范围)
+  - [性能指标](#性能指标)
+- [网络分层](#网络分层)
+  - [物理层](#物理层)
+  - [数据链路层](#数据链路层)
+  - [网络层](#网络层)
+  - [传输层](#传输层)
+  - [\~~会话层\~~](#\会话层\)
+  - [\~~表示层\~~](#\表示层\)
+  - [应用层](#应用层)
+- [资源](#资源)
+- [:door: 传送门](#door-传送门)
+
+<!-- /TOC -->
 
 ## 💡 指南
 
@@ -158,16 +182,16 @@ date: 2019-02-20 22:26
   - [TCP/IP 详解 卷 1：协议](https://book.douban.com/subject/1088054/)
   - [TCP/IP 详解 卷 2：实现](https://book.douban.com/subject/1087767/)
   - [TCP/IP 详解 卷 3：TCP 事务协议、HTTP、NNTP 和 UNIX 域协议](https://book.douban.com/subject/1058634/)
-  - [Web性能权威指南](https://book.douban.com/subject/25856314/)
+  - [Web 性能权威指南](https://book.douban.com/subject/25856314/)
   - [图解 HTTP](https://book.douban.com/subject/25863515/)
-  - [图解TCP/IP](https://book.douban.com/subject/24737674/)
-  - [计算机网络（第7版）](https://book.douban.com/subject/26960678/) - 谢希仁
+  - [图解 TCP/IP](https://book.douban.com/subject/24737674/)
+  - [计算机网络（第 7 版）](https://book.douban.com/subject/26960678/) - 谢希仁
 - 站点
   - https://www.rfc-editor.org/ - 在线查阅、下载 RFC 文档
 - 工具
   - [WireShark](https://www.wireshark.org/)
   - [Postman](https://www.getpostman.com/)
- 
+
 ## :door: 传送门
 
 | [回首頁](https://github.com/dunwu/blog) |

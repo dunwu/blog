@@ -5,9 +5,31 @@ tags: ['网络', '通信', '协议']
 date: 2016-01-08 22:14
 ---
 
-# 网络协议之 HTTP
+# 网络通信之 HTTP
 
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+>
 > **超文本传输协议（HTTP）**是一个用于传输超媒体文档（例如 HTML）的[应用层](https://en.wikipedia.org/wiki/Application_Layer)协议。
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [HTTP 简介](#http-简介)
+  - [HTTP 是什么](#http-是什么)
+  - [HTTP 协议特点](#http-协议特点)
+  - [HTTP 版本特性](#http-版本特性)
+- [工作原理](#工作原理)
+  - [HTTP 优化](#http-优化)
+- [HTTP 报文](#http-报文)
+  - [HTTP 请求报文](#http-请求报文)
+  - [HTTP 响应报文](#http-响应报文)
+- [HTTPS](#https)
+- [Cookie 和 Session](#cookie-和-session)
+  - [Cookie](#cookie)
+  - [Session](#session)
+  - [Cookie vs. Session](#cookie-vs-session)
+- [参考资料](#参考资料)
+
+<!-- /TOC -->
 
 <!-- TOC depthFrom:2 depthTo:2 -->
 

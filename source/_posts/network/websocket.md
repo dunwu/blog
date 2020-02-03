@@ -7,6 +7,24 @@ date: 2019-05-31 11:51
 
 # Socket 和 WebSocket
 
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [Socket](#socket)
+  - [Socket 用法](#socket-用法)
+  - [Socket 长连接](#socket-长连接)
+- [WebSocket](#websocket)
+  - [WebSocket 简介](#websocket-简介)
+  - [WebSocket 使用](#websocket-使用)
+- [FAQ](#faq)
+  - [Http vs. Socket](#http-vs-socket)
+  - [HTTP 和 WebSocket 有什么关系？](#http-和-websocket-有什么关系)
+  - [Html 和 HTTP 有什么关系？](#html-和-http-有什么关系)
+- [参考资料](#参考资料)
+
+<!-- /TOC -->
+
 ## Socket
 
 Socket 作为一种抽象层，应用程序通过它来发送和接收数据，使用 Socket 可以将应用程序与处于同一网络中的其他应用程序进行通信交互。简而言之，Socket 提供了应用程序内部与外界通信的端口以及为通信双方提供了数据传输的通道。
@@ -108,20 +126,20 @@ var ws = new WebSocket('ws://localhost:9998/echo')
 
 // 建立 web socket 连接成功触发事件
 ws.onopen = function() {
-	// 使用 send() 方法发送数据
-	ws.send('发送数据')
-	alert('数据发送中...')
+  // 使用 send() 方法发送数据
+  ws.send('发送数据')
+  alert('数据发送中...')
 }
 
 // 接收服务端数据时触发事件
 ws.onmessage = function(evt) {
-	var received_msg = evt.data
-	alert('数据已接收...')
+  var received_msg = evt.data
+  alert('数据已接收...')
 }
 
 // 断开 web socket 连接成功触发事件
 ws.onclose = function() {
-	alert('连接已关闭...')
+  alert('连接已关闭...')
 }
 ```
 

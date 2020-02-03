@@ -5,6 +5,19 @@ tags: ['网络', '通信', '协议']
 date: 2019-05-31 11:51
 ---
 
+# 网络协议之 UDP
+
+> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
+
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [简介](#简介)
+  - [UDP 特点](#udp-特点)
+  - [UDP 应用场景](#udp-应用场景)
+- [UDP 报文](#udp-报文)
+
+<!-- /TOC -->
+
 ## 简介
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559263939493.png!zp"/></div>
