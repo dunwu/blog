@@ -1,6 +1,6 @@
 ---
 title: UML 教程
-categories: ['工具']
+categories: ['设计']
 tags: ['设计', 'UML']
 date: 2019-03-06
 ---

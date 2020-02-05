@@ -12,17 +12,17 @@ date: 2019-03-08 13:16:53
 ## 内容
 
 - [系统原理面试题](system-theory-interview.md)
-- [分布式基本原理](distributed-base-theory.md)
-- [负载均衡基本原理](load-balance-theory.md)
-- [缓存基本原理](cache-theory.md)
-- [消息队列基本原理](mq-theory.md)
-- [分布式锁基本原理](distributed-lock-theory.md)
-- [分布式会话基本原理](distributed-session-theory.md)
-- [分布式存储基本原理](distributed-storage-theory.md)
-- [分布式 ID 基本原理](distributed-id-theory.md)
-- [分布式事务基本原理](distributed-transaction.md)
-- [分库分表基本原理](sharding-theory.md)
-- [深入剖析共识性算法 Raft](raft.md)
+- [分布式基础理论](distributed-base-theory.md) - 关键词：拜占庭将军问题、CAP、BASE
+- [分布式事务](distributed-transaction.md) - 关键词：2PC、TCC、本地消息表、MQ 消息、SAGA
+- [负载均衡](load-balance-theory.md) - 关键词：轮询、随机、最少连接、源地址哈希、一致性哈希
+- [缓存](cache-theory.md) - 关键词：进程内缓存、分布式缓存、缓存雪崩、缓存穿透、缓存击穿、缓存更新、缓存预热、缓存降级
+- [消息队列](mq-theory.md) - 关键词：重复消费、消息丢失、消息顺序性、消息积压
+- [分布式锁](distributed-lock-theory.md)
+- [分布式会话](distributed-session-theory.md) - 关键词：粘性 Session、Session 复制共享、基于缓存的 session 共享
+- [分布式存储](distributed-storage-theory.md)
+- [分布式 ID](distributed-id-theory.md) - 关键词：UUID、自增序列、雪花算法、Leaf
+- [分库分表](sharding-theory.md)
+- RPC
 
 ## 学习资料
 

@@ -57,25 +57,15 @@
 > 分布式系统需要解决很多不同领域的问题。
 
 - [系统原理面试题](source/_posts/distributed/system-theory-interview.md)
-- 分布式基础理论
-  - [CAP](source/_posts/distributed/cap-and-base.md#一cap)
-  - [BASE](source/_posts/distributed/cap-and-base.md#二base)
-- 共识性算法 - 解决分布式副本一致性问题
-  - [拜占庭将军问题](source/_posts/distributed/byzantine.md)
-  - [Paxos](source/_posts/distributed/paxos.md)
-  - [Raft](source/_posts/distributed/raft.md)
-- [分布式事务](source/_posts/distributed/distributed-transaction.md)
-  - 两阶段提交（2PC）
-  - 补偿事务（TCC）
-  - 本地消息表
-  - MQ 事务消息
-- [负载均衡](source/_posts/distributed/load-balance-theory.md) - 详细介绍常见负载均衡算法（轮询、随机、最少连接、源地址哈希、一致性哈希）和技术。
-- [缓存](source/_posts/distributed/cache-theory.md) - 详细介绍进程内缓存、分布式缓存常见技术、框架，以及应用缓存所经常面对的问题和解决方案。
-- [消息队列](source/_posts/distributed/mq-theory.md) - 详细介绍消息队列的特性、原理，以及消息安全性、顺序性问题。
+- [分布式基础理论](source/_posts/distributed/distributed-base-theory.md) - 关键词：拜占庭将军问题、CAP、BASE
+- [分布式事务](source/_posts/distributed/distributed-transaction.md) - 关键词：2PC、3PC、TCC、本地消息表、MQ 消息、SAGA
+- [负载均衡](source/_posts/distributed/load-balance-theory.md) - 关键词：轮询、随机、最少连接、源地址哈希、一致性哈希
+- [缓存](source/_posts/distributed/cache-theory.md) - 关键词：进程内缓存、分布式缓存、缓存雪崩、缓存穿透、缓存击穿、缓存更新、缓存预热、缓存降级
+- [消息队列](source/_posts/distributed/mq-theory.md) - 关键词：重复消费、消息丢失、消息顺序性、消息积压
 - [分布式锁](source/_posts/distributed/distributed-lock-theory.md)
-- [分布式会话](source/_posts/distributed/distributed-session-theory.md)
+- [分布式会话](source/_posts/distributed/distributed-session-theory.md) - 关键词：粘性 Session、Session 复制共享、基于缓存的 session 共享
 - [分布式存储](source/_posts/distributed/distributed-storage-theory.md)
-- [分布式 ID](source/_posts/distributed/distributed-id-theory.md)
+- [分布式 ID](source/_posts/distributed/distributed-id-theory.md) - 关键词：UUID、自增序列、雪花算法、Leaf
 - [分库分表](source/_posts/distributed/sharding-theory.md)
 - RPC
 
@@ -130,10 +120,27 @@
 
 > TODO：有待完善，不断补充。。。
 
-## 设计
+## 架构设计
 
-### 架构
+> 🔰 知识储备：
+>
+> 不想做架构师的程序员不是好程序员，也写不出好代码。
+>
+> 体现架构师水平的，就是其架构设计功力。架构设计当然需要一定的方式方法，但是更重要的前提是：需要对系统涉及到的计算机科学的各个知识领域有宏观、微观的认知。**只有理解才会运用**，这就像战士不熟悉手里的武器，怎么能充分发挥战斗力呢？
+>
+> 所以，架构师需要不断拓展知识储备，厚积薄发。如果是一个通信系统，需要学习[计算机网络](#计算机网络)；如果是一个分布式系统，需要了解[分布式系统](#分布式系统)；如果要应对海量数据，需要学习[大数据](#大数据)；如果使用了数据库，需要学习[数据库](#数据库)。。。
+>
+> 简言之：_路漫漫兮其修远，吾将上下而求索_。
+>
+> 🔰 工具：
+>
+> - UML - 架构设计，不画些 UML，实在说不过去。
+>   - [UML Cheat Sheet](source/_posts/design/uml.md) - 全面介绍 UML 各种图，也适合作为速查手册。
 
+### 系统架构
+
+> 如果把软件开发工作比作是一场战争，那么系统架构无疑是战略层面的工作。众所周知，万丈高楼平地起，系统架构就像是软件的地基，如果一开始就歪了，那么代码写得再漂亮，软件也难以成功。
+>
 > 软件整体结构与组件的抽象描述，用于指导大型软件系统各个方面的设计。重点是分而治之，先将大型系统抽象为各个组件或模块；然后逐一解决各组件、各模块的功能、性能问题；最后将这些组件、模块整合成对外服务的一个整体。
 
 - [系统架构面试题](source/_posts/design/architecture/system-architecture-interview.md)
@@ -147,9 +154,11 @@
 
 ### 设计模式
 
+> TODO：以前写的教程比较简陋，一直没有抽出时间进行整理加工。待完善。
+
 ### 重构
 
-> **改善既有代码的设计**
+> **改善既有代码的设计**。
 >
 > 关键词：过长函数、过大的类、基本类型偏执、过长参数列、数据泥团、switch 声明、临时字段、被拒绝的馈赠、异曲同工的类、发散式变化、霰弹式修改、平行继承体系、过多的注释、重复代码、冗余类、纯稚的数据类、夸夸其谈未来性、依恋情结、狎昵关系、过度耦合的消息链、中间人、不完美的库类
 
@@ -160,19 +169,18 @@
 - [代码坏味道之非必要的](source/_posts/design/refactor/代码坏味道之非必要的.md)
 - [代码坏味道之耦合](source/_posts/design/refactor/代码坏味道之耦合.md)
 
-### UML
-
-[UML 教程](source/_posts/tools/uml.md) - 全面介绍 UML 各种图：类图、对象图、包图、组件图、部署图、复合结构图、活动图、状态图、用例图、通信图、交互概述图、时序图、时间图
-
 ## 前端技术
 
 [前端编程教程](https://dunwu.github.io/frontend-tutorial/) 📚 - 不会前端的后端不是好后端，这里是二手前端技术的总结。
 
-## 开发工具
+## 工具
 
-- [Git 从入门到精通](source/_posts/tools/git.md) - Git 的特性、原理、配置、命令、最佳实践、常见问题。学习 Git，基本上这篇文章就够了。
-- [正则教程](source/_posts/tools/regex.md) - 正则语义很晦涩，但是一旦掌握，编程绝对是一件神兵利器。
-- [使用 Gitbook 打造你的电子书](https://dunwu.gitbooks.io/gitbook-notes/)
+- [Git Cheat Sheet](source/_posts/tools/git.md) - 全面介绍 Git 特性，也适合作为速查手册。Git 的特性、原理、配置、命令、最佳实践、常见问题。
+- [Regex Cheat Sheet](source/_posts/tools/regex.md) - 全面介绍正则表达式，也适合作为速查手册。
+- [Markdown Cheat Sheet](source/_posts/tools/markdown.md) - 全面介绍 Markdown 语义。
+- 电子书生成器
+  - [Gitbook 教程](https://github.com/dunwu/gitbook-templates) 📚 - Gitbook 可以根据 Markdown 生成电子书。我整理了一个教程，并包含了几个常用模板。
+  - [Docsify](https://github.com/docsifyjs/docsify) - 类似 Gitbook，可以根据 Markdown 生成电子书。比 Gitbook 更方便，官方手册很详尽。
 
 ## 效率提升
 

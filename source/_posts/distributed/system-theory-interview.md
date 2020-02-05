@@ -262,13 +262,11 @@ MQ 的常见问题有：
 假如生产者产生了 2 条消息：M1、M2，假定 M1 发送到 S1，M2 发送到 S2，如果要保证 M1 先于 M2 被消费，怎么做？
 
 <div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-23145c8b554a0f2f.jpg"/></div>
-
 解决方案：
 
 （1）保证生产者 - MQServer - 消费者是一对一对一的关系
 
 <div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-034106d7e04c062d.jpg"/></div>
-
 缺陷：
 
 - 并行度就会成为消息系统的瓶颈（吞吐量不够）
@@ -293,7 +291,6 @@ MQ 的常见问题有：
 ### 2.4. Kafka, ActiveMQ, RabbitMQ, RocketMQ 各有什么优缺点？
 
 <div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-c26f4a3048c38af4.jpg"/></div>
-
 ## 3. 分布式服务（RPC）
 
 ### 3.1. Dubbo 的实现过程？
@@ -349,7 +346,6 @@ MQ 的常见问题有：
 ### 3.3. Dubbo 集群容错策略 ？
 
 <div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99.jpg!zp"/></div>
-
 - **Failover** - 失败自动切换，当出现失败，重试其它服务器。通常用于读操作，但重试会带来更长延迟。可通过 retries="2" 来设置重试次数(不含第一次)。
 - **Failfast** - 快速失败，只发起一次调用，失败立即报错。通常用于非幂等性的写操作，比如新增记录。
 - **Failsafe** - 失败安全，出现异常时，直接忽略。通常用于写入审计日志等操作。
@@ -362,7 +358,6 @@ MQ 的常见问题有：
 Dubbo 作为 RPC 框架，首先要完成的就是跨系统，跨网络的服务调用。消费方与提供方遵循统一的接口定义，消费方调用接口时，Dubbo 将其转换成统一格式的数据结构，通过网络传输，提供方根据规则找到接口实现，通过反射完成调用。也就是说，消费方获取的是对远程服务的一个代理(Proxy)，而提供方因为要支持不同的接口实现，需要一个包装层(Wrapper)。调用的过程大概是这样：
 
 <div align="center"><img src="https://oscimg.oschina.net/oscnet/bef19cd5a31b5ae13aff35a8cb4898faaf0.jpg"/></div>
-
 消费方的 Proxy 和提供方的 Wrapper 得以让 Dubbo 构建出复杂、统一的体系。而这种动态代理与包装也是通过基于 SPI 的插件方式实现的，它的接口就是**ProxyFactory**。
 
 ```
@@ -434,7 +429,6 @@ Netty 是一个“网络通讯框架”。
 Netty 进行事件处理的流程。`Channel`是连接的通道，是 ChannelEvent 的产生者，而`ChannelPipeline`可以理解为 ChannelHandler 的集合。
 
 <div align="center"><img src="https://camo.githubusercontent.com/5f7331d15c79fba29474c5be6e9e86db465637c3/687474703a2f2f7374617469632e6f736368696e612e6e65742f75706c6f6164732f73706163652f323031332f303932312f3137343033325f313872625f3139303539312e706e67"/></div>
-
 > 参考：https://github.com/code4craft/netty-learning/blob/master/posts/ch1-overview.md
 
 IO 的方式通常分为几种：
@@ -458,7 +452,6 @@ NIO 基于 Reactor，当 socket 有流可读或可写入 socket 时，操作系�
 从采用的先后顺序可分为：水平扩展、垂直拆分、业务拆分、水平拆分。
 
 <div align="center"><img src="http://misc.linkedkeeper.com/misc/img/blog/201804/linkedkeeper0_9c2ed2ed-6156-40f7-ad08-20af067047ca.jpg"/></div>
-
 是否使用服务依据实际业务场景来决定。
 
 当垂直应用越来越多，应用之间交互不可避免，将核心业务抽取出来，作为独立的服务，逐渐形成稳定的服务中心，使前端应用能更快速的响应多变的市场需求。此时，用于提高业务复用及整合的分布式服务框架(RPC)是关键。
