@@ -13,7 +13,7 @@
 [Java 教程](https://turnon.gitee.io/java-tutorial/) 📚 - 本人作为一名 Java 程序员，十年的技术积累，汇总与此。
 
 - [JavaCore 教程](https://dunwu.github.io/javacore/) 📚 - Java 核心技术教程。内容包含：Java 语法基础特性、Java 语法高级特性、Java 并发、JVM、Java IO/NIO 、Java 容器等。
-- [JavaWeb 教程](https://dunwu.github.io/javaweb/) 📚 - 内容包含：JavaEE（Servlet、Jsp 等）、JavaWeb 主流技术及框架（Mybatis、Ehcache、Shiro、Quartz 等）。
+- [JavaTech 教程](https://dunwu.github.io/javatech/) 📚 - 汇总了 Java 开发中常见的主流技术的应用、特性、原理。
 - [Spring 教程](https://dunwu.github.io/spring-tutorial/) 📚 - Spring 框架实战教程。
 - [Spring Boot 教程](https://dunwu.github.io/spring-boot-tutorial/) 📚 - Spring Boot 框架实战教程。
 - Spring Cloud 教程 [TODO]
@@ -178,9 +178,7 @@
 - [Git Cheat Sheet](source/_posts/tools/git.md) - 全面介绍 Git 特性，也适合作为速查手册。Git 的特性、原理、配置、命令、最佳实践、常见问题。
 - [Regex Cheat Sheet](source/_posts/tools/regex.md) - 全面介绍正则表达式，也适合作为速查手册。
 - [Markdown Cheat Sheet](source/_posts/tools/markdown.md) - 全面介绍 Markdown 语义。
-- 电子书生成器
-  - [Gitbook 教程](https://github.com/dunwu/gitbook-templates) 📚 - Gitbook 可以根据 Markdown 生成电子书。我整理了一个教程，并包含了几个常用模板。
-  - [Docsify](https://github.com/docsifyjs/docsify) - 类似 Gitbook，可以根据 Markdown 生成电子书。比 Gitbook 更方便，官方手册很详尽。
+- 静态网站生成器 - [Hexo](https://link.jianshu.com/?t=https%3A%2F%2Fwww.oschina.net%2Fp%2Fhexo)、[Jekyll](https://link.jianshu.com/?t=https%3A%2F%2Fwww.oschina.net%2Fp%2Fkyll)、[hugo](https://github.com/gohugoio/hugo)、[VuePress](https://github.com/vuejs/vuepress)、[Gitbook（官方停止更新）](https://github.com/dunwu/gitbook-templates)、[Docsify](https://github.com/docsifyjs/docsify)
 
 ## 效率提升
 

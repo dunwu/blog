@@ -37,7 +37,7 @@
 
 The simplest way to install is to clone the entire repository:
 
-```sh
+```shell
 $ cd hexo
 $ git clone https://github.com/theme-next/hexo-theme-next themes/next
 ```
@@ -78,7 +78,7 @@ Instead of defining [main organization link][official-plugins-url] for updates.
 
 You can update to latest master branch by the following command:
 
-```sh
+```shell
 $ cd themes/next
 $ git pull
 ```
