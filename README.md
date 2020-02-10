@@ -175,10 +175,11 @@
 
 ## 工具
 
-- [Git Cheat Sheet](source/_posts/tools/git.md) - 全面介绍 Git 特性，也适合作为速查手册。Git 的特性、原理、配置、命令、最佳实践、常见问题。
 - [Regex Cheat Sheet](source/_posts/tools/regex.md) - 全面介绍正则表达式，也适合作为速查手册。
 - [Markdown Cheat Sheet](source/_posts/tools/markdown.md) - 全面介绍 Markdown 语义。
-- 静态网站生成器 - [Hexo](https://link.jianshu.com/?t=https%3A%2F%2Fwww.oschina.net%2Fp%2Fhexo)、[Jekyll](https://link.jianshu.com/?t=https%3A%2F%2Fwww.oschina.net%2Fp%2Fkyll)、[hugo](https://github.com/gohugoio/hugo)、[VuePress](https://github.com/vuejs/vuepress)、[Gitbook（官方停止更新）](https://github.com/dunwu/gitbook-templates)、[Docsify](https://github.com/docsifyjs/docsify)
+- 静态网站生成器 - [Hexo](https://github.com/hexojs/hexo)、[Jekyll](https://github.com/jekyll/jekyll)、[hugo](https://github.com/gohugoio/hugo)、[VuePress](https://github.com/vuejs/vuepress)、[Gitbook（官方停止更新）](https://github.com/dunwu/gitbook-templates)、[Docsify](https://github.com/docsifyjs/docsify)
+- 版本控制 - [Git](source/_posts/tools/git.md)、Svn、Github、Gitlab
+- 持续集成 - Jenkins、gitlab-ci、[travis-ci](source/_posts/tools/travis-ci.md)
 
 ## 效率提升
 
