@@ -173,6 +173,10 @@
 
 [前端编程教程](https://dunwu.github.io/frontend-tutorial/) 📚 - 不会前端的后端不是好后端，这里是二手前端技术的总结。
 
+## 软件工程
+
+- [软件工程与项目管理](source/_posts/software/software-engineering.md)
+
 ## 工具
 
 - [Regex Cheat Sheet](source/_posts/tools/regex.md) - 全面介绍正则表达式，也适合作为速查手册。
@@ -185,11 +189,11 @@
 
 > 方法论，是人们认识世界、改造世界的方法的理论。同样，项目管理、编程、写文档都应该有一定的方式方法，帮助我们合理、高效、快速的达成目标。
 
-- [软件工程与项目管理](source/_posts/efficiency/software-engineering.md)
-- [合理规划项目](source/_posts/efficiency/style/project-style.md)
-- [合理对文档进行归类](source/_posts/efficiency/style/dir-style.md)
-- [合理编排技术文档](source/_posts/efficiency/style/doc-style.md)
-- [Markdown Cheat Sheet](source/_posts/efficiency/style/markdown-cheatsheet.md)
+- [效率提升方法论](source/_posts/efficiency/methodology.md) - 关键词：5W2H、四象限原则
+- 规范
+  - [合理规划项目](source/_posts/efficiency/style/project-style.md)
+  - [合理对文档进行归类](source/_posts/efficiency/style/dir-style.md)
+  - [合理编排技术文档](source/_posts/efficiency/style/doc-style.md)
 
 ## License
 

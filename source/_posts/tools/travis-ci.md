@@ -1,3 +1,10 @@
+---
+title: Travis CI 入门教程
+categories: ['工具']
+tags: ['工具', 'CI']
+date: 2020-02-10 14:40
+---
+
 # Travis CI 入门教程
 
 ## 一、简介
