@@ -29,14 +29,12 @@ git checkout -b gh-pages && git add .
 git commit -m 'deploy'
 
 # 如果发布到 https://<USERNAME>.github.io/<REPO>
-GITHUB_REPO=github.com/dunwu/blog.git
-GITEE_REPO=gitee.com/turnon/blog.git
 if [[ ${GITHUB_TOKEN} && ${GITEE_TOKEN} ]]; then
     echo "使用 token 公钥部署 gh-pages"
     # ${GITHUB_TOKEN} 是 Github 私人令牌；${GITEE_TOKEN} 是 Gitee 私人令牌
     # ${GITHUB_TOKEN} 和 ${GITEE_TOKEN} 都是环境变量；travis-ci 构建时会传入变量
-    git push --force --quiet "https://dunwu:${GITHUB_TOKEN}@${GITHUB_REPO}" gh-pages
-    git push --force --quiet "https://turnon:${GITEE_TOKEN}@${GITEE_REPO}" gh-pages
+    git push --force --quiet "https://dunwu:${GITHUB_TOKEN}@github.com/dunwu/blog.git" gh-pages
+    git push --force --quiet "https://turnon:${GITEE_TOKEN}@gitee.com/turnon/blog.git" gh-pages
 else
     echo "使用 ssh 公钥部署 gh-pages"
     git push -f git@github.com:dunwu/blog.git gh-pages

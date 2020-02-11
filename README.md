@@ -1,4 +1,15 @@
-# BLOG
+<p align="center">
+    <a href="https://dunwu.github.io/javacore/#/" target="_blank" rel="noopener noreferrer">
+        <img src="https://raw.githubusercontent.com/dunwu/images/master/common/dunwu-logo-200.png" alt="logo" width="150px"/>
+    </a>
+</p>
+
+<p align="center">
+    <img src="https://badgen.net/github/license/dunwu/blog" alt="license">
+    <img src="https://travis-ci.com/dunwu/blog.svg?branch=master" alt="build">
+</p>
+
+<h1 align="center">BLOG</h1>
 
 ## 编程语言
 
@@ -9,14 +20,44 @@
 ### Java
 
 > Java 领域的知识点非常庞杂，我整理成了多个教程项目，每个项目都包含大量文档和代码。
+>
+> [Java 教程](https://turnon.gitee.io/java-tutorial/) 📚 - 本人作为一名 Java 程序员，十年的技术积累，汇总与此。
 
-[Java 教程](https://turnon.gitee.io/java-tutorial/) 📚 - 本人作为一名 Java 程序员，十年的技术积累，汇总与此。
+#### JavaCore
 
-- [JavaCore 教程](https://dunwu.github.io/javacore/) 📚 - Java 核心技术教程。内容包含：Java 语法基础特性、Java 语法高级特性、Java 并发、JVM、Java IO/NIO 、Java 容器等。
-- [JavaTech 教程](https://dunwu.github.io/javatech/) 📚 - 汇总了 Java 开发中常见的主流技术的应用、特性、原理。
-- [Spring 教程](https://dunwu.github.io/spring-tutorial/) 📚 - Spring 框架实战教程。
-- [Spring Boot 教程](https://dunwu.github.io/spring-boot-tutorial/) 📚 - Spring Boot 框架实战教程。
-- Spring Cloud 教程 [TODO]
+> [JavaCore 教程](https://dunwu.github.io/javacore/) 📚 - Java 核心技术教程。
+
+- [**Java 基础**](https://github.com/dunwu/javacore/blob/master/docs/basics) - [基本数据类型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-data-type.md)、[类和对象](https://github.com/dunwu/javacore/blob/master/docs/basics/java-class.md)、[方法](https://github.com/dunwu/javacore/blob/master/docs/basics/java-method.md)、[数组](https://github.com/dunwu/javacore/blob/master/docs/basics/java-array.md)、[枚举](https://github.com/dunwu/javacore/blob/master/docs/basics/java-enum.md)、[控制语句](https://github.com/dunwu/javacore/blob/master/docs/basics/java-control-statement.md)、[异常](https://github.com/dunwu/javacore/blob/master/docs/basics/java-exception.md)、[泛型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-generic.md)、[反射](https://github.com/dunwu/javacore/blob/master/docs/basics/java-reflection.md)、[注解](https://github.com/dunwu/javacore/blob/master/docs/basics/java-annotation.md)
+- [**Java 高级**](https://github.com/dunwu/javacore/blob/master/docs/advanced) - [Java 正则](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-regex.md)、[Java 编码和加密](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-crypto.md)、[Java 本地化](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-locale.md)、[JDK8](https://github.com/dunwu/javacore/blob/master/docs/advanced/jdk8.md)
+- [**Java 容器**](https://github.com/dunwu/javacore/blob/master/docs/container) - [List](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-list.md)、[Set](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-set.md)、[Queue](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-queue.md)、[Map](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-map.md)
+- [**Java 并发**](https://github.com/dunwu/javacore/blob/master/docs/concurrent) - [并发简介](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-introduction.md)、[线程基础](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-thread.md)、[并发核心机制](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-basic-mechanism.md)、[并发锁](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-lock.md)、[原子类](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-atomic-class.md)、[并发容器](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-container.md)、[线程池](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-thread-pool.md)、[并发工具类](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-tools.md)、[内存模型](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-memory-model.md)
+- [**JAVA IO**](https://github.com/dunwu/javacore/tree/master/docs/io)
+- [**Java 虚拟机**](https://github.com/dunwu/javacore/blob/master/docs/jvm) - [JVM 内存区域](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-memory.md)、[JVM 垃圾收集](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-gc.md)、[JVM 字节码](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-bytecode.md)、[JVM 类加载](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-class-loader.md)、[JVM 工具](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-tools.md)、[JVM 实战](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-action.md)
+
+#### JavaEE
+
+- [Servlet](https://github.com/dunwu/java-tutorial/blob/master/docs/javaee/javaee-servlet.md)
+- [Jsp](https://github.com/dunwu/java-tutorial/blob/master/docs/javaee/javaee-jsp.md)
+- [Filter 和 Listener](https://github.com/dunwu/java-tutorial/blob/master/docs/javaee/javaee-filter-listener.md)
+- [Cookie 和 Session](https://github.com/dunwu/java-tutorial/blob/master/docs/javaee/javaee-cookie-sesion.md)
+
+#### JavaTech
+
+> [JavaTech 教程](https://dunwu.github.io/javatech/) 📚 - 汇总了 Java 开发中常见的主流技术的应用、特性、原理。
+
+- [**框架**](https://github.com/dunwu/javatech/tree/master/docs/framework) - [Spring 教程](https://dunwu.github.io/spring-tutorial/) 📚、[Spring Boot 教程](https://dunwu.github.io/spring-boot-tutorial/) 📚、[Mybatis](https://dunwu.github.io/javatech/ecology/framework/javatech/data/mybatis.html)
+- [**缓存**](https://github.com/dunwu/javatech/tree/master/docs/cache) - [Redis](https://github.com/dunwu/db-tutorial/tree/master/docs/nosql/redis) 📚、[Ehcache](https://github.com/dunwu/javatech/blob/master/docs/cache/Ehcache.md)、[Caffeine](https://github.com/dunwu/javatech/blob/master/docs/cache/Caffeine.md)
+- [**消息队列**](https://github.com/dunwu/javatech/blob/master/docs/mq/) - [Kafka](https://github.com/dunwu/javatech/blob/master/docs/mq/kafka)、[RocketMQ](https://github.com/dunwu/javatech/blob/master/docs/mq/rocketmq.md)、[ActiveMQ](https://github.com/dunwu/javatech/blob/master/docs/mq/activemq.md)
+- [**安全**](https://github.com/dunwu/javatech/blob/master/docs/security/) - [Shiro](https://github.com/dunwu/javatech/blob/master/docs/security/shiro.md)、[Spring Security](https://github.com/dunwu/javatech/blob/master/docs/security/spring-security.md)
+- [**测试**](https://github.com/dunwu/javatech/blob/master/docs/test/) - [Junit](https://github.com/dunwu/javatech/blob/master/docs/test/junit.md)、[Mockito](https://github.com/dunwu/javatech/blob/master/docs/test/mockito.md)、[JMH](https://github.com/dunwu/javatech/blob/master/docs/test/jmh.md)
+- [**服务器**](https://github.com/dunwu/javatech/tree/master/docs/server) - [Tomcat](https://github.com/dunwu/javatech/blob/master/docs/server/tomcat.md)、[Jetty](https://github.com/dunwu/javatech/blob/master/docs/server/jetty.md)、[Nginx](https://github.com/dunwu/nginx-tutorial) 📚
+- [**SOA**](https://github.com/dunwu/javatech/blob/master/docs/soa/) - [Dubbo](https://github.com/dunwu/javatech/blob/master/docs/soa/dubbo.md)、[ZooKeeper](https://github.com/dunwu/javatech/blob/master/docs/soa/zookeeper)
+
+#### JavaTool
+
+- [**构建工具**](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build) - [Maven](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build/maven) 📚、[Ant](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build/ant.md)
+- [**IDE**](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide) - [Intellij Idea](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide/intellij-idea.md)、[Eclipse](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide/eclipse.md)、[vscode](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide/vscode.md)
+- [**监控/诊断工具**](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor) - [CAT](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/cat.md)、[Zipkin](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/zipkin.md)、[SkyWalking](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/skywalking.md)、[Arthas](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/arthas.md)
 
 ### 其他语言
 
@@ -44,11 +85,9 @@
 
 ## 操作系统
 
-- 📚 教程
-  - [Linux 教程 📚](https://dunwu.github.io/linux-tutorial/)
-- 文章
-  - [Windows 常用技巧总结](source/_posts/os/windows.md)
-  - [Mac 常用技巧总结](source/_posts/os/mac.md)
+- [Linux](https://dunwu.github.io/linux-tutorial/) 📚
+- [Windows](source/_posts/os/windows.md)
+- [Mac](source/_posts/os/mac.md)
 
 ## 分布式系统
 
