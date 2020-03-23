@@ -90,7 +90,7 @@ VPN 可以加密信息，使黑客更难以拦截和窃取数据。
 
 VPN 会在您的设备和私人服务器之间建立私人和加密的互联网连接。 这意味着您的数据无法被 ISP 或任何其他第三方读取或理解。 然后，私有服务器将您的流量发送到您要访问的网站或服务上。
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203102422.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203102422.png)
 
 VPN 的基本处理过程如下：
 
@@ -102,7 +102,7 @@ VPN 的基本处理过程如下：
 
 ## VPN 协议
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203102656.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203102656.png)
 
 - OpenVPN
 

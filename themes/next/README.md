@@ -106,7 +106,7 @@ Also, we welcome Issue or PR to [official-plugins][official-plugins-url].
 
 ## Contributors
 
-[![][contributors-image]][contributors-url]
+[![img][contributors-image]][contributors-url]
 
 ## Thanks
 

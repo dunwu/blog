@@ -273,6 +273,6 @@ public class LeakBucket {
 
 ## 参考资料
 
-- 《大型网站技术架构》
+- [《大型网站技术架构：核心原理与案例分析》](https://item.jd.com/11322972.html)
 - [谈谈限流算法的几种实现](https://www.jianshu.com/p/76cc8ba5ca91)
 - [如何限流？在工作中是怎么做的？说一下具体的实现？](https://github.com/doocs/advanced-java/blob/master/docs/high-concurrency/huifer-how-to-limit-current.md)

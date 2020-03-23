@@ -357,7 +357,7 @@ TCC 事务机制相对于传统事务机制（X/Open XA），TCC 事务机制相
 
 **正常情况——事务主动方发消息** 这种情况下，事务主动方服务正常，没有发生故障，发消息流程如下：
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200205230320.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200205230320.png)
 
 > 1. 发送方向 MQ 服务端(MQ Server)发送 half 消息。
 > 2. MQ Server 将消息持久化成功之后，向发送方 ACK 确认消息已经发送成功。
@@ -367,7 +367,7 @@ TCC 事务机制相对于传统事务机制（X/Open XA），TCC 事务机制相
 
 **异常情况——事务主动方消息恢复** 在断网或者应用重启等异常情况下，图中 4 提交的二次确认超时未到达 MQ Server，此时处理逻辑如下：
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200205230412.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200205230412.png)
 
 > 5. MQ Server 对该消息发起消息回查。
 > 6. 发送方收到消息回查后，需要检查对应消息的本地事务执行的最终结果。

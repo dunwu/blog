@@ -661,7 +661,7 @@ regex = a\w{3,}?b, content: abaabaaabaaaab
 
 **描述：**校验字符串中只能有中文字符（不包括中文标点符号）。中文字符的 Unicode 编码范围是\u4e00 到 \u9fa5。
 
-如有兴趣，可以参考[**_百度百科-Unicode_**](http://baike.baidu.com/link?url=3xi0vmvCIGKQLJZdn_BYhQ1IDFsoSJMrya6_eOjCBb7A6cRIW-zhZFLC9Yh8wjxU6A_HCfNuP8FBBXU9CN3Wcq) 。
+如有兴趣，可以参考[***百度百科-Unicode***](http://baike.baidu.com/link?url=3xi0vmvCIGKQLJZdn_BYhQ1IDFsoSJMrya6_eOjCBb7A6cRIW-zhZFLC9Yh8wjxU6A_HCfNuP8FBBXU9CN3Wcq) 。
 
 ```
 ^[\u4e00-\u9fa5]+$
@@ -683,7 +683,7 @@ regex = a\w{3,}?b, content: abaabaaabaaaab
 
 **描述：**由十七位数字本体码和一位数字校验码组成。排列顺序从左至右依次为：六位数字地区码；八位数字出生日期；三位数字顺序码和一位数字校验码（也可能是 X）。
 
-身份证号含义详情请见：[**_百度百科-居民身份证号码_**](http://baike.baidu.com/link?url=5mYlYNE0RsSe2D4tydajtiaR8hAm4pPZ0FHSPuQ05N4f6H-i7qPuw7sY5KfNuiOVJWVWZvU4gf3IY-vIcKdP1CU4Fv-9pKmFQB50qGv_hZT2dkGbkd9--8_saY7omV80vEw9ixVeEwda37fHswfmtyU4QSiBG5s3K5K-JnYr1dqNlPu0f3t008UcLh5-wyID)
+身份证号含义详情请见：[***百度百科-居民身份证号码***](http://baike.baidu.com/link?url=5mYlYNE0RsSe2D4tydajtiaR8hAm4pPZ0FHSPuQ05N4f6H-i7qPuw7sY5KfNuiOVJWVWZvU4gf3IY-vIcKdP1CU4Fv-9pKmFQB50qGv_hZT2dkGbkd9--8_saY7omV80vEw9ixVeEwda37fHswfmtyU4QSiBG5s3K5K-JnYr1dqNlPu0f3t008UcLh5-wyID)
 
 **地区码（6 位）**
 
@@ -800,7 +800,7 @@ regex = a\w{3,}?b, content: abaabaaabaaaab
 
 此外，中国在国际上的区号为 86，所以手机号开头有+86、86 也是合法的。
 
-以上信息来源于 [**_百度百科-手机号_**](http://baike.baidu.com/link?url=Bia2K_f8rGcakOlP4d9m_-DNSgXU5-0NDP0pPavS0ZbhRHQcUFUTbMERjdO4u7cvkpTJaIDeUXq_EXWnMqXMdSuMQDX3NAbZXAlZYl_V18KATWF7y1EFzUyJ62rf3bAN)
+以上信息来源于 [***百度百科-手机号***](http://baike.baidu.com/link?url=Bia2K_f8rGcakOlP4d9m_-DNSgXU5-0NDP0pPavS0ZbhRHQcUFUTbMERjdO4u7cvkpTJaIDeUXq_EXWnMqXMdSuMQDX3NAbZXAlZYl_V18KATWF7y1EFzUyJ62rf3bAN)
 
 ```
 ^((\+)?86\s*)?((13[0-9])|(15([0-3]|[5-9]))|(18[0,2,5-9]))\d{8}$
@@ -816,7 +816,7 @@ regex = a\w{3,}?b, content: abaabaaabaaaab
 3 位有效区号：010、020\~029，固话位数为 8 位。
 4 位有效区号：03xx 开头到 09xx，固话位数为 7。
 
-如果想了解更详细的信息，请参考 [**_百度百科-电话区号_**](http://baike.baidu.com/link?url=sX8JoxK1ja5uM5pDYvQe27_QsyqAZ_78DLSeEvwjqtG_uXqU6p5Oh7CPbImNbnwu1ClOmD8udgDIswZfYzQIw0z3BYZO3eTplvVDzieuowTYqt7yHGDAqyT7o4vvGhg4) 。
+如果想了解更详细的信息，请参考 [***百度百科-电话区号***](http://baike.baidu.com/link?url=sX8JoxK1ja5uM5pDYvQe27_QsyqAZ_78DLSeEvwjqtG_uXqU6p5Oh7CPbImNbnwu1ClOmD8udgDIswZfYzQIw0z3BYZO3eTplvVDzieuowTYqt7yHGDAqyT7o4vvGhg4) 。
 
 ```
 ^(010|02[0-9])(\s|-)\d{8}|(0[3-9]\d{2})(\s|-)\d{7}$
@@ -853,9 +853,9 @@ IPv6 地址可以表示为以下形式：
 
 显然，IPv6 地址的表示方式很复杂。你也可以参考
 
-[**_百度百科-IPv6_**](http://baike.baidu.com/link?url=D3nmh0q_G_ZVmxXFG79mjjNfT4hs9fwjqUgygh-tvhq43KYqx88HV27WEXmoT4nA4iGzXwXMm5L-j50C2gSL5q)
+[***百度百科-IPv6***](http://baike.baidu.com/link?url=D3nmh0q_G_ZVmxXFG79mjjNfT4hs9fwjqUgygh-tvhq43KYqx88HV27WEXmoT4nA4iGzXwXMm5L-j50C2gSL5q)
 
-[**_Stack overflow 上的 IPv6 正则表达高票答案_**](http://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses)
+[***Stack overflow 上的 IPv6 正则表达高票答案***](http://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses)
 
 ```
 (([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))

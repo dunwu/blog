@@ -418,5 +418,5 @@ tags: ['设计', '架构', '网站']
 
 ## 5. 参考资料
 
-- [大型网站技术架构：核心原理与案例分析](https://item.jd.com/11322972.html)
+- [《大型网站技术架构：核心原理与案例分析》](https://item.jd.com/11322972.html)
 - [软件架构入门- 阮一峰的网络日志](http://www.ruanyifeng.com/blog/2016/09/software-architecture.html)

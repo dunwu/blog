@@ -188,13 +188,13 @@ date: 2018-07-09 17:43
 
 ### 4.1. Paxos
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200202221611.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200202221611.png)
 
 > :bulb: Paxos 详尽剖析，请参考：[深入剖析共识性算法 Paxos](paxos.md)
 
 ### 4.2. Raft
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200201221202.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200201221202.png)
 
 > :bulb: Raft 详尽剖析，请参考：[深入剖析共识性算法 Raft](raft.md)
 

@@ -215,7 +215,7 @@ Math.pow(2, 41) / (365 * 24 * 60 * 60 * 1000L);
 
 机器三地部署我们可以用 3bit 总共 8 来表示机房位置，当前的机器 10 台，为了保证扩展到百台那么可以用 7bit 128 来表示，时间位依然是 41bit，那么还剩下 64-10-3-7-41-1 = 2bit，还剩下 2bit 可以用来进行扩展。
 
-![](https://user-gold-cdn.xitu.io/2018/9/29/16624909d2007c22?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+![img](https://user-gold-cdn.xitu.io/2018/9/29/16624909d2007c22?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
 ### 5.2. 优点
 

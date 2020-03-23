@@ -15,43 +15,43 @@ date: 2019-07-05 15:11
 >
 > 注意：_为了简便，下文中除了文章标题，一律使用 MQ 简称_。
 
-## 1. 为什么要使用 MQ
+## 为什么要使用 MQ
 
 MQ 比较核心的优点有 3 个：**解耦**、**异步**、**削峰**。
 
-### 1.1. 解耦
+### 解耦
 
 不同系统如果要建立通信，传统的做法是：调用接口。
 
 如果需要和新的系统建立通信或删除已建立的通信，都需要修改代码，这种方案显然耦合度很高。
 
-![](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_1.png)
+![img](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_1.png)
 
 如果使用 MQ，系统间的通信只需要通过发布/订阅（Pub/Sub）模型即可，彼此没有直接联系，也就不需要相互感知，从而达到 **解耦**。
 
-![](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_2.png)
+![img](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_2.png)
 
-### 1.2. 异步
+### 异步
 
 假设这样一个场景，用户向系统 A 发起请求，系统 A 处理计算只需要 10 ms，然后通知系统 BCD 写库，系统 BCD 写库耗时分别为：100ms、200ms、300ms。最终总耗时为： 10+100ms+200ms+300ms=610ms。此外，加上请求和响应的网络传输时间，从用户角度看，可能要等待将近 1s 才能得到结果。
 
-![](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_3.png)
+![img](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_3.png)
 
 如果使用 MQ，系统 A 接到请求后，耗时 10ms 处理计算，然后向系统 BCD 连续发送消息，假设耗时 5ms。那么 这一过程的总耗时为 3ms + 5ms = 8ms，这相比于 610 ms，大大缩短了响应时间。至于系统 BCD 的写库操作，只要自行消费 MQ 后处理即可，用户无需关注。
 
-![](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_4.png)
+![img](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_4.png)
 
-### 1.3. 削峰
+### 削峰
 
 假设某个系统读写数据库的稳定性能为每秒处理 1000 条数据。平常情况下，远远达不到这么大的处理量。假设，因为因为做活动，系统的瞬时请求量剧增，达到每秒 10000 个并发请求，数据库根本承受不了，可能直接就把数据库给整崩溃了，这样系统服务就不可用了。
 
-![](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_5.png)
+![img](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_5.png)
 
 如果使用 MQ，每秒写入 10000 条请求，但是系统 A 每秒只从 MQ 中消费 1000 条请求，然后写入数据库。这样，就不会超过数据库的承受能力，而是把请求积压在 MQ 中。只要高峰期一过，系统 A 就会很快把积压的消息给处理掉。
 
-![](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_6.png)
+![img](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_6.png)
 
-## 2. MQ 引入的问题
+## MQ 引入的问题
 
 凡事有利有弊，使用 MQ 给系统带来很多好处，也会付出一定的代价。
 
@@ -65,27 +65,27 @@ MQ 比较核心的优点有 3 个：**解耦**、**异步**、**削峰**。
   - 如何处理大量消息积压的问题？
 - **一致性问题** - 假设系统 A 处理完直接返回成功的结果给用户，用户认为请求成功。但如果此时，系统 BCD 中只要有任意一个写库失败，那么数据就不一致了。这种情况如何处理？
 
-### 2.1. 重复消费
+### 重复消费
 
 **如何保证消息不被重复消费** 和 **如何保证消息消费的幂等性** 是同一个问题。
 
 必须先明确产生重复消费的原因，才能对症下药。
 
-#### 2.1.1. 重复消费问题原因
+#### 重复消费问题原因
 
 重复消费问题通常不是 MQ 来处理，而是由开发来处理的。
 
 以 Kafka 举例：Kafka 每个 Partition 都是一个有序的、不可变的记录序列，不断追加到结构化的提交日志中。Partition 中的记录每个分配一个连续的 id 号，称为偏移量（Offset），用于唯一标识 Partition 内的每条记录。
 
-![](http://kafka.apachecn.org/10/images/log_consumer.png)
+![img](http://kafka.apachecn.org/10/images/log_consumer.png)
 
 Kafka 的客户端和 Broker 都会保存 Offset。客户端消费消息后，每隔一段时间，就把已消费的 Offset 提交给 Kafka Broker，表示已消费。
 
 在这个过程中，如果客户端应用消费消息后，因为宕机、重启等情况而没有提交已消费的 Offset 。当系统恢复后，会继续消费消息，由于 Offset 未提交，就会出现重复消费的问题。
 
-![](http://upload-images.jianshu.io/upload_images/3101171-75abe308f9cf21f8.png)
+![img](http://upload-images.jianshu.io/upload_images/3101171-75abe308f9cf21f8.png)
 
-#### 2.1.2. 重复消费解决方案
+#### 重复消费解决方案
 
 应对重复消费问题，就要通过幂等性来解决。
 
@@ -97,7 +97,7 @@ MQ 重复消费不可怕，可怕的是没有应对机制，可以借鉴的思�
 - 如果是写 Redis，set 操作，由于天然具有幂等性，大可放心；
 - 如果是根据消息做较复杂的逻辑处理，可以在消息中加入全局唯一 ID，例如：订单 ID 等。在客户端存储中（Mysql、Redis 等）保存已消费消息的 ID。一旦接受到新消息，先判断消息中的 ID 是否在已消费消息 ID 表中存在，存在则不再处理，不存在则处理。
 
-### 2.2. 消息丢失
+### 消息丢失
 
 **如何处理消息丢失的问题** 和 **如何保证消息不被重复消费** 是同一个问题。关注点有按个：
 
@@ -105,13 +105,13 @@ MQ 重复消费不可怕，可怕的是没有应对机制，可以借鉴的思�
 - 消费方丢失数据
 - 生产方丢失数据
 
-#### 2.2.1. 消费方丢失数据
+#### 消费方丢失数据
 
 唯一可能导致消费方丢失数据的情况，就是：消费方设置了**自动提交 Offset**。设置了自动提交 Offset，接受到消息后就会自动提交 Offset 给 Kafka ，Kafka 就认为消息已被消费。如果此时，消费方尚未来得及处理消息就挂了，那么消息就丢了。
 
 解决方法就是消费方关闭自动提交 Offset，处理完消息后手动提交 Offset。但这种情况下可能会出现重复消费的情形，需要自行保证幂等性。
 
-#### 2.2.2. Kafka 丢失数据
+#### Kafka 丢失数据
 
 当 Kafka 某个 Broker 宕机，需要重新选举 Partition 的 Leader。若此时其他的 Follower 尚未同步 Leader 的数据，那么新选某个 Follower 为 Leader 后，就丢失了部分数据。
 
@@ -122,13 +122,13 @@ MQ 重复消费不可怕，可怕的是没有应对机制，可以借鉴的思�
 - 在 Producer 端设置 `acks=all` - 这意味着：要求每条数据，必须是**写入所有 replica 之后，才能认为是写成功了**。
 - 在 Producer 端设置 `retries=MAX`（很大很大很大的一个值，无限次重试的意思） - 这意味着**要求一旦写入失败，就无限重试**，卡在这里了。
 
-#### 2.2.3. 生产方丢失数据
+#### 生产方丢失数据
 
 如果按照上述的思路设置了 `acks=all`，生产方一定不会丢数据。
 
 要求是，你的 Leader 接收到消息，所有的 Follower 都同步到了消息之后，才认为本生产消息成功了。如果未满足这个条件，生产者会自动不断的重试，重试无限次。
 
-### 2.3. 消息的顺序性
+### 消息的顺序性
 
 > 以 Kafka 为例
 
@@ -145,9 +145,9 @@ MQ 重复消费不可怕，可怕的是没有应对机制，可以借鉴的思�
   - 消费方维护 N 个缓存队列，具有相同 key 的数据都写入同一个队列中；
   - 创建 N 个线程，每个线程只负责从指定的一个队列中取数据。
 
-![](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_7.png)
+![img](http://dunwu.test.upcdn.net/cs/design/theory/mq/mq_7.png)
 
-### 2.4. 消息积压
+### 消息积压
 
 假设一个 MQ 消费者可以一秒处理 1000 条消息，三个 MQ 消费者可以一秒处理 3000 条消息，那么一分钟的处理量是 18 万条。如果 MQ 中积压了几百万到上千万的数据，即使消费者恢复了，也需要大概很长的时间才能恢复过来。
 
@@ -159,13 +159,13 @@ MQ 重复消费不可怕，可怕的是没有应对机制，可以借鉴的思�
 - 接着临时征用 10 倍的机器来部署 Consumer ，每一批 Consumer 消费一个临时 Queue 的数据。这种做法相当于是临时将 Queue 资源和 Consumer 资源扩大 10 倍，以正常的 10 倍速度来消费数据。
 - 等快速消费完积压数据之后，**得恢复原先部署的架构**，**重新**用原先的 consumer 机器来消费消息。
 
-## 3. MQ 的高可用
+## MQ 的高可用
 
 不同 MQ 实现高可用的原理各不相同。因为 Kafka 比较具有代表性，所以这里以 Kafka 为例。
 
-### 3.1. Kafka 的高可用
+### Kafka 的高可用
 
-#### 3.1.1. Kafka 的核心概念
+#### Kafka 的核心概念
 
 了解 Kafka，必须先了解 Kafka 的核心概念：
 
@@ -177,9 +177,9 @@ MQ 重复消费不可怕，可怕的是没有应对机制，可以借鉴的思�
 
   - Kafka 日志的分区（Partition）分布在 Kafka 集群的节点上。每个节点在处理数据和请求时，共享这些分区。每一个分区都会在已配置的节点上进行备份，确保容错性。
 
-![](http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/mq/kafka/kafka-cluster-roles.png)
+![img](http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/mq/kafka/kafka-cluster-roles.png)
 
-#### 3.1.2. Kafka 的副本机制
+#### Kafka 的副本机制
 
 Kafka 是如何实现高可用的呢？
 
@@ -196,7 +196,7 @@ Kafka 在 0.8 以前的版本中，如果一个 Broker 宕机了，其上面的 
 
 同一个 Topic 的不同 Partition 会分布在多个 Broker 上，而且一个 Partition 还会在其他的 Broker 上面进行备份，Producer 在发布消息到某个 Partition 时，先找到该 Partition 的 Leader，然后向这个 Leader 推送消息；每个 Follower 都从 Leader 拉取消息，拉取消息成功之后，向 Leader 发送一个 ACK 确认。
 
-![](http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/mq/kafka/kafka-replication.png)
+![img](http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/mq/kafka/kafka-replication.png)
 
 > FAQ
 >
@@ -204,7 +204,7 @@ Kafka 在 0.8 以前的版本中，如果一个 Broker 宕机了，其上面的 
 >
 > 答：因为如果允许所有 Broker 都可以处理读写请求，就可能产生数据一致性问题。
 
-#### 3.1.3. Kafka 选举 Leader
+#### Kafka 选举 Leader
 
 由上文可知，Partition 在多个 Broker 上存在副本。
 
@@ -212,7 +212,7 @@ Kafka 在 0.8 以前的版本中，如果一个 Broker 宕机了，其上面的 
 
 如果 Leader 宕机了，会从 Follower 中**重新选举**一个新的 Leader。
 
-## 4. MQ 的通信模式
+## MQ 的通信模式
 
 MQ 可驻留在内存或磁盘上，队列存储消息直到它们被应用程序读取。通过 MQ，应用程序可独立地执行，它们不需要知道彼此的位置，不需要等待接收程序接收此消息。在分布式计算环境中，为了集成分布式应用，开发者需要对异构网络环境下的分布式应用提供有效的通信手段。为了管理需要共享的信息，对应用提供公共的信息交换机制是重要的。
 
@@ -221,7 +221,7 @@ MQ 可驻留在内存或磁盘上，队列存储消息直到它们被应用程�
 - **发布/订阅 (Publish/Subscribe)** - 发布/订阅模式使消息的分发可以突破目的队列地理位置的限制，使消息按照特定的主题甚至内容进行分发，用户或应用程序可以根据主题或内容接收到所需要的消息。发布/订阅模式使得发送者和接收者之间的耦合关系变得更为松散，发送者不必关心接收者的目的地址，而接收者也不必关心消息的发送地址，而只是根据消息的主题进行消息的收发。
 - **集群 (Cluster)** - 为了简化点对点通讯模式中的系统配置，MQ 提供 Cluster(集群) 的解决方案。集群类似于一个域 (Domain)，集群内部的队列管理器之间通讯时，不需要两两之间建立消息通道，而是采用集群 (Cluster) 通道与其它成员通讯，从而大大简化了系统配置。此外，集群中的队列管理器之间能够自动进行负载均衡，当某一队列管理器出现故障时，其它队列管理器可以接管它的工作，从而大大提高系统的高可靠性。
 
-## 5. 常用 MQ 对比
+## 常用 MQ 对比
 
 | 特性                     | ActiveMQ                              | RabbitMQ                                           | RocketMQ                                                                                                              | Kafka                                                                                                                                           |
 | ------------------------ | ------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -240,7 +240,7 @@ MQ 可驻留在内存或磁盘上，队列存储消息直到它们被应用程�
 - 所以**中小型公司**，技术实力较为一般，技术挑战不是特别高，用 RabbitMQ 是不错的选择；**大型公司**，基础架构研发实力较强，用 RocketMQ 是很好的选择。
 - 如果是**大数据领域**的实时计算、日志采集等场景，用 Kafka 是业内标准的，绝对没问题，社区活跃度很高，绝对不会黄，何况几乎是全世界这个领域的事实性规范。
 
-## 6. JMS
+## JMS
 
 谈 MQ 就不得不提一下 JMS 。
 
@@ -248,14 +248,14 @@ MQ 可驻留在内存或磁盘上，队列存储消息直到它们被应用程�
 
 在 EJB 架构中，有消息 bean 可以无缝的与 JM 消息服务集成。在 J2EE 架构模式中，有消息服务者模式，用于实现消息与应用直接的解耦。
 
-### 6.1. 消息模型
+### 消息模型
 
 在 JMS 标准中，有两种消息模型：
 
 - P2P(Point to Point)
 - Pub/Sub(Publish/Subscribe)
 
-#### 6.1.1. P2P 模式
+#### P2P 模式
 
 <div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-2adc66e2367cd2c2.png"/></div>
 P2P 模式包含三个角色：MQ（Queue），发送者(Sender)，接收者(Receiver)。每个消息都被发送到一个特定的队列，接收者从队列中获取消息。队列保留着消息，直到他们被消费或超时。
@@ -268,7 +268,7 @@ P2P 的特点
 
 如果希望发送的每个消息都会被成功处理的话，那么需要 P2P 模式。
 
-#### 6.1.2. Pub/sub 模式
+#### Pub/sub 模式
 
 <div align="center"><img src="http://upload-images.jianshu.io/upload_images/3101171-12afe9581da889ea.png"/></div>
 包含三个角色主题（Topic），发布者（Publisher），订阅者（Subscriber） 。多个发布者将消息发送到 Topic,系统将这些消息传递给多个订阅者。
@@ -283,7 +283,7 @@ Pub/Sub 的特点
 
 如果希望发送的消息可以不被做任何处理、或者只被一个消息者处理、或者可以被多个消费者处理的话，那么可以采用 Pub/Sub 模型。
 
-### 6.2. 消息消费
+### 消息消费
 
 在 JMS 中，消息的产生和消费都是异步的。对于消费来说，JMS 的消息者可以通过两种方式来消费消息。
 
@@ -294,41 +294,41 @@ Pub/Sub 的特点
 
 JNDI 在 JMS 中起到查找和访问发送目标或消息来源的作用。
 
-### 6.3. JMS 编程模型
+### JMS 编程模型
 
-#### 6.3.1. ConnectionFactory
+#### ConnectionFactory
 
 创建 Connection 对象的工厂，针对两种不同的 jms 消息模型，分别有 QueueConnectionFactory 和 TopicConnectionFactory 两种。可以通过 JNDI 来查找 ConnectionFactory 对象。
 
-#### 6.3.2. Destination
+#### Destination
 
 Destination 的意思是消息生产者的消息发送目标或者说消息消费者的消息来源。对于消息生产者来说，它的 Destination 是某个队列（Queue）或某个主题（Topic）;对于消息消费者来说，它的 Destination 也是某个队列或主题（即消息来源）。
 
 所以，Destination 实际上就是两种类型的对象：Queue、Topic。可以通过 JNDI 来查找 Destination。
 
-#### 6.3.3. (3) Connection
+#### (3) Connection
 
 Connection 表示在客户端和 JMS 系统之间建立的链接（对 TCP/IP socket 的包装）。Connection 可以产生一个或多个 Session。跟 ConnectionFactory 一样，Connection 也有两种类型：QueueConnection 和 TopicConnection。
 
-#### 6.3.4. (4) Session
+#### (4) Session
 
 Session 是操作消息的接口。可以通过 session 创建生产者、消费者、消息等。Session 提供了事务的功能。当需要使用 session 发送/接收多个消息时，可以将这些发送/接收动作放到一个事务中。同样，也分 QueueSession 和 TopicSession。
 
-#### 6.3.5. 消息的生产者
+#### 消息的生产者
 
 消息生产者由 Session 创建，并用于将消息发送到 Destination。同样，消息生产者分两种类型：QueueSender 和 TopicPublisher。可以调用消息生产者的方法（send 或 publish 方法）发送消息。
 
-#### 6.3.6. 消息消费者
+#### 消息消费者
 
 消息消费者由 Session 创建，用于接收被发送到 Destination 的消息。两种类型：QueueReceiver 和 TopicSubscriber。可分别通过 session 的 createReceiver(Queue)或 createSubscriber(Topic)来创建。当然，也可以 session 的 creatDurableSubscriber 方法来创建持久化的订阅者。
 
-#### 6.3.7. MessageListener
+#### MessageListener
 
 消息监听器。如果注册了消息监听器，一旦消息到达，将自动调用监听器的 onMessage 方法。EJB 中的 MDB（Message-Driven Bean）就是一种 MessageListener。
 
 深入学习 JMS 对掌握 JAVA 架构，EJB 架构有很好的帮助，消息中间件也是大型分布式系统必须的组件。本次分享主要做全局性介绍，具体的深入需要大家学习，实践，总结，领会。
 
-## 7. 参考资料
+## 参考资料
 
 - [大型网站架构系列：分布式 MQ（一）](https://www.cnblogs.com/itfly8/p/5155983.html)
 - [大型网站架构系列：MQ（二）](https://www.cnblogs.com/itfly8/p/5156155.html)

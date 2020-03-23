@@ -50,7 +50,7 @@ date: 2016-01-08 22:14
 
 HTTP 是由 **IETF**(Internet Engineering Task Force，互联网工程工作小组) 和 **W3C**(World Wide Web Consortium，万维网协会) 共同合作制订的，它们发布了一系列的**RFC**(Request For Comments)，其中最著名的是 RFC 2616，它定义了**HTTP /1.1**。
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119131949.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119131949.png)
 
 ### HTTP 协议特点
 
@@ -132,7 +132,7 @@ HTTP 使用统一资源标识符（Uniform Resource Identifiers, URI）来传输
 
 客户端发送一个 HTTP 请求到服务器的请求消息包括以下格式：请求行（request line）、请求头部（header）、空行和请求数据四个部分组成，下图给出了请求报文的一般格式。
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119132129.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119132129.png)
 
 HTTP 请求报文由以下元素组成：
 
@@ -176,7 +176,7 @@ HTTP 请求报文由以下元素组成：
 
 ### HTTP 响应报文
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119132311.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119132311.png)
 
 HTTP 响应报文包含了下面的元素：
 
@@ -265,7 +265,7 @@ Cookie 工作步骤：
 2. 客户端浏览器会把 Cookie 保存下来。
 3. 当浏览器再请求该网站时，浏览器把该请求的网址连同 Cookie 一同提交给服务器。服务器检查该 Cookie，以此来辨认用户状态。
 
-**_注：Cookie 功能需要浏览器的支持，如果浏览器不支持 Cookie 或者 Cookie 禁用了，Cookie 功能就会失效。_**
+***注：Cookie 功能需要浏览器的支持，如果浏览器不支持 Cookie 或者 Cookie 禁用了，Cookie 功能就会失效。***
 
 Java 中把 Cookie 封装成了 `javax.servlet.http.Cookie` 类。
 

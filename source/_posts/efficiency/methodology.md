@@ -48,7 +48,7 @@ date: 2020-02-10 16:00
 
 时间管理四象限法则是美国的管理学家科维提出的一个时间管理的理论，按处理顺序划分为：紧急又重要、重要不紧急、紧急不重要、不紧急不重要。
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/20200210173335.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200210173335.png)
 
 - **第一象限（重要而紧急**）
 
