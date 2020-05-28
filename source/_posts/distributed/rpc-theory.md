@@ -9,519 +9,839 @@ date: 2020-02-04 10:00
 
 > 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
-<!-- TOC depthFrom:2 depthTo:3 -->
+> [Apache Dubbo](https://dubbo.apache.org/zh-cn/) 是一款高性能、轻量级的开源 Java RPC 框架，它提供了三大核心能力：面向接口的远程方法调用，智能容错和负载均衡，以及服务自动注册和发现。
 
-- [1. 缓存概述](#1-缓存概述)
-  - [1.1. 什么是缓存](#11-什么是缓存)
-  - [1.2. 为什么引入缓存](#12-为什么引入缓存)
-  - [1.3. 缓存的基本原理](#13-缓存的基本原理)
-  - [1.4. 缓存淘汰算法](#14-缓存淘汰算法)
-  - [1.5. 缓存的分类](#15-缓存的分类)
-  - [1.6. 缓存整体架构](#16-缓存整体架构)
-- [2. CDN 缓存](#2-cdn-缓存)
-  - [2.1. CDN 原理](#21-cdn-原理)
-  - [2.2. CDN 特点](#22-cdn-特点)
-- [3. 反向代理缓存](#3-反向代理缓存)
-  - [3.1. 缓存原理](#31-缓存原理)
-  - [3.2. 代理缓存比较](#32-代理缓存比较)
-- [4. 进程内缓存](#4-进程内缓存)
-  - [4.1. ConcurrentHashMap](#41-concurrenthashmap)
-  - [4.2. LRUHashMap](#42-lruhashmap)
-  - [4.3. Guava Cache](#43-guava-cache)
-  - [4.4. Caffeine](#44-caffeine)
-  - [4.5. 选择进程内缓存](#45-选择进程内缓存)
-- [5. 分布式缓存](#5-分布式缓存)
-  - [5.1. Memcache](#51-memcache)
-  - [5.2. Redis](#52-redis)
-  - [5.3. 选择分布式缓存](#53-选择分布式缓存)
-- [6. 多级缓存](#6-多级缓存)
-  - [6.1. 使用进程内缓存](#61-使用进程内缓存)
-  - [6.2. 使用分布式缓存](#62-使用分布式缓存)
-  - [6.3. 使用多级缓存](#63-使用多级缓存)
-- [7. 缓存问题](#7-缓存问题)
-  - [7.1. 缓存雪崩](#71-缓存雪崩)
-  - [7.2. 缓存穿透](#72-缓存穿透)
-  - [7.3. 缓存击穿](#73-缓存击穿)
-  - [7.4. 缓存更新](#74-缓存更新)
-  - [7.5. 缓存预热](#75-缓存预热)
-  - [7.6. 缓存降级](#76-缓存降级)
-- [参考资料](#参考资料)
+## 一、Dubbo 简介
 
-<!-- /TOC -->
+[Apache Dubbo](https://dubbo.apache.org/zh-cn/) 是一款高性能、轻量级的开源 Java RPC 框架。
 
-## 1. 缓存概述
+Dubbo 提供了三大核心能力：
 
-### 1.1. 什么是缓存
+- 面向接口的远程方法调用
+- 智能容错和负载均衡
+- 服务自动注册和发现
 
-**缓存就是数据交换的缓冲区**。
+### RPC 原理简介
 
-缓存是用于存储数据的硬件或软件的组成部分，以使得后续更快访问相应的数据。缓存中的数据可能是提前计算好的结果、数据的副本等。典型的应用场景：有 cpu cache, 磁盘 cache 等。本文中提及到缓存主要是指互联网应用中所使用的缓存组件。
+#### 什么是 RPC
 
-### 1.2. 为什么引入缓存
+RPC（Remote Procedure Call），即远程过程调用，它是一种通过网络从远程计算机程序上请求服务，而不需要了解底层网络技术的协议。比如两个不同的服务 A、B 部署在两台不同的机器上，那么服务 A 如果想要调用服务 B 中的某个方法该怎么办呢？使用 HTTP 请求 当然可以，但是可能会比较慢而且一些优化做的并不好。 RPC 的出现就是为了解决这个问题。
 
-传统的后端业务场景中，访问量以及对响应时间的要求均不高，通常只使用数据库即可满足要求。这种架构简单，便于快速部署，很多网站发展初期均考虑使用这种架构。但是随着访问量的上升，以及对响应时间的要求提升，一个数据库服务已无法再满足要求。这时候通常会考虑数据库拆分(sharding)、读写分离、甚至硬件升级(SSD)等以满足新的业务需求。但是这种方式仍然会面临很多问题，主要体现在：
+#### RPC 工作流程
 
-- 性能提升有限，很难达到数量级上的提升，尤其在互联网业务场景下，随着网站的发展，访问量经常会面临十倍、百倍的上涨。
-- 成本高昂，为了承载 N 倍的访问量，通常需要 N 倍的机器，这个代价难以接受。
+![img](http://dunwu.test.upcdn.net/snap/20200305121252.jpg)
 
-在数据层引入缓存，有以下几个好处：
+1. 服务消费方（client）调用以本地调用方式调用服务；
+2. client stub 接收到调用后负责将方法、参数等组装成能够进行网络传输的消息体；
+3. client stub 找到服务地址，并将消息发送到服务端；
+4. server stub 收到消息后进行解码；
+5. server stub 根据解码结果调用本地的服务；
+6. 本地服务执行并将结果返回给 server stub；
+7. server stub 将返回结果打包成消息并发送至消费方；
+8. client stub 接收到消息，并进行解码；
+9. 服务消费方得到最终结果。
 
-- 提升数据读取速度。
-- 提升系统扩展能力，通过扩展缓存，提升系统承载能力。
-- 降低存储成本，Cache+DB 的方式可以承担原有需要多台 DB 才能承担的请求量，节省机器成本。
+### 为什么需要 Dubbo
 
-根据业务场景，通常缓存有以下几种使用方式：
+**如果你要开发分布式程序，你也可以直接基于 HTTP 接口进行通信，但是为什么要用 Dubbo 呢？**
 
-- 懒汉式(读时触发)：写入 DB 后, 然后把相关的数据也写入 Cache。
-- 饥饿式(写时触发)：先查询 DB 里的数据, 然后把相关的数据写入 Cache。
-- 定期刷新：适合周期性的跑数据的任务，或者列表型的数据，而且不要求绝对实时性。
+我觉得主要可以从 Dubbo 提供的下面四点特性来说为什么要用 Dubbo：
 
-### 1.3. 缓存的基本原理
+1. **负载均衡**——同一个服务部署在不同的机器时该调用那一台机器上的服务。
+2. **服务调用链路**——随着系统的发展，服务越来越多，服务间依赖关系变得错踪复杂，甚至分不清哪个应用要在哪个应用之前启动，架构师都不能完整的描述应用的架构关系。Dubbo 可以为我们解决服务之间互相是如何调用的。
+3. **服务访问压力以及时长统计、资源调度和治理**——基于访问压力实时管理集群容量，提高集群利用率。
+4. **服务治理**——某个服务挂掉之后调用备用服务。
 
-1. 将数据写入/读取速度更快的存储（设备）；
-2. 将数据缓存到离应用最近的位置；
-3. 将数据缓存到离用户最近的位置。
+另外，Dubbo 除了能够应用在分布式系统中，也可以应用在现在比较火的微服务系统中。不过，由于 Spring Cloud 在微服务中应用更加广泛，所以，我觉得一般我们提 Dubbo 的话，大部分是分布式系统的情况。
 
-### 1.4. 缓存淘汰算法
+## 二、QuickStart
 
-常见的缓存淘汰算法有以下几种：
+（1）添加 maven 依赖
 
-- **FIFO** - 先进先出，在这种淘汰算法中，先进入缓存的会先被淘汰。这种可谓是最简单的了，但是会导致我们命中率很低。试想一下我们如果有个访问频率很高的数据是所有数据第一个访问的，而那些不是很高的是后面再访问的，那这样就会把我们的首个数据但是他的访问频率很高给挤出。
-- **LRU** - 最近最少使用算法。在这种算法中避免了上面的问题，每次访问数据都会将其放在我们的队尾，如果需要淘汰数据，就只需要淘汰队首即可。但是这个依然有个问题，如果有个数据在 1 个小时的前 59 分钟访问了 1 万次(可见这是个热点数据),再后一分钟没有访问这个数据，但是有其他的数据访问，就导致了我们这个热点数据被淘汰。
-- **LFU** - 最近最少频率使用。在这种算法中又对上面进行了优化，利用额外的空间记录每个数据的使用频率，然后选出频率最低进行淘汰。这样就避免了 LRU 不能处理时间段的问题。
+```xml
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>dubbo</artifactId>
+    <version>${dubbo.version}</version>
+</dependency>
+```
 
-这三种缓存淘汰算法，实现复杂度一个比一个高，同样的命中率也是一个比一个好。而我们一般来说选择的方案居中即可，即实现成本不是太高，而命中率也还行的 LRU。
+（2）定义 Provider
 
-### 1.5. 缓存的分类
+```java
+package com.alibaba.dubbo.demo;
 
-在分布式系统中，缓存的应用非常广泛，从部署角度有以下几个方面的缓存应用。
+public interface DemoService {
+    String sayHello(String name);
+}
+```
 
-- **CDN 缓存** - 存放 HTML、CSS、JS 等静态资源。
-- **反向代理缓存** - 动静分离，只缓存用户请求的静态资源。
-- **进程内缓存** - 缓存应用字典等常用数据。
-- **分布式缓存** - 缓存数据库中的热点数据。
+（3）实现 Provider
 
-### 1.6. 缓存整体架构
+```java
+package com.alibaba.dubbo.demo.provider;
+import com.alibaba.dubbo.demo.DemoService;
 
-通常，网站的缓存整体架构如下图所示：
+public class DemoServiceImpl implements DemoService {
+    public String sayHello(String name) {
+        return "Hello " + name;
+    }
+}
+```
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存整体架构.png!zp" /></div>
-请求过程：
+（4）配置 Provider
 
-1. 浏览器向客户端发起请求，如果 CDN 有缓存则直接返回；
-2. 如果 CDN 无缓存，则访问反向代理服务器；
-3. 如果反向代理服务器有缓存则直接返回；
-4. 如果反向代理服务器无缓存或动态请求，则访问应用服务器；
-5. 应用服务器访问进程内缓存；如果有缓存，则返回代理服务器，并缓存数据；（动态请求不缓存）
-6. 如果进程内缓存无数据，则读取分布式缓存；并返回应用服务器；应用服务器将数据缓存到本地缓存（部分）；
-7. 如果分布式缓存无数据，则应用程序读取数据库数据，并放入分布式缓存；
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <dubbo:application name="demo-provider"/>
+    <dubbo:registry address="multicast://224.5.6.7:1234"/>
+    <dubbo:protocol name="dubbo" port="20880"/>
+    <dubbo:service interface="com.alibaba.dubbo.demo.DemoService" ref="demoService"/>
+    <bean id="demoService" class="com.alibaba.dubbo.demo.provider.DemoServiceImpl"/>
+</beans>
+```
 
-## 2. CDN 缓存
+（5）启动 Provider
 
-> **CDN 将数据缓存到离用户物理距离最近的服务器，使得用户可以就近获取请求内容。CDN 一般缓存静态资源文件（页面，脚本，图片，视频，文件等）**。
+```java
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Provider {
+    public static void main(String[] args) throws Exception {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+                new String[] {"META-INF/spring/dubbo-demo-provider.xml"});
+        context.start();
+        // press any key to exit
+        System.in.read();
+    }
+}
+```
+
+（6）配置 Consumer
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <dubbo:application name="demo-consumer"/>
+    <dubbo:registry address="multicast://224.5.6.7:1234"/>
+    <dubbo:reference id="demoService" interface="com.alibaba.dubbo.demo.DemoService"/>
+</beans>
+```
+
+（7）启动 Consumer
+
+```java
+import com.alibaba.dubbo.demo.DemoService;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Consumer {
+    public static void main(String[] args) throws Exception {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+                new String[]{"META-INF/spring/dubbo-demo-consumer.xml"});
+        context.start();
+        // obtain proxy object for remote invocation
+        DemoService demoService = (DemoService) context.getBean("demoService");
+        // execute remote invocation
+        String hello = demoService.sayHello("world");
+        // show the result
+        System.out.println(hello);
+    }
+}
+```
+
+## 三、Dubbo 配置
+
+Dubbo 所有配置最终都将转换为 URL 表示，并由服务提供方生成，经注册中心传递给消费方，各属性对应 URL 的参数，参见配置项一览表中的 "对应 URL 参数" 列。
+
+只有 group，interface，version 是服务的匹配条件，三者决定是不是同一个服务，其它配置项均为调优和治理参数。
+
+URL 格式：`protocol://username:password@host:port/path?key=value&key=value`
+
+### 配置方式
+
+Dubbo 支持多种配置方式：
+
+- xml 配置
+- properties 配置
+- API 配置
+- 注解配置
+
+如果同时存在多种配置方式，遵循以下覆盖策略：
+
+- JVM 启动 -D 参数优先，这样可以使用户在部署和启动时进行参数重写，比如在启动时需改变协议的端口。
+- XML 次之，如果在 XML 中有配置，则 dubbo.properties 中的相应配置项无效。
+- Properties 最后，相当于缺省值，只有 XML 没有配置时，dubbo.properties 的相应配置项才会生效，通常用于共享公共配置，比如应用名。
+
+<div align="center">
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo配置覆盖策略.jpg" width="300"/>
+</div>
+
+#### xml 配置
+
+示例：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+    <dubbo:application name="hello-world-app"  />
+    <dubbo:registry address="multicast://224.5.6.7:1234" />
+    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:service interface="com.alibaba.dubbo.demo.DemoService" ref="demoServiceLocal" />
+    <dubbo:reference id="demoServiceRemote" interface="com.alibaba.dubbo.demo.DemoService" />
+</beans>
+```
+
+#### properties 配置
+
+示例：
+
+```properties
+dubbo.application.name=foo
+dubbo.application.owner=bar
+dubbo.registry.address=10.20.153.10:9090
+```
+
+### 配置项
+
+所有配置项分为三大类：
+
+- 服务发现：表示该配置项用于服务的注册与发现，目的是让消费方找到提供方。
+- 服务治理：表示该配置项用于治理服务间的关系，或为开发测试提供便利条件。
+- 性能调优：表示该配置项用于调优性能，不同的选项对性能会产生影响。
+
+配置项清单：
+
+| 标签                | 用途         | 解释                                                                                             |
+| ------------------- | ------------ | ------------------------------------------------------------------------------------------------ |
+| `dubbo:service`     | 服务配置     | 用于暴露一个服务，定义服务的元信息，一个服务可以用多个协议暴露，一个服务也可以注册到多个注册中心 |
+| `dubbo:reference`   | 引用配置     | 用于创建一个远程服务代理，一个引用可以指向多个注册中心                                           |
+| `dubbo:protocol`    | 协议配置     | 用于配置提供服务的协议信息，协议由提供方指定，消费方被动接受                                     |
+| `dubbo:application` | 应用配置     | 用于配置当前应用信息，不管该应用是提供者还是消费者                                               |
+| `dubbo:module`      | 模块配置     | 用于配置当前模块信息，可选                                                                       |
+| `dubbo:registry`    | 注册中心配置 | 用于配置连接注册中心相关信息                                                                     |
+| `dubbo:monitor`     | 监控中心配置 | 用于配置连接监控中心相关信息，可选                                                               |
+| `dubbo:provider`    | 提供方配置   | 当 ProtocolConfig 和 ServiceConfig 某属性没有配置时，采用此缺省值，可选                          |
+| `dubbo:consumer`    | `消费方配置` | `当 ReferenceConfig 某属性没有配置时，采用此缺省值，可选`                                        |
+| `dubbo:method`      | 方法配置     | 用于 ServiceConfig 和 ReferenceConfig 指定方法级的配置信息                                       |
+| `dubbo:argument`    | 参数配置     | 用于指定方法参数配置                                                                             |
+
+> 详细配置说明请参考：[官方配置](http://dubbo.apache.org/books/dubbo-user-book/references/xml/introduction.html)
+
+#### 配置之间的关系
+
+<div align="center">
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo配置关系.jpg" width="600"/>
+</div>
+
+#### 配置覆盖关系
+
+以 timeout 为例，显示了配置的查找顺序，其它 retries, loadbalance, actives 等类似：
+
+- **方法级优先，接口级次之，全局配置再次之**。
+- **如果级别一样，则消费方优先，提供方次之**。
+
+其中，服务提供方配置，通过 URL 经由注册中心传递给消费方。
+
+<div align="center">
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo配置覆盖关系.jpg" width="500"/>
+</div>
+### 动态配置中心
+
+配置中心（v2.7.0）在Dubbo中承担两个职责：
+
+1. 外部化配置。启动配置的集中式存储 （简单理解为dubbo.properties的外部化存储）。
+2. 服务治理。服务治理规则的存储与通知。
+
+启用动态配置：
+
+```xml
+<dubbo:config-center address="zookeeper://127.0.0.1:2181"/>
+```
+
+或者
+
+```properties
+dubbo.config-center.address=zookeeper://127.0.0.1:2181
+```
+
+或者
+
+```java
+ConfigCenterConfig configCenter = new ConfigCenterConfig();
+configCenter.setAddress("zookeeper://127.0.0.1:2181");
+```
+
+## 四、Dubbo 架构
+
+### Dubbo 核心组件
+
+<div align="center">
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo基本架构.png" width="500"/>
+</div>
+
+节点角色：
+
+| 节点      | 角色说明                               |
+| --------- | -------------------------------------- |
+| Provider  | 暴露服务的服务提供方                   |
+| Consumer  | 调用远程服务的服务消费方               |
+| Registry  | 服务注册与发现的注册中心               |
+| Monitor   | 统计服务的调用次数和调用时间的监控中心 |
+| Container | 服务运行容器                           |
+
+调用关系：
+
+1. 服务容器负责启动，加载，运行服务提供者。
+2. 服务提供者在启动时，向注册中心注册自己提供的服务。
+3. 服务消费者在启动时，向注册中心订阅自己所需的服务。
+4. 注册中心返回服务提供者地址列表给消费者，如果有变更，注册中心将基于长连接推送变更数据给消费者。
+5. 服务消费者，从提供者地址列表中，基于软负载均衡算法，选一台提供者进行调用，如果调用失败，再选另一台调用。
+6. 服务消费者和提供者，在内存中累计调用次数和调用时间，定时每分钟发送一次统计数据到监控中心。
+
+**重要知识点总结：**
+
+- **注册中心负责服务地址的注册与查找，相当于目录服务，服务提供者和消费者只在启动时与注册中心交互，注册中心不转发请求，压力较小**
+- **监控中心负责统计各服务调用次数，调用时间等，统计先在内存汇总后每分钟一次发送到监控中心服务器，并以报表展示**
+- **注册中心，服务提供者，服务消费者三者之间均为长连接，监控中心除外**
+- **注册中心通过长连接感知服务提供者的存在，服务提供者宕机，注册中心将立即推送事件通知消费者**
+- **注册中心和监控中心全部宕机，不影响已运行的提供者和消费者，消费者在本地缓存了提供者列表**
+- **注册中心和监控中心都是可选的，服务消费者可以直连服务提供者**
+- **服务提供者无状态，任意一台宕掉后，不影响使用**
+- **服务提供者全部宕掉后，服务消费者应用将无法使用，并无限次重连等待服务提供者恢复**
+
+> 问：注册中心挂了可以继续通信吗？
 >
-> 国内网络异常复杂，跨运营商的网络访问会很慢。为了解决跨运营商或各地用户访问问题，可以在重要的城市，部署 CDN 应用。使用户就近获取所需内容，降低网络拥塞，提高用户访问响应速度和命中率。
+> 答：可以，因为刚开始初始化的时候，消费者会将提供者的地址等信息**拉取到本地缓存**，所以注册中心挂了可以继续通信。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559138689425.png!zp"/></div>
-### 2.1. CDN 原理
+### Dubbo 架构层次
 
-CDN 的基本原理是广泛采用各种缓存服务器，将这些缓存服务器分布到用户访问相对集中的地区或网络中，在用户访问网站时，利用全局负载技术将用户的访问指向距离最近的工作正常的缓存服务器上，由缓存服务器直接响应用户请求。
+<div align="center">
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo整体设计.jpg" />
+</div>
 
-（1）未部署 CDN 应用前的网络路径：
+图例说明：
 
-- 请求：本机网络（局域网）=> 运营商网络 => 应用服务器机房
-- 响应：应用服务器机房 => 运营商网络 => 本机网络（局域网）
+- 图中左边淡蓝背景的为服务消费方使用的接口，右边淡绿色背景的为服务提供方使用的接口，位于中轴线上的为双方都用到的接口。
+- 图中从下至上分为十层，各层均为单向依赖，右边的黑色箭头代表层之间的依赖关系，每一层都可以剥离上层被复用，其中，Service 和 Config 层为 API，其它各层均为 SPI。
+- 图中绿色小块的为扩展接口，蓝色小块为实现类，图中只显示用于关联各层的实现类。
+- 图中蓝色虚线为初始化过程，即启动时组装链，红色实线为方法调用过程，即运行时调时链，紫色三角箭头为继承，可以把子类看作父类的同一个节点，线上的文字为调用的方法。
 
-在不考虑复杂网络的情况下，从请求到响应需要经过 3 个节点，6 个步骤完成一次用户访问操作。
+#### 各层说明
 
-（2）部署 CDN 应用后网络路径：
+- **config 配置层**：对外配置接口，以 ServiceConfig, ReferenceConfig 为中心，可以直接初始化配置类，也可以通过 spring 解析配置生成配置类
+- **proxy 服务代理层**：服务接口透明代理，生成服务的客户端 Stub 和服务器端 Skeleton, 以 ServiceProxy 为中心，扩展接口为 ProxyFactory
+- **registry 注册中心层**：封装服务地址的注册与发现，以服务 URL 为中心，扩展接口为 RegistryFactory, Registry, RegistryService
+- **cluster 路由层**：封装多个提供者的路由及负载均衡，并桥接注册中心，以 Invoker 为中心，扩展接口为 Cluster, Directory, Router, LoadBalance
+- **monitor 监控层**：RPC 调用次数和调用时间监控，以 Statistics 为中心，扩展接口为 MonitorFactory, Monitor, MonitorService
+- **protocol 远程调用层**：封装 RPC 调用，以 Invocation, Result 为中心，扩展接口为 Protocol, Invoker, Exporter
+- **exchange 信息交换层**：封装请求响应模式，同步转异步，以 Request, Response 为中心，扩展接口为 Exchanger, ExchangeChannel, ExchangeClient, ExchangeServer
+- **transport 网络传输层**：抽象 mina 和 netty 为统一接口，以 Message 为中心，扩展接口为 Channel, Transporter, Client, Server, Codec
+- **serialize 数据序列化层**：可复用的一些工具，扩展接口为 Serialization, ObjectInput, ObjectOutput, ThreadPool
+- **serialize 数据序列化层**：可复用的一些工具，扩展接口为 Serialization, ObjectInput, ObjectOutput, ThreadPool
 
-- 请求：本机网络（局域网） => 运营商网络
-- 响应：运营商网络 => 本机网络（局域网）
+#### 各层关系说明
 
-在不考虑复杂网络的情况下，从请求到响应需要经过 2 个节点，2 个步骤完成一次用户访问操作。
+- 在 RPC 中，Protocol 是核心层，也就是只要有 Protocol + Invoker + Exporter 就可以完成非透明的 RPC 调用，然后在 Invoker 的主过程上 Filter 拦截点。
+- 图中的 Consumer 和 Provider 是抽象概念，只是想让看图者更直观的了解哪些类分属于客户端与服务器端，不用 Client 和 Server 的原因是 Dubbo 在很多场景下都使用 Provider, Consumer, Registry, Monitor 划分逻辑拓普节点，保持统一概念。
+- 而 Cluster 是外围概念，所以 Cluster 的目的是将多个 Invoker 伪装成一个 Invoker，这样其它人只要关注 Protocol 层 Invoker 即可，加上 Cluster 或者去掉 Cluster 对其它层都不会造成影响，因为只有一个提供者时，是不需要 Cluster 的。
+- Proxy 层封装了所有接口的透明化代理，而在其它层都以 Invoker 为中心，只有到了暴露给用户使用时，才用 Proxy 将 Invoker 转成接口，或将接口实现转成 Invoker，也就是去掉 Proxy 层 RPC 是可以 Run 的，只是不那么透明，不那么看起来像调本地服务一样调远程服务。
+- 而 Remoting 实现是 Dubbo 协议的实现，如果你选择 RMI 协议，整个 Remoting 都不会用上，Remoting 内部再划为 Transport 传输层和 Exchange 信息交换层，Transport 层只负责单向消息传输，是对 Mina, Netty, Grizzly 的抽象，它也可以扩展 UDP 传输，而 Exchange 层是在传输层之上封装了 Request-Response 语义。
+- Registry 和 Monitor 实际上不算一层，而是一个独立的节点，只是为了全局概览，用层的方式画在一起。
 
-与不部署 CDN 服务相比，减少了 1 个节点，4 个步骤的访问。极大的提高的系统的响应速度。
+## 五、服务发现
 
-### 2.2. CDN 特点
+### 启动时检查
 
-- **优点**
-  - **本地 Cache 加速** - 提升访问速度，尤其含有大量图片和静态页面站点；
-  - **镜像服务** - 消除了不同运营商之间互联的瓶颈造成的影响，实现了跨运营商的网络加速，保证不同网络中的用户都能得到良好的访问质量；
-  - **远程加速** - 远程访问用户根据 DNS 负载均衡技术智能自动选择 Cache 服务器，选择最快的 Cache 服务器，加快远程访问的速度；
-  - **带宽优化** - 自动生成服务器的远程 Mirror（镜像）cache 服务器，远程用户访问时从 cache 服务器上读取数据，减少远程访问的带宽、分担网络流量、减轻原站点 WEB 服务器负载等功能。
-  - **集群抗攻击** - 广泛分布的 CDN 节点加上节点之间的智能冗余机制，可以有效地预防黑客入侵以及降低各种 D.D.o.S 攻击对网站的影响，同时保证较好的服务质量。
-- **缺点**
-  - **不适宜缓存动态资源**
-    - 解决方案：主要缓存静态资源，动态资源建立多级缓存或准实时同步；
-  - **存在数据的一致性问题**
-    - 解决方案（主要是在性能和数据一致性二者间寻找一个平衡）
-      - 设置缓存失效时间（1 个小时，过期后同步数据）。
-      - 针对资源设置版本号。
+Dubbo 缺省会在启动时检查依赖的服务是否可用，不可用时会抛出异常，阻止 Spring 初始化完成，以便上线时，能及早发现问题，默认 `check="true"`。
 
-## 3. 反向代理缓存
+可以通过 xml、properties、-D 参数三种方式设置。启动时检查
 
-> **反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。**
+## 六、Dubbo 序列化
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/web/nginx/reverse-proxy.png!zp"/></div>
-### 3.1. 缓存原理
+Dubbo 支持多种通信协议，不同的协议针对不同的序列化方式。
 
-反向代理位于应用服务器同一网络，处理所有对 WEB 服务器的请求。
+### dubbo 协议
 
-反向代理缓存的原理：
+[dubbo](http://dubbo.apache.org/zh-cn/docs/user/references/protocol/dubbo.html) 协议是 Dubbo 的默认通信协议，采用单一长连接和 NIO 异步通信，基于 hessian 作为序列化协议。
 
-- 如果用户请求的页面在代理服务器上有缓存的话，代理服务器直接将缓存内容发送给用户。
-- 如果没有缓存则先向 WEB 服务器发出请求，取回数据，本地缓存后再发送给用户。
+[dubbo](http://dubbo.apache.org/zh-cn/docs/user/references/protocol/dubbo.html) 协议适合于小数据量大并发的服务调用，以及服务消费者机器数远大于服务提供者机器数的情况。反之，Dubbo 缺省协议不适合传送大数据量的服务，比如传文件，传视频等，除非请求量很低。
 
-这种方式通过降低向 WEB 服务器的请求数，从而降低了 WEB 服务器的负载。
+为了要支持高并发场景，一般是服务提供者就几台机器，但是服务消费者有上百台，可能每天调用量达到上亿次！此时用长连接是最合适的，就是跟每个服务消费者维持一个长连接就可以，可能总共就 100 个连接。然后后面直接基于长连接 NIO 异步通信，可以支撑高并发请求。
 
-**反向代理缓存一般针对的是静态资源，而将动态资源请求转发到应用服务器处理**。常用的缓存应用服务器有 Varnish，Ngnix，Squid。
+### rmi 协议
 
-### 3.2. 代理缓存比较
+[rmi](http://dubbo.apache.org/zh-cn/docs/user/references/protocol/rmi.html) - 采用 JDK 标准的 `java.rmi.*` 实现，采用阻塞式短连接和 JDK 标准序列化方式。
 
-常用的代理缓存有 Varnish，Squid，Ngnix，简单比较如下：
+注意：如果正在使用 RMI 提供服务给外部访问，同时应用里依赖了老的 `common-collections` 包的情况下，存在反序列化安全风险。
 
-- Varnish 和 Squid 是专业的 cache 服务，Ngnix 需要第三方模块支持；
-- Varnish 采用内存型缓存，避免了频繁在内存、磁盘中交换文件，性能比 Squid 高；
-- Varnish 由于是内存 cache，所以对小文件如 css、js、小图片的支持很棒，后端的持久化缓存可以采用的是 Squid 或 ATS；
-- Squid 功能全而大，适合于各种静态的文件缓存，一般会在前端挂一个 HAProxy 或 Ngnix 做负载均衡跑多个实例；
-- Nginx 采用第三方模块 ncache 做的缓冲，性能基本达到 Varnish，一般作为反向代理使用，可以实现简单的缓存。
+### hessian 协议
 
-## 4. 进程内缓存
+[hessian](http://dubbo.apache.org/zh-cn/docs/user/references/protocol/hessian.html) 协议用于集成 Hessian 的服务，Hessian 底层采用 Http 通讯，采用 Servlet 暴露服务，Dubbo 缺省内嵌 Jetty 作为服务器实现。
 
-> 进程内缓存是指应用内部的缓存，标准的分布式系统，一般有多级缓存构成。本地缓存是离应用最近的缓存，一般可以将数据缓存到硬盘或内存。
+Dubbo 的 Hessian 协议可以和原生 Hessian 服务互操作，即：
 
-- `硬盘缓存` - 将数据缓存到硬盘到，读取时从硬盘读取。原理是直接读取本机文件，减少了网络传输消耗，比通过网络读取数据库速度更快。可以应用在对速度要求不是很高，但需要大量缓存存储的场景。
-- `内存缓存` - 直接将数据存储到本机内存中，通过程序直接维护缓存对象，是访问速度最快的方式。
+- 提供者用 Dubbo 的 Hessian 协议暴露服务，消费者直接用标准 Hessian 接口调用
+- 或者提供方用标准 Hessian 暴露服务，消费方用 Dubbo 的 Hessian 协议调用。
 
-常见的本地缓存实现方案：HashMap、Guava Cache、Caffeine、Ehcache。
+### thrift 协议
 
-### 4.1. ConcurrentHashMap
+当前 dubbo 支持的 [thrift](http://dubbo.apache.org/zh-cn/docs/user/references/protocol/thrift.html) 协议是对 thrift 原生协议的扩展，在原生协议的基础上添加了一些额外的头信息，比如 service name，magic number 等。
 
-最简单的进程内缓存可以通过 JDK 自带的 `HashMap` 或 `ConcurrentHashMap` 实现。
+使用 dubbo thrift 协议同样需要使用 thrift 的 idl compiler 编译生成相应的 java 代码，后续版本中会在这方面做一些增强。
 
-适用场景：不需要淘汰的缓存数据。
+### http 协议
 
-缺点：无法进行缓存淘汰，内存会无限制的增长。
+[http](http://dubbo.apache.org/zh-cn/docs/user/references/protocol/http.html) 协议基于 HTTP 表单的远程调用协议，采用 Spring 的 HttpInvoker 实现。
 
-### 4.2. LRUHashMap
+使用 JSON 序列化方式。
 
-可以通过继承 `LinkedHashMap` 来实现一个简单的 `LRUHashMap`。重写 `removeEldestEntry` 方法，即可完成一个简单的最近最少使用算法。
+### webservice 协议
 
-- 缺点：
-  - 锁竞争严重，性能比较低。
-  - 不支持过期时间
-  - 不支持自动刷新
+基于 WebService 的远程调用协议，基于 [Apache CXF](http://cxf.apache.org/) 的 `frontend-simple` 和 `transports-http` 实现。
 
-### 4.3. Guava Cache
+使用 SOAP 序列化方式。
 
-解决了 `LRUHashMap` 中的几个缺点。
+可以和原生 WebService 服务互操作，即：
 
-Guava Cache 采用了类似 `ConcurrentHashMap` 的思想，分段加锁，减少锁竞争。
+- 提供者用 Dubbo 的 WebService 协议暴露服务，消费者直接用标准 WebService 接口调用，
+- 或者提供方用标准 WebService 暴露服务，消费方用 Dubbo 的 WebService 协议调用。
 
-Guava Cache 对于过期的 Entry 并没有马上过期(也就是并没有后台线程一直在扫)，而是通过进行读写操作的时候进行过期处理，这样做的好处是避免后台线程扫描的时候进行全局加锁。
+### rest 协议
 
-直接通过查询，判断其是否满足刷新条件，进行刷新。
+基于标准的 Java REST API——JAX-RS 2.0（Java API for RESTful Web Services 的简写）实现的 REST 调用支持
 
-### 4.4. Caffeine
+### memcached 协议
 
-Caffeine 实现了 W-TinyLFU(LFU+LRU 算法的变种)，其命中率和读写吞吐量大大优于 Guava Cache。
+基于 memcached 实现的 RPC 协议。
 
-其实现原理较复杂，可以参考[你应该知道的缓存进化史](https://juejin.im/post/5b7593496fb9a009b62904fa#comment)。
+### redis 协议
 
-### 4.5. 选择进程内缓存
+基于 redis 实现的 RPC 协议。
 
-| 比较项       | ConcurrentHashMap | LRUMap                   | Ehcache                       | Guava Cache                         | Caffeine                |
-| ------------ | ----------------- | ------------------------ | ----------------------------- | ----------------------------------- | ----------------------- |
-| 读写性能     | 很好，分段锁      | 一般，全局加锁           | 好                            | 好，需要做淘汰操作                  | 很好                    |
-| 淘汰算法     | 无                | LRU，一般                | 支持多种淘汰算法,LRU,LFU,FIFO | LRU，一般                           | W-TinyLFU, 很好         |
-| 功能丰富程度 | 功能比较简单      | 功能比较单一             | 功能很丰富                    | 功能很丰富，支持刷新和虚引用等      | 功能和 Guava Cache 类似 |
-| 工具大小     | jdk 自带类，很小  | 基于 LinkedHashMap，较小 | 很大，最新版本 1.4MB          | 是 Guava 工具类中的一个小部分，较小 | 一般，最新版本 644KB    |
-| 是否持久化   | 否                | 否                       | 是                            | 否                                  | 否                      |
-| 是否支持集群 | 否                | 否                       | 是                            | 否                                  | 否                      |
-
-- **`ConcurrentHashMap`** - 比较适合缓存比较固定不变的元素，且缓存的数量较小的。虽然从上面表格中比起来有点逊色，但是其由于是 JDK 自带的类，在各种框架中依然有大量的使用，比如我们可以用来缓存我们反射的 Method，Field 等等；也可以缓存一些链接，防止其重复建立。在 Caffeine 中也是使用的 `ConcurrentHashMap` 来存储元素。
-- **`LRUMap`** - 如果不想引入第三方包，又想使用淘汰算法淘汰数据，可以使用这个。
-- **`Ehcache`** - 由于其 jar 包很大，较重量级。对于需要持久化和集群的一些功能的，可以选择 Ehcache。笔者没怎么使用过这个缓存，如果要选择的话，可以选择分布式缓存来替代 Ehcache。
-- **`Guava Cache`** - Guava 这个 jar 包在很多 Java 应用程序中都有大量的引入，所以很多时候其实是直接用就好了，并且其本身是轻量级的而且功能较为丰富，在不了解 Caffeine 的情况下可以选择 Guava Cache。
-- **`Caffeine`** - 其在命中率，读写性能上都比 Guava Cache 好很多，并且其 API 和 Guava cache 基本一致，甚至会多一点。在真实环境中使用 Caffeine，取得过不错的效果。
-
-总结一下：如果不需要淘汰算法则选择 `ConcurrentHashMap`，如果需要淘汰算法和一些丰富的 API，推荐选择 Caffeine。
-
-## 5. 分布式缓存
-
-> **分布式缓存解决了进程内缓存最大的问题：如果应用是分布式系统，节点之间无法共享彼此的进程内缓存**。
+> 在现实世界中，序列化有多种方式。
 >
-> 分布式缓存的应用场景：
+> JDK 自身提供的序列化方式，效率不高，但是 Java 程序使用最多。
 >
-> - 缓存经过复杂计算得到的数据
-> - 缓存系统中频繁访问的热点数据，减轻数据库压力
-
-不同分布式缓存的实现原理往往有比较大的差异。本文主要针对 Memcached 和 Redis 进行说明。
-
-### 5.1. Memcache
-
-> [Memcache](https://memcached.org/) 是一个高性能，分布式内存对象缓存系统，通过在内存里维护一个统一的巨大的 hash 表，它能够用来存储各种格式的数据，包括图像、视频、文件以及数据库检索的结果等。
+> 如果想要较好的可读性，可以使用 JSON （常见库有：[jackson](https://github.com/FasterXML/jackson)、[gson](https://github.com/google/gson)、[fastjson](https://github.com/alibaba/fastjson)）或 SOAP （即 xml 形式）
 >
-> 简单的说就是：将数据缓存到内存中，然后从内存中读取，从而大大提高读取速度。
-
-#### Memcache 特性
-
-- **使用物理内存作为缓存区，可独立运行在服务器上**。每个进程最大 2G，如果想缓存更多的数据，可以开辟更多的 Memcache 进程（不同端口）或者使用分布式 Memcache 进行缓存，将数据缓存到不同的物理机或者虚拟机上。
-- **使用 key-value 的方式来存储数据**。这是一种单索引的结构化数据组织形式，可使数据项查询时间复杂度为 O(1)。
-- **协议简单，基于文本行的协议**。直接通过 telnet 在 Memcached 服务器上可进行存取数据操作，简单，方便多种缓存参考此协议；
-- **基于 libevent 高性能通信**。Libevent 是一套利用 C 开发的程序库，它将 BSD 系统的 kqueue,Linux 系统的 epoll 等事件处理功能封装成一个接口，与传统的 select 相比，提高了性能。
-- **分布式能力取决于 Memcache 客户端，服务器之间互不通信**。各个 Memcached 服务器之间互不通信，各自独立存取数据，不共享任何信息。服务器并不具有分布式功能，分布式部署取决于 Memcached 客户端。
-- **采用 LRU 缓存淘汰策略**。在 Memcached 内存储数据项时，可以指定它在缓存的失效时间，默认为永久。当 Memcached 服务器用完分配的内时，失效的数据被首先替换，然后也是最近未使用的数据。在 LRU 中，Memcached 使用的是一种 Lazy Expiration 策略，自己不会监控存入的 key/vlue 对是否过期，而是在获取 key 值时查看记录的时间戳，检查 key/value 对空间是否过期，这样可减轻服务器的负载。
-- **内置了一套高效的内存管理算法**。这套内存管理效率很高，而且不会造成内存碎片，但是它最大的缺点就是会导致空间浪费。当内存满后，通过 LRU 算法自动删除不使用的缓存。
-- **不支持持久化**。Memcached 没有考虑数据的容灾问题，重启服务，所有数据会丢失。
-
-#### Memcache 工作原理
-
-（1）内存管理
-
-Memcached 利用 **slab allocation** 机制来分配和管理内存，它按照预先规定的大小，将分配的内存分割成特定长度的内存块，再把尺寸相同的内存块分成组，数据在存放时，根据键值 大小去匹配 slab 大小，找就近的 slab 存放，所以存在空间浪费现象。
-
-这套内存管理效率很高，而且不会造成内存碎片，但是它最大的缺点就是会导致空间浪费。
-
-（2）缓存淘汰策略
-
-Memcached 的缓存淘汰策略是 **LRU** + 到期失效策略。
-
-当你在 Memcached 内存储数据项时，你有可能会指定它在缓存的失效时间，默认为永久。当 Memcached 服务器用完分配的内时，失效的数据被首先替换，然后是最近未使用的数据。
-
-在 LRU 中，Memcached 使用的是一种 Lazy Expiration 策略：**Memcached 不会监控存入的 key/vlue 对是否过期**，而是在获取 key 值时查看记录的时间戳，**检查 key/value 对空间是否过期**，这样可减轻服务器的负载。
-
-（3）分区
-
-Memcached 服务器之间彼此不通信，它的分布式能力是依赖客户端来实现。
-
-具体来说，就是在客户端实现一种算法，根据 key 来计算出数据应该向哪个服务器节点读/写。
-
-而这种选取集群节点的算法常见的有三种：
-
-- **哈希取余算法** - 使用公式：`hash（key）% N` 计算出 **哈希值** 来决定数据映射到哪一个节点。
-- **一致性哈希算法** - 可以很好的解决 **稳定性问题**，可以将所有的 **存储节点** 排列在 **首尾相接** 的 `Hash` 环上，每个 `key` 在计算 `Hash` 后会 **顺时针** 找到 **临接** 的 **存储节点** 存放。而当有节点 **加入** 或 **退出** 时，仅影响该节点在 `Hash` 环上 **顺时针相邻** 的 **后续节点**。
-- **虚拟 Hash 槽算法** - 使用 **分散度良好** 的 **哈希函数** 把所有数据 **映射** 到一个 **固定范围** 的 **整数集合** 中，整数定义为 **槽**（`slot`），这个范围一般 **远远大于** 节点数。**槽** 是集群内 **数据管理** 和 **迁移** 的 **基本单位**。采用 **大范围槽** 的主要目的是为了方便 **数据拆分** 和 **集群扩展**。每个节点会负责 **一定数量的槽**。
-
-### 5.2. Redis
-
-> Redis 是一个开源（BSD 许可）的，基于内存的，多数据结构存储系统。可以用作数据库、缓存和消息中间件。
+> 如果想要更好的性能，可以使用 [thrift](https://github.com/apache/thrift)、[protobuf](https://github.com/protocolbuffers/protobuf)、[hessian](http://hessian.caucho.com/doc/hessian-overview.xtp)
 >
-> Redis 还可以使用客户端分片来扩展写性能。内置了 复制（replication），LUA 脚本（Lua scripting），LRU 驱动事件（LRU eviction），事务（transactions） 和不同级别的 磁盘持久化（persistence）， 并通过 Redis 哨兵（Sentinel）和自动分区（Cluster）提供高可用性（high availability）。
+> 想深入了解可以参考：[序列化](https://github.com/dunwu/javatech/blob/master/docs/lib/serialized)
 
-#### Redis 特性
+## 七、集群容错
 
-- 支持多种数据类型 - string、hash、list、set、sorted set。
-- 支持多种数据淘汰策略
+在集群调用失败时，Dubbo 提供了多种容错方案，缺省为 failover 重试。
 
-  - **volatile-lru** - 从已设置过期时间的数据集中挑选最近最少使用的数据淘汰
-  - **volatile-ttl** - 从已设置过期时间的数据集中挑选将要过期的数据淘汰
-  - **volatile-random** - 从已设置过期时间的数据集中任意选择数据淘汰
-  - **allkeys-lru** - 从所有数据集中挑选最近最少使用的数据淘汰
-  - **allkeys-random** - 从所有数据集中任意选择数据进行淘汰
-  - **noeviction** - 禁止驱逐数据
+<div align="center">
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo集群容错.jpg" />
+</div>
 
-- 提供两种持久化方式 - RDB 和 AOF
-- 通过 Redis cluster 提供集群模式。
+- **Failover** - 失败自动切换，当出现失败，重试其它服务器。通常用于读操作，但重试会带来更长延迟。可通过 retries="2" 来设置重试次数(不含第一次)。
+- **Failfast** - 快速失败，只发起一次调用，失败立即报错。通常用于非幂等性的写操作，比如新增记录。
+- **Failsafe** - 失败安全，出现异常时，直接忽略。通常用于写入审计日志等操作。
+- **Failback** - 失败自动恢复，后台记录失败请求，定时重发。通常用于消息通知操作。
+- **Forking** - 并行调用多个服务器，只要一个成功即返回。通常用于实时性要求较高的读操作，但需要浪费更多服务资源。可通过 forks="2" 来设置最大并行数。
+- **Broadcast** - 播调用所有提供者，逐个调用，任意一台报错则报错。通常用于通知所有提供者更新缓存或日志等本地资源信息。
 
-#### Redis 原理
+集群容错配置示例：
 
-- 缓存淘汰
-  - Redis 有两种数据淘汰实现
-    - 消极方式 - 访问 Redis key 时，如果发现它已经失效，则删除它
-    - 积极方式 - 周期性从设置了失效时间的 key 中，根据淘汰策略，选择一部分失效的 key 进行删除。
-- 分区
-  - Redis Cluster 集群包含 16384 个虚拟 Hash 槽，它通过一个高效的算法来计算 key 属于哪个 Hash 槽。
-  - Redis Cluster 支持请求分发 - 节点在接到一个命令请求时，会先检测这个命令请求要处理的键所在的槽是否由自己负责，如果不是的话，节点将向客户端返回一个 MOVED 错误，MOVED 错误携带的信息可以指引客户端将请求重定向至正在负责相关槽的节点。
-- 主从复制
-  - Redis 2.8 后支持异步复制。它有两种模式：
-    - `完整重同步（full resychronization）` - 用于初次复制。执行步骤与 `SYNC` 命令基本一致。
-    - `部分重同步（partial resychronization）` - 用于断线后重复制。如果条件允许，主服务器可以将主从服务器连接断开期间执行的写命令发送给从服务器，从服务器只需接收并执行这些写命令，即可将主从服务器的数据库状态保持一致。
-  - 集群中每个节点都会定期向集群中的其他节点发送 PING 消息，以此来检测对方是否在线。
-  - 如果一个主节点被认为下线，则在其从节点中，根据 Raft 算法，选举出一个节点，升级为主节点。
-- 数据一致性
-  - Redis 不保证强一致性，因为这会使得集群性能大大降低。
-  - Redis 是通过异步复制来实现最终一致性。
+```xml
+<dubbo:service cluster="failsafe" />
+<dubbo:reference cluster="failsafe" />
+```
 
-### 5.3. 选择分布式缓存
+## 八、负载均衡
 
-不同的分布式缓存功能特性和实现原理方面有很大的差异，因此他们所适应的场景也有所不同。
+Dubbo 提供了多种负载均衡（LoadBalance）策略，缺省为 `Random` 随机调用。
 
-这里选取三个比较出名的分布式缓存（MemCache，Redis，Tair）来作为比较：
+Dubbo 的负载均衡配置可以细粒度到服务、方法级别，且 `dubbo:service` 和 `dubbo:reference` 均可配置。
 
-| 比较项   | MemCache                     | Redis                                  | Tair                                                      |
-| -------- | ---------------------------- | -------------------------------------- | --------------------------------------------------------- |
-| 数据结构 | 只支持简单的 Key-Value 结构  | String,Hash, List, Set, Sorted Set     | String,HashMap, List，Set                                 |
-| 持久化   | 不支持                       | 支持                                   | 支持                                                      |
-| 容量大小 | 数据纯内存，数据存储不宜过多 | 数据全内存，资源成本考量不宜超过 100GB | 可以配置全内存或内存+磁盘引擎，数据容量可无限扩充         |
-| 读写性能 | 很高                         | 很高(RT0.5ms 左右)                     | String 类型比较高(RT1ms 左右)，复杂类型比较慢(RT5ms 左右) |
-| 过期策略 | 过期后，不删除缓存           | 有六种策略来处理过期数据               | 支持                                                      |
+```xml
+<!-- 服务端服务级别 -->
+<dubbo:service interface="..." loadbalance="roundrobin" />
+<!-- 客户端服务级别 -->
+<dubbo:reference interface="..." loadbalance="roundrobin" />
+<!-- 服务端方法级别 -->
+<dubbo:service interface="...">
+    <dubbo:method name="..." loadbalance="roundrobin"/>
+</dubbo:service>
+<!-- 客户端方法级别 -->
+<dubbo:reference interface="...">
+    <dubbo:method name="..." loadbalance="roundrobin"/>
+</dubbo:reference>
+```
 
-- `MemCache` - 这一块接触得比较少，不做过多的推荐。其吞吐量较大，但是支持的数据结构较少，并且不支持持久化。
-- `Redis` - 支持丰富的数据结构，读写性能很高，但是数据全内存，必须要考虑资源成本，支持持久化。
-- `Tair` - 支持丰富的数据结构，读写性能较高，部分类型比较慢，理论上容量可以无限扩充。
+#### Random
 
-总结：如果服务对延迟比较敏感，Map/Set 数据也比较多的话，比较适合 Redis。如果服务需要放入缓存量的数据很大，对延迟又不是特别敏感的话，那就可以选择 Tair。
+- **随机**，按权重设置随机概率。
+- 在一个截面上碰撞的概率高，但调用量越大分布越均匀，而且按概率使用权重后也比较均匀，有利于动态调整提供者权重。
 
-## 6. 多级缓存
+#### RoundRobin
 
-### 6.1. 使用进程内缓存
+- **轮询**，按公约后的权重设置轮询比率。
+- 存在慢的提供者累积请求的问题，比如：第二台机器很慢，但没挂，当请求调到第二台时就卡在那，久而久之，所有请求都卡在调到第二台上。
 
-如果应用服务不是分布式系统，那么进程内缓存当然是缓存的首选方案。
+#### LeastActive
 
-对于进程内缓存，其本来受限于内存的大小的限制，以及进程缓存更新后其他缓存无法得知，所以一般来说进程缓存适用于:
+- **最少活跃调用数**，相同活跃数的随机，活跃数指调用前后计数差。
+- 使慢的提供者收到更少请求，因为越慢的提供者的调用前后计数差会越大。
 
-1. 数据量不是很大且更新频率较低的数据。
-2. 如果更新频繁的数据，也想使用进程内缓存，那么可以将其过期时间设置为较短的时间，或者设置较短的自动刷新时间。
+#### ConsistentHash
 
-这种方案存在以下问题：
+- **一致性 Hash**，相同参数的请求总是发到同一提供者。
+- 当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动。
+- 算法参见：[http://en.wikipedia.org/wiki/Consistent_hashing](http://en.wikipedia.org/wiki/Consistent_hashing)
+- 缺省只对第一个参数 Hash，如果要修改，请配置 `<dubbo:parameter key="hash.arguments" value="0,1" />`
+- 缺省用 160 份虚拟节点，如果要修改，请配置 `<dubbo:parameter key="hash.nodes" value="320" />`
 
-- 如果应用服务是分布式系统，应用节点之间无法共享缓存，存在数据不一致问题。
-- 由于进程内缓存受限于内存大小的限制，所以缓存不能无限扩展。
+## 九、Dubbo 服务治理
 
-### 6.2. 使用分布式缓存
+### 服务治理简介
 
-如果应用服务是分布式系统，那么最简单的缓存方案就是直接使用分布式缓存。
+- 当服务越来越多时，服务 URL 配置管理变得非常困难，F5 硬件负载均衡器的单点压力也越来越大。
+- 当进一步发展，服务间依赖关系变得错踪复杂，甚至分不清哪个应用要在哪个应用之前启动，架构师都不能完整的描述应用的架构关系。
+- 接着，服务的调用量越来越大，服务的容量问题就暴露出来，这个服务需要多少机器支撑？什么时候该加机器？
 
-其应用场景如图所示：
+以上问题可以归纳为服务治理问题，这也是 Dubbo 的核心功能。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/多级缓存1.png!zp" width="600px"/></div>
-Redis 用来存储热点数据，如果缓存不命中，则去查询数据库，并更新缓存。
+#### 调用链路
 
-这种方案存在以下问题：
+一个微服务架构，往往由大量分布式服务组成。那么这些服务之间互相是如何调用的？调用链路是啥？说实话，几乎到后面没人搞的清楚了，因为服务实在太多了，可能几百个甚至几千个服务。
 
-1. 缓存服务如果挂了，这时应用只能访问数据库，容易造成缓存雪崩。
-2. 访问分布式缓存服务会有一定的 I/O 以及序列化反序列化的开销，虽然性能很高，但是其终究没有在内存中查询快。
+那就需要基于 dubbo 做的分布式系统中，对各个服务之间的调用自动记录下来，然后自动将**各个服务之间的依赖关系和调用链路生成出来**，做成一张图，显示出来，大家才可以看到对吧。
 
-### 6.3. 使用多级缓存
+#### 服务访问压力以及时长统计
 
-单纯使用进程内缓存和分布式缓存都存在各自的不足。如果需要更高的性能以及更好的可用性，我们可以将缓存设计为多级结构。将最热的数据使用进程内缓存存储在内存中，进一步提升访问速度。
+需要自动统计**各个接口和服务之间的调用次数以及访问延时**，而且要分成两个级别。
 
-这个设计思路在计算机系统中也存在，比如 CPU 使用 L1、L2、L3 多级缓存，用来减少对内存的直接访问，从而加快访问速度。
+- 一个级别是接口粒度，就是每个服务的每个接口每天被调用多少次，TP50/TP90/TP99，三个档次的请求延时分别是多少；
+- 第二个级别是从源头入口开始，一个完整的请求链路经过几十个服务之后，完成一次请求，每天全链路走多少次，全链路请求延时的 TP50/TP90/TP99，分别是多少。
 
-一般来说，多级缓存架构使用二级缓存已可以满足大部分业务需求，过多的分级会增加系统的复杂度以及维护的成本。因此，多级缓存不是分级越多越好，需要根据实际情况进行权衡。
+#### 其他
 
-一个典型的二级缓存架构，可以使用进程内缓存（如： Caffeine/Google Guava/Ehcache/HashMap）作为一级缓存；使用分布式缓存（如：Redis/Memcached）作为二级缓存。
+- 服务分层（避免循环依赖）
+- 调用链路失败监控和报警
+- 服务鉴权
+- 每个服务的可用性的监控（接口调用成功率？几个 9？99.99%，99.9%，99%）
 
-#### 多级缓存查询
+所谓失败重试，就是 consumer 调用 provider 要是失败了，比如抛异常了，此时应该是可以重试的，或者调用超时了也可以重试。配置如下：
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/多级缓存2.png!zp" width="600" /></div>
-多级缓存查询流程如下：
+```
+<dubbo:reference id="xxxx" interface="xx" check="true" async="false" retries="3" timeout="2000"/>
+```
 
-1. 首先，查询 L1 缓存，如果缓存命中，直接返回结果；如果没有命中，执行下一步。
-2. 接下来，查询 L2 缓存，如果缓存命中，直接返回结果并回填 L1 缓存；如果没有命中，执行下一步。
-3. 最后，查询数据库，返回结果并依次回填 L2 缓存、L1 缓存。
+举个栗子。
 
-#### 多级缓存更新
+某个服务的接口，要耗费 5s，你这边不能干等着，你这边配置了 timeout 之后，我等待 2s，还没返回，我直接就撤了，不能干等你。
 
-对于 L1 缓存，如果有数据更新，只能删除并更新所在机器上的缓存，其他机器只能通过超时机制来刷新缓存。超时设定可以有两种策略:
+可以结合你们公司具体的场景来说说你是怎么设置这些参数的：
 
-- 设置成写入后多少时间后过期
-- 设置成写入后多少时间刷新
+- `timeout`：一般设置为 `200ms`，我们认为不能超过 `200ms` 还没返回。
+- `retries`：设置 retries，一般是在读请求的时候，比如你要查询个数据，你可以设置个 retries，如果第一次没读到，报错，重试指定的次数，尝试再次读取。
 
-对于 L1 缓存，如果有数据更新，其他机器立马可见。但是，也必须要设置超时时间，其时间应该比 L1 缓存的有效时间长。
+### 路由规则
 
-为了解决进程内缓存不一致的问题，设计可以进一步优化:
+路由规则决定一次 dubbo 服务调用的目标服务器，分为条件路由规则和脚本路由规则，并且支持可扩展。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/多级缓存3.png!zp" /></div>
-通过消息队列的发布、订阅机制，可以通知其他应用节点对进程内缓存进行更新。使用这种方案，即使消息队列服务挂了或不可靠，由于先执行了数据库更新，但进程内缓存过期，刷新缓存时，也能保证数据的最终一致性。
+向注册中心写入路由规则的操作通常由监控中心或治理中心的页面完成。
 
-## 7. 缓存问题
+```java
+RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
+Registry registry = registryFactory.getRegistry(URL.valueOf("zookeeper://10.20.153.10:2181"));
+registry.register(URL.valueOf("condition://0.0.0.0/com.foo.BarService?category=routers&dynamic=false&rule=" + URL.encode("host = 10.20.153.10 => host = 10.20.153.11") + "));
+```
 
-### 7.1. 缓存雪崩
+- **condition://** - 表示路由规则的类型，支持条件路由规则和脚本路由规则，可扩展，必填。
+- **0.0.0.0** - 表示对所有 IP 地址生效，如果只想对某个 IP 的生效，请填入具体 IP，必填。
+- **com.foo.BarService** - 表示只对指定服务生效，必填。
+- **category=routers** - 表示该数据为动态配置类型，必填。
+- **dynamic=false** - 表示该数据为持久数据，当注册方退出时，数据依然保存在注册中心，必填。
+- **enabled=true** - 覆盖规则是否生效，可不填，缺省生效。
+- **force=false** - 当路由结果为空时，是否强制执行，如果不强制执行，路由结果为空的路由规则将自动失效，可不填，缺省为 flase。
+- **runtime=false** - 是否在每次调用时执行路由规则，否则只在提供者地址列表变更时预先执行并缓存结果，调用时直接从缓存中获取路由结果。如果用了参数路由，必须设为 true，需要注意设置会影响调用的性能，可不填，缺省为 flase。
+- **priority=1** - 路由规则的优先级，用于排序，优先级越大越靠前执行，可不填，缺省为 0。
+- **rule=URL.encode("host = 10.20.153.10 => host = 10.20.153.11")** - 表示路由规则的内容，必填。
 
-> **缓存雪崩是指缓存不可用或者大量缓存由于超时时间相同在同一时间段失效，大量请求直接访问数据库，数据库压力过大导致系统雪崩**。
+### 服务降级
 
-解决方案：
+可以通过服务降级功能临时屏蔽某个出错的非关键服务，并定义降级后的返回策略。
 
-- 增加缓存系统可用性。通过监控关注缓存的健康程度，根据业务量适当的扩容缓存。
-- 采用多级缓存。不同级别缓存设置的超时时间不同，即使某个级别缓存都过期，也有其他级别缓存兜底。
-- 缓存的过期时间可以取个随机值。比如以前是设置 10 分钟的超时时间，那每个 Key 都可以随机 8-13 分钟过期，尽量让不同 Key 的过期时间不同。
-- 对数据库进行过载保护或应用层限流。
+向注册中心写入动态配置覆盖规则：
 
-### 7.2. 缓存穿透
+```java
+RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
+Registry registry = registryFactory.getRegistry(URL.valueOf("zookeeper://10.20.153.10:2181"));
+registry.register(URL.valueOf("override://0.0.0.0/com.foo.BarService?category=configurators&dynamic=false&application=foo&mock=force:return+null"));
+```
 
-> **缓存穿透是指：查询的数据在数据库中不存在，那么缓存中自然也不存在。所以，应用在缓存中查不到，则会去查询数据库。当这样的请求多了后，数据库的压力就会增大。**
+其中：
 
-解决缓存穿透，一般有两种方法：
+**`mock=force:return+null`** 表示消费方对该服务的方法调用都直接返回 null 值，不发起远程调用。用来屏蔽不重要服务不可用时对调用方的影响。
+还可以改为 **`mock=fail:return+null`** 表示消费方对该服务的方法调用在失败后，再返回 null 值，不抛异常。用来容忍不重要服务不稳定时对调用方的影响。
 
-- **对于返回为 NULL 的依然缓存，对于抛出异常的返回不进行缓存**。
+比如说服务 A 调用服务 B，结果服务 B 挂掉了，服务 A 重试几次调用服务 B，还是不行，那么直接降级，走一个备用的逻辑，给用户返回响应。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存穿透1.png!zp" width="350px"/></div>
-采用这种手段的会增加我们缓存的维护成本，需要在插入缓存的时候删除这个空缓存，当然我们可以通过设置较短的超时时间来解决这个问题。
+举个例子，我们有接口 `HelloService`。`HelloServiceImpl` 有该接口的具体实现。
 
-- **过滤不可能存在的数据**
+```java
+public interface HelloService {
+   void sayHello();
+}
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存穿透2.png!zp" width="350px"/></div>
-**制定一些规则过滤一些不可能存在的数据**。小数据用 BitMap，大数据可以用布隆过滤器，比如你的订单 ID 明显是在一个范围 1-1000，如果不是 1-1000 之内的数据那其实可以直接给过滤掉。
+public class HelloServiceImpl implements HelloService {
+    public void sayHello() {
+        System.out.println("hello world......");
+    }
+}
+```
 
-### 7.3. 缓存击穿
+Dubbo 配置：
 
-对于某些 key 设置了过期时间，但是其是热点数据，如果某个 key 失效，可能大量的请求打过来，缓存未命中，然后去数据库访问，此时数据库访问量会急剧增加。
+```xml
+<!-- provider 配置 -->
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans.xsd        http://code.alibabatech.com/schema/dubbo        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-为了避免这个问题，我们可以采取下面的两个手段:
+    <dubbo:application name="dubbo-provider" />
+    <dubbo:registry address="zookeeper://127.0.0.1:2181" />
+    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:service interface="com.zhss.service.HelloService" ref="helloServiceImpl" timeout="10000" />
+    <bean id="helloServiceImpl" class="com.zhss.service.HelloServiceImpl" />
 
-- **分布式锁** - 锁住热点数据的 key，避免大量线程同时访问同一个 key。
-- **异步加载** - 可以对部分数据采取到期自动刷新的策略，而不是到期自动淘汰。淘汰其实也是为了数据的时效性，所以采用自动刷新也可以。
+</beans>
 
-### 7.4. 缓存更新
+<!-- consumer 配置 -->
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans.xsd        http://code.alibabatech.com/schema/dubbo        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-一般来说缓存的更新有两种情况:
+    <dubbo:application name="dubbo-consumer"  />
 
-- 先删除缓存，再更新数据库。
-- 先更新数据库，再删除缓存。
+    <dubbo:registry address="zookeeper://127.0.0.1:2181" />
 
-> **为什么是删除缓存，而不是更新缓存呢？**
->
-> 你可以想想当有多个并发的请求更新数据，你并不能保证更新数据库的顺序和更新缓存的顺序一致，那就会出现数据库中和缓存中数据不一致的情况。所以一般来说考虑删除缓存。
+    <dubbo:reference id="fooService" interface="com.test.service.FooService"  timeout="10000" check="false" mock="return null">
+    </dubbo:reference>
 
-- **先删除缓存，再更新数据库**
+</beans>
+```
 
-对于一个更新操作简单来说，就是先去各级缓存进行删除，然后更新数据库。
+我们调用接口失败的时候，可以通过 `mock` 统一返回 null。
 
-这个操作有一个比较大的问题，在对缓存删除完之后，有一个读请求，这个时候由于缓存被删除所以直接会读库，读操作的数据是老的并且会被加载进入缓存当中，后续读请求全部访问的老数据。
+mock 的值也可以修改为 true，然后再跟接口同一个路径下实现一个 Mock 类，命名规则是 “接口名称+`Mock`” 后缀。然后在 Mock 类里实现自己的降级逻辑。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存更新.png!zp" width="400px"/></div>
-对缓存的操作不论成功失败都不能阻塞我们对数据库的操作，那么很多时候删除缓存可以用异步的操作，但是先删除缓存不能很好的适用于这个场景。
+```java
+public class HelloServiceMock implements HelloService {
+    public void sayHello() {
+        // 降级逻辑
+    }
+}
+```
 
-先删除缓存也有一个好处是，如果对数据库操作失败了，那么由于先删除的缓存，最多只是造成 Cache Miss。
+### 访问控制
 
-- **先更新数据库，再删除缓存**
+#### 直连
 
-> 注：更推荐使用这种策略
+在开发及测试环境下，经常需要绕过注册中心，只测试指定服务提供者，这时候可能需要点对点直连，点对点直联方式，将以服务接口为单位，忽略注册中心的提供者列表，A 接口配置点对点，不影响 B 接口从注册中心获取列表。
 
-如果我们使用更新数据库，再删除缓存就能避免上面的问题。
+<div align="center">
+<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/distributed/rpc/dubbo/dubbo访问控制-直连.jpg" />
+</div>
 
-但是同样的引入了新的问题：假设执行更新操作时，又接收到查询请求，此时就会返回缓存中的老数据。更麻烦的是，如果数据库更新操作执行失败，则缓存中可能永远是脏数据。
+配置方式：
 
-- 应该选择哪种更新测录
+（1）通过 XML 配置
 
-通过上面的内容，我们知道，两种更新策略都存在并发问题。
+如果是线上需求需要点对点，可在 <dubbo:reference> 中配置 url 指向提供者，将绕过注册中心，多个地址用分号隔开，配置如下：
 
-但是建议选择先更新数据库，再删除缓存，因为其并发问题出现的概率可能非常低，因为这个条件需要发生在读缓存时缓存失效，而且并发着有一个写操作。而实际上数据库的写操作会比读操作慢得多，而且还要锁表，而读操作必需在写操作前进入数据库操作，而又要晚于写操作更新缓存，所有的这些条件都具备的概率基本并不大。
+```xml
+<dubbo:reference id="xxxService" interface="com.alibaba.xxx.XxxService" url="dubbo://localhost:20890" />
+```
 
-如果需要数据库和缓存保证强一致性，则可以通过 2PC 或 Paxos 协议来实现。但是 2PC 太慢，而 Paxos 太复杂，所以如果不是非常重要的数据，不建议使用强一致性方案。
+（2）通过 -D 参数指定
 
-### 7.5. 缓存预热
+在 JVM 启动参数中加入-D 参数映射服务地址：
 
-缓存预热是指系统启动后，将常用的数据直接缓存。这样就可以避免用户请求的时候，先查询数据库，然后再更新缓存的问题。
+```
+java -Dcom.alibaba.xxx.XxxService=dubbo://localhost:20890
+```
 
-解决方案：
+（3）通过文件映射
+如果服务比较多，也可以用文件映射，用 -Ddubbo.resolve.file 指定映射文件路径，此配置优先级高于 <dubbo:reference> 中的配置：
 
-- 直接写个缓存刷新页面，上线时手工操作下。
-- 数据量不大，可以在项目启动的时候自动进行加载。
-- 定时刷新缓存。
+```
+java -Ddubbo.resolve.file=xxx.properties
+```
 
-### 7.6. 缓存降级
+然后在映射文件 xxx.properties 中加入配置，其中 key 为服务名，value 为服务提供者 URL：
 
-当访问量剧增、服务出现问题（如响应时间慢或不响应）或非核心服务影响到核心流程的性能时，仍然需要保证服务还是可用的，即使是有损服务。系统可以根据一些关键数据进行自动降级，也可以配置开关实现人工降级。
+```properties
+com.alibaba.xxx.XxxService=dubbo://localhost:20890
+```
 
-降级的最终目的是保证核心服务可用，即使是有损的。而且有些服务是无法降级的（如加入购物车、结算）。
+#### 只订阅
+
+为方便开发测试，经常会在线下共用一个所有服务可用的注册中心，这时，如果一个正在开发中的服务提供者注册，可能会影响消费者不能正常运行。
+
+可以让服务提供者开发方，只订阅服务(开发的服务可能依赖其它服务)，而不注册正在开发的服务，通过直连测试正在开发的服务。
+
+禁用注册配置：
+
+```xml
+<dubbo:registry address="10.20.153.10:9090" register="false" />
+```
+
+或者
+
+```xml
+<dubbo:registry address="10.20.153.10:9090?register=false" />
+```
+
+#### 只注册
+
+如果有两个镜像环境，两个注册中心，有一个服务只在其中一个注册中心有部署，另一个注册中心还没来得及部署，而两个注册中心的其它应用都需要依赖此服务。这个时候，可以让服务提供者方只注册服务到另一注册中心，而不从另一注册中心订阅服务。
+
+禁用订阅配置
+
+```xml
+<dubbo:registry id="hzRegistry" address="10.20.153.10:9090" />
+<dubbo:registry id="qdRegistry" address="10.20.141.150:9090" subscribe="false" />
+```
+
+或者
+
+```xml
+<dubbo:registry id="hzRegistry" address="10.20.153.10:9090" />
+<dubbo:registry id="qdRegistry" address="10.20.141.150:9090?subscribe=false" />
+```
+
+#### 静态服务
+
+有时候希望人工管理服务提供者的上线和下线，此时需将注册中心标识为非动态管理模式。
+
+```
+<dubbo:registry address="10.20.141.150:9090" dynamic="false" />
+```
+
+或者
+
+```
+<dubbo:registry address="10.20.141.150:9090?dynamic=false" />
+```
+
+服务提供者初次注册时为禁用状态，需人工启用。断线时，将不会被自动删除，需人工禁用。
+
+### 动态配置
+
+向注册中心写入动态配置覆盖规则。该功能通常由监控中心或治理中心的页面完成。
+
+```java
+RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension();
+Registry registry = registryFactory.getRegistry(URL.valueOf("zookeeper://10.20.153.10:2181"));
+registry.register(URL.valueOf("override://0.0.0.0/com.foo.BarService?category=configurators&dynamic=false&application=foo&timeout=1000"));
+```
+
+其中：
+
+- **override://** - 表示数据采用覆盖方式，支持 override 和 absent，可扩展，必填。
+- **0.0.0.0** - 表示对所有 IP 地址生效，如果只想覆盖某个 IP 的数据，请填入具体 IP，必填。
+- **com.foo.BarService** - 表示只对指定服务生效，必填。
+- **category=configurators** - 表示该数据为动态配置类型，必填。
+- **dynamic=false** - 表示该数据为持久数据，当注册方退出时，数据依然保存在注册中心，必填。
+- **enabled=true** - 覆盖规则是否生效，可不填，缺省生效。
+- **application=foo** - 表示只对指定应用生效，可不填，表示对所有应用生效。
+- **timeout=1000** - 表示将满足以上条件的 timeout 参数的值覆盖为 1000。如果想覆盖其它参数，直接加在 override 的 URL 参数上。
+
+示例：
+
+- 禁用提供者：(通常用于临时踢除某台提供者机器，相似的，禁止消费者访问请使用路由规则)
+
+```
+override://10.20.153.10/com.foo.BarService?category=configurators&dynamic=false&disbaled=true
+```
+
+- 调整权重：(通常用于容量评估，缺省权重为 100)
+
+```
+override://10.20.153.10/com.foo.BarService?category=configurators&dynamic=false&weight=200
+```
+
+- 调整负载均衡策略：(缺省负载均衡策略为 random)
+
+```
+override://10.20.153.10/com.foo.BarService?category=configurators&dynamic=false&loadbalance=leastactive
+```
+
+- 服务降级：(通常用于临时屏蔽某个出错的非关键服务)
+
+```
+override://0.0.0.0/com.foo.BarService?category=configurators&dynamic=false&application=foo&mock=force:return+null
+```
+
+## 十、多版本
+
+当一个接口实现，出现不兼容升级时，可以用版本号过渡，版本号不同的服务相互间不引用。
+
+可以按照以下的步骤进行版本迁移：
+
+1. 在低压力时间段，先升级一半提供者为新版本
+2. 再将所有消费者升级为新版本
+3. 然后将剩下的一半提供者升级为新版本
+
+老版本服务提供者配置：
+
+```xml
+<dubbo:service interface="com.foo.BarService" version="1.0.0" />
+```
+
+新版本服务提供者配置：
+
+```xml
+<dubbo:service interface="com.foo.BarService" version="2.0.0" />
+```
+
+老版本服务消费者配置：
+
+```xml
+<dubbo:reference id="barService" interface="com.foo.BarService" version="1.0.0" />
+```
+
+新版本服务消费者配置：
+
+```xml
+<dubbo:reference id="barService" interface="com.foo.BarService" version="2.0.0" />
+```
+
+如果不需要区分版本，可以按照以下的方式配置 [[1\]](http://dubbo.apache.org/zh-cn/docs/user/demos/multi-versions.html#fn1)：
+
+```xml
+<dubbo:reference id="barService" interface="com.foo.BarService" version="*" />
+```
+
+## 十一、Dubbo SPI
+
+SPI 全称为 Service Provider Interface，是一种服务发现机制。SPI 的本质是**将接口实现类的全限定名配置在文件中，并由服务加载器读取配置文件，加载实现类**。这样可以在运行时，动态为接口替换实现类。正因此特性，我们可以很容易的通过 SPI 机制为我们的程序提供拓展功能。SPI 机制在第三方框架中也有所应用，比如 Dubbo 就是通过 SPI 机制加载所有的组件。不过，Dubbo 并未使用 Java 原生的 SPI 机制，而是对其进行了增强，使其能够更好的满足需求。在 Dubbo 中，SPI 是一个非常重要的模块。基于 SPI，我们可以很容易的对 Dubbo 进行拓展。
+
+Dubbo SPI 的相关逻辑被封装在了 `ExtensionLoader` 类中，通过 `ExtensionLoader`，我们可以加载指定的实现类。Dubbo SPI 所需的配置文件需放置在 `META-INF/dubbo` 路径下。
 
 ## 参考资料
 
-- [《大型网站技术架构：核心原理与案例分析》](https://item.jd.com/11322972.html)
-- [你应该知道的缓存进化史](https://link.juejin.im/?target=https%3A%2F%2Fjuejin.im%2Fpost%2F5b7593496fb9a009b62904fa)
-- [如何优雅的设计和使用缓存？](https://link.juejin.im/?target=https%3A%2F%2Fjuejin.im%2Fpost%2F5b849878e51d4538c77a974a)
-- [理解分布式系统中的缓存架构(上)](https://www.jianshu.com/p/73ce0ef820f9)
+- **官方**
+  - [Dubbo Github](https://github.com/apache/dubbo)
+  - [Dubbo 官方文档](https://dubbo.apache.org/zh-cn/)
+  - [管理员手册](https://dubbo.gitbooks.io/dubbo-admin-book/content/)
+- **文章**
+  - [如何基于 Dubbo 进行服务治理、服务降级、失败重试以及超时重试？](https://github.com/doocs/advanced-java/blob/master/docs/distributed-system/dubbo-service-management.md)

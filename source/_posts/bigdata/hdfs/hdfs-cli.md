@@ -24,7 +24,7 @@ $ hdfs dfs -cat /user/adam/songs.txt
 ```
 
 - 更改文件的权限：
-
+ 
 ```
 $ hdfs dfs -chmod 700 /user/adam/songs.txt
 ```
