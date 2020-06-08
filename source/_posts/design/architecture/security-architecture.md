@@ -90,7 +90,7 @@ CAS 分为两部分，CAS Server 和 CAS Client
 
 CAS 工作流程：
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119195646.png)
+![img](http://dunwu.test.upcdn.net/snap/20200119195646.png)
 
 1. 用户访问 CAS Client A（业务系统），第一次访问，重定向到认证服务中心（CAS Server）。CAS Server 发现当前请求中没有 Cookie，再重定向到 CAS Server 的登录页面。重定向请求的 URL 中包含访问地址，以便认证成功后直接跳转到访问页面。
 2. 用户在登录页面输入用户名、密码等认证信息，认证成功后，CAS Server 生成 TGT，再用 TGT 生成一个 ST。然后返回 ST 和 TGC（Cookie）给浏览器。
@@ -99,7 +99,7 @@ CAS 工作流程：
 5. 此时，如果登录另一个 CAS Client B，会先重定向到 CAS Server，CAS Server 可以判断这个 CAS Client B 是第一次访问，但是本地有 TGC，所以无需再次登录。用 TGC 创建一个 ST，返回给浏览器。
 6. 重复类似 3、4 步骤。
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119202448.png)
+![img](http://dunwu.test.upcdn.net/snap/20200119202448.png)
 
 以上了归纳总结如下：
 
@@ -430,13 +430,13 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 每个用户关联一个或多个角色，每个角色关联一个或多个权限，从而可以实现了非常灵活的权限管理。角色可以根据实际业务需求灵活创建，这样就省去了每新增一个用户就要关联一遍所有权限的麻烦。简单来说 RBAC 就是：用户关联角色，角色关联权限。
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119210359.png)
+![img](http://dunwu.test.upcdn.net/snap/20200119210359.png)
 
 ### 角色继承
 
 角色继承(Hierarchical Role) 就是指角色可以继承于其他角色，在拥有其他角色权限的同时，自己还可以关联额外的权限。这种设计可以给角色分组和分层，一定程度简化了权限管理工作。
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200119210528.png)
+![img](http://dunwu.test.upcdn.net/snap/20200119210528.png)
 
 #### 职责分离(Separation of Duty)
 

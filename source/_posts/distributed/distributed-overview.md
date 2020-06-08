@@ -70,7 +70,7 @@ date: 2018-07-09 17:43
 
 ## 2. 分布式基础理论
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200202201007.png)
+![img](http://dunwu.test.upcdn.net/snap/20200202201007.png)
 
 > :bulb: CAP 和 BASE 详尽剖析，请参考：[CAP 定理和 BASE 理论](cap-and-base.md)
 
@@ -188,13 +188,13 @@ date: 2018-07-09 17:43
 
 ### 4.1. Paxos
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200202221611.png)
+![img](http://dunwu.test.upcdn.net/snap/20200202221611.png)
 
 > :bulb: Paxos 详尽剖析，请参考：[深入剖析共识性算法 Paxos](paxos.md)
 
 ### 4.2. Raft
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200201221202.png)
+![img](http://dunwu.test.upcdn.net/snap/20200201221202.png)
 
 > :bulb: Raft 详尽剖析，请参考：[深入剖析共识性算法 Raft](raft.md)
 

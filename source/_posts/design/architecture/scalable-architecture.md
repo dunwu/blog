@@ -27,7 +27,7 @@ tags: ['设计', '架构']
 ### 2.1. HTTP 重定向负载均衡
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/architecture/负载均衡-HTTP重定向.png!zp" width="500"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡-HTTP重定向.png!zp" width="500"/>
 </div>
 
 利用 HTTP 重定向协议实现负载均衡。
@@ -41,7 +41,7 @@ tags: ['设计', '架构']
 利用 DNS 处理域名解析请求的同时进行负载均衡处理的一种方案。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/architecture/负载均衡-DNS域名解析.png!zp" width="500"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡-DNS域名解析.png!zp" width="500"/>
 </div>
 
 在 DNS 服务器中配置多个 A 记录，如：
@@ -69,7 +69,7 @@ DNS 域名解析负载均衡的缺点：
 大多数反向代理服务器同时提供反向代理和负载均衡的功能。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/architecture/负载均衡-反向代理.png!zp" width="500"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡-反向代理.png!zp" width="500"/>
 </div>
 
 反向代理服务器的优点是部署简单。缺点是反向代理服务器是所有请求和响应的中转站，其性能可能会成为瓶颈。
@@ -79,7 +79,7 @@ DNS 域名解析负载均衡的缺点：
 在网络层通过修改请求目标地址进行负载均衡。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/architecture/负载均衡-IP层.png!zp" width="500"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡-IP层.png!zp" width="500"/>
 </div>
 
 负载均衡服务器（网关服务器）在操作系统内核获取网络数据包，根据负载均衡算法计算得到一台真实 Web 服务器 10.0.0.1，然后将目的 IP 地址修改为 10.0.0.1，不需要通过用户进程。真实 Web 服务器处理完成后，响应数据包回到负载均衡服务器，负载均衡服务器再将数据包原地址修改为自身的 IP 地址（114.100.80.10）发送给浏览器。
@@ -91,7 +91,7 @@ IP 负载均衡在内核完成数据分发，所以处理性能优于反向代�
 数据链路层负载均衡是指在通信协议的数据链路层修改 mac 地址进行负载均衡。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/java/javaweb/architecture/负载均衡-数据链路层.png!zp" width="500"/>
+<img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡-数据链路层.png!zp" width="500"/>
 </div>
 
 这种方式又称作三角传输方式，负载均衡数据分发过程中不修改 IP 地址，只修改目的 mac 地址，通过配置真实物理服务器集群所有机器虚拟 IP 和负载均衡服务器 IP 地址一致，从而达到不修改数据包的源地址和目的地址就可以进行数据分发的目的，由于实际处理请求的真实物理服务器 IP 和数据请求目的 IP 一致，不需要通过负载均衡服务器进行地址转换，可将响应数据包直接返回给用户浏览器，避免负载均衡服务器网卡带宽成为瓶颈。这种负载方式又称作直接路由方式。

@@ -9,7 +9,7 @@ date: 2020-02-03 10:30
 
 > 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203095528.png)
+![img](http://dunwu.test.upcdn.net/snap/20200203095528.png)
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -38,7 +38,7 @@ VPN 属于远程访问技术，简单地说就是利用公用网络架设专用�
 
 ### 隐藏 IP 和位置
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203100404.png)
+![img](http://dunwu.test.upcdn.net/snap/20200203100404.png)
 
 VPN 可以隐藏使用者的 IP 地址和位置。
 
@@ -54,7 +54,7 @@ VPN 可以隐藏使用者的 IP 地址和位置。
 
 ### 通信加密
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203100543.png)
+![img](http://dunwu.test.upcdn.net/snap/20200203100543.png)
 
 使用 VPN 时，可以对信息进行加密，使得密码，电子邮件，照片，银行数据和其他敏感信息不会被拦截。
 
@@ -64,7 +64,7 @@ VPN 可以加密信息，使黑客更难以拦截和窃取数据。
 
 ### 翻墙
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203100706.png)
+![img](http://dunwu.test.upcdn.net/snap/20200203100706.png)
 
 轻松解除对 Facebook 和 Twitter，Skype，YouTube 和 Gmail 等网站和服务的阻止。 即使您被告知您所在的国家/地区不可用它，或者您所在的学校或办公室网络限制访问，也可以获取所需的东西。
 
@@ -72,7 +72,7 @@ VPN 可以加密信息，使黑客更难以拦截和窃取数据。
 
 ### 避免被监听
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203100933.png)
+![img](http://dunwu.test.upcdn.net/snap/20200203100933.png)
 
 使用 VPN 可以向政府、ISP、黑客隐藏通信信息。
 
@@ -90,7 +90,7 @@ VPN 可以加密信息，使黑客更难以拦截和窃取数据。
 
 VPN 会在您的设备和私人服务器之间建立私人和加密的互联网连接。 这意味着您的数据无法被 ISP 或任何其他第三方读取或理解。 然后，私有服务器将您的流量发送到您要访问的网站或服务上。
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203102422.png)
+![img](http://dunwu.test.upcdn.net/snap/20200203102422.png)
 
 VPN 的基本处理过程如下：
 
@@ -102,7 +102,7 @@ VPN 的基本处理过程如下：
 
 ## VPN 协议
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200203102656.png)
+![img](http://dunwu.test.upcdn.net/snap/20200203102656.png)
 
 - OpenVPN
 

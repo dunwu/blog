@@ -13,7 +13,7 @@ date: 2020-02-02 22:00
 >
 > Paxos 算法解决的问题正是分布式一致性问题。在一个节点数为 N 的分布式集群中，只要半数以上的节点（N/2 + 1）还正常工作，整个系统仍可以正常工作。
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200202221611.png)
+![img](http://dunwu.test.upcdn.net/snap/20200202221611.png)
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -47,7 +47,7 @@ Paxos 将分布式系统中的节点分为以下角色：
 
 在复制状态机中，每个副本都同时具有 Proposer、Acceptor、Learner 三种角色。
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200202213738.png)
+![img](http://dunwu.test.upcdn.net/snap/20200202213738.png)
 
 ### 算法
 
