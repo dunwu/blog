@@ -11,11 +11,15 @@
 
 <h1 align="center">BLOG</h1>
 
+> 本博客内容较多，请善用 `Ctrl + F`
+
 ## 编程语言
 
-> 作为程序员，职业生涯的第一步，当然是掌握并精通至少一门编程语言。
+> 作为程序员，编程当然是基础中的基础。
 >
-> 本人是一名 Java 后端程序员，刚毕业时做过两年 C/C++ 程序员，此外，还略懂几门其他编程语言。
+> 每个优秀的程序员，至少应该掌握并精通一门编程语言（根据自己的兴趣和技术方向选择）。
+>
+> 本人较为精通 Java ，且熟悉 C/C++/JavaScript，略懂 Shell/Python 等脚本语言。
 
 ### Java
 
@@ -23,16 +27,43 @@
 >
 > [Java 教程](https://turnon.gitee.io/java-tutorial/) 📚 - 本人作为一名 Java 程序员，十年的技术积累，汇总与此。
 
-#### JavaCore
+#### JavaCore 📚
 
 > [JavaCore 教程](https://dunwu.github.io/javacore/) 📚 - Java 核心技术教程。
 
 - [**Java 基础**](https://github.com/dunwu/javacore/blob/master/docs/basics) - [基本数据类型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-data-type.md)、[类和对象](https://github.com/dunwu/javacore/blob/master/docs/basics/java-class.md)、[方法](https://github.com/dunwu/javacore/blob/master/docs/basics/java-method.md)、[数组](https://github.com/dunwu/javacore/blob/master/docs/basics/java-array.md)、[枚举](https://github.com/dunwu/javacore/blob/master/docs/basics/java-enum.md)、[控制语句](https://github.com/dunwu/javacore/blob/master/docs/basics/java-control-statement.md)、[异常](https://github.com/dunwu/javacore/blob/master/docs/basics/java-exception.md)、[泛型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-generic.md)、[反射](https://github.com/dunwu/javacore/blob/master/docs/basics/java-reflection.md)、[注解](https://github.com/dunwu/javacore/blob/master/docs/basics/java-annotation.md)
 - [**Java 高级**](https://github.com/dunwu/javacore/blob/master/docs/advanced) - [Java 正则](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-regex.md)、[Java 编码和加密](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-crypto.md)、[Java 本地化](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-locale.md)、[JDK8](https://github.com/dunwu/javacore/blob/master/docs/advanced/jdk8.md)
-- [**Java 容器**](https://github.com/dunwu/javacore/blob/master/docs/container) - [List](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-list.md)、[Set](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-set.md)、[Queue](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-queue.md)、[Map](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-map.md)
-- [**Java 并发**](https://github.com/dunwu/javacore/blob/master/docs/concurrent) - [并发简介](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-introduction.md)、[线程基础](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-thread.md)、[并发核心机制](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-basic-mechanism.md)、[并发锁](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-lock.md)、[原子类](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-atomic-class.md)、[并发容器](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-container.md)、[线程池](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-thread-pool.md)、[并发工具类](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-tools.md)、[内存模型](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-memory-model.md)
+- [**Java 容器**](https://github.com/dunwu/javacore/blob/master/docs/container)
+  - [Java 容器简介](https://github.com/dunwu/javacore/blob/master/docs/container/java-container.md) - 关键词：`Collection`、`泛型`、`Iterable`、`Iterator`、`Comparable`、`Comparator`、`Cloneable`、`fail-fast`
+  - [Java 容器之 List](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-list.md) - 关键词：`List`、`ArrayList`、`LinkedList`
+  - [Java 容器之 Map](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-map.md) - 关键词：`Map`、`HashMap`、`TreeMap`、`LinkedHashMap`、`WeakHashMap`
+  - [Java 容器之 Set](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-set.md) - 关键词：`Set`、`HashSet`、`TreeSet`、`LinkedHashSet`、`EmumSet`
+  - [Java 容器之 Queue](https://github.com/dunwu/javacore/blob/master/docs/container/java-container-queue.md) - 关键词：`Queue`、`Deque`、`ArrayDeque`、`LinkedList`、`PriorityQueue`
+- [**Java 并发**](https://github.com/dunwu/javacore/blob/master/docs/concurrent)
+  - [Java 并发面试题集 💯](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-interview.md)
+  - [Java 并发简介](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-introduction.md) - 关键词：`进程`、`线程`
+  - [Java 线程基础](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-thread.md) - 关键词：`Thread`、`Runnable`、`Callable`、`Future`
+  - [Java 并发核心机制](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-basic-mechanism.md) - 关键词：`synchronized`、`volatile`、`CAS`、`ThreadLocal`
+  - [Java 并发锁](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-lock.md) - 关键词：`AQS`、`ReentrantLock`、`ReentrantReadWriteLock`、`Condition`
+  - [Java 原子类](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-atomic-class.md) - 关键词：`CAS`、`Atomic`
+  - [Java 并发容器](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-container.md) - 关键词：`ConcurrentHashMap`、`CopyOnWriteArrayList`
+  - [Java 线程池](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-thread-pool.md) - 关键词：`Executor`、`ExecutorService`、`ThreadPoolExecutor`、`Executors`
+  - [Java 并发工具类](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-tools.md) - 关键词：`CountDownLatch`、`CyclicBarrier`、`Semaphore`
+  - [Java 内存模型](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-memory-model.md) - 关键词：`JMM`、`原子性`、`可见性`、`有序性`、`Happens-Before`
 - [**JAVA IO**](https://github.com/dunwu/javacore/tree/master/docs/io)
-- [**Java 虚拟机**](https://github.com/dunwu/javacore/blob/master/docs/jvm) - [JVM 内存区域](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-memory.md)、[JVM 垃圾收集](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-gc.md)、[JVM 字节码](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-bytecode.md)、[JVM 类加载](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-class-loader.md)、[JVM 工具](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-tools.md)、[JVM 实战](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-action.md)
+  - [Java 基础 IO 类](https://github.com/dunwu/javacore/blob/master/docs/io/java-io-base.md) - 关键词：`File`、`RandomAccessFile`、`System`、`Scanner`
+  - [Java BIO](https://github.com/dunwu/javacore/blob/master/docs/io/java-bio.md) - 关键词：`InputStream`、`OutputStream`、`Reader`、`Writer`
+  - [Java NIO](https://github.com/dunwu/javacore/blob/master/docs/io/java-nio.md) - 关键词：`Channel`、`Buffer`、`Selector`、`多路复用`
+  - [Java 序列化](https://github.com/dunwu/javacore/blob/master/docs/io/java-serialization.md) - 关键词：`Serializable`、`Externalizable`、`ObjectInputStream`、`ObjectOutputStream`、`transient`
+  - [Java 网络编程](https://github.com/dunwu/javacore/blob/master/docs/io/java-net.md) - 关键词：`Socket`、`ServerSocket`、`DatagramPacket`、`DatagramSocket`
+- [**Java 虚拟机**](https://github.com/dunwu/javacore/blob/master/docs/jvm)
+  - [JVM 内存区域](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-memory.md) - 关键词：程序计数器、虚拟机栈、本地方法栈、堆、方法区、运行时常量池、直接内存、`OutOfMemoryError`、`StackOverflowError`
+  - [JVM 垃圾收集](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-gc.md) - 关键词：`GC Roots`、`Serial`、`Parallel`、`CMS`、`G1`、`Minor GC`、`Full GC`
+  - [JVM 字节码](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-bytecode.md) - 关键词：`bytecode`、`asm`、`javassist`
+  - [JVM 类加载](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-class-loader.md) - 关键词：类加载过程、`ClassLoader`、双亲委派、
+  - [JVM 工具](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-tools.md) - 关键词：`jps`、`jstat`、`jmap` 、`jstack`、`jhat`、`jinfo`、`jconsole`、`jvisualvm`、`MAT`
+  - [JVM 实战](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-action.md) - 关键词：VM 参数、分析、调优
+  - [Java 故障排查](https://github.com/dunwu/javacore/blob/master/docs/jvm/troubleshooting.md) - 关键词：CPU、内存、磁盘、网络、GC
 
 #### JavaEE
 
@@ -41,17 +72,17 @@
 - [Filter 和 Listener](https://github.com/dunwu/java-tutorial/blob/master/docs/javaee/javaee-filter-listener.md)
 - [Cookie 和 Session](https://github.com/dunwu/java-tutorial/blob/master/docs/javaee/javaee-cookie-sesion.md)
 
-#### JavaTech
+#### JavaTech 📚
 
 > [JavaTech 教程](https://dunwu.github.io/javatech/) 📚 - 汇总了 Java 开发中常见的主流技术的应用、特性、原理。
 
 - [**框架**](https://github.com/dunwu/javatech/tree/master/docs/framework) - [Spring 教程](https://dunwu.github.io/spring-tutorial/) 📚、[Spring Boot 教程](https://dunwu.github.io/spring-boot-tutorial/) 📚、[Mybatis](https://dunwu.github.io/javatech/ecology/framework/javatech/data/mybatis.html)
 - [**缓存**](https://github.com/dunwu/javatech/tree/master/docs/cache) - [Redis](https://github.com/dunwu/db-tutorial/tree/master/docs/nosql/redis) 📚、[Ehcache](https://github.com/dunwu/javatech/blob/master/docs/cache/Ehcache.md)、[Caffeine](https://github.com/dunwu/javatech/blob/master/docs/cache/Caffeine.md)
-- [**消息队列**](https://github.com/dunwu/javatech/blob/master/docs/mq/) - [Kafka](https://github.com/dunwu/javatech/blob/master/docs/mq/kafka)、[RocketMQ](https://github.com/dunwu/javatech/blob/master/docs/mq/rocketmq.md)、[ActiveMQ](https://github.com/dunwu/javatech/blob/master/docs/mq/activemq.md)
+- [**消息队列**](https://github.com/dunwu/javatech/blob/master/docs/mq/) - [Kafka](https://dunwu.github.io/bigdata-tutorial/kafka/) 📚、[RocketMQ](https://github.com/dunwu/javatech/blob/master/docs/mq/rocketmq.md)、[ActiveMQ](https://github.com/dunwu/javatech/blob/master/docs/mq/activemq.md)
 - [**安全**](https://github.com/dunwu/javatech/blob/master/docs/security/) - [Shiro](https://github.com/dunwu/javatech/blob/master/docs/security/shiro.md)、[Spring Security](https://github.com/dunwu/javatech/blob/master/docs/security/spring-security.md)
 - [**测试**](https://github.com/dunwu/javatech/blob/master/docs/test/) - [Junit](https://github.com/dunwu/javatech/blob/master/docs/test/junit.md)、[Mockito](https://github.com/dunwu/javatech/blob/master/docs/test/mockito.md)、[JMH](https://github.com/dunwu/javatech/blob/master/docs/test/jmh.md)
 - [**服务器**](https://github.com/dunwu/javatech/tree/master/docs/server) - [Tomcat](https://github.com/dunwu/javatech/blob/master/docs/server/tomcat.md)、[Jetty](https://github.com/dunwu/javatech/blob/master/docs/server/jetty.md)、[Nginx](https://github.com/dunwu/nginx-tutorial) 📚
-- [**SOA**](https://github.com/dunwu/javatech/blob/master/docs/soa/) - [Dubbo](https://github.com/dunwu/javatech/blob/master/docs/soa/dubbo.md)、[ZooKeeper](https://github.com/dunwu/javatech/blob/master/docs/soa/zookeeper)
+- [**RPC**](https://github.com/dunwu/javatech/blob/master/docs/soa/) - [Dubbo](https://github.com/dunwu/javatech/blob/master/docs/soa/dubbo.md)
 
 #### JavaTool
 
@@ -83,13 +114,74 @@
 
 [数据库教程](https://dunwu.github.io/db-tutorial/) 📚 - 本人接触的最多的数据库就是 Mysql、Redis，本教程内对于这两种数据库的特性和原理讲解比较细致，其他数据库内容没那么细致。
 
+### 关系型数据库
+
+#### Mysql
+
+> [Mysql](https://dunwu.github.io/db-tutorial/sql/mysql) 📚
+
+- [Mysql 基本原理](https://dunwu.github.io/db-tutorial/sql/mysql/mysql-theory.html)
+- [Mysql 索引](https://dunwu.github.io/db-tutorial/sql/mysql/mysql-index.html)
+- [Mysql 锁](https://dunwu.github.io/db-tutorial/sql/mysql/mysql-lock.html)
+- [Mysql 事务](https://dunwu.github.io/db-tutorial/sql/mysql/mysql-transaction.html)
+- [Mysql 优化](https://dunwu.github.io/db-tutorial/sql/mysql/mysql-optimization.html)
+- [Mysql 运维](https://dunwu.github.io/db-tutorial/sql/mysql/mysql-ops.html) 🔨
+- [Mysql 配置](https://dunwu.github.io/db-tutorial/sql/mysql/mysql-config.html)
+
+#### 其他
+
+- [关系型数据库面试总结](https://dunwu.github.io/db-tutorial/sql/sql-interview.html) 💯
+- [SQL Cheat Sheet](https://dunwu.github.io/db-tutorial/sql/sql-cheat-sheet.html)
+
+- [H2 入门指南](https://dunwu.github.io/db-tutorial/sql/h2.html)
+- [SqLite 入门指南](https://dunwu.github.io/db-tutorial/sql/sqlite.html)
+- [PostgreSQL 入门指南](https://dunwu.github.io/db-tutorial/sql/postgresql.html)
+
+### Nosql
+
+#### Redis
+
+[Redis](https://dunwu.github.io/db-tutorial/nosql/redis) 📚
+
+- [Redis 面试总结](https://dunwu.github.io/db-tutorial/nosql/redis/redis-interview.html) 💯
+- [Redis 入门指南](https://dunwu.github.io/db-tutorial/nosql/redis/redis-quickstart.html) ⚡
+- [Redis 数据类型和应用](https://dunwu.github.io/db-tutorial/nosql/redis/redis-datatype.html)
+- [Redis 持久化](https://dunwu.github.io/db-tutorial/nosql/redis/redis-persistence.html)
+- [Redis 复制](https://dunwu.github.io/db-tutorial/nosql/redis/redis-replication.html)
+- [Redis 哨兵](https://dunwu.github.io/db-tutorial/nosql/redis/redis-sentinel.html)
+- [Redis 集群](https://dunwu.github.io/db-tutorial/nosql/redis/redis-cluster.html)
+- [Redis 事务](https://dunwu.github.io/db-tutorial/nosql/redis/redis-transaction.html)
+- [Redis 发布与订阅](https://dunwu.github.io/db-tutorial/nosql/redis/redis-pub-sub.html)
+- [Redis 运维](https://dunwu.github.io/db-tutorial/nosql/redis/redis-ops.html) 🔨
+
+#### 其他
+
+- [Nosql 技术选型](https://dunwu.github.io/db-tutorial/nosql/nosql-selection.html)
+
+### 中间件
+
+- [版本管理中间件 flyway](https://dunwu.github.io/db-tutorial/middleware/flyway.html)
+- [分库分表中间件 ShardingSphere](https://dunwu.github.io/db-tutorial/middleware/shardingsphere.html)
+
 ## 操作系统
 
-- [Linux](https://dunwu.github.io/linux-tutorial/) 📚
+### Linux
+
+> [**linux-tutorial**](https://dunwu.github.io/linux-tutorial/) 📚 是一个 Linux 教程。
+
+主要内容如下：
+
+- [Linux 命令](https://dunwu.github.io/linux-tutorial/linux/cli/) 📚 是一个 Linux 常用命令行教程。
+- [Linux 系统运维](https://dunwu.github.io/linux-tutorial/linux/ops/) 📚
+- [Linux 软件运维](https://dunwu.github.io/linux-tutorial/linux/soft/) 📚
+- [Docker 教程](https://dunwu.github.io/linux-tutorial/docker/) 📚
+
+### 其他
+
 - [Windows](source/_posts/os/windows.md)
 - [Mac](source/_posts/os/mac.md)
 
-## 分布式系统
+## 分布式
 
 > 大型软件为了应对海量数据、高并发，一般都会被设计为分布式系统。
 >
@@ -101,7 +193,7 @@
 - [负载均衡](source/_posts/distributed/load-balance-theory.md) - 关键词：轮询、随机、最少连接、源地址哈希、一致性哈希
 - [缓存](source/_posts/distributed/cache-theory.md) - 关键词：进程内缓存、分布式缓存、缓存雪崩、缓存穿透、缓存击穿、缓存更新、缓存预热、缓存降级
 - [消息队列](source/_posts/distributed/mq-theory.md) - 关键词：重复消费、消息丢失、消息顺序性、消息积压
-- [分布式锁](source/_posts/distributed/distributed-lock-theory.md)
+- [分布式锁](source/_posts/distributed/distributed-lock-theory.md) - 关键词：数据库、Redis、ZooKeeper
 - [分布式会话](source/_posts/distributed/distributed-session-theory.md) - 关键词：粘性 Session、Session 复制共享、基于缓存的 session 共享
 - [分布式存储](source/_posts/distributed/distributed-storage-theory.md)
 - [分布式 ID](source/_posts/distributed/distributed-id-theory.md) - 关键词：UUID、自增序列、雪花算法、Leaf
@@ -144,20 +236,13 @@
 
 ## 大数据
 
-> TODO：有待完善，不断补充。。。
+> [bigdata-tutorial](https://dunwu.github.io/bigdata-tutorial/) 📚 是一个大数据教程。
 
-- [HDFS](source/_posts/bigdata/HDFS.md)
-- [YARN](source/_posts/bigdata/YARN.md)
-- [MapReduce](source/_posts/bigdata/MapReduce.md)
-- [HBase](source/_posts/bigdata/hbase)
-
-## 计算机安全和密码学
-
-> TODO：有待完善，不断补充。。。
-
-## 计算机体系结构
-
-> TODO：有待完善，不断补充。。。
+- [Hive](https://dunwu.github.io/bigdata-tutorial/hive/) 📚
+- [Hdfs](https://dunwu.github.io/bigdata-tutorial//hdfs) 📚
+- [Hbase](https://dunwu.github.io/bigdata-tutorial//hbase) 📚
+- [ZooKeeper](https://dunwu.github.io/bigdata-tutorial/zookeeper/) 📚
+- [Kafka](https://dunwu.github.io/bigdata-tutorial/kafka/) 📚
 
 ## 架构设计
 
