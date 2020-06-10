@@ -57,7 +57,7 @@ tags: ['设计', '架构', '性能']
 - 单点应用可以使用进程内缓存（如：ConcurrentHashMap、Caffeine）；
 - 分布式应用可以使用分布式缓存（如：Redis、Memcached），或进程缓存+分布式缓存的多级缓存方案。
 
-> 缓存解决方案请参考：[缓存基本原理](https://github.com/dunwu/blog/blob/master/source/_posts/distributed/cache-theory.md) 
+> 缓存解决方案请参考：[缓存基本原理](https://github.com/dunwu/blog/blob/master/source/_posts/theory/cache-theory.md) 
 >
 
 ### 并发模型
@@ -188,7 +188,7 @@ Reactor 模式的核心组成部分包括 Reactor 和处理资源池（进程池
 
 **高性能集群的复杂性主要体现在需要增加一个任务分配器，以及为任务选择一个合适的任务分配算法**。
 
-> 缓存解决方案请参考：[负载均衡](https://github.com/dunwu/blog/blob/master/source/_posts/distributed/load-balance-theory.md)
+> 缓存解决方案请参考：[负载均衡](https://github.com/dunwu/blog/blob/master/source/_posts/theory/load-balance-theory.md)
 
 ### 代码优化
 
@@ -239,13 +239,13 @@ Reactor 模式的核心组成部分包括 Reactor 和处理资源池（进程池
 
 **读写分离的基本原理是将数据库读写操作分散到不同的节点上**
 
-> 详细解决方案参考：[分布式存储](https://github.com/dunwu/blog/blob/master/source/_posts/distributed/distributed-storage-theory.md)
+> 详细解决方案参考：[分布式存储](https://github.com/dunwu/blog/blob/master/source/_posts/theory/distributed-storage-theory.md)
 
 #### 数据库分库分表
 
 **数据分片指按照某个维度将存放在单一数据库中的数据分散地存放至多个数据库或表中以达到提升性能瓶颈以及可用性的效果**。 
 
-> 详细解决方案参考：[分布式存储](https://github.com/dunwu/blog/blob/master/source/_posts/distributed/distributed-storage-theory.md)
+> 详细解决方案参考：[分布式存储](https://github.com/dunwu/blog/blob/master/source/_posts/theory/distributed-storage-theory.md)
 
 #### Nosql
 

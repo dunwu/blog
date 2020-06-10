@@ -43,12 +43,12 @@ CAP 定理又称为 CAP 原则，指的是：**在一个分布式系统中， `�
 
 BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State）`** 和 **`最终一致性（Eventually Consistent）`** 三个短语的缩写。BASE 理论是对 CAP 中一致性和可用性权衡的结果，它的理论的核心思想是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。
 
-> CAP 和 BASE 理论的详细分析请参考：[分布式基础理论](https://github.com/dunwu/blog/blob/master/source/_posts/distributed/distributed-base-theory.md) - 关键词：拜占庭将军问题、CAP、BASE
+> CAP 和 BASE 理论的详细分析请参考：[分布式基础理论](https://github.com/dunwu/blog/blob/master/source/_posts/theory/distributed-base-theory.md) - 关键词：拜占庭将军问题、CAP、BASE
 
 Paxos 和 Raft 是为了实现分布式系统中高可用架构而提出的共识性算法，已经成为业界标准。
 
-- [Paxos 算法](https://github.com/dunwu/blog/blob/master/source/_posts/distributed/paxos.md)
-- [Raft 算法](https://github.com/dunwu/blog/blob/master/source/_posts/distributed/raft.md)
+- [Paxos 算法](https://github.com/dunwu/blog/blob/master/source/_posts/theory/paxos.md)
+- [Raft 算法](https://github.com/dunwu/blog/blob/master/source/_posts/theory/raft.md)
 
 ## 三、高可用的存储架构
 
