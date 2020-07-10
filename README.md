@@ -51,7 +51,7 @@
   - [Java 并发工具类](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-concurrent-tools.md) - 关键词：`CountDownLatch`、`CyclicBarrier`、`Semaphore`
   - [Java 内存模型](https://github.com/dunwu/javacore/blob/master/docs/concurrent/java-memory-model.md) - 关键词：`JMM`、`原子性`、`可见性`、`有序性`、`Happens-Before`
 - [**JAVA IO**](https://github.com/dunwu/javacore/tree/master/docs/io)
-  - [Java 基础 IO 类](https://github.com/dunwu/javacore/blob/master/docs/io/java-io-base.md) - 关键词：`File`、`RandomAccessFile`、`System`、`Scanner`
+  - [Java IO 工具类](https://github.com/dunwu/javacore/blob/master/docs/io/java-io-tool.md) - 关键词：`File`、`RandomAccessFile`、`System`、`Scanner`
   - [Java BIO](https://github.com/dunwu/javacore/blob/master/docs/io/java-bio.md) - 关键词：`InputStream`、`OutputStream`、`Reader`、`Writer`
   - [Java NIO](https://github.com/dunwu/javacore/blob/master/docs/io/java-nio.md) - 关键词：`Channel`、`Buffer`、`Selector`、`多路复用`
   - [Java 序列化](https://github.com/dunwu/javacore/blob/master/docs/io/java-serialization.md) - 关键词：`Serializable`、`Externalizable`、`ObjectInputStream`、`ObjectOutputStream`、`transient`
@@ -193,7 +193,7 @@
   - [Paxos 算法](source/_posts/theory/paxos.md) - 关键词：`共识性算法`
   - [Raft 算法](source/_posts/theory/raft.md) - 关键词：`共识性算法`
 - **核心技术**
-  - [缓存](source/_posts/theory/cache-theory.md) - 关键词：`进程内缓存`、`分布式缓存`、`缓存雪崩`、`缓存穿透`、`缓存击穿`、`缓存更新`、`缓存预热`、`缓存降级`
+  - [缓存](source/_posts/theory/cache.md) - 关键词：`进程内缓存`、`分布式缓存`、`缓存雪崩`、`缓存穿透`、`缓存击穿`、`缓存更新`、`缓存预热`、`缓存降级`
   - [消息队列](source/_posts/theory/mq-theory.md) - 关键词：`重复消费`、`消息丢失`、`消息顺序性`、`消息积压`
   - [分布式存储](source/_posts/theory/distributed-storage-theory.md) - 关键词：`读写分离`、`分库分表`、`迁移`、`扩容`
   - [分布式事务](source/_posts/theory/distributed-transaction.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`MQ 消息`、`SAGA`

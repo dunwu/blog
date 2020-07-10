@@ -15,7 +15,7 @@ date: 2019-03-08 13:16:53
 - [分布式基础理论](distributed-base-theory.md) - 关键词：拜占庭将军问题、CAP、BASE
 - [分布式事务](distributed-transaction.md) - 关键词：2PC、TCC、本地消息表、MQ 消息、SAGA
 - [负载均衡](load-balance-theory.md) - 关键词：轮询、随机、最少连接、源地址哈希、一致性哈希
-- [缓存](cache-theory.md) - 关键词：进程内缓存、分布式缓存、缓存雪崩、缓存穿透、缓存击穿、缓存更新、缓存预热、缓存降级
+- [缓存](cache.md) - 关键词：进程内缓存、分布式缓存、缓存雪崩、缓存穿透、缓存击穿、缓存更新、缓存预热、缓存降级
 - [消息队列](mq-theory.md) - 关键词：重复消费、消息丢失、消息顺序性、消息积压
 - [分布式锁](distributed-lock-theory.md)
 - [分布式会话](distributed-session-theory.md) - 关键词：粘性 Session、Session 复制共享、基于缓存的 session 共享

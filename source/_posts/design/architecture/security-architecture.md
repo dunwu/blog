@@ -104,15 +104,10 @@ CAS 工作流程：
 以上了归纳总结如下：
 
 1. **访问服务** - 用户访问 SSO Client 资源。
-
 2. **定向认证** - SSO Client 重定向用户请求到 SSO Server。
-
 3. **用户认证** - 用户身份认证。
-
 4. **发放票据** - SSO Server 会产生一个 Service Ticket (ST) 并返回给浏览器。
-
 5. **验证票据** - 浏览器每次访问 SSO Client 时，携带 ST，SSO Client 向 SSO Server 验证票据。只有验证通过，才允许访问。
-
 6. **传输用户信息** - SSO Server 验证票据通过后，传输用户认证结果信息给 SSO Client。
 
 ### Oauth 2.0
@@ -309,6 +304,7 @@ Location: http://example.com/cb#access_token=2YotnFZFEjr1zCsicMWpAA
 在这种模式中，用户必须把自己的密码给客户端，但是客户端不得储存密码。这通常用在用户对客户端高度信任的情况下，比如客户端是操作系统的一部分，或者由一个著名公司出品。而认证服务器只有在其他授权模式无法执行的情况下，才能考虑使用这种模式。
 
 <div align="center"><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051206.png"/></div>
+
 它的步骤如下：
 
 （A）用户向客户端提供用户名和密码。
@@ -361,6 +357,7 @@ Pragma: no-cache
 客户端模式（Client Credentials Grant）指客户端以自己的名义，而不是以用户的名义，向"服务提供商"进行认证。严格地说，客户端模式并不属于 OAuth 框架所要解决的问题。在这种模式中，用户直接向客户端注册，客户端以自己的名义要求"服务提供商"提供服务，其实不存在授权问题。
 
 <div align="center"><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051207.png"/></div>
+
 它的步骤如下：
 
 （A）客户端向认证服务器进行身份认证，并要求一个访问令牌。
@@ -490,7 +487,7 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 ![img](http://image.woshipm.com/wp-files/2018/07/7MEIhTRfnGmV0T5MBYoH.png)
 
-## **三、什么是权限**
+### 什么是权限
 
 说了这么久用户-角色-权限，可能小伙伴们都了解了什么是用户、什么是角色。但是有的小伙伴会好奇，那权限又是个什么玩意呢？
 
@@ -533,7 +530,7 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 通过以上两点，系统就可以在用户登录时，自动判断要给用户展示哪些数据了。
 
-## **四、用户组的使用**
+### 用户组的使用
 
 当平台用户基数增大，角色类型增多时，如果直接给用户配角色，管理员的工作量就会很大。这时候我们可以引入一个概念“用户组”，就是将相同属性的用户归类到一起。
 
@@ -545,7 +542,7 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 关于用户组的详细疑难解答，请查看https://wen.woshipm.com/question/detail/88fues.html。在这里也十分感谢为我解答疑惑的朋友们！
 
-## **五、实例分析**
+### 实例分析
 
 ### 5.1 如何设计RBAC权限系统
 
@@ -774,7 +771,7 @@ MSSQL 服务器会执行这条 SQL 语句，包括它后面那个用于向系统
 
 - **防火墙** - 允许或拒绝特定通讯协议，端口或 IP 地址。当攻击从少数不正常的 IP 地址发出时，可以简单的使用拒绝规则阻止一切从攻击源 IP 发出的通信。
 - **路由器、交换机** - 具有速度限制和访问控制能力。
-- **流量清洗** - 通过采用抗 DDoS 软件处理，将正常流量和恶意流量区分开。
+- **流量清洗** - 通过采用抗 DoS 软件处理，将正常流量和恶意流量区分开。
 
 > :point_right: 参考阅读：
 >
