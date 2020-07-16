@@ -15,11 +15,32 @@ tags: ['设计', '架构', '分布式']
 >
 > 本文主要讨论应对分布式系统共性问题的解决方案，这既可以加深对分布式系统运作原理的理解，也可以作为设计大型分布式系统时的借鉴。
 
-## 1. 分布式事务
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [分布式事务](#分布式事务)
+- [分布式锁](#分布式锁)
+  - [基于数据库实现分布式锁](#基于数据库实现分布式锁)
+  - [基于 Redis 实现分布式锁](#基于-redis-实现分布式锁)
+  - [基于 ZooKeeper 实现分布式锁](#基于-zookeeper-实现分布式锁)
+- [分布式 Session](#分布式-session)
+  - [Sticky Sessions](#sticky-sessions)
+  - [Session Replication](#session-replication)
+  - [Session Server](#session-server)
+- [分布式存储](#分布式存储)
+- [分布式缓存](#分布式缓存)
+- [分布式计算](#分布式计算)
+- [负载均衡](#负载均衡)
+  - [算法](#算法)
+  - [实现](#实现)
+- [资料](#资料)
+
+<!-- /TOC -->
+
+## 分布式事务
 
 > 参考：[分布式原理#4-分布式事务问题](分布式原理.md#4-分布式事务问题)
 
-## 2. 分布式锁
+## 分布式锁
 
 Java 原生 API 虽然有并发锁，但并没有提供分布式锁的能力，所以针对分布式场景中的锁需要解决的方案。
 
@@ -29,7 +50,7 @@ Java 原生 API 虽然有并发锁，但并没有提供分布式锁的能力，�
 - 基于缓存（redis，memcached 等）实现
 - 基于 Zookeeper 实现
 
-### 2.1. 基于数据库实现分布式锁
+### 基于数据库实现分布式锁
 
 #### 实现
 
@@ -85,7 +106,7 @@ delete from methodLock where method_name ='method_name'
 - 优点: 直接借助数据库，容易理解。
 - 缺点: 会有各种各样的问题，在解决问题的过程中会使整个方案变得越来越复杂。操作数据库需要一定的开销，性能问题需要考虑。
 
-### 2.2. 基于 Redis 实现分布式锁
+### 基于 Redis 实现分布式锁
 
 相比于用数据库来实现分布式锁，基于缓存实现的分布式锁的性能会更好一些。目前有很多成熟的分布式产品，包括 Redis、memcache、Tair 等。这里以 Redis 举例。
 
@@ -112,7 +133,7 @@ delete from methodLock where method_name ='method_name'
 
 可以考虑使用 [redisson 的解决方案](https://github.com/redisson/redisson/wiki/8.-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%92%8C%E5%90%8C%E6%AD%A5%E5%99%A8)。
 
-### 2.3. 基于 ZooKeeper 实现分布式锁
+### 基于 ZooKeeper 实现分布式锁
 
 #### 实现
 
@@ -133,7 +154,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 
 总体上来说 ZooKeeper 实现分布式锁更加的简单，可靠性更高。但 ZooKeeper 因为需要频繁的创建和删除节点，性能上不如 Redis 方式。
 
-## 3. 分布式 Session
+## 分布式 Session
 
 在分布式场景下，一个用户的 Session 如果只存储在一个服务器上，那么当负载均衡器把用户的下一个请求转发到另一个服务器上，该服务器没有用户的 Session，就可能导致用户需要重新进行登录等操作。
 
@@ -143,7 +164,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 2.  应用服务器间的 session 复制共享
 3.  基于 cache DB 缓存的 session 共享
 
-### 3.1. Sticky Sessions
+### Sticky Sessions
 
 需要配置负载均衡器，使得一个用户的所有请求都路由到一个服务器节点上，这样就可以把用户的 Session 存放在该服务器节点中。
 
@@ -153,7 +174,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-StickySessions.jpg" />
 </div>
 
-### 3.2. Session Replication
+### Session Replication
 
 在服务器节点之间进行 Session 同步操作，这样的话用户可以访问任何一个服务器节点。
 
@@ -163,7 +184,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-SessionReplication.jpg" />
 </div>
 
-### 3.3. Session Server
+### Session Server
 
 使用一个单独的服务器存储 Session 数据，可以存在 MySQL 数据库上，也可以存在 Redis 或者 Memcached 这种内存型数据库。
 
@@ -173,7 +194,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/MultiNode-SpringSession.jpg" />
 </div>
 
-## 4. 分布式存储
+## 分布式存储
 
 通常有两种解决方案：
 
@@ -182,7 +203,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 
 > 参考：[分布式原理.md#2-数据分布](分布式原理.md#2-数据分布)
 
-## 5. 分布式缓存
+## 分布式缓存
 
 使用缓存的好处：
 
@@ -203,11 +224,11 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 
 > 参考：[分布式原理.md#6-分布式缓存问题](分布式原理.md#6-分布式缓存问题)
 
-## 6. 分布式计算
+## 分布式计算
 
-## 7. 负载均衡
+## 负载均衡
 
-### 7.1. 算法
+### 算法
 
 #### 轮询（Round Robin）
 
@@ -272,7 +293,7 @@ ZooKeeper 版本的分布式锁问题相对比较来说少。
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/负载均衡算法之IpHash.jpg" width="640"/>
 </div>
 
-### 7.2. 实现
+### 实现
 
 #### HTTP 重定向
 
@@ -328,7 +349,7 @@ PAC 服务器是用来判断一个请求是否要经过代理。
 <img src="http://dunwu.test.upcdn.net/cs/design/architecture/代理自动配置.jpg" width="640"/>
 </div>
 
-## 8. 资料
+## 资料
 
 - https://www.cnblogs.com/savorboard/p/distributed-system-transaction-consistency.html
 - https://github.com/CyC2018/Interview-Notebook/blob/master/notes/%E5%88%86%E5%B8%83%E5%BC%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90.md

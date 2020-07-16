@@ -17,6 +17,15 @@ tags: ['设计', '架构', '安全']
 - [二、鉴权](#二鉴权)
   - [RBAC](#rbac)
   - [角色继承](#角色继承)
+  - [2.1 RBAC0 模型](#21-rbac0-模型)
+  - [2.2 RBAC1 模型](#22-rbac1-模型)
+  - [2.3 RBAC2 模型](#23-rbac2-模型)
+  - [2.4 RBAC3 模型](#24-rbac3-模型)
+  - [什么是权限](#什么是权限)
+  - [用户组的使用](#用户组的使用)
+  - [实例分析](#实例分析)
+  - [5.1 如何设计 RBAC 权限系统](#51-如何设计-rbac-权限系统)
+  - [5.2 实例分析](#52-实例分析)
 - [三、审计](#三审计)
 - [四、网站攻击](#四网站攻击)
   - [XSS](#xss)
@@ -423,7 +432,7 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 ### RBAC
 
-***RBAC（Role-Based Access Control）即：基于角色的权限控制***。通过角色关联用户，角色关联权限的方式间接赋予用户权限。
+**_RBAC（Role-Based Access Control）即：基于角色的权限控制_**。通过角色关联用户，角色关联权限的方式间接赋予用户权限。
 
 每个用户关联一个或多个角色，每个角色关联一个或多个权限，从而可以实现了非常灵活的权限管理。角色可以根据实际业务需求灵活创建，这样就省去了每新增一个用户就要关联一遍所有权限的麻烦。简单来说 RBAC 就是：用户关联角色，角色关联权限。
 
@@ -451,9 +460,9 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 讲了这么多 RBAC，都还只是在用户和权限之间进行设计，并没有涉及到用户和对象之间的权限判断，而在实际业务系统中限制用户能够使用的对象是很常见的需求。
 
-### 2.1 RBAC0模型
+### 2.1 RBAC0 模型
 
-最简单的用户、角色、权限模型。这里面又包含了2种：
+最简单的用户、角色、权限模型。这里面又包含了 2 种：
 
 1. 用户和角色是多对一关系，即：一个用户只充当一种角色，一种角色可以有多个用户担当。
 2. 用户和角色是多对多关系，即：一个用户可同时充当多种角色，一种角色可以有多个用户担当。
@@ -462,28 +471,28 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 如果系统功能比较单一，使用人员较少，岗位权限相对清晰且确保不会出现兼岗的情况，此时可以考虑用多对一的权限体系。其余情况尽量使用多对多的权限体系，保证系统的可扩展性。如：张三既是行政，也负责财务工作，那张三就同时拥有行政和财务两个角色的权限。
 
-### 2.2 RBAC1模型
+### 2.2 RBAC1 模型
 
-相对于RBAC0模型，增加了子角色，引入了继承概念，即子角色可以继承父角色的所有权限。
+相对于 RBAC0 模型，增加了子角色，引入了继承概念，即子角色可以继承父角色的所有权限。
 
 ![img](http://image.woshipm.com/wp-files/2018/07/CN3L7POv7d8Ku1QMnXGU.png)
 
-**使用场景：**如某个业务部门，有经理、主管、专员。主管的权限不能大于经理，专员的权限不能大于主管，如果采用RBAC0模型做权限系统，极可能出现分配权限失误，最终出现主管拥有经理都没有的权限的情况。
+**使用场景：**如某个业务部门，有经理、主管、专员。主管的权限不能大于经理，专员的权限不能大于主管，如果采用 RBAC0 模型做权限系统，极可能出现分配权限失误，最终出现主管拥有经理都没有的权限的情况。
 
-而RBAC1模型就很好解决了这个问题，创建完经理角色并配置好权限后，主管角色的权限继承经理角色的权限，并且支持在经理权限上删减主管权限。
+而 RBAC1 模型就很好解决了这个问题，创建完经理角色并配置好权限后，主管角色的权限继承经理角色的权限，并且支持在经理权限上删减主管权限。
 
-### 2.3 RBAC2模型
+### 2.3 RBAC2 模型
 
-基于RBAC0模型，增加了对角色的一些限制：角色互斥、基数约束、先决条件角色等。
+基于 RBAC0 模型，增加了对角色的一些限制：角色互斥、基数约束、先决条件角色等。
 
 - **角色互斥：**同一用户不能分配到一组互斥角色集合中的多个角色，互斥角色是指权限互相制约的两个角色。案例：财务系统中一个用户不能同时被指派给会计角色和审计员角色。
-- **基数约束：**一个角色被分配的用户数量受限，它指的是有多少用户能拥有这个角色。例如：一个角色专门为公司CEO创建的，那这个角色的数量是有限的。
+- **基数约束：**一个角色被分配的用户数量受限，它指的是有多少用户能拥有这个角色。例如：一个角色专门为公司 CEO 创建的，那这个角色的数量是有限的。
 - **先决条件角色：**指要想获得较高的权限，要首先拥有低一级的权限。例如：先有副总经理权限，才能有总经理权限。
 - **运行时互斥：**例如，允许一个用户具有两个角色的成员资格，但在运行中不可同时激活这两个角色。
 
-### 2.4 RBAC3模型
+### 2.4 RBAC3 模型
 
-称为统一模型，它包含了RBAC1和RBAC2，利用传递性，也把RBAC0包括在内，综合了RBAC0、RBAC1和RBAC2的所有特点，这里就不在多描述了。
+称为统一模型，它包含了 RBAC1 和 RBAC2，利用传递性，也把 RBAC0 包括在内，综合了 RBAC0、RBAC1 和 RBAC2 的所有特点，这里就不在多描述了。
 
 ![img](http://image.woshipm.com/wp-files/2018/07/7MEIhTRfnGmV0T5MBYoH.png)
 
@@ -511,22 +520,22 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 ![img](http://image.woshipm.com/wp-files/2018/07/eQKuv1vmlhA7eNDvlb1t.png)
 
-按照实际理解，‘销售专员张三’登录时，只能看到自己负责的数据；销售主管2登录时，能看到他所领导的所有业务员负责的数据，但看不到其他团队业务员负责的数据。
+按照实际理解，‘销售专员张三’登录时，只能看到自己负责的数据；销售主管 2 登录时，能看到他所领导的所有业务员负责的数据，但看不到其他团队业务员负责的数据。
 
 换另外一句话就是：我的客户只有我和我的直属上级以及直属上级的领导能看到，这就是我理解的数据权限。
 
 要实现数据权限有多种方式：
 
-1. 可以利用RBAC1模型，通过角色分级来实现。
+1. 可以利用 RBAC1 模型，通过角色分级来实现。
 2. 在‘用户-角色-权限’的基础上，增加用户与组织的关联关系，用组织决定用户的数据权限。
 
 具体如何做呢？
 
-**①组织层级划分：**
+**① 组织层级划分：**
 
 ![img](http://image.woshipm.com/wp-files/2018/07/7OfSVWkovU90yPLCAYXl.png)
 
-**②数据可视权限规则制定：**上级组织只能看到下级组织员工负责的数据，而不能看到其他平级组织及其下级组织的员工数据等。
+**② 数据可视权限规则制定：**上级组织只能看到下级组织员工负责的数据，而不能看到其他平级组织及其下级组织的员工数据等。
 
 通过以上两点，系统就可以在用户登录时，自动判断要给用户展示哪些数据了。
 
@@ -534,7 +543,7 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 当平台用户基数增大，角色类型增多时，如果直接给用户配角色，管理员的工作量就会很大。这时候我们可以引入一个概念“用户组”，就是将相同属性的用户归类到一起。
 
-例如：加入用户组的概念后，可以将部门看做一个用户组，再给这个部门直接赋予角色（1万员工部门可能就几十个），使部门拥有部门权限，这样这个部门的所有用户都有了部门权限，而不需要为每一个用户再单独指定角色，极大的减少了分配权限的工作量。
+例如：加入用户组的概念后，可以将部门看做一个用户组，再给这个部门直接赋予角色（1 万员工部门可能就几十个），使部门拥有部门权限，这样这个部门的所有用户都有了部门权限，而不需要为每一个用户再单独指定角色，极大的减少了分配权限的工作量。
 
 同时，也可以为特定的用户指定角色，这样用户除了拥有所属用户组的所有权限外，还拥有自身特定的权限。
 
@@ -544,13 +553,13 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 ### 实例分析
 
-### 5.1 如何设计RBAC权限系统
+### 5.1 如何设计 RBAC 权限系统
 
 首先，我们思考一下一个简单的权限系统应该具备哪些内容？
 
-答案显而易见，RBAC模型：**用户-角色-权限**。所以最基本的我们应该具备用户、角色、权限这三个内容。
+答案显而易见，RBAC 模型：**用户-角色-权限**。所以最基本的我们应该具备用户、角色、权限这三个内容。
 
-接下来，我们思考，究竟如何将三者关联起来。回顾前文，角色作为枢纽，关联用户、权限。所以在RBAC模型下，我们应该：**创建一个角色，并为这个角色赋予相应权限，最后将角色赋予用户**。
+接下来，我们思考，究竟如何将三者关联起来。回顾前文，角色作为枢纽，关联用户、权限。所以在 RBAC 模型下，我们应该：**创建一个角色，并为这个角色赋予相应权限，最后将角色赋予用户**。
 
 将这个问题抽象为流程，如下图：
 
@@ -565,7 +574,7 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 ### 5.2 实例分析
 
-**①创建角色列表**
+**① 创建角色列表**
 
 ![img](http://image.woshipm.com/wp-files/2018/07/KHqjDiWnyZrOxgJnvjRX.png)
 
@@ -573,7 +582,7 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 ![img](http://image.woshipm.com/wp-files/2018/07/uPzZ1iOh0bQpKkYbWCAc.png)
 
-**②创建用户列表**
+**② 创建用户列表**
 
 ![img](http://image.woshipm.com/wp-files/2018/07/x1pHe9duvadzeUfoeOac.png)
 
@@ -581,18 +590,18 @@ grant_type=refresh_token&refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
 
 ![img](http://image.woshipm.com/wp-files/2018/07/VZLXACV2P72RTzJn0Us8.png)
 
-上述案例是基于最简单的RBAC0模型创建，适用于大部分常规的权限管理系统。
+上述案例是基于最简单的 RBAC0 模型创建，适用于大部分常规的权限管理系统。
 
-下面再分析一下RBAC1中角色分级具体如何设计。
+下面再分析一下 RBAC1 中角色分级具体如何设计。
 
-1. **在RBAC0的基础上，加上角色等级这个字段。**
+1. **在 RBAC0 的基础上，加上角色等级这个字段。**
 2. **权限分配规则制定**：低等级角色只能在高等级角色权限基础上进行删减权限。
 
 具体界面呈现如下图：
 
 ![img](http://image.woshipm.com/wp-files/2018/07/lGcyi0RJKsKmDI6C0bXy.png)
 
-以上就是简单的RBAC系统设计，若需更复杂的，还请读者根据上面的分析自行揣摩思考，尽管样式不同，但万变不离其宗，理解清楚RBAC模型后，结合自己的业务就可以设计出一套符合自己平台需求的角色权限系统，具体的就不再多阐述了。
+以上就是简单的 RBAC 系统设计，若需更复杂的，还请读者根据上面的分析自行揣摩思考，尽管样式不同，但万变不离其宗，理解清楚 RBAC 模型后，结合自己的业务就可以设计出一套符合自己平台需求的角色权限系统，具体的就不再多阐述了。
 
 ## 三、审计
 
@@ -621,7 +630,7 @@ value1from 是来自用户的输入，如果用户不是输入 value1from,而是
 ```html
 <input type="text" name="address1" value="" />
 <script>
-	alert(document.cookie)
+  alert(document.cookie)
 </script>
 <!- ">
 ```
@@ -691,9 +700,9 @@ CSRF 能做的事太多：
 
 ```html
 <form action="/login" method="POST">
-	<p>Username: <input type="text" name="username" /></p>
-	<p>Password: <input type="password" name="password" /></p>
-	<p><input type="submit" value="登陆" /></p>
+  <p>Username: <input type="text" name="username" /></p>
+  <p>Password: <input type="password" name="password" /></p>
+  <p><input type="submit" value="登陆" /></p>
 </form>
 ```
 
@@ -795,9 +804,7 @@ MSSQL 服务器会执行这条 SQL 语句，包括它后面那个用于向系统
 
 应用场景：将用户密码以消息摘要形式保存到数据库中。
 
-> :point_right: 参考阅读：
->
-> - [消息摘要](https://github.com/dunwu/javacore/blob/master/docs/advanced/encode/java-message-digest.md)
+> :point_right: 参考阅读： [Java 编码和加密](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-crypto.md)
 
 ### 加密算法
 
@@ -817,9 +824,7 @@ MSSQL 服务器会执行这条 SQL 语句，包括它后面那个用于向系统
 
 应用场景：HTTPS 传输中浏览器使用的数字证书实质上是经过权威机构认证的非对称加密公钥。
 
-> :point_right: 参考阅读：
->
-> - [加密](https://github.com/dunwu/javacore/blob/master/docs/advanced/encode/java-encryption.md)
+> :point_right: 参考阅读： [Java 编码和加密](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-crypto.md)
 
 #### 密钥安全管理
 
@@ -938,4 +943,4 @@ SSL/TLS 协议的基本过程是这样的：
 - http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html
 - [CAS 实现 SSO 单点登录原理](http://www.coin163.com/java/cas/cas.html)
 - [权限系统设计模型分析（DAC，MAC，RBAC，ABAC）](https://www.jianshu.com/p/ce0944b4a903)
-- [RBAC模型：基于用户-角色-权限控制的一些思考](http://www.woshipm.com/pd/1150093.html)
+- [RBAC 模型：基于用户-角色-权限控制的一些思考](http://www.woshipm.com/pd/1150093.html)

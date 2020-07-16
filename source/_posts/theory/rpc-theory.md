@@ -15,7 +15,7 @@ RPC 框架能够帮助我们解决系统拆分后的通信问题，并且能让�
 
 更进一步来讲，RPC 的工作流程如下：
 
-![](http://dunwu.test.upcdn.net/snap/20200610153311.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610153311.png)
 
 - RPC 拦截调用方要执行的远程方法，将方法名、参数等序列化为方便在网络中传输的二进制或 JSON 数据，然后将这些请求信息传给服务提供方；
 - 服务提供方将请求信息反序列化为本地的方法和请求参数，然后执行，最后将执行结果序列化为二进制或 JSON 数据，再回应给调用方。
@@ -32,7 +32,7 @@ RPC 框架能够帮助我们解决系统拆分后的通信问题，并且能让�
 
 有必要。因为 HTTP 这些通信标准协议，数据包中的实际请求数据相对于数据包本身要小很多，有很多无用的内容；并且 HTTP 属于无状态协议，无法将请求和响应关联，每次请求要重新建立连接。这对于高性能的 RPC 来说，HTTP 协议难以满足需求，所以有必要设计一个紧凑的私有协议。
 
-![](http://dunwu.test.upcdn.net/snap/20200610163132.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610163132.png)
 
 ## 序列化
 
@@ -62,7 +62,7 @@ RPC 框架能够帮助我们解决系统拆分后的通信问题，并且能让�
 
 初次以外，还有很多其他的序列化方案。那么，RPC 的序列化方式如何选择呢？
 
-![](http://dunwu.test.upcdn.net/snap/20200610193721.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610193721.png)
 
 综合以上，Java RPC 框架中序列化方式，一般首选 Protobuf 和 Hessian，二者在性能、通用性、安全性、兼容性、空间开销上都表现不错。其中，Protobuf 性能、通用性更好；而 Hessian 在开发体验上更为便捷。
 
@@ -88,7 +88,7 @@ Java 对象序列化，一般要关注以下问题：
 
 RPC 的远程过程调用时通过反射+动态代理实现的。
 
-![](http://dunwu.test.upcdn.net/snap/20200610161617.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610161617.png)
 
 RPC 框架会自动为要调用的接口生成一个代理类。当在项目中注入接口的时候，运行过程中实际绑定的就是这个接口生成的代理类。在接口方法被调用时，会被代理类拦截，这样，就可以在生成的代理类中，加入远程调用逻辑。
 
@@ -102,11 +102,11 @@ RPC 框架在网络通信上倾向于 Reactor 模式（多路复用模式）。�
 
 ## RPC 架构模型
 
-![](http://dunwu.test.upcdn.net/snap/20200610164920.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610164920.png)
 
 ### 服务发现
 
-![](http://dunwu.test.upcdn.net/snap/20200610180056.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610180056.png)
 
 ### 健康检查
 
@@ -142,7 +142,7 @@ RPC 框架在网络通信上倾向于 Reactor 模式（多路复用模式）。�
 
 超时重试机制是指：当调用端发起的请求失败或超时未收到响应时，RPC 框架自身可以进行重试，再重新发送请求，用户可以自行设置是否开启重试以及重试的次数。
 
-![](http://dunwu.test.upcdn.net/snap/20200610193748.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610193748.png)
 
 ### 限流、降级、熔断
 
@@ -154,11 +154,11 @@ RPC 框架在网络通信上倾向于 Reactor 模式（多路复用模式）。�
 
 如何避免服务停机带来的业务损失：
 
-![](http://dunwu.test.upcdn.net/snap/20200610193806.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610193806.png)
 
 如何避免流量打到没有启动完成的节点：
 
-![](http://dunwu.test.upcdn.net/snap/20200610193829.png)
+![img](http://dunwu.test.upcdn.net/snap/20200610193829.png)
 
 ## 参考资料
 

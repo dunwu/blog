@@ -120,7 +120,7 @@ date: 2019-10-16 20:54
 
 #### 分库分表策略
 
-![](http://dunwu.test.upcdn.net/snap/20200608091832.png)
+![img](http://dunwu.test.upcdn.net/snap/20200608091832.png)
 
 分库分表策略主要有两种：
 
@@ -163,7 +163,7 @@ date: 2019-10-16 20:54
 
 停机迁移/扩容是最暴力、最简单的迁移、扩容方案。
 
-![](http://dunwu.test.upcdn.net/snap/20200601114836.png)
+![img](http://dunwu.test.upcdn.net/snap/20200601114836.png)
 
 ##### 停机迁移/扩容流程
 
@@ -189,7 +189,7 @@ date: 2019-10-16 20:54
 
 #### 双写迁移
 
-![](http://dunwu.test.upcdn.net/snap/20200601135751.png)
+![img](http://dunwu.test.upcdn.net/snap/20200601135751.png)
 
 ##### 双写迁移流程
 
@@ -209,11 +209,11 @@ date: 2019-10-16 20:54
 
 生产环境的数据库，为了保证高可用，一般会采用主备架构。主库支持读写操作，从库支持读操作。
 
-![](http://dunwu.test.upcdn.net/snap/20200601121215.png)
+![img](http://dunwu.test.upcdn.net/snap/20200601121215.png)
 
 由于主备节点数据一致，所以将从库升级为主节点，并修改分片配置，将从节点作为分库之一，就实现了扩容。
 
-![](http://dunwu.test.upcdn.net/snap/20200601121400.png)
+![img](http://dunwu.test.upcdn.net/snap/20200601121400.png)
 
 ##### 升级从库的流程
 
