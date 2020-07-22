@@ -194,16 +194,15 @@
   - [Raft 算法](source/_posts/theory/raft.md) - 关键词：`共识性算法`
 - **核心技术**
   - [缓存](source/_posts/theory/cache.md) - 关键词：`进程内缓存`、`分布式缓存`、`缓存雪崩`、`缓存穿透`、`缓存击穿`、`缓存更新`、`缓存预热`、`缓存降级`
-  - [消息队列](source/_posts/theory/mq-theory.md) - 关键词：`重复消费`、`消息丢失`、`消息顺序性`、`消息积压`
-  - [分布式存储](source/_posts/theory/distributed-storage-theory.md) - 关键词：`读写分离`、`分库分表`、`迁移`、`扩容`
+  - [消息队列](source/_posts/theory/mq.md) - 关键词：`重复消费`、`消息丢失`、`消息顺序性`、`消息积压`
+  - [分布式存储](source/_posts/theory/distributed-storage.md) - 关键词：`读写分离`、`分库分表`、`迁移`、`扩容`
   - [分布式事务](source/_posts/theory/distributed-transaction.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`MQ 消息`、`SAGA`
-  - [负载均衡](source/_posts/theory/load-balance-theory.md) - 关键词：`轮询`、`随机`、`最少连接`、`源地址哈希`、`一致性哈希`
-  - [RPC](source/_posts/theory/rpc-theory.md) - 关键词：`微服务`
+  - [负载均衡](source/_posts/theory/load-balance.md) - 关键词：`轮询`、`随机`、`最少连接`、`源地址哈希`、`一致性哈希`
+  - [RPC](source/_posts/theory/rpc.md) - 关键词：`微服务`、序列化、动态代理、通信、服务注册发现、健康检查、路由、负载均衡、容错处理、优雅上线下线、限流、熔断、业务分组
 - **辅助技术**
-  - [分布式锁](source/_posts/theory/distributed-lock-theory.md) - 关键词：数据库、Redis、ZooKeeper
-  - [分布式 ID](source/_posts/theory/distributed-id-theory.md) - 关键词：`UUID`、`自增序列`、`雪花算法`、`Leaf`
-  - [分布式会话](source/_posts/theory/distributed-session-theory.md) - 关键词：`粘性 Session`、`Session 复制共享`、`基于缓存的 session 共享`
-
+  - [分布式锁](source/_posts/theory/distributed-lock.md) - 关键词：数据库、Redis、ZooKeeper
+  - [分布式 ID](source/_posts/theory/distributed-id.md) - 关键词：`UUID`、`自增序列`、`雪花算法`、`Leaf`
+  - [分布式会话](source/_posts/theory/distributed-session.md) - 关键词：`粘性 Session`、`Session 复制共享`、`基于缓存的 session 共享`
 
 ## 计算机网络
 
@@ -280,6 +279,10 @@
 - [扩展性架构](source/_posts/design/architecture/extensible-architecture.md)
 - [安全性架构](source/_posts/design/architecture/security-architecture.md)
 - [大型系统核心技术](source/_posts/design/architecture/system-core-technologies.md)
+
+### 架构方案
+
+- [秒杀系统设计](source/_posts/design/solution/miao-sha-system.md)
 
 ### 设计模式
 

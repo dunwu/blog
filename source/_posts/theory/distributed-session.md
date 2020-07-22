@@ -13,6 +13,27 @@ date: 2019-06-04 23:42
 >
 > 会话跟踪是 Web 程序中常用的技术，用来跟踪用户的整个会话。常用会话跟踪技术是 Cookie 与 Session。
 
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [1. 简介](#1-简介)
+  - [1.1. 什么是 Cookie](#11-什么是-cookie)
+  - [1.2. 什么是 Session](#12-什么是-session)
+  - [1.3. Cookie 和 Session 的区别](#13-cookie-和-session-的区别)
+  - [1.4. 为什么需要 Cookie 和 Session，他们有什么关联？](#14-为什么需要-cookie-和-session他们有什么关联)
+  - [1.5. 如果浏览器禁用 Cookie 怎么办](#15-如果浏览器禁用-cookie-怎么办)
+- [2. 分布式 Session](#2-分布式-session)
+  - [2.1. 粘性 Session](#21-粘性-session)
+  - [2.2. Session 复制共享](#22-session-复制共享)
+  - [2.3. 基于缓存的 session 共享](#23-基于缓存的-session-共享)
+- [3. 具体实现](#3-具体实现)
+  - [3.1. JWT Token](#31-jwt-token)
+  - [3.2. tomcat + redis](#32-tomcat--redis)
+  - [3.3. spring session + redis](#33-spring-session--redis)
+- [4. 参考资料](#4-参考资料)
+
+<!-- /TOC -->
+
+
 ## 1. 简介
 
 ### 1.1. 什么是 Cookie

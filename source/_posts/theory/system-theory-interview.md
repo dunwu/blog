@@ -9,6 +9,38 @@ date: 2018-07-10 16:02
 
 > 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
+<!-- TOC depthFrom:2 depthTo:3 -->
+
+- [1. 分布式缓存](#1-分布式缓存)
+  - [1.1. Redis 有什么数据类型？分别用于什么场景](#11-redis-有什么数据类型分别用于什么场景)
+  - [1.2. Redis 的主从复制是如何实现的](#12-redis-的主从复制是如何实现的)
+  - [1.3. Redis 的 key 是如何寻址的](#13-redis-的-key-是如何寻址的)
+  - [1.4. Redis 的集群模式是如何实现的？](#14-redis-的集群模式是如何实现的)
+  - [1.5. Redis 如何实现分布式锁？ZooKeeper 如何实现分布式锁？比较二者优劣？](#15-redis-如何实现分布式锁zookeeper-如何实现分布式锁比较二者优劣)
+  - [1.6. Redis 的持久化方式？有什么优缺点？持久化实现原理？](#16-redis-的持久化方式有什么优缺点持久化实现原理)
+  - [1.7. Redis 过期策略有哪些？](#17-redis-过期策略有哪些)
+  - [1.8. Redis 和 Memcached 有什么区别？](#18-redis-和-memcached-有什么区别)
+  - [1.9. 为什么单线程的 Redis 性能反而优于多线程的 Memcached？](#19-为什么单线程的-redis-性能反而优于多线程的-memcached)
+- [2. 分布式消息队列（MQ）](#2-分布式消息队列mq)
+  - [2.1. 为什么使用 MQ？](#21-为什么使用-mq)
+  - [2.2. 如何保证 MQ 的高可用？](#22-如何保证-mq-的高可用)
+  - [2.3. MQ 有哪些常见问题？如何解决这些问题？](#23-mq-有哪些常见问题如何解决这些问题)
+  - [2.4. Kafka, ActiveMQ, RabbitMQ, RocketMQ 各有什么优缺点？](#24-kafka-activemq-rabbitmq-rocketmq-各有什么优缺点)
+- [3. 分布式服务（RPC）](#3-分布式服务rpc)
+  - [3.1. Dubbo 的实现过程？](#31-dubbo-的实现过程)
+  - [3.2. Dubbo 负载均衡策略有哪些？](#32-dubbo-负载均衡策略有哪些)
+  - [3.3. Dubbo 集群容错策略 ？](#33-dubbo-集群容错策略-)
+  - [3.4. 动态代理策略？](#34-动态代理策略)
+  - [3.5. Dubbo 支持哪些序列化协议？Hessian？Hessian 的数据结构？](#35-dubbo-支持哪些序列化协议hessianhessian-的数据结构)
+  - [3.6. Protoco Buffer 是什么？](#36-protoco-buffer-是什么)
+  - [3.7. 注册中心挂了可以继续通信吗？](#37-注册中心挂了可以继续通信吗)
+  - [3.8. ZooKeeper 原理是什么？ZooKeeper 有什么用？](#38-zookeeper-原理是什么zookeeper-有什么用)
+  - [3.9. Netty 有什么用？NIO/BIO/AIO 有什么用？有什么区别？](#39-netty-有什么用niobioaio-有什么用有什么区别)
+  - [3.10. 为什么要进行系统拆分？拆分不用 Dubbo 可以吗？](#310-为什么要进行系统拆分拆分不用-dubbo-可以吗)
+  - [3.11. Dubbo 和 Thrift 有什么区别？](#311-dubbo-和-thrift-有什么区别)
+
+<!-- /TOC -->
+
 ## 1. 分布式缓存
 
 ### 1.1. Redis 有什么数据类型？分别用于什么场景

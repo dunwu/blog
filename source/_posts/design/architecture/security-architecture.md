@@ -68,7 +68,7 @@ SSO 需要解决多个异构系统之间的问题：
 - 应用服务器间的 Session 复制共享 - 缺点：**占用过多内存**；**同步过程占用网络带宽以及服务器处理器时间**。
 - 基于缓存的 Session 共享 ✅ （推荐方案） - 不过需要程序自身控制 Session 读写，可以考虑基于 spring-session + redis 这种成熟的方案来处理。
 
-> 详情请参考：[Session 原理](../theory/distributed-session-theory.md)
+> 详情请参考：[Session 原理](../theory/distributed-session.md)
 
 #### Cookie 跨域
 

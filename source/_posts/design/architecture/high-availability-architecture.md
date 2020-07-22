@@ -167,7 +167,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 无状态的应用实现高可用架构十分简单，由于服务器不保存请求状态，那么所有服务器完全对等，在任意节点执行同样的请求，结果总是一致的。这种情况下，最简单的高可用方案就是使用负载均衡。
 
-> 负载均衡原理可以参考：[负载均衡基本原理](https://github.com/dunwu/blog/blob/master/source/_posts/theory/load-balance-theory.md)
+> 负载均衡原理可以参考：[负载均衡基本原理](https://github.com/dunwu/blog/blob/master/source/_posts/theory/load-balance.md)
 
 ### 分布式 Session
 
@@ -181,7 +181,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 - 应用服务器间的 session 复制共享
 - 基于缓存的 session 共享 ✅
 
-> 分布式会话原理可以参考：[分布式会话基本原理](https://github.com/dunwu/blog/blob/master/source/_posts/theory/distributed-session-theory.md)
+> 分布式会话原理可以参考：[分布式会话基本原理](https://github.com/dunwu/blog/blob/master/source/_posts/theory/distributed-session.md)
 
 ## 五、高可用的服务
 
