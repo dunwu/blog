@@ -616,7 +616,7 @@ Mesos、Marathon、Kubernetes
 
 ## 十四、Service Mesh
 
-![](http://dunwu.test.upcdn.net/snap/20200721154106.png)
+![img](http://dunwu.test.upcdn.net/snap/20200721154106.png)
 
 ### Service Mesh 的实现原理
 
