@@ -73,17 +73,17 @@ date: 2015-01-27 16:50
 
 ## 行为型模式
 
-- [模板方法模式 (Template Method Pattern)](http://www.cnblogs.com/jingmoxukong/p/4203714.html)
-- [命令模式 (Command Pattern)](http://www.cnblogs.com/jingmoxukong/p/4234281.html)
-- [迭代器模式 (Iterator Pattern)](http://www.cnblogs.com/jingmoxukong/p/4236056.html)
-- [观察者模式 (Observer Pattern)](http://www.cnblogs.com/jingmoxukong/p/4236338.html)
-- [解释器模式 (Interpreter Pattern)](http://www.cnblogs.com/jingmoxukong/p/4236961.html)
-- [中介者模式 (Mediator Pattern)](http://www.cnblogs.com/jingmoxukong/p/4238479.html)
-- [职责链模式 (Chain of Responsibility Pattern)](http://www.cnblogs.com/jingmoxukong/p/4241496.html)
-- [备忘录模式 (Memento Pattern)](http://www.cnblogs.com/jingmoxukong/p/4241659.html)
-- [策略模式 (Strategy Pattern)](http://www.cnblogs.com/jingmoxukong/p/4241965.html)
-- [访问者模式 (Visitor Pattern)](http://www.cnblogs.com/jingmoxukong/p/4242418.html)
-- [状态模式 (State Pattern)](http://www.cnblogs.com/jingmoxukong/p/4243478.html)
+- [模板方法模式 (Template Method Pattern)](模板方法模式.md)
+- [命令模式 (Command Pattern)](命令模式.md)
+- [迭代器模式 (Iterator Pattern)](迭代器模式.md)
+- [观察者模式 (Observer Pattern)](观察者模式.md)
+- [解释器模式 (Interpreter Pattern)](解释器模式.md)
+- [中介者模式 (Mediator Pattern)](中介者模式.md)
+- [职责链模式 (Chain of Responsibility Pattern)](职责链模式.md)
+- [备忘录模式 (Memento Pattern)](备忘录模式.md)
+- [策略模式 (Strategy Pattern)](策略模式.md)
+- [访问者模式 (Visitor Pattern)](访问者模式.md)
+- [状态模式 (State Pattern)](状态模式.md)
 
 ## 资料
 

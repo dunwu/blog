@@ -288,7 +288,38 @@
 
 ### 设计模式
 
-> TODO：以前写的教程比较简陋，一直没有抽出时间进行整理加工。待完善。
+#### 创建型模式
+
+- [单例模式 (Singleton Pattern)](source/_posts/design/pattern/单例模式.md)
+- [简单工厂模式 (Simple Factory Pattern)](source/_posts/design/pattern/简单工厂模式.md)
+- [工厂方法模式 (Factory Method Pattern)](source/_posts/design/pattern/工厂方法模式.md)
+- [抽象工厂模式 (Abstract Factory Pattern)](source/_posts/design/pattern/抽象工厂模式.md)
+- [构造者模式 (Builder Pattern)](source/_posts/design/pattern/构造者模式.md)
+- [原型模式 (Prototype Pattern)](source/_posts/design/pattern/原型模式.md)
+
+#### 结构型模式
+
+- [适配器模式 (Adapter Pattern)](source/_posts/design/pattern/适配器模式.md)
+- [桥接模式 (Bridge Pattern)](source/_posts/design/pattern/桥接模式.md)
+- [装饰者模式 (Decorator Pattern)](source/_posts/design/pattern/装饰者模式.md)
+- [组合模式 (Composite Pattern)](source/_posts/design/pattern/组合模式.md)
+- [外观模式 (Facade Pattern)](source/_posts/design/pattern/外观模式.md)
+- [享元模式 (Flyweight Pattern)](source/_posts/design/pattern/享元模式.md)
+- [代理模式 (Proxy Pattern)](source/_posts/design/pattern/代理模式.md)
+
+#### 行为型模式
+
+- [模板方法模式 (Template Method Pattern)](source/_posts/design/pattern/模板方法模式.md)
+- [命令模式 (Command Pattern)](source/_posts/design/pattern/命令模式.md)
+- [迭代器模式 (Iterator Pattern)](source/_posts/design/pattern/迭代器模式.md)
+- [观察者模式 (Observer Pattern)](source/_posts/design/pattern/观察者模式.md)
+- [解释器模式 (Interpreter Pattern)](source/_posts/design/pattern/解释器模式.md)
+- [中介者模式 (Mediator Pattern)](source/_posts/design/pattern/中介者模式.md)
+- [职责链模式 (Chain of Responsibility Pattern)](source/_posts/design/pattern/职责链模式.md)
+- [备忘录模式 (Memento Pattern)](source/_posts/design/pattern/备忘录模式.md)
+- [策略模式 (Strategy Pattern)](source/_posts/design/pattern/策略模式.md)
+- [访问者模式 (Visitor Pattern)](source/_posts/design/pattern/访问者模式.md)
+- [状态模式 (State Pattern)](source/_posts/design/pattern/状态模式.md)
 
 ### 重构
 
