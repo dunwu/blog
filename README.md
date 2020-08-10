@@ -31,7 +31,7 @@
 
 > [JavaCore 教程](https://dunwu.github.io/javacore/) 📚 - Java 核心技术教程。
 
-- [**Java 基础**](https://github.com/dunwu/javacore/blob/master/docs/basics) - [基本数据类型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-data-type.md)、[类和对象](https://github.com/dunwu/javacore/blob/master/docs/basics/java-class.md)、[方法](https://github.com/dunwu/javacore/blob/master/docs/basics/java-method.md)、[数组](https://github.com/dunwu/javacore/blob/master/docs/basics/java-array.md)、[枚举](https://github.com/dunwu/javacore/blob/master/docs/basics/java-enum.md)、[控制语句](https://github.com/dunwu/javacore/blob/master/docs/basics/java-control-statement.md)、[异常](https://github.com/dunwu/javacore/blob/master/docs/basics/java-exception.md)、[泛型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-generic.md)、[反射](https://github.com/dunwu/javacore/blob/master/docs/basics/java-reflection.md)、[注解](https://github.com/dunwu/javacore/blob/master/docs/basics/java-annotation.md)
+- [**Java 基础**](https://github.com/dunwu/javacore/blob/master/docs/basics) - [基本数据类型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-data-type.md)、[类和对象](https://github.com/dunwu/javacore/blob/master/docs/basics/java-oop.md)、[方法](https://github.com/dunwu/javacore/blob/master/docs/basics/java-method.md)、[数组](https://github.com/dunwu/javacore/blob/master/docs/basics/java-array.md)、[枚举](https://github.com/dunwu/javacore/blob/master/docs/basics/java-enum.md)、[控制语句](https://github.com/dunwu/javacore/blob/master/docs/basics/java-control-statement.md)、[异常](https://github.com/dunwu/javacore/blob/master/docs/basics/java-exception.md)、[泛型](https://github.com/dunwu/javacore/blob/master/docs/basics/java-generic.md)、[反射](https://github.com/dunwu/javacore/blob/master/docs/basics/java-reflection.md)、[注解](https://github.com/dunwu/javacore/blob/master/docs/basics/java-annotation.md)
 - [**Java 高级**](https://github.com/dunwu/javacore/blob/master/docs/advanced) - [Java 正则](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-regex.md)、[Java 编码和加密](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-crypto.md)、[Java 本地化](https://github.com/dunwu/javacore/blob/master/docs/advanced/java-locale.md)、[JDK8](https://github.com/dunwu/javacore/blob/master/docs/advanced/jdk8.md)
 - [**Java 容器**](https://github.com/dunwu/javacore/blob/master/docs/container)
   - [Java 容器简介](https://github.com/dunwu/javacore/blob/master/docs/container/java-container.md) - 关键词：`Collection`、`泛型`、`Iterable`、`Iterator`、`Comparable`、`Comparator`、`Cloneable`、`fail-fast`
@@ -61,9 +61,9 @@
   - [JVM 垃圾收集](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-gc.md) - 关键词：`GC Roots`、`Serial`、`Parallel`、`CMS`、`G1`、`Minor GC`、`Full GC`
   - [JVM 字节码](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-bytecode.md) - 关键词：`bytecode`、`asm`、`javassist`
   - [JVM 类加载](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-class-loader.md) - 关键词：类加载过程、`ClassLoader`、双亲委派、
-  - [JVM 工具](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-tools.md) - 关键词：`jps`、`jstat`、`jmap` 、`jstack`、`jhat`、`jinfo`、`jconsole`、`jvisualvm`、`MAT`
+  - [JDK 命令行工具](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-cli-tools.md) - 关键词：`jps`、`jstat`、`jmap` 、`jstack`、`jhat`、`jinfo`、`jconsole`、`jvisualvm`、`MAT`
   - [JVM 实战](https://github.com/dunwu/javacore/blob/master/docs/jvm/jvm-action.md) - 关键词：VM 参数、分析、调优
-  - [Java 故障排查](https://github.com/dunwu/javacore/blob/master/docs/jvm/troubleshooting.md) - 关键词：CPU、内存、磁盘、网络、GC
+  - [Java 故障排查](https://github.com/dunwu/javacore/blob/master/docs/jvm/trouble-shooting.md) - 关键词：CPU、内存、磁盘、网络、GC
 
 #### JavaEE
 
@@ -86,7 +86,7 @@
 
 #### JavaTool
 
-- [**构建工具**](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build) - [Maven](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build/maven) 📚、[Ant](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build/ant.md)
+- [**构建工具**](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build) - [Maven](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build/maven) 📚、[Ant 简易教程](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/build/ant.md)
 - [**IDE**](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide) - [Intellij Idea](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide/intellij-idea.md)、[Eclipse](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide/eclipse.md)、[vscode](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/ide/vscode.md)
 - [**监控/诊断工具**](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor) - [CAT](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/cat.md)、[Zipkin](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/zipkin.md)、[SkyWalking](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/skywalking.md)、[Arthas](https://github.com/dunwu/java-tutorial/blob/master/docs/javatool/monitor/arthas.md)
 
