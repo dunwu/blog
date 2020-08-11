@@ -87,5 +87,5 @@ date: 2015-01-27 16:50
 
 ## 资料
 
-- [O'Reilly：Head First 设计模式](https://item.jd.com/10100236.html)
-- [大话设计模式](https://item.jd.com/10079261.html)
+- [《O'Reilly：Head First 设计模式》](https://item.jd.com/10100236.html)
+- [《大话设计模式》](https://item.jd.com/10079261.html)
