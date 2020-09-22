@@ -1310,13 +1310,40 @@ git update-ref refs/tags/<tag_name> <hash>
 你可能有一个仓库需要授权，这时你可以缓存用户名和密码，而不用每次推/拉(push/pull)的时候都输入，Credential helper 能帮你。
 
 ```shell
-$ git config --global credential.helper cache
+git config --global credential.helper cache
 ## Set git to use the credential memory cache
 ```
 
 ```shell
-$ git config --global credential.helper 'cache --timeout=3600'
+git config --global credential.helper 'cache --timeout=3600'
 ## Set the cache to timeout after 1 hour (setting is in seconds)
+```
+
+### Fork 项目
+
+GitHub 中 Fork 是 服务端的代码仓库克隆（即 新克隆出来的代码仓库在远程服务端），包含了原来的仓库（即 upstream repository，上游仓库）所有内容，如分支、Tag、提交。代码托管服务（如 Github、BitBucket）提供了方便的完成 Fork 操作的功能（在仓库页面点一下 Fork 按钮）。这样有了一个你自己的可以自由提交的远程仓库，然后可以通过的 Pull Request 把你的提交贡献回 原仓库。而对于原仓库 Owner 来说，鼓励别人 Fork 自己的仓库，通过 Pull Request 给自己的仓库做贡献，也能提高了自己仓库的知名度。
+
+> 参考：[Fork a repo](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo)
+
+（1）执行 `git remote -v`，您将看到当前为 fork 配置的远程存储库。
+
+（2）添加上游项目的仓库地址
+
+```shell
+git remote add upstream <github仓库地址>
+```
+
+（3）确认是否添加成功，再次键入 `git remote -v`。
+
+（4）获取上游项目更新，可以执行 `git fetch upstream`
+
+（5）同步上游项目的代码到新仓库
+
+```shell
+# merge
+git merge upstream/master
+# rebase
+git rebase upstream/master origin/master
 ```
 
 ### 我不知道我做错了些什么
