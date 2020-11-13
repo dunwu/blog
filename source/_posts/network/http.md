@@ -46,7 +46,7 @@ date: 2016-01-08 22:14
 
 ### HTTP 是什么
 
-**超文本传输协议（HTTP）**是一个用于传输超媒体文档（例如 HTML）的[应用层](https://en.wikipedia.org/wiki/Application_Layer)协议。它是为 Web 浏览器与 Web 服务器之间的通信而设计的，但也可以用于其他目的。HTTP 遵循经典的[客户端-服务端模型](https://en.wikipedia.org/wiki/Client–server_model)，客户端打开一个连接以发出请求，然后等待它收到服务器端响应。HTTP 是[无状态协议](http://en.wikipedia.org/wiki/Stateless_protocol)，这意味着服务器不会在两个请求之间保留任何数据（状态）。该协议虽然通常基于 TCP/IP 层，但可以在任何可靠的[传输层](https://zh.wikipedia.org/wiki/传输层)上使用；也就是说，不像 UDP，它是一个不会静默丢失消息的协议。
+**超文本传输协议（HTTP）**是一个用于传输超媒体文档（例如 HTML）的[应用层](https://en.wikipedia.org/wiki/Application_Layer)协议。HTTP 是 浏览器与服务器之间的数据传送协议。HTTP 遵循经典的[客户端-服务端模型](https://en.wikipedia.org/wiki/Client–server_model)，客户端打开一个连接以发出请求，然后等待它收到服务器端响应。HTTP 是[无状态协议](http://en.wikipedia.org/wiki/Stateless_protocol)，这意味着服务器不会在两个请求之间保留任何数据（状态）。该协议虽然通常基于 TCP/IP 层，但可以在任何可靠的[传输层](https://zh.wikipedia.org/wiki/传输层)上使用；也就是说，不像 UDP，它是一个不会静默丢失消息的协议。
 
 HTTP 是由 **IETF**(Internet Engineering Task Force，互联网工程工作小组) 和 **W3C**(World Wide Web Consortium，万维网协会) 共同合作制订的，它们发布了一系列的**RFC**(Request For Comments)，其中最著名的是 RFC 2616，它定义了**HTTP /1.1**。
 
@@ -251,7 +251,7 @@ HTTPS 的连接很简单，是无状态的；HTTPS 协议是由 SSL+HTTP 协议�
 
 ### Cookie
 
-HTTP Cookie（也叫 Web Cookie 或浏览器 Cookie）是服务器发送到用户浏览器并保存在本地的一小块数据，它会在浏览器下次向同一服务器再发起请求时被携带并发送到服务器上。通常，它用于告知服务端两个请求是否来自同一浏览器，如保持用户的登录状态。Cookie 使基于[无状态](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview#HTTP_is_stateless_but_not_sessionless)的 HTTP 协议记录稳定的状态信息成为了可能。
+HTTP Cookie（也叫 Web Cookie 或浏览器 Cookie）是服务器发送到用户浏览器，并保存在本地的一小块数据，它会在浏览器下次向同一服务器再发起请求时被携带并发送到服务器上。通常，它用于告知服务端两个请求是否来自同一浏览器，如保持用户的登录状态。Cookie 使基于[无状态](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview#HTTP_is_stateless_but_not_sessionless)的 HTTP 协议记录稳定的状态信息成为了可能。
 
 Cookie 主要用于以下三个方面：
 
@@ -259,7 +259,7 @@ Cookie 主要用于以下三个方面：
 - 个性化设置（如用户自定义设置、主题等）
 - 浏览器行为跟踪（如跟踪分析用户行为等）
 
-Cookie 工作步骤：
+#### Cookie 工作步骤
 
 1. 客户端请求服务器，如果服务器需要记录该用户的状态，就是用 response 向客户端浏览器颁发一个 Cookie。
 2. 客户端浏览器会把 Cookie 保存下来。
@@ -269,7 +269,7 @@ Cookie 工作步骤：
 
 Java 中把 Cookie 封装成了 `javax.servlet.http.Cookie` 类。
 
-Cookie 和 Http 消息：
+#### Cookie 和 Http 报文
 
 `Cookies` 通常设置在 HTTP 头信息中（虽然 JavaScript 也可以直接在浏览器上设置一个 Cookie）。
 
@@ -305,13 +305,19 @@ Cookie: name=xyz
 
 不同于 **Cookie 保存在客户端浏览器中**，**Session 保存在服务器上**。
 
-如果说 Cookie 机制是通过检查客户身上的“通行证”来确定客户身份的话，那么 Session 机制就是通过检查服务器上的“客户明细表”来确认客户身份。
+由于 Cookie 以明文的方式存储在本地，而 Cookie 中往往带有用户信息，这样就造成了非常大的安全隐患。
 
-#### Session 对浏览器的要求
+Session 的出现解决了这个问题，**Session 可以理解为服务器端开辟的存储空间，里面保存了用户的状态**，用户信息以 Session 的形式存储在服务端。当用户请求到来时，服务端可以把用户的请求和用户的 Session 对应起来。那么 Session 是怎么和请求对应起来的呢？答案是通过 Cookie，浏览器在 Cookie 中填充了一个 Session ID 之类的字段用来标识请求。
 
-HTTP 协议是无状态的，`Session` 不能依据 HTTP 连接来判断是否为同一客户。因此服务器向客户端浏览器发送一个名为 `JESSIONID` 的 Cookie，他的值为该 Session 的 id（也就是 HttpSession.getId()的返回值）。Session 依据该 Cookie 来识别是否为同一用户。
+#### Session 工作流程
 
-该 Cookie 为服务器自动生成的，它的`maxAge`属性一般为-1，表示仅当前浏览器内有效，并且各浏览器窗口间不共享，关闭浏览器就会失效。
+Session 工作流程是这样的：
+
+服务器在创建 Session 的同时，会为该 Session 生成唯一的 Session ID，当浏览器再次发送请求的时候，会将这个 Session ID 带上，服务器接受到请求之后就会依据 Session ID 找到相应的 Session，找到 Session 后，就可以在 Session 中获取或者添加内容了。而这些内容只会保存在服务器中，发到客户端的只有 Session ID，这样相对安全，也节省了网络流量，因为不需要在 Cookie 中存储大量用户信息。该 Cookie 为服务器自动生成的，它的 `maxAge` 属性一般为-1，表示仅当前浏览器内有效，并且各浏览器窗口间不共享，关闭浏览器就会失效。
+
+#### Session 创建与存储
+
+那么 Session 在何时何地创建呢？当然还是在服务器端程序运行的过程中创建的，不同语言实现的应用程序有不同的创建 Session 的方法。Tomcat 的 Session 管理器提供了多种持久化方案来存储 Session，通常会采用高性能的存储方式，比如 Redis，并且通过集群部署的方式，防止单点故障，从而提升高可用。同时，Session 有过期时间，因此 Tomcat 会开启后台线程定期的轮询，如果 Session 过期了就将 Session 失效。
 
 ### Cookie vs. Session
 
@@ -341,6 +347,7 @@ Cookie vs. Session 对比如下：
 
 - [《图解 HTTP》](https://book.douban.com/subject/25863515/)
 - [MDN HTTP 教程](https://developer.mozilla.org/zh-CN/docs/Web/HTTP)
+- [深入拆解 Tomcat & Jetty](https://time.geekbang.org/column/intro/100027701)
 - [HTTP1.0、HTTP1.1 和 HTTP2.0 的区别](https://juejin.im/entry/5981c5df518825359a2b9476)
 - http://blog.csdn.net/gueter/article/details/1524447
 - http://www.runoob.com/http/http-intro.html
