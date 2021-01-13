@@ -116,7 +116,7 @@ delete from methodLock where method_name ='method_name'
 
 ## 三、Redis 分布式锁
 
-相比于用数据库来实现分布式锁，基于缓存实现的分布式锁的性能会更好一些。目前有很多成熟的分布式产品，包括 Redis、memcache、Tair 等。这里以 Redis 举例。
+相比于用数据库来实现分布式锁，基于缓存实现的分布式锁的性能会更好。目前有很多成熟的分布式产品，包括 Redis、memcache、Tair 等。这里以 Redis 举例。
 
 ### Redis 分布式锁原理
 
@@ -134,7 +134,7 @@ delete from methodLock where method_name ='method_name'
 
 > 注意：
 >
-> 不要将 setnx 和 expire 作为两个命令组合实现加锁，这样就**无法保证原子性**。如果客户端在 setnx 之后崩溃，那么将导致锁无法释放。正确的做法应是在 setnx 命令中指定 expire 时间。
+> 不要将 `setnx` 和 `expire` 作为两个命令组合实现加锁，这样就**无法保证原子性**。如果客户端在 `setnx` 之后崩溃，那么将导致锁无法释放。正确的做法应是在 `setnx` 命令中指定 `expire` 时间。
 
 ### Redis 分布式锁实现
 
@@ -184,6 +184,11 @@ end
 ## 四、ZooKeeper 分布式锁
 
 ### ZooKeeper 分布式锁原理
+
+ZooKeeper 实现分布式锁基于 ZooKeeper 的两个特性：
+
+- **顺序临时节点**：ZooKeeper 的存储类似于 DNS 那样的具有层级的命名空间。ZooKeeper 节点类型可以分为持久节点（PERSISTENT ）、临时节点（EPHEMERAL），每个节点还能被标记为有序性（SEQUENTIAL），一旦节点被标记为有序性，那么整个节点就具有顺序自增的特点。
+- **Watch 机制**：ZooKeeper 允许用户在指定节点上注册一些 Watcher，并且在特定事件触发的时候，ZooKeeper 服务端会将事件通知给用户。
 
 这也是 ZooKeeper 客户端 curator 的分布式锁实现。
 
