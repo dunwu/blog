@@ -32,7 +32,7 @@ date: 2018-07-05 15:50
 
 ## 1. 负载均衡简介
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210112113136.svg)
+![img](http://dunwu.test.upcdn.net/snap/20210112113136.svg)
 
 ### 1.1. 大型网站面临的挑战
 
@@ -127,7 +127,7 @@ DNS 即 **域名解析服务**，是 OSI 第七层网络协议。DNS 被设计�
 
 DNS 负载均衡的工作原理就是：**基于 DNS 查询缓存，按照负载情况返回不同服务器的 IP 地址**。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117220007.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117220007.png)
 
 DNS 重定向的 **优点**：
 
@@ -146,7 +146,7 @@ DNS 重定向的 **缺点**：
 
 HTTP 重定向原理是：**根据用户的 HTTP 请求计算出一个真实的服务器地址，将该服务器地址写入 HTTP 重定向响应中，返回给浏览器，由浏览器重新进行访问**。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117220310.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117220310.png)
 
 HTTP 重定向的 **优点**：**方案简单**。
 
@@ -169,7 +169,7 @@ HTTP 重定向的 **缺点**：
 - 正向代理：发生在 **客户端**，是由用户主动发起的。翻墙软件就是典型的正向代理，客户端通过主动访问代理服务器，让代理服务器获得需要的外网数据，然后转发回客户端。
 - 反向代理：发生在 **服务端**，用户不知道代理的存在。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117222209.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117222209.png)
 
 反向代理是如何实现负载均衡的呢？以 Nginx 为例，如下所示：
 
@@ -191,19 +191,26 @@ HTTP 重定向的 **缺点**：
   - 反向代理服务如果自身宕机，就无法访问站点，所以需要有 **高可用** 方案，常见的方案有：主备模式（一主一备）、双主模式（互为主备）。
   - 反向代理服务自身也存在性能瓶颈，随着需要转发的请求量不断攀升，需要有 **可扩展** 方案。
 
-#### RPC 负载均衡
+#### IP 负载均衡
 
-对于微服务架构，RPC 几乎是标配，它同样需要解决负载均衡问题。
+IP 负载均衡是在网络层通过修改请求目的地址进行负载均衡。
 
-RPC 的负载均衡原理是：服务提供方向服务注册中心注册服务，服务消费方向注册中心请求可用的服务提供方。当服务消费方获取到可用服务方信息后，消费方自身根据一定的负载均衡算法，选择向哪个服务方发送请求。
+![img](http://dunwu.test.upcdn.net/snap/20210119000529.png)
 
-常见的技术有：Dubbo（支持负载均衡的 RPC 框架）、Thrift、gRpc、Spring Cloud 等。
+如上图所示，IP 均衡处理流程大致为：
+
+1. 客户端请求 192.168.137.10，由负载均衡服务器接收到报文。
+2. 负载均衡服务器根据算法选出一个服务节点 192.168.0.1，然后将报文请求地址改为该节点的 IP。
+3. 真实服务节点收到请求报文，处理后，返回响应数据到负载均衡服务器。
+4. 负载均衡服务器将响应数据的源地址改负载均衡服务器地址，返回给客户端。
+
+IP 负载均衡在内核进程完成数据分发，较反向代理负载均衡有更好的从处理性能。但是，由于所有请求响应都要经过负载均衡服务器，集群的吞吐量受制于负载均衡服务器的带宽。
 
 #### 数据链路层负载均衡
 
 数据链路层负载均衡是指在通信协议的数据链路层修改 mac 地址进行负载均衡。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117222127.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117222127.png)
 
 在 Linux 平台上最好的链路层负载均衡开源产品是 LVS (Linux Virtual Server)。
 
@@ -237,11 +244,11 @@ LVS 的工作流程大致如下：
 
 如下图所示，负载均衡器收到来自客户端的 6 个请求，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117204412.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117204412.png)
 
 该算法适合场景：各服务器处理能力相近，且每个事务工作量差异不大。如果存在较大差异，那么处理较慢的服务器就可能会积压请求，最终无法承担过大的负载。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117204707.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117204707.png)
 
 【示例】轮询算法示例
 
@@ -272,7 +279,7 @@ private V select() {
 
 如下图所示，服务器 A 设置权重为 5，服务器 B 设置权重为 1，负载均衡器收到来自客户端的 6 个请求，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 A，(6) 请求会被发送到服务器 B。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117204955.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117204955.png)
 
 【示例】加权轮询算法实现示例
 
@@ -307,7 +314,7 @@ public V select() {
 
 随机算法 **适合服务器硬件相同的场景**。学习过概率论的都知道，调用量较小的时候，可能负载并不均匀，**调用量越大，负载越均衡**。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117205443.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117205443.png)
 
 【示例】随机算法实现示例
 
@@ -365,13 +372,13 @@ public V select() {
 
 例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开。该系统继续运行时，服务器 2 会承担过大的负载。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117210011.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117210011.png)
 
 最少连接算法会记录当前时刻，每个候选节点正在处理的连接数，然后选择连接数最小的节点。该策略能够动态、实时地反应服务器的当前状况，较为合理地将负责分配均匀，适用于对当前系统负载较为敏感的场景。
 
 例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210117210248.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117210248.png)
 
 **加权最少连接（Weighted Least Connection）**在最少连接的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。
 
@@ -401,7 +408,7 @@ public V select(final String key) {
 
 **一致性哈希** 可以很好的解决 **稳定性问题**，可以将所有的 **存储节点** 排列在 **首尾相接** 的 `Hash` 环上，每个 `key` 在计算 `Hash` 后会 **顺时针** 找到 **临接** 的 **存储节点** 存放。而当有节点 **加入** 或 **退出** 时，仅影响该节点在 `Hash` 环上 **顺时针相邻** 的 **后续节点**。
 
-![](http://dunwu.test.upcdn.net/cs/design/architecture/partition-consistent-hash.png)
+![img](http://dunwu.test.upcdn.net/cs/design/architecture/partition-consistent-hash.png)
 
 - 相同的请求是指：一般在使用一致性哈希时，需要指定一个 key 用于 hash 计算，可能是：
   - 用户 ID
@@ -458,7 +465,7 @@ public V select(String key) {
 
 **虚拟槽分区** 巧妙地使用了 **哈希空间**，使用 **分散度良好** 的 **哈希函数** 把所有数据 **映射** 到一个 **固定范围** 的 **整数集合** 中，整数定义为 **槽**（`slot`）。这个范围一般 **远远大于** 节点数，比如 `Redis Cluster` 槽范围是 `0 ~ 16383`。**槽** 是集群内 **数据管理** 和 **迁移** 的 **基本单位**。采用 **大范围槽** 的主要目的是为了方便 **数据拆分** 和 **集群扩展**。每个节点会负责 **一定数量的槽**，如图所示：
 
-![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210112104935.png)
+![img](http://dunwu.test.upcdn.net/snap/20210112104935.png)
 
 当前集群有 `3` 个节点，每个节点平均大约负责 `5460` 个 **槽**。由于采用 **高质量** 的 **哈希算法**，每个槽所映射的数据通常比较 **均匀**，将数据平均划分到 `3` 个节点进行 **数据分区**。`Redis Cluster` 就是采用 **虚拟槽分区**。
 

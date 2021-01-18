@@ -130,7 +130,7 @@ MQ 通信模型大致有以下类型：
 
 例如，Kafka 常被用于做为各种日志数据、采集数据的数据中转。然后，Kafka 将数据转发给 Logstash、Elasticsearch 中，然后基于 Elasticsearch 来做日志中心，提供检索、聚合、分析日志的能力。开发者可以通过 Kibana 集成 Elasticsearch 数据进行可视化展示，或自行进行定制化开发。
 
-![](http://dunwu.test.upcdn.net/snap/20200930164342.png)
+![img](http://dunwu.test.upcdn.net/snap/20200930164342.png)
 
 （2）MQ 也可以被用于流式处理。
 
@@ -181,7 +181,7 @@ MQ 主要引入了以下问题：
 
 Kafka 的客户端和 Broker 都会保存 Offset。客户端消费消息后，每隔一段时间，就把已消费的 Offset 提交给 Kafka Broker，表示已消费。
 
-![](http://dunwu.test.upcdn.net/snap/20200930154152.png)
+![img](http://dunwu.test.upcdn.net/snap/20200930154152.png)
 
 在这个过程中，如果客户端应用消费消息后，因为宕机、重启等情况而没有提交已消费的 Offset 。当系统恢复后，会继续消费消息，由于 Offset 未提交，就会出现重复消费的问题。
 
