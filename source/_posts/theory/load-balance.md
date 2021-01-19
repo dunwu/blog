@@ -22,7 +22,7 @@ date: 2018-07-05 15:50
 - [3. 负载均衡算法](#3-负载均衡算法)
   - [3.1. 轮询](#31-轮询)
   - [3.2. 随机](#32-随机)
-  - [3.3. 最近最少连接](#33-最近最少连接)
+  - [3.3. 最近最小活跃数](#33-最近最小活跃数)
   - [3.4. 源地址哈希](#34-源地址哈希)
   - [3.5. 一致性哈希](#35-一致性哈希)
   - [3.6. 虚拟哈希槽](#36-虚拟哈希槽)
@@ -234,7 +234,9 @@ LVS 的工作流程大致如下：
 
 负载均衡算法是负载均衡服务核心中的核心。负载均衡产品多种多样，但是各种负载均衡算法原理是共性的。
 
-负载均衡算法有很多种，分别适用于不同的应用场景，本文仅介绍最为常见的负载均衡算法的特性及原理：轮询、随机、最近最少连接、源地址哈希、一致性哈希。
+负载均衡算法有很多种，分别适用于不同的应用场景，本文仅介绍最为常见的负载均衡算法的特性及原理：轮询、随机、最小活跃数、源地址哈希、一致性哈希。
+
+> 注：负载均衡算法的实现，推荐阅读 [Dubbo 官方负载均衡算法说明](https://dubbo.apache.org/zh/docs/v2.7/dev/source/loadbalance/) ，源码讲解非常详细，非常值得借鉴。
 
 ### 3.1. 轮询
 
@@ -252,24 +254,72 @@ LVS 的工作流程大致如下：
 
 【示例】轮询算法示例
 
+负载均衡接口
+
 ```java
-private AtomicInteger offset = new AtomicInteger(0);
-private Set<V> nodes = Collections.emptyNavigableSet();
+public interface LoadBalance<N extends Node> {
 
-// 节点选择算法
-private V select() {
-    if (CollectionUtil.isEmpty(this.nodes)) {
-        return null;
+    N select(List<N> nodes, String ip);
+
+}
+```
+
+负载均衡抽象类
+
+```java
+public abstract class BaseLoadBalance<N extends Node> implements LoadBalance<N> {
+
+    @Override
+    public N select(List<N> nodes, String ip) {
+        if (CollectionUtil.isEmpty(nodes)) {
+            return null;
+        }
+
+        // 如果 nodes 列表中仅有一个 node，直接返回即可，无需进行负载均衡
+        if (nodes.size() == 1) {
+            return nodes.get(0);
+        }
+
+        return doSelect(nodes, ip);
     }
 
-    int size = this.nodes.size();
-    offset.compareAndSet(size, 0);
-    int number = offset.getAndIncrement();
-    Iterator<V> iterator = nodes.iterator();
-    while (number-- > 0) {
-        iterator.next();
+    protected abstract N doSelect(List<N> nodes, String ip);
+
+}
+```
+
+服务器节点类
+
+```java
+public class Node implements Comparable<Node> {
+
+    protected String url;
+
+    protected Integer weight;
+
+    protected Integer active;
+
+    // ...
+}
+```
+
+轮询负载均衡算法实现
+
+```java
+public class RoundRobinLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
+
+    private final AtomicInteger position = new AtomicInteger(0);
+
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+        int length = nodes.size();
+        // 如果位置值已经等于节点数，重置为 0
+        position.compareAndSet(length, 0);
+        N node = nodes.get(position.get());
+        position.getAndIncrement();
+        return node;
     }
-    return iterator.next();
+
 }
 ```
 
@@ -319,15 +369,16 @@ public V select() {
 【示例】随机算法实现示例
 
 ```java
-List<V> nodeList = Collections.emptyList();
+public class RandomLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
 
-public V select() {
-    if (CollectionUtil.isEmpty(this.nodeList)) {
-        return null;
+    private final Random random = new Random();
+
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+        int index = random.nextInt(nodes.size());
+        return nodes.get(index);
     }
 
-    int offset = random.nextInt(nodeList.size());
-    return nodeList.get(offset);
 }
 ```
 
@@ -338,32 +389,42 @@ public V select() {
 【示例】加权随机算法实现示例
 
 ```java
-// key 存储实际节点内容，value 存储节点的权重
-Map<V, Integer> nodeMap = new LinkedHashMap<>();
+public class WeightRandomLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
 
-public V select() {
-    if (MapUtil.isEmpty(keyWeightMap)) {
-        return null;
-    }
+    private final Random random = ThreadLocalRandom.current();
 
-    List<V> list = new ArrayList<>();
-    for (Map.Entry<V, Integer> item : keyWeightMap.entrySet()) {
-        for (int i = 0; i < item.getValue(); i++) {
-            list.add(item.getKey());
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+
+        int length = nodes.size();
+        AtomicInteger totalWeight = new AtomicInteger(0);
+        for (N node : nodes) {
+            Integer weight = node.getWeight();
+            totalWeight.getAndAdd(weight);
         }
+
+        if (totalWeight.get() > 0) {
+            int offset = random.nextInt(totalWeight.get());
+            for (N node : nodes) {
+                // 让随机值 offset 减去权重值
+                offset -= node.getWeight();
+                if (offset < 0) {
+                    // 返回相应的 Node
+                    return node;
+                }
+            }
+        }
+
+        // 直接随机返回一个
+        return nodes.get(random.nextInt(length));
     }
 
-    int totalWeight = keyWeightMap.values().stream().mapToInt(a -> a).sum();
-    int number = random.nextInt(totalWeight);
-    return list.get(number);
 }
 ```
 
-### 3.3. 最近最少连接
+### 3.3. 最小活跃数
 
-#### 最近最少连接算法
-
-**`最近最少连接（Least Connection）`** 算法 **将请求分发到连接数/请求数最少的候选服务器**（目前处理请求最少的服务器）。
+**`最小活跃数（Least Active）`** 算法 **将请求分发到连接数/请求数最少的候选服务器**（目前处理请求最少的服务器）。
 
 - 特点：根据候选服务器当前的请求连接数，动态分配。
 - 场景：**适用于对系统负载较为敏感或请求连接时长相差较大的场景**。
@@ -374,13 +435,92 @@ public V select() {
 
 ![img](http://dunwu.test.upcdn.net/snap/20210117210011.png)
 
-最少连接算法会记录当前时刻，每个候选节点正在处理的连接数，然后选择连接数最小的节点。该策略能够动态、实时地反应服务器的当前状况，较为合理地将负责分配均匀，适用于对当前系统负载较为敏感的场景。
+最小活跃数算法会记录当前时刻，每个候选节点正在处理的连接数，然后选择连接数最小的节点。该策略能够动态、实时地反应服务器的当前状况，较为合理地将负责分配均匀，适用于对当前系统负载较为敏感的场景。
 
 例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。
 
 ![img](http://dunwu.test.upcdn.net/snap/20210117210248.png)
 
-**加权最少连接（Weighted Least Connection）**在最少连接的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。
+**加权最小活跃数（Weighted Least Connection）**在最小活跃数的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。
+
+最小活跃数算法实现要点：活跃调用数越小，表明该服务节点处理能力越高，单位时间内可处理更多的请求，应优先将请求分发给该服务。在具体实现中，每个服务节点对应一个活跃数 active。初始情况下，所有服务提供者活跃数均为 0。每收到一个请求，活跃数加 1，完成请求后则将活跃数减 1。在服务运行一段时间后，性能好的服务提供者处理请求的速度更快，因此活跃数下降的也越快，此时这样的服务提供者能够优先获取到新的服务请求、这就是最小活跃数负载均衡算法的基本思想。
+
+```java
+public class LeastActiveLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
+
+    private final Random random = new Random();
+
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+        int length = nodes.size();
+        // 最小的活跃数
+        int leastActive = -1;
+        // 具有相同“最小活跃数”的服务者提供者（以下用 Node 代称）数量
+        int leastCount = 0;
+        // leastIndexs 用于记录具有相同“最小活跃数”的 Node 在 nodes 列表中的下标信息
+        int[] leastIndexs = new int[length];
+        int totalWeight = 0;
+        // 第一个最小活跃数的 Node 权重值，用于与其他具有相同最小活跃数的 Node 的权重进行对比，
+        // 以检测是否“所有具有相同最小活跃数的 Node 的权重”均相等
+        int firstWeight = 0;
+        boolean sameWeight = true;
+
+        // 遍历 nodes 列表
+        for (int i = 0; i < length; i++) {
+            N node = nodes.get(i);
+            // 发现更小的活跃数，重新开始
+            if (leastActive == -1 || node.getActive() < leastActive) {
+                // 使用当前活跃数更新最小活跃数 leastActive
+                leastActive = node.getActive();
+                // 更新 leastCount 为 1
+                leastCount = 1;
+                // 记录当前下标值到 leastIndexs 中
+                leastIndexs[0] = i;
+                totalWeight = node.getWeight();
+                firstWeight = node.getWeight();
+                sameWeight = true;
+
+                // 当前 Node 的活跃数 node.getActive() 与最小活跃数 leastActive 相同
+            } else if (node.getActive() == leastActive) {
+                // 在 leastIndexs 中记录下当前 Node 在 nodes 集合中的下标
+                leastIndexs[leastCount++] = i;
+                // 累加权重
+                totalWeight += node.getWeight();
+                // 检测当前 Node 的权重与 firstWeight 是否相等，
+                // 不相等则将 sameWeight 置为 false
+                if (sameWeight && i > 0
+                    && node.getWeight() != firstWeight) {
+                    sameWeight = false;
+                }
+            }
+        }
+
+        // 当只有一个 Node 具有最小活跃数，此时直接返回该 Node 即可
+        if (leastCount == 1) {
+            return nodes.get(leastIndexs[0]);
+        }
+
+        // 有多个 Node 具有相同的最小活跃数，但它们之间的权重不同
+        if (!sameWeight && totalWeight > 0) {
+            // 随机生成一个 [0, totalWeight) 之间的数字
+            int offsetWeight = random.nextInt(totalWeight);
+            // 循环让随机数减去具有最小活跃数的 Node 的权重值，
+            // 当 offset 小于等于0时，返回相应的 Node
+            for (int i = 0; i < leastCount; i++) {
+                int leastIndex = leastIndexs[i];
+                // 获取权重值，并让随机数减去权重值
+                offsetWeight -= nodes.get(leastIndex).getWeight();
+                if (offsetWeight <= 0) {
+                    return nodes.get(leastIndex);
+                }
+            }
+        }
+        // 如果权重相同或权重为0时，随机返回一个 Node
+        return nodes.get(leastIndexs[random.nextInt(leastCount)]);
+    }
+
+}
+```
 
 ### 3.4. 源地址哈希
 
@@ -393,12 +533,23 @@ public V select() {
 【示例】源地址哈希算法实现示例
 
 ```java
-List<V> nodeList = Collections.emptyList();
+public class IpHashLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
 
-public V select(final String key) {
-    int hashCode = key.hashCode();
-    int idx = hashCode % nodeList.size();
-    return nodeList.get(Math.abs(idx));
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+        if (StrUtil.isBlank(ip)) {
+            ip = "127.0.0.1";
+        }
+
+        int length = nodes.size();
+        int index = hash(ip) % length;
+        return nodes.get(index);
+    }
+
+    public int hash(String text) {
+        return HashUtil.fnvHash(text);
+    }
+
 }
 ```
 
@@ -459,26 +610,6 @@ public V select(String key) {
 }
 ```
 
-### 3.6. 虚拟哈希槽
-
-虚拟哈希槽是对一致性 Hash 的改进。
-
-**虚拟槽分区** 巧妙地使用了 **哈希空间**，使用 **分散度良好** 的 **哈希函数** 把所有数据 **映射** 到一个 **固定范围** 的 **整数集合** 中，整数定义为 **槽**（`slot`）。这个范围一般 **远远大于** 节点数，比如 `Redis Cluster` 槽范围是 `0 ~ 16383`。**槽** 是集群内 **数据管理** 和 **迁移** 的 **基本单位**。采用 **大范围槽** 的主要目的是为了方便 **数据拆分** 和 **集群扩展**。每个节点会负责 **一定数量的槽**，如图所示：
-
-![img](http://dunwu.test.upcdn.net/snap/20210112104935.png)
-
-当前集群有 `3` 个节点，每个节点平均大约负责 `5460` 个 **槽**。由于采用 **高质量** 的 **哈希算法**，每个槽所映射的数据通常比较 **均匀**，将数据平均划分到 `3` 个节点进行 **数据分区**。`Redis Cluster` 就是采用 **虚拟槽分区**。
-
-集群中的每个节点负责一部分哈希槽，比如集群中有３个节点，则：
-
-- 节点Ａ存储的哈希槽范围是：0 – 5460
-- 节点Ｂ存储的哈希槽范围是：5461 – 10922
-- 节点Ｃ存储的哈希槽范围是：10923 – 16383
-
-这种结构很容易 **添加** 或者 **删除** 节点。如果 **增加** 一个节点 `4`，就需要从节点 `1 ~ 3` 获得部分 **槽** 分配到节点 `4` 上。如果想 **移除** 节点 `1`，需要将节点 `1` 中的 **槽** 移到节点 `2 ~ 3` 上，然后将 **没有任何槽** 的节点 `1` 从集群中 **移除** 即可。
-
-> 由于从一个节点将 **哈希槽** 移动到另一个节点并不会 **停止服务**，所以无论 **添加删除** 或者 **改变** 某个节点的 **哈希槽的数量** 都不会造成 **集群不可用** 的状态.
-
 ## 4. 参考资料
 
 - [Comparing Load Balancing Algorithms](https://www.youtube.com/watch?reload=9&app=desktop&v=iqOTT7_7qXY)
@@ -486,6 +617,6 @@ public V select(String key) {
 - [大型网站架构系列：负载均衡详解（1）](https://www.cnblogs.com/itfly8/p/5043435.html)
 - [什么是负载均衡](https://zhuanlan.zhihu.com/p/32841479)
 - [What Is Load Balancing](https://avinetworks.com/what-is-load-balancing/)
+- [Dubbo 官方负载均衡算法说明](https://dubbo.apache.org/zh/docs/v2.7/dev/source/loadbalance/)
 - [负载均衡算法及手段](https://segmentfault.com/a/1190000004492447)
 - [利用 dns 解析来实现网站的负载均衡](https://segmentfault.com/a/1190000002578457)
-- [负载均衡 LVS 总结 - 基础原理](https://blog.csdn.net/liwei0526vip/article/details/103104483)
