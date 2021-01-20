@@ -1,11 +1,11 @@
 ---
-title: 负载均衡基本原理
+title: 深入浅出负载均衡
 categories: ['分布式']
 tags: ['分布式', '负载均衡']
 date: 2018-07-05 15:50
 ---
 
-# 负载均衡基本原理
+# 深入浅出负载均衡
 
 > 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
@@ -20,19 +20,16 @@ date: 2018-07-05 15:50
   - [2.1. 载体维度分类](#21-载体维度分类)
   - [2.2. 网络通信分类](#22-网络通信分类)
 - [3. 负载均衡算法](#3-负载均衡算法)
-  - [3.1. 轮询](#31-轮询)
-  - [3.2. 随机](#32-随机)
-  - [3.3. 最近最小活跃数](#33-最近最小活跃数)
+  - [3.1. 随机](#31-随机)
+  - [3.2. 轮询](#32-轮询)
+  - [3.3. 最小活跃数](#33-最小活跃数)
   - [3.4. 源地址哈希](#34-源地址哈希)
   - [3.5. 一致性哈希](#35-一致性哈希)
-  - [3.6. 虚拟哈希槽](#36-虚拟哈希槽)
 - [4. 参考资料](#4-参考资料)
 
 <!-- /TOC -->
 
 ## 1. 负载均衡简介
-
-![img](http://dunwu.test.upcdn.net/snap/20210112113136.svg)
 
 ### 1.1. 大型网站面临的挑战
 
@@ -237,22 +234,20 @@ LVS 的工作流程大致如下：
 负载均衡算法有很多种，分别适用于不同的应用场景，本文仅介绍最为常见的负载均衡算法的特性及原理：轮询、随机、最小活跃数、源地址哈希、一致性哈希。
 
 > 注：负载均衡算法的实现，推荐阅读 [Dubbo 官方负载均衡算法说明](https://dubbo.apache.org/zh/docs/v2.7/dev/source/loadbalance/) ，源码讲解非常详细，非常值得借鉴。
+>
+> 下文中的各种算法的可执行示例已归档在 Github 仓库：https://github.com/dunwu/java-tutorial/tree/master/codes/java-distributed/java-load-balance，可以通过执行 io.github.dunwu.javatech.LoadBalanceDemo 查看各算法执行效果。
 
-### 3.1. 轮询
+### 3.1. 随机
 
-#### 轮询算法
+#### 随机算法
 
-**`轮询（Round Robin）`** 算法的策略是：**将请求依次分发到候选服务器**。
+**`随机（Random）`** 算法 **将请求随机分发到候选服务器**。
 
-如下图所示，负载均衡器收到来自客户端的 6 个请求，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
+随机算法 **适合服务器硬件相同的场景**。学习过概率论的都知道，调用量较小的时候，可能负载并不均匀，**调用量越大，负载越均衡**。
 
-![img](http://dunwu.test.upcdn.net/snap/20210117204412.png)
+![img](http://dunwu.test.upcdn.net/snap/20210117205443.png)
 
-该算法适合场景：各服务器处理能力相近，且每个事务工作量差异不大。如果存在较大差异，那么处理较慢的服务器就可能会积压请求，最终无法承担过大的负载。
-
-![img](http://dunwu.test.upcdn.net/snap/20210117204707.png)
-
-【示例】轮询算法示例
+【示例】随机算法实现示例
 
 负载均衡接口
 
@@ -303,70 +298,7 @@ public class Node implements Comparable<Node> {
 }
 ```
 
-轮询负载均衡算法实现
-
-```java
-public class RoundRobinLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
-
-    private final AtomicInteger position = new AtomicInteger(0);
-
-    @Override
-    protected N doSelect(List<N> nodes, String ip) {
-        int length = nodes.size();
-        // 如果位置值已经等于节点数，重置为 0
-        position.compareAndSet(length, 0);
-        N node = nodes.get(position.get());
-        position.getAndIncrement();
-        return node;
-    }
-
-}
-```
-
-#### 加权轮询算法
-
-**`加权轮询（Weighted Round Robbin）`** 算法在轮询算法的基础上，增加了权重属性来调节转发服务器的请求数目。性能高、处理速度快的节点应该设置更高的权重，使得分发时优先将请求分发到权重较高的节点上。
-
-如下图所示，服务器 A 设置权重为 5，服务器 B 设置权重为 1，负载均衡器收到来自客户端的 6 个请求，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 A，(6) 请求会被发送到服务器 B。
-
-![img](http://dunwu.test.upcdn.net/snap/20210117204955.png)
-
-【示例】加权轮询算法实现示例
-
-```java
-// key 存储实际节点内容，value 存储节点的权重
-private Map<V, Integer> nodeMap = new LinkedHashMap<>();
-
-// 选择节点
-public V select() {
-    if (MapUtil.isEmpty(nodeMap)) {
-        return null;
-    }
-
-    int totalWeight = nodeMap.values().stream().mapToInt(a -> a).sum();
-    int number = offset.getAndIncrement() % totalWeight;
-
-    for (Map.Entry<V, Integer> item : nodeMap.entrySet()) {
-        if (item.getValue() > number) {
-            return item.getKey();
-        }
-        number -= item.getValue();
-    }
-    return null;
-}
-```
-
-### 3.2. 随机
-
-#### 随机算法
-
-**`随机（Random）`** 算法 **将请求随机分发到候选服务器**。
-
-随机算法 **适合服务器硬件相同的场景**。学习过概率论的都知道，调用量较小的时候，可能负载并不均匀，**调用量越大，负载越均衡**。
-
-![img](http://dunwu.test.upcdn.net/snap/20210117205443.png)
-
-【示例】随机算法实现示例
+随机算法实现
 
 ```java
 public class RandomLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
@@ -375,6 +307,7 @@ public class RandomLoadBalance<N extends Node> extends BaseLoadBalance<N> implem
 
     @Override
     protected N doSelect(List<N> nodes, String ip) {
+        // 在列表中随机选取一个节点
         int index = random.nextInt(nodes.size());
         return nodes.get(index);
     }
@@ -422,6 +355,205 @@ public class WeightRandomLoadBalance<N extends Node> extends BaseLoadBalance<N> 
 }
 ```
 
+### 3.2. 轮询
+
+#### 轮询算法
+
+**`轮询（Round Robin）`** 算法的策略是：**将请求依次分发到候选服务器**。
+
+如下图所示，负载均衡器收到来自客户端的 6 个请求，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
+
+![img](http://dunwu.test.upcdn.net/snap/20210117204412.png)
+
+该算法适合场景：各服务器处理能力相近，且每个事务工作量差异不大。如果存在较大差异，那么处理较慢的服务器就可能会积压请求，最终无法承担过大的负载。
+
+![img](http://dunwu.test.upcdn.net/snap/20210117204707.png)
+
+【示例】轮询算法示例
+
+轮询负载均衡算法实现
+
+```java
+public class RoundRobinLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
+
+    private final AtomicInteger position = new AtomicInteger(0);
+
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+        int length = nodes.size();
+        // 如果位置值已经等于节点数，重置为 0
+        position.compareAndSet(length, 0);
+        N node = nodes.get(position.get());
+        position.getAndIncrement();
+        return node;
+    }
+
+}
+```
+
+#### 加权轮询算法
+
+**`加权轮询（Weighted Round Robbin）`** 算法在轮询算法的基础上，增加了权重属性来调节转发服务器的请求数目。性能高、处理速度快的节点应该设置更高的权重，使得分发时优先将请求分发到权重较高的节点上。
+
+如下图所示，服务器 A 设置权重为 5，服务器 B 设置权重为 1，负载均衡器收到来自客户端的 6 个请求，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 A，(6) 请求会被发送到服务器 B。
+
+![img](http://dunwu.test.upcdn.net/snap/20210117204955.png)
+
+【示例】加权轮询算法实现示例
+
+以下实现基于 Dubbo 加权轮询算法做了一些简化。
+
+```java
+public class WeightRoundRobinLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
+
+    /**
+     * 60秒
+     */
+    private static final int RECYCLE_PERIOD = 60000;
+
+    /**
+     * Node hashcode 到 WeightedRoundRobin 的映射关系
+     */
+    private ConcurrentMap<Integer, WeightedRoundRobin> weightMap = new ConcurrentHashMap<>();
+
+    /**
+     * 原子更新锁
+     */
+    private AtomicBoolean updateLock = new AtomicBoolean();
+
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+
+        int totalWeight = 0;
+        long maxCurrent = Long.MIN_VALUE;
+
+        // 获取当前时间
+        long now = System.currentTimeMillis();
+        N selectedNode = null;
+        WeightedRoundRobin selectedWRR = null;
+
+        // 下面这个循环主要做了这样几件事情：
+        //   1. 遍历 Node 列表，检测当前 Node 是否有相应的 WeightedRoundRobin，没有则创建
+        //   2. 检测 Node 权重是否发生了变化，若变化了，则更新 WeightedRoundRobin 的 weight 字段
+        //   3. 让 current 字段加上自身权重，等价于 current += weight
+        //   4. 设置 lastUpdate 字段，即 lastUpdate = now
+        //   5. 寻找具有最大 current 的 Node，以及 Node 对应的 WeightedRoundRobin，
+        //      暂存起来，留作后用
+        //   6. 计算权重总和
+        for (N node : nodes) {
+            int hashCode = node.hashCode();
+            WeightedRoundRobin weightedRoundRobin = weightMap.get(hashCode);
+            int weight = node.getWeight();
+            if (weight < 0) {
+                weight = 0;
+            }
+
+            // 检测当前 Node 是否有对应的 WeightedRoundRobin，没有则创建
+            if (weightedRoundRobin == null) {
+                weightedRoundRobin = new WeightedRoundRobin();
+                // 设置 Node 权重
+                weightedRoundRobin.setWeight(weight);
+                // 存储 url 唯一标识 identifyString 到 weightedRoundRobin 的映射关系
+                weightMap.putIfAbsent(hashCode, weightedRoundRobin);
+                weightedRoundRobin = weightMap.get(hashCode);
+            }
+            // Node 权重不等于 WeightedRoundRobin 中保存的权重，说明权重变化了，此时进行更新
+            if (weight != weightedRoundRobin.getWeight()) {
+                weightedRoundRobin.setWeight(weight);
+            }
+
+            // 让 current 加上自身权重，等价于 current += weight
+            long current = weightedRoundRobin.increaseCurrent();
+            // 设置 lastUpdate，表示近期更新过
+            weightedRoundRobin.setLastUpdate(now);
+            // 找出最大的 current
+            if (current > maxCurrent) {
+                maxCurrent = current;
+                // 将具有最大 current 权重的 Node 赋值给 selectedNode
+                selectedNode = node;
+                // 将 Node 对应的 weightedRoundRobin 赋值给 selectedWRR，留作后用
+                selectedWRR = weightedRoundRobin;
+            }
+
+            // 计算权重总和
+            totalWeight += weight;
+        }
+
+        // 对 weightMap 进行检查，过滤掉长时间未被更新的节点。
+        // 该节点可能挂了，nodes 中不包含该节点，所以该节点的 lastUpdate 长时间无法被更新。
+        // 若未更新时长超过阈值后，就会被移除掉，默认阈值为60秒。
+        if (!updateLock.get() && nodes.size() != weightMap.size()) {
+            if (updateLock.compareAndSet(false, true)) {
+                try {
+                    // 遍历修改，即移除过期记录
+                    weightMap.entrySet().removeIf(item -> now - item.getValue().getLastUpdate() > RECYCLE_PERIOD);
+                } finally {
+                    updateLock.set(false);
+                }
+            }
+        }
+
+        if (selectedNode != null) {
+            // 让 current 减去权重总和，等价于 current -= totalWeight
+            selectedWRR.decreaseCurrent(totalWeight);
+            // 返回具有最大 current 的 Node
+            return selectedNode;
+        }
+
+        // should not happen here
+        return nodes.get(0);
+    }
+
+    protected static class WeightedRoundRobin {
+
+        // 服务提供者权重
+        private int weight;
+        // 当前权重
+        private AtomicLong current = new AtomicLong(0);
+        // 最后一次更新时间
+        private long lastUpdate;
+
+        public long increaseCurrent() {
+            // current = current + weight；
+            return current.addAndGet(weight);
+        }
+
+        public long decreaseCurrent(int total) {
+            // current = current - total;
+            return current.addAndGet(-1 * total);
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+            // 初始情况下，current = 0
+            current.set(0);
+        }
+
+        public AtomicLong getCurrent() {
+            return current;
+        }
+
+        public void setCurrent(AtomicLong current) {
+            this.current = current;
+        }
+
+        public long getLastUpdate() {
+            return lastUpdate;
+        }
+
+        public void setLastUpdate(long lastUpdate) {
+            this.lastUpdate = lastUpdate;
+        }
+
+    }
+
+}
+```
+
 ### 3.3. 最小活跃数
 
 **`最小活跃数（Least Active）`** 算法 **将请求分发到连接数/请求数最少的候选服务器**（目前处理请求最少的服务器）。
@@ -444,6 +576,10 @@ public class WeightRandomLoadBalance<N extends Node> extends BaseLoadBalance<N> 
 **加权最小活跃数（Weighted Least Connection）**在最小活跃数的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。
 
 最小活跃数算法实现要点：活跃调用数越小，表明该服务节点处理能力越高，单位时间内可处理更多的请求，应优先将请求分发给该服务。在具体实现中，每个服务节点对应一个活跃数 active。初始情况下，所有服务提供者活跃数均为 0。每收到一个请求，活跃数加 1，完成请求后则将活跃数减 1。在服务运行一段时间后，性能好的服务提供者处理请求的速度更快，因此活跃数下降的也越快，此时这样的服务提供者能够优先获取到新的服务请求、这就是最小活跃数负载均衡算法的基本思想。
+
+【示例】最小活跃数算法实现
+
+以下实现基于 Dubbo 最小活跃数负载均衡算法做了些许改动。
 
 ```java
 public class LeastActiveLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
@@ -581,32 +717,126 @@ public class IpHashLoadBalance<N extends Node> extends BaseLoadBalance<N> implem
 
 【示例】一致性哈希算法示例
 
+以下示例基于 Dubbo 的一致性哈希负载均衡算法做了一些简化。
+
 ```java
-private final static int VIRTUAL_NODE_SIZE = 1000;
-private final static String VIRTUAL_NODE_SUFFIX = "&&";
-private Set<V> nodes = new LinkedHashSet<>(collection);
-private TreeMap<Integer, V> hashRing = buildConsistentHashRing(this.nodes);
+public class ConsistentHashLoadBalance<N extends Node> extends BaseLoadBalance<N> implements LoadBalance<N> {
 
-TreeMap<Integer, V> buildConsistentHashRing(Set<V> nodes) {
-    TreeMap<Integer, V> hashRing = new TreeMap<>();
-    for (V node : nodes) {
-        for (int i = 0; i < VIRTUAL_NODE_SIZE; i++) {
-            // 新增虚拟节点的方式如果有影响，也可以抽象出一个由物理节点扩展虚拟节点的类
-            hashRing.put(hashStrategy.hashCode(node + VIRTUAL_NODE_SUFFIX + i), node);
+    private final ConcurrentMap<String, ConsistentHashSelector<?>> selectors = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected N doSelect(List<N> nodes, String ip) {
+        // 分片数，这里设为节点数的 4 倍
+        Integer replicaNum = nodes.size() * 4;
+        // 获取 nodes 原始的 hashcode
+        int identityHashCode = System.identityHashCode(nodes);
+
+        // 如果 nodes 是一个新的 List 对象，意味着节点数量发生了变化
+        // 此时 selector.identityHashCode != identityHashCode 条件成立
+        ConsistentHashSelector<N> selector = (ConsistentHashSelector<N>) selectors.get(ip);
+        if (selector == null || selector.identityHashCode != identityHashCode) {
+            // 创建新的 ConsistentHashSelector
+            selectors.put(ip, new ConsistentHashSelector<>(nodes, identityHashCode, replicaNum));
+            selector = (ConsistentHashSelector<N>) selectors.get(ip);
         }
+        // 调用 ConsistentHashSelector 的 select 方法选择 Node
+        return selector.select(ip);
     }
-    return hashRing;
-}
 
-public V select(String key) {
-    int hashCode = hashStrategy.hashCode(key);
-    // 向右找到第一个 key
-    Map.Entry<Integer, V> entry = hashRing.ceilingEntry(hashCode);
-    if (entry == null) {
-        // 想象成一个环，超过尾部则取第一个 key
-        entry = hashRing.firstEntry();
+    /**
+     * 一致性哈希选择器
+     */
+    private static final class ConsistentHashSelector<N extends Node> {
+
+        /**
+         * 存储虚拟节点
+         */
+        private final TreeMap<Long, N> virtualNodes;
+
+        private final int identityHashCode;
+
+        /**
+         * 构造器
+         *
+         * @param nodes            节点列表
+         * @param identityHashCode hashcode
+         * @param replicaNum       分片数
+         */
+        ConsistentHashSelector(List<N> nodes, int identityHashCode, Integer replicaNum) {
+            this.virtualNodes = new TreeMap<>();
+            this.identityHashCode = identityHashCode;
+            // 获取虚拟节点数，默认为 100
+            if (replicaNum == null) {
+                replicaNum = 100;
+            }
+            for (N node : nodes) {
+                for (int i = 0; i < replicaNum / 4; i++) {
+                    // 对 url 进行 md5 运算，得到一个长度为16的字节数组
+                    byte[] digest = md5(node.getUrl());
+                    // 对 digest 部分字节进行 4 次 hash 运算，得到四个不同的 long 型正整数
+                    for (int j = 0; j < 4; j++) {
+                        // h = 0 时，取 digest 中下标为 0 ~ 3 的4个字节进行位运算
+                        // h = 1 时，取 digest 中下标为 4 ~ 7 的4个字节进行位运算
+                        // h = 2, h = 3 时过程同上
+                        long m = hash(digest, j);
+                        // 将 hash 到 node 的映射关系存储到 virtualNodes 中，
+                        // virtualNodes 需要提供高效的查询操作，因此选用 TreeMap 作为存储结构
+                        virtualNodes.put(m, node);
+                    }
+                }
+            }
+        }
+
+        public N select(String key) {
+            // 对参数 key 进行 md5 运算
+            byte[] digest = md5(key);
+            // 取 digest 数组的前四个字节进行 hash 运算，再将 hash 值传给 selectForKey 方法，
+            // 寻找合适的 Node
+            return selectForKey(hash(digest, 0));
+        }
+
+        private N selectForKey(long hash) {
+            // 查找第一个大于或等于当前 hash 的节点
+            Map.Entry<Long, N> entry = virtualNodes.ceilingEntry(hash);
+            // 如果 hash 大于 Node 在哈希环上最大的位置，此时 entry = null，
+            // 需要将 TreeMap 的头节点赋值给 entry
+            if (entry == null) {
+                entry = virtualNodes.firstEntry();
+            }
+            // 返回 Node
+            return entry.getValue();
+        }
+
     }
-    return entry.getValue();
+
+    /**
+     * 计算 hash 值
+     */
+    public static long hash(byte[] digest, int number) {
+        return (((long) (digest[3 + number * 4] & 0xFF) << 24)
+            | ((long) (digest[2 + number * 4] & 0xFF) << 16)
+            | ((long) (digest[1 + number * 4] & 0xFF) << 8)
+            | (digest[number * 4] & 0xFF))
+            & 0xFFFFFFFFL;
+    }
+
+    /**
+     * 计算 MD5 值
+     */
+    public static byte[] md5(String value) {
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+        md5.reset();
+        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+        md5.update(bytes);
+        return md5.digest();
+    }
+
 }
 ```
 
