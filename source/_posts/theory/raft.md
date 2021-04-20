@@ -39,7 +39,7 @@ date: 2020-02-01 22:07
 
 ## 一、Raft 简介
 
-**[Raft](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf) _是一种为了管理日志复制的分布式一致性算法***。
+**[Raft](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf) 是一种为了管理日志复制的分布式一致性算法**。
 
 [Raft](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf) 出现之前，Paxos 一直是分布式一致性算法的标准。Paxos **难以理解，更难以实现**。Raft 的设计目标是简化 Paxos，使得算法**既容易理解，也容易实现**。
 

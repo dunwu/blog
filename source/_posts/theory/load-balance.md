@@ -245,7 +245,7 @@ LVS 的工作流程大致如下：
 
 随机算法 **适合服务器硬件相同的场景**。学习过概率论的都知道，调用量较小的时候，可能负载并不均匀，**调用量越大，负载越均衡**。
 
-![img](http://dunwu.test.upcdn.net/snap/20210117205443.png)
+![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210415165323.png)
 
 【示例】随机算法实现示例
 
@@ -363,11 +363,11 @@ public class WeightRandomLoadBalance<N extends Node> extends BaseLoadBalance<N> 
 
 如下图所示，负载均衡器收到来自客户端的 6 个请求，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
 
-![img](http://dunwu.test.upcdn.net/snap/20210117204412.png)
+![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210415164758.png)
 
 该算法适合场景：各服务器处理能力相近，且每个事务工作量差异不大。如果存在较大差异，那么处理较慢的服务器就可能会积压请求，最终无法承担过大的负载。
 
-![img](http://dunwu.test.upcdn.net/snap/20210117204707.png)
+![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210415165041.png)
 
 【示例】轮询算法示例
 
@@ -397,7 +397,7 @@ public class RoundRobinLoadBalance<N extends Node> extends BaseLoadBalance<N> im
 
 如下图所示，服务器 A 设置权重为 5，服务器 B 设置权重为 1，负载均衡器收到来自客户端的 6 个请求，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 A，(6) 请求会被发送到服务器 B。
 
-![img](http://dunwu.test.upcdn.net/snap/20210117204955.png)
+![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210415165140.png)
 
 【示例】加权轮询算法实现示例
 
@@ -563,15 +563,13 @@ public class WeightRoundRobinLoadBalance<N extends Node> extends BaseLoadBalance
 
 由于每个请求的连接时长不一样，如果采用简单的轮循或随机算法，都可能出现**某些服务器当前连接数过大，而另一些服务器的连接过小**的情况，这就造成了负载并非真正均衡。虽然，轮询或算法都可以通过加权重属性的方式进行负载调整，但加权方式难以应对动态变化。
 
-例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开。该系统继续运行时，服务器 2 会承担过大的负载。
-
-![img](http://dunwu.test.upcdn.net/snap/20210117210011.png)
+![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210415171432.png)
 
 最小活跃数算法会记录当前时刻，每个候选节点正在处理的连接数，然后选择连接数最小的节点。该策略能够动态、实时地反应服务器的当前状况，较为合理地将负责分配均匀，适用于对当前系统负载较为敏感的场景。
 
 例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。
 
-![img](http://dunwu.test.upcdn.net/snap/20210117210248.png)
+![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210415165935.png)
 
 **加权最小活跃数（Weighted Least Connection）**在最小活跃数的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。
 
@@ -658,9 +656,11 @@ public class LeastActiveLoadBalance<N extends Node> extends BaseLoadBalance<N> i
 }
 ```
 
-### 3.4. 源地址哈希
+### 3.4. 哈希
 
-**`源地址哈希（IP Hash）`**算法 **根据请求源 IP，通过哈希计算得到一个数值，用该数值在候选服务器列表的进行取模运算，得到的结果便是选中的服务器**。
+**`哈希（IP Hash）`**算法 **根据一个 key （可以是唯一ID、IP 等），通过哈希计算得到一个数值，用该数值在候选服务器列表的进行取模运算，得到的结果便是选中的服务器**。
+
+![](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210415172716.png)
 
 可以保证同一 IP 的客户端的请求会转发到同一台服务器上，用来实现会话粘滞（Sticky Session）。
 
