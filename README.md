@@ -166,24 +166,52 @@
 
 ### 10.2. 设计模式
 
-> TODO：以前写的教程比较简陋，一直没有抽出时间进行整理加工。待完善。
+> [设计模式教程](https://dunwu.github.io/design/pattern/) 📚 - 软件设计中常见问题的典型解决方案。
+
+- **创建型模式**：创建型模式提供了创建对象的机制， 能够提升已有代码的灵活性和可复用性。
+  - [单例模式 (Singleton)](https://dunwu.github.io/design/pattern/单例模式.html)
+  - [简单工厂模式 (Simple Factory)](https://dunwu.github.io/design/pattern/简单工厂模式.html)
+  - [工厂方法模式 (Factory Method)](https://dunwu.github.io/design/pattern/工厂方法模式.html)
+  - [抽象工厂模式 (Abstract Factory)](https://dunwu.github.io/design/pattern/抽象工厂模式.html)
+  - [建造者模式 (Builder)](https://dunwu.github.io/design/pattern/建造者模式.html)
+  - [原型模式 (Prototype)](https://dunwu.github.io/design/pattern/原型模式.html)
+- **结构型模式**：结构型模式介绍如何将对象和类组装成较大的结构， 并同时保持结构的灵活和高效。
+  - [适配器模式 (Adapter)](https://dunwu.github.io/design/pattern/适配器模式.html)
+  - [桥接模式 (Bridge)](https://dunwu.github.io/design/pattern/桥接模式.html)
+  - [组合模式 (Composite)](https://dunwu.github.io/design/pattern/组合模式.html)
+  - [装饰模式 (Decorator)](https://dunwu.github.io/design/pattern/装饰模式.html)
+  - [外观模式 (Facade)](https://dunwu.github.io/design/pattern/外观模式.html)
+  - [享元模式 (Flyweight)](https://dunwu.github.io/design/pattern/享元模式.html)
+  - [代理模式 (Proxy)](https://dunwu.github.io/design/pattern/代理模式.html)
+- **行为型模式**：行为模式负责对象间的高效沟通和职责委派。
+  - [模板方法模式 (Template Method)](https://dunwu.github.io/design/pattern/模板方法模式.html)
+  - [命令模式 (Command)](https://dunwu.github.io/design/pattern/命令模式.html)
+  - [迭代器模式 (Iterator)](https://dunwu.github.io/design/pattern/迭代器模式.html)
+  - [观察者模式 (Observer)](https://dunwu.github.io/design/pattern/观察者模式.html)
+  - [解释器模式 (Interpreter)](https://dunwu.github.io/design/pattern/解释器模式.html)
+  - [中介者模式 (Mediator)](https://dunwu.github.io/design/pattern/中介者模式.html)
+  - [职责链模式 (Chain of Responsibility)](https://dunwu.github.io/design/pattern/职责链模式.html)
+  - [备忘录模式 (Memento)](https://dunwu.github.io/design/pattern/备忘录模式.html)
+  - [策略模式 (Strategy)](https://dunwu.github.io/design/pattern/策略模式.html)
+  - [访问者模式 (Visitor)](https://dunwu.github.io/design/pattern/访问者模式.html)
+  - [状态模式 (State)](https://dunwu.github.io/design/pattern/状态模式.html)
 
 ### 10.3. 重构
 
-> **改善既有代码的设计**。
+> [重构教程](https://dunwu.github.io/design/refactor/) 📚 - **改善既有代码的设计**。
 >
-> 关键词：过长函数、过大的类、基本类型偏执、过长参数列、数据泥团、switch 声明、临时字段、被拒绝的馈赠、异曲同工的类、发散式变化、霰弹式修改、平行继承体系、过多的注释、重复代码、冗余类、纯稚的数据类、夸夸其谈未来性、依恋情结、狎昵关系、过度耦合的消息链、中间人、不完美的库类
+> **重构是不改变软件系统外部行为的前提下，改善它的内部结构**。
 
-- [代码的坏味道和重构](https://github.com/dunwu/design/blob/master/docs/refactor/代码的坏味道和重构.md)
-- [代码坏味道之代码臃肿](https://github.com/dunwu/design/blob/master/docs/refactor/代码坏味道之代码臃肿.md)
-- [代码坏味道之滥用面向对象](https://github.com/dunwu/design/blob/master/docs/refactor/代码坏味道之滥用面向对象.md)
-- [代码坏味道之变革的障碍](https://github.com/dunwu/design/blob/master/docs/refactor/代码坏味道之变革的障碍.md)
-- [代码坏味道之非必要的](https://github.com/dunwu/design/blob/master/docs/refactor/代码坏味道之非必要的.md)
-- [代码坏味道之耦合](https://github.com/dunwu/design/blob/master/docs/refactor/代码坏味道之耦合.md)
+- [代码的坏味道和重构](https://dunwu.github.io/design/refactor/代码的坏味道和重构.html)
+- [代码坏味道之代码臃肿](https://dunwu.github.io/design/refactor/代码坏味道之代码臃肿.html)
+- [代码坏味道之滥用面向对象](https://dunwu.github.io/design/refactor/代码坏味道之滥用面向对象.html)
+- [代码坏味道之变革的障碍](https://dunwu.github.io/design/refactor/代码坏味道之变革的障碍.html)
+- [代码坏味道之非必要的](https://dunwu.github.io/design/refactor/代码坏味道之非必要的.html)
+- [代码坏味道之耦合](https://dunwu.github.io/design/refactor/代码坏味道之耦合.html)
 
 ## 11. 前端技术
 
-[前端编程教程](https://dunwu.github.io/frontend-tutorial/) 📚 - 不会前端的后端不是好后端，这里是二手前端技术的总结。
+> [前端编程教程](https://dunwu.github.io/frontend-tutorial/) 📚 - 不会前端的后端不是好后端，这里是二手前端技术的总结。
 
 ## 12. 工具
 
