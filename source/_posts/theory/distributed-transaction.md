@@ -59,7 +59,7 @@ date: 2019-06-21 11:30
 
 事务简单来说：**一个会话中所进行所有的操作，要么同时成功，要么同时失败**。
 
-![img](http://dunwu.test.upcdn.net/cs/database/RDB/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/cs/database/RDB/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1.png)
 
 具体来说，事务指的是满足 ACID 特性的一组操作，可以通过 `Commit` 提交一个事务，也可以使用 `Rollback` 进行回滚。
 
@@ -80,11 +80,11 @@ date: 2019-06-21 11:30
 
 举个互联网常用的交易业务为例：
 
-![img](http://dunwu.test.upcdn.net/snap/20200205112615.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205112615.png)
 
 上图中包含了库存和订单两个独立的微服务，每个微服务维护了自己的数据库。在交易系统的业务逻辑中，一个商品在下单之前需要先调用库存服务，进行扣除库存，再调用订单服务，创建订单记录。
 
-![img](http://dunwu.test.upcdn.net/snap/20200205112518.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205112518.png)
 
 可以看到，如果多个数据库之间的数据更新没有保证事务，将会导致出现子系统数据不一致，业务出现问题。
 
@@ -150,7 +150,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 **情况 1，当所有参与者均反馈 yes，提交事务**：
 
-![img](http://dunwu.test.upcdn.net/snap/20200205153529.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205153529.png)
 
 > 1. 协调者向所有参与者发出正式提交事务的请求（即 commit 请求）。
 > 2. 参与者执行 commit 请求，并释放整个事务期间占用的资源。
@@ -159,7 +159,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 **情况 2，当任何阶段 1 一个参与者反馈 no，中断事务**：
 
-![img](http://dunwu.test.upcdn.net/snap/20200205154145.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205154145.png)
 
 > 1. 协调者向所有参与者发出回滚请求（即 rollback 请求）。
 > 2. 参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。
@@ -197,7 +197,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 **情况 1：阶段 1 所有参与者均反馈 yes，参与者预执行事务：**
 
-![img](http://dunwu.test.upcdn.net/snap/20200205180242.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205180242.png)
 
 > 1. 协调者向所有参与者发出 preCommit 请求，进入准备阶段。
 > 2. 参与者收到 preCommit 请求后，执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。
@@ -205,7 +205,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 **情况 2：阶段 1 任何一个参与者反馈 no，或者等待超时后协调者尚无法收到所有参与者的反馈，即中断事务:**
 
-![img](http://dunwu.test.upcdn.net/snap/20200205205117.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205205117.png)
 
 > 1. 协调者向所有参与者发出 abort 请求。
 > 2. 无论收到协调者发出的 abort 请求，或者在等待协调者请求过程中出现超时，参与者均会中断事务。
@@ -216,7 +216,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 **情况 1：阶段 2 所有参与者均反馈 ack 响应，执行真正的事务提交：**
 
-![img](http://dunwu.test.upcdn.net/snap/20200205180425.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205180425.png)
 
 > 1. 如果协调者处于工作状态，则向所有参与者发出 do Commit 请求。
 > 2. 参与者收到 do Commit 请求后，会正式执行事务提交，并释放整个事务期间占用的资源。
@@ -225,7 +225,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 **阶段 2 任何一个参与者反馈 no，或者等待超时后协调者尚无法收到所有参与者的反馈，即中断事务：**
 
-![img](http://dunwu.test.upcdn.net/snap/20200205180515.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205180515.png)
 
 > 1. 如果协调者处于工作状态，向所有参与者发出 abort 请求。
 > 2. 参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。
@@ -278,13 +278,13 @@ TCC 事务的 Try、Confirm、Cancel 可以理解为 SQL 事务中的 Lock、Com
 
 **Confirm：当 Try 阶段服务全部正常执行， 执行确认业务逻辑操作**
 
-![img](http://dunwu.test.upcdn.net/snap/20200205205200.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205205200.png)
 
 这里使用的资源一定是 Try 阶段预留的业务资源。在 TCC 事务机制中认为，如果在 Try 阶段能正常的预留资源，那 Confirm 一定能完整正确的提交。Confirm 阶段也可以看成是对 Try 阶段的一个补充，Try+Confirm 一起组成了一个完整的业务逻辑。
 
 **Cancel：当 Try 阶段存在服务执行失败， 进入 Cancel 阶段**
 
-![img](http://dunwu.test.upcdn.net/snap/20200205205221.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205205221.png)
 
 Cancel 取消执行，释放 Try 阶段预留的业务资源，上面的例子中，Cancel 操作会把冻结的库存释放，并更新订单状态为取消。
 
@@ -318,7 +318,7 @@ TCC 事务机制相对于传统事务机制（X/Open XA），TCC 事务机制相
 
 整个业务处理流程如下：
 
-![img](http://dunwu.test.upcdn.net/snap/20200205220246.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205220246.png)
 
 > 1. **步骤 1 事务主动方处理本地事务。** 事务主动发在本地事务中处理业务更新操作和写消息表操作。 上面例子中库存服务阶段再本地事务中完成扣减库存和写消息表(图中 1、2)。
 > 2. **步骤 2 事务主动方通过 MQ 通知事务被动方处理事务**。 消息中间件可以基于 Kafka、RocketMQ 消息队列，事务主动方法主动写消息到消息队列，事务消费方消费并处理消息队列中的消息。 上面例子中，库存服务把事务待处理消息写到消息中间件，订单服务消费消息中间件的消息，完成新增订单（图中 3 - 5）。
@@ -358,7 +358,7 @@ TCC 事务机制相对于传统事务机制（X/Open XA），TCC 事务机制相
 
 **正常情况——事务主动方发消息** 这种情况下，事务主动方服务正常，没有发生故障，发消息流程如下：
 
-![img](http://dunwu.test.upcdn.net/snap/20200205230320.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205230320.png)
 
 > 1. 发送方向 MQ 服务端(MQ Server)发送 half 消息。
 > 2. MQ Server 将消息持久化成功之后，向发送方 ACK 确认消息已经发送成功。
@@ -368,7 +368,7 @@ TCC 事务机制相对于传统事务机制（X/Open XA），TCC 事务机制相
 
 **异常情况——事务主动方消息恢复** 在断网或者应用重启等异常情况下，图中 4 提交的二次确认超时未到达 MQ Server，此时处理逻辑如下：
 
-![img](http://dunwu.test.upcdn.net/snap/20200205230412.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200205230412.png)
 
 > 5. MQ Server 对该消息发起消息回查。
 > 6. 发送方收到消息回查后，需要检查对应消息的本地事务执行的最终结果。

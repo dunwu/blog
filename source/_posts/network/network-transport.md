@@ -35,13 +35,13 @@ date: 2019-03-06
 
 ## UDP 首部格式
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551092392065.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551092392065.png!zp"/></div>
 
 首部字段只有 8 个字节，包括源端口、目的端口、长度、检验和。12 字节的伪首部是为了计算检验和临时添加的。
 
 ## TCP 首部格式
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551092419042.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551092419042.png!zp"/></div>
 
 - **序号** ：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。
 
@@ -59,7 +59,7 @@ date: 2019-03-06
 
 ## TCP 的三次握手
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551092794258.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551092794258.png!zp"/></div>
 
 假设 A 为客户端，B 为服务器端。
 
@@ -81,7 +81,7 @@ date: 2019-03-06
 
 ## TCP 的四次挥手
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551092825974.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551092825974.png!zp"/></div>
 
 以下描述不讨论序号和确认号，因为序号和确认号的规则比较简单。并且不讨论 ACK，因为 ACK 在连接建立之后都为 1。
 
@@ -125,7 +125,7 @@ TCP 使用超时重传来实现可靠传输：如果一个已经发送的报文�
 
 ## TCP 滑动窗口
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551092841802.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551092841802.png!zp"/></div>
 
 窗口是缓存的一部分，用来暂时存放字节流。发送方和接收方各有一个窗口，接收方通过 TCP 报文段中的窗口字段告诉发送方自己的窗口大小，发送方根据这个值和其它信息设置自己的窗口大小。
 
@@ -143,7 +143,7 @@ TCP 使用超时重传来实现可靠传输：如果一个已经发送的报文�
 
 如果网络出现拥塞，分组将会丢失，此时发送方会继续重传，从而导致网络拥塞程度更高。因此当出现拥塞时，应当控制发送方的速率。这一点和流量控制很像，但是出发点不同。流量控制是为了让接收方能来得及接收，而拥塞控制是为了降低整个网络的拥塞程度。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551092981695.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551092981695.png!zp"/></div>
 
 TCP 主要通过四个算法来进行拥塞控制：慢开始、拥塞避免、快重传、快恢复。
 
@@ -154,7 +154,7 @@ TCP 主要通过四个算法来进行拥塞控制：慢开始、拥塞避免、�
 - 接收方有足够大的接收缓存，因此不会发生流量控制；
 - 虽然 TCP 的窗口基于字节，但是这里设窗口的大小单位为报文段。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551093119265.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551093119265.png!zp"/></div>
 
 ### 1. 慢开始与拥塞避免
 
@@ -174,4 +174,4 @@ TCP 主要通过四个算法来进行拥塞控制：慢开始、拥塞避免、�
 
 慢开始和快恢复的快慢指的是 cwnd 的设定值，而不是 cwnd 的增长速率。慢开始 cwnd 设定为 1，而快恢复 cwnd 设定为 ssthresh。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/1551093167163.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/1551093167163.png!zp"/></div>

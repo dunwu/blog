@@ -29,7 +29,7 @@ tags: ['设计', '架构', '性能']
 - **准（一致性）**：商品减库存方式非常关键，不能出现超卖。
 - **快（高性能）**：整个请求链路，从前端到后端，依赖组件都要做到协同优化。
 
-![img](http://dunwu.test.upcdn.net/snap/20200720073346.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200720073346.png)
 
 ## 前端优化
 
@@ -78,7 +78,7 @@ tags: ['设计', '架构', '性能']
 - 答题（摇一摇）：可以限制秒杀器并延缓请求。
 - 分层过滤：采用漏斗式的设计尽可能拦截无效请求。
 
-![img](http://dunwu.test.upcdn.net/snap/20200720094300.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200720094300.png)
 
 ### 减库存
 

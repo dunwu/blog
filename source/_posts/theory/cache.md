@@ -11,7 +11,7 @@ date: 2019-06-27 15:36
 >
 > 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 
-![img](http://dunwu.test.upcdn.net/snap/20200710163555.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200710163555.png)
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -145,7 +145,7 @@ date: 2019-06-27 15:36
 >
 > 国内网络异常复杂，跨运营商的网络访问会很慢。为了解决跨运营商或各地用户访问问题，可以在重要的城市，部署 CDN 应用。使用户就近获取所需内容，降低网络拥塞，提高用户访问响应速度和命中率。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559138689425.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559138689425.png"/></div>
 
 #### CDN 原理
 
@@ -190,7 +190,7 @@ CDN 的基本原理是广泛采用各种缓存服务器，将这些缓存服务�
 
 > **反向代理（Reverse Proxy）方式是指以代理服务器来接受 internet 上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给 internet 上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。**
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/web/nginx/reverse-proxy.png"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/web/nginx/reverse-proxy.png"/></div>
 
 #### 反向代理缓存原理
 
@@ -400,7 +400,7 @@ Memcached 服务器之间彼此不通信，它的分布式能力是依赖客户�
 
 不同的分布式缓存功能特性和实现原理方面有很大的差异，因此他们所适应的场景也有所不同。
 
-![img](http://dunwu.test.upcdn.net/snap/20200709224247.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200709224247.png)
 
 这里选取三个比较出名的分布式缓存（MemCache，Redis，Tair）来作为比较：
 
@@ -424,7 +424,7 @@ Memcached 服务器之间彼此不通信，它的分布式能力是依赖客户�
 
 通常，一个大型软件系统的缓存采用多级缓存方案：
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存整体架构.png" /></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/technology/cache/缓存整体架构.png" /></div>
 
 请求过程：
 
@@ -456,7 +456,7 @@ Memcached 服务器之间彼此不通信，它的分布式能力是依赖客户�
 
 其应用场景如图所示：
 
-![img](http://dunwu.test.upcdn.net/snap/20200611141419.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200611141419.png)
 
 Redis 用来存储热点数据，如果缓存不命中，则去查询数据库，并更新缓存。
 
@@ -477,7 +477,7 @@ Redis 用来存储热点数据，如果缓存不命中，则去查询数据库�
 
 #### 多级缓存查询
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/多级缓存2.png" width="600" /></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/technology/cache/多级缓存2.png" width="600" /></div>
 
 多级缓存查询流程如下：
 
@@ -496,7 +496,7 @@ Redis 用来存储热点数据，如果缓存不命中，则去查询数据库�
 
 为了解决进程内缓存不一致的问题，设计可以进一步优化:
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/多级缓存3.png" /></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/technology/cache/多级缓存3.png" /></div>
 
 通过消息队列的发布、订阅机制，可以通知其他应用节点对进程内缓存进行更新。使用这种方案，即使消息队列服务挂了或不可靠，由于先执行了数据库更新，但进程内缓存过期，刷新缓存时，也能保证数据的最终一致性。
 
@@ -532,13 +532,13 @@ Redis 用来存储热点数据，如果缓存不命中，则去查询数据库�
 
 **对于返回为 NULL 的依然缓存，对于抛出异常的返回不进行缓存**。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存穿透1.png" width="350px"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/technology/cache/缓存穿透1.png" width="350px"/></div>
 
 采用这种手段的会增加我们缓存的维护成本，需要在插入缓存的时候删除这个空缓存，当然我们可以通过设置较短的超时时间来解决这个问题。
 
 （二）过滤不可能存在的数据
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存穿透2.png" width="350px"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/technology/cache/缓存穿透2.png" width="350px"/></div>
 
 **制定一些规则过滤一些不可能存在的数据**。可以使用布隆过滤器（针对二进制操作的数据结构，所以性能高），比如你的订单 ID 明显是在一个范围 1-1000，如果不是 1-1000 之内的数据那其实可以直接给过滤掉。
 
@@ -619,7 +619,7 @@ Redis 用来存储热点数据，如果缓存不命中，则去查询数据库�
 
 这个操作有一个比较大的问题，在对缓存删除完之后，有一个读请求，这个时候由于缓存被删除所以直接会读库，读操作的数据是老的并且会被加载进入缓存当中，后续读请求全部访问的老数据。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/java/javaweb/technology/cache/缓存更新.png" width="400px"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/technology/cache/缓存更新.png" width="400px"/></div>
 
 对缓存的操作不论成功失败都不能阻塞我们对数据库的操作，那么很多时候删除缓存可以用异步的操作，但是先删除缓存不能很好的适用于这个场景。
 

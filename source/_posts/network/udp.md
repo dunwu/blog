@@ -20,7 +20,7 @@ date: 2019-05-31 11:51
 
 ## 简介
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559263939493.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559263939493.png!zp"/></div>
 
 UDP 是无连接的。数据报（类似于数据包）只在数据报级别有保证。数据报可能会无序的到达目的地，也有可能会遗失。UDP 不支持拥塞控制。虽然不如 TCP 那样有保证，但 UDP 通常效率更高。
 

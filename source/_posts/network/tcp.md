@@ -33,7 +33,7 @@ date: 2019-05-31 11:51
 
 **TCP（Transmission Control Protocol），即传输控制协议，它是一种`面向连接的`、`可靠的`、`基于字节流的`传输层通信协议**。TCP 由 RFC 793 定义。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559263786555.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559263786555.png!zp"/></div>
 
 ### TCP 的特性
 
@@ -60,7 +60,7 @@ TCP 对于需要高可靠性但时间紧迫的应用程序很有用。比如包�
 
 ### TCP 报文
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559264511812.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559264511812.png!zp"/></div>
 
 报文字段不一一阐述，重点关注以下几点：
 
@@ -72,11 +72,11 @@ TCP 对于需要高可靠性但时间紧迫的应用程序很有用。比如包�
   - **Window 又叫 Advertised-Window**，也就是著名的滑动窗口（Sliding Window），**用于解决流控的**。
   - **TCP Flag**，也就是包的类型，**主要是用于操控 TCP 的状态机的**。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559264593860.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559264593860.png!zp"/></div>
 
 ## TCP 通信流程
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559264679371.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559264679371.png!zp"/></div>
 
 TCP 完整的通信分为三块：
 
@@ -92,7 +92,7 @@ TCP 完整的通信分为三块：
 
 （2）什么是三次握手？
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/三次握手.gif!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/三次握手.gif!zp"/></div>
 
 如上图所示，三次握手流程如下：
 
@@ -122,7 +122,7 @@ TCP 完整的通信分为三块：
 
 如上图所示，四次挥手流程如下：
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/cs/network/transport/四次挥手.gif!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/transport/四次挥手.gif!zp"/></div>
 
 1. 第一次挥手 - 客户端向服务端发送一个 FIN 包，用来关闭客户端到服务端的数据传送。
 2. 第二次挥手 - 服务端收到这个 FIN 包，向客户端发送一个 ACK 包，确认序号为收到的序号加 1。和 SYN 一样，一个 FIN 将占用一个序号。
@@ -146,14 +146,14 @@ TCP 头里有一个字段叫 Window，又叫 Advertised-Window，这个字段是
 
 滑动窗口原理是什么？
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559265819762.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559265819762.png!zp"/></div>
 
 1. 已发送已确认 - 数据流中最早的字节已经发送并得到确认。这些数据是站在发送端的角度来看的。上图中的 31 个字节已经发送并确认。
 2. 已发送但尚未确认 - 已发送但尚未得到确认的字节。发送方在确认之前，不认为这些数据已经被处理。上图中的 32 \~ 45 字节为第 2 类。
 3. 未发送而接收方已 Ready - 设备尚未将数据发出 ，但接收方根据最近一次关于发送方一次要发送多少字节确认自己有足够空间。发送方会立即尝试发送。上图中的 46 \~ 51 字节为第 3 类。
 4. 未发送而接收方 Not Ready - 由于接收方 not ready，还不允许将这部分数据发出。上图中的 52 以后的字节为第 4 类。
 
-<div align="center"><img src="http://dunwu.test.upcdn.net/snap/1559265927658.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559265927658.png!zp"/></div>
 
 这张图片相对于上一张图片，滑动窗口偏移了 5 个字节，意味着有 5 个已发送的字节得到了确认。
 

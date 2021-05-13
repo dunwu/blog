@@ -27,7 +27,7 @@ date: 2020-02-10 16:00
 
 5W2H 分析法的意义在于：避免遇到一个问题后，不知从何入手。通过设问方式，由点成线，由线成面，把问题的关键点串联起来，整理出问题的解决思路。
 
-![5W2H](http://dunwu.test.upcdn.net/snap/20200210161837.png)
+![5W2H](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200210161837.png)
 
 - **why** - 为什么？为什么要这么做？理由何在？原因是什么？
 - **what** - 是什么？目的是什么？作什么工作？
@@ -48,7 +48,7 @@ date: 2020-02-10 16:00
 
 时间管理四象限法则是美国的管理学家科维提出的一个时间管理的理论，按处理顺序划分为：紧急又重要、重要不紧急、紧急不重要、不紧急不重要。
 
-![img](http://dunwu.test.upcdn.net/snap/20200210173335.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200210173335.png)
 
 - **第一象限（重要而紧急**）
 

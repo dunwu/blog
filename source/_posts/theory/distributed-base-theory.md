@@ -7,7 +7,7 @@ date: 2020-02-02 19:39
 
 # 分布式基础原理
 
-![img](http://dunwu.test.upcdn.net/snap/20200202201007.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200202201007.png)
 
 > 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
 >
@@ -58,7 +58,7 @@ CAP 定理是加州大学计算机科学家埃里克·布鲁尔提出来的猜�
 CAP 定理又称为 CAP 原则，指的是：**在一个分布式系统中， `一致性（C：Consistency）`、`可用性（A：Availability）` 和 `分区容忍性（P：Partition Tolerance）`，最多只能同时满足其中两项**。
 
 <div align="center">
-<img src="http://dunwu.test.upcdn.net/cs/design/architecture/分布式理论-CAP.jpg" width="450"/>
+<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/分布式理论-CAP.jpg" width="450"/>
 </div>
 
 ### 分区容错性
@@ -125,7 +125,7 @@ BASE 是 **`基本可用（Basically Available）`**、**`软状态（Soft State
 
 BASE 理论是对 CAP 中一致性和可用性权衡的结果，它的理论的核心思想是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。
 
-![img](http://dunwu.test.upcdn.net/cs/design/architecture/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA-BASE.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA-BASE.png)
 
 ### 基本可用
 

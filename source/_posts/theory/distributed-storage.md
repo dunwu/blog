@@ -47,7 +47,7 @@ date: 2019-10-16 20:54
 
 读写分离的基本实现是：
 
-![img](http://dunwu.test.upcdn.net/cs/database/mysql/master-slave-proxy.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/cs/database/mysql/master-slave-proxy.png)
 
 - 数据库服务器搭建主从集群，一主一从、一主多从都可以。
 - 数据库主机负责读写操作，从机只负责读操作。
@@ -111,7 +111,7 @@ date: 2019-10-16 20:54
 
 > 访问频率拆分，是 **把一个有很多字段的表给拆分成多个表，或者是多个库上去**。一般来说，会 **将较少的、访问频率较高的字段放到一个表中**，然后 **将较多的、访问频率较低的字段放到另外一个表中**。因为数据库是有缓存的，访问频率高的行字段越少，就可以在缓存里缓存更多的行，性能就越好。这个一般在表层面做的较多一些。
 
-![image-20200114211639899](http://dunwu.test.upcdn.net/snap/image-20200114211639899.png)
+![image-20200114211639899](https://raw.githubusercontent.com/dunwu/images/dev/snap/image-20200114211639899.png)
 
 一般来说，满足下面的条件就可以考虑扩容了：
 
@@ -128,7 +128,7 @@ date: 2019-10-16 20:54
 
 水平分片从理论上突破了单机数据量处理的瓶颈，并且扩展相对自由，是分库分表的标准解决方案。
 
-![image-20200114211203589](http://dunwu.test.upcdn.net/snap/image-20200114211203589.png)
+![image-20200114211203589](https://raw.githubusercontent.com/dunwu/images/dev/snap/image-20200114211203589.png)
 
 一般来说，**单表有 200 万条数据** 的时候，性能就会相对差一些了，需要考虑分表了。但是，这也要视具体情况而定，可能是 100 万条，也可能是 500 万条，SQL 越复杂，就最好让单表行数越少。
 
@@ -136,7 +136,7 @@ date: 2019-10-16 20:54
 
 #### 分库分表策略
 
-![img](http://dunwu.test.upcdn.net/snap/20200608091832.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200608091832.png)
 
 分库分表策略主要有两种：
 
@@ -179,7 +179,7 @@ date: 2019-10-16 20:54
 
 停机迁移/扩容是最暴力、最简单的迁移、扩容方案。
 
-![img](http://dunwu.test.upcdn.net/snap/20200601114836.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200601114836.png)
 
 ##### 停机迁移/扩容流程
 
@@ -205,7 +205,7 @@ date: 2019-10-16 20:54
 
 #### 双写迁移
 
-![img](http://dunwu.test.upcdn.net/snap/20200601135751.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200601135751.png)
 
 ##### 双写迁移流程
 
@@ -225,11 +225,11 @@ date: 2019-10-16 20:54
 
 生产环境的数据库，为了保证高可用，一般会采用主备架构。主库支持读写操作，从库支持读操作。
 
-![img](http://dunwu.test.upcdn.net/snap/20200601121215.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200601121215.png)
 
 由于主备节点数据一致，所以将从库升级为主节点，并修改分片配置，将从节点作为分库之一，就实现了扩容。
 
-![img](http://dunwu.test.upcdn.net/snap/20200601121400.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200601121400.png)
 
 ##### 升级从库的流程
 
