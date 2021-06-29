@@ -27,7 +27,7 @@ date: 2019-05-29 23:19
 
 <!-- /TOC -->
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559138689425.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559138689425.png"/></div>
 
 ## 简介
 
@@ -66,7 +66,7 @@ CDN 是一个策略性部署的整体系统，包括**分布式存储**、**负�
 
 CDN 网络将存储资源分布到各个地理位置、各个网段。存储系统作为 CDN 系统密不可分的一部分，将 CDN 分发的文件和数据库表记录内容存储起来，提供持续服务。存储系统采用三级存储架构，包括核心存储、CDN 服务节点分布式缓存和终端本地缓存。任意一个点的存储崩溃或失效，并不影响系统服务的可用性。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559140068433.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559140068433.png"/></div>
 
 如 CDN 系统在 5 大运营商（中国电信、中国网通、中国铁通、中国移动、中国联通）以及 2 大专有网络（中国教育和科研计算机网、中国科技网）都布有 CDN 节点。**这样就消除了不同运营商之间互联的瓶颈造成的影响，实现了跨运营商的网络加速，保证不同网络中的用户都能得到良好的访问质量。**
 
@@ -91,7 +91,7 @@ CDN 负载均衡系统实现 CDN 的**内容路由功能**。它的作用是将�
 
 ## CDN 访问流程
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559126750010.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/snap/1559126750010.png"/></div>
 
 1. 用户在浏览器中访问域名，域名解析的请求被发往网站的 DNS 域名解析服务器；
 2. 由于网站的 DNS 域名解析服务器对此域名的解析设置了 CNAME，请求被指向 CDN 网络中的智能 DNS 负载均衡系统；

@@ -11,7 +11,7 @@ date: 2019-02-20 22:26
 >
 > 计算机网络是指将地理位置不同的具有独立功能的多台计算机及其外部设备，通过通信线路连接起来，在网络操作系统，网络管理软件及网络通信协议的管理和协调下，实现资源共享和信息传递的计算机系统。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/network.jpg!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/network.jpg"/></div>
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
@@ -106,14 +106,14 @@ date: 2019-02-20 22:26
 >
 > 这是学习计算机网络知识宏观层面必须要了解的核心点。知道了这些，对于网络的体系结构就基本上了解了。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/overview/network-layers.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/overview/network-layers.png"/></div>
 
 计算机网络分层一般有三种划分体系：OSI 分层；五层协议分层；TCP/IP 协议分层。
 
 - OSI 的七层体系结构概念清楚，理论完整，但是比较复杂且不实用，所以并不流行。
 - 五层协议分层是一种折中方案，在现实中更为流行。
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/overview/网络分层架构图.png!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/network/overview/网络分层架构图.png"/></div>
 
 ### 物理层
 

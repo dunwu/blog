@@ -329,7 +329,7 @@ MQ 的常见问题有：
 ### 3.1. Dubbo 的实现过程？
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/distributed/rpc/dubbo/dubbo基本架构.png!zp" width="500"/>
+<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/distributed/rpc/dubbo/dubbo基本架构.png" width="500"/>
 </div>
 
 节点角色：
@@ -378,7 +378,7 @@ MQ 的常见问题有：
 
 ### 3.3. Dubbo 集群容错策略 ？
 
-<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/distributed/rpc/dubbo/dubbo%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99.jpg!zp"/></div>
+<div align="center"><img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/distributed/rpc/dubbo/dubbo%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99.jpg"/></div>
 - **Failover** - 失败自动切换，当出现失败，重试其它服务器。通常用于读操作，但重试会带来更长延迟。可通过 retries="2" 来设置重试次数(不含第一次)。
 - **Failfast** - 快速失败，只发起一次调用，失败立即报错。通常用于非幂等性的写操作，比如新增记录。
 - **Failsafe** - 失败安全，出现异常时，直接忽略。通常用于写入审计日志等操作。
@@ -447,7 +447,7 @@ Protocol Buffer 的数据压缩效果好（即序列化后的数据量体积小�
 ZooKeeper 是一个分布式应用协调系统，已经用到了许多分布式项目中，用来完成统一命名服务、状态同步服务、集群管理、分布式应用配置项的管理等工作。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper-service.png!zp" />
+<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper-service.png" />
 </div>
 
 1. 每个 Server 在内存中存储了一份数据；

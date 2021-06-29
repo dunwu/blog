@@ -111,7 +111,7 @@ Token 的意思是“令牌”，是服务端生成的一串字符串，作为�
 > 缺点：**当服务器节点宕机时，将丢失该服务器节点上的所有 Session**。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/MultiNode-StickySessions.jpg!zp" />
+<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/MultiNode-StickySessions.jpg" />
 </div>
 
 ### 2.2. Session 复制共享
@@ -121,7 +121,7 @@ Token 的意思是“令牌”，是服务端生成的一串字符串，作为�
 > 缺点：**占用过多内存**；**同步过程占用网络带宽以及服务器处理器时间**。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/MultiNode-SessionReplication.jpg!zp" />
+<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/MultiNode-SessionReplication.jpg" />
 </div>
 
 ### 2.3. 基于缓存的 session 共享
@@ -131,7 +131,7 @@ Token 的意思是“令牌”，是服务端生成的一串字符串，作为�
 > 缺点：需要去实现存取 Session 的代码。
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/MultiNode-SpringSession.jpg!zp" />
+<img src="https://raw.githubusercontent.com/dunwu/images/dev/cs/design/architecture/MultiNode-SpringSession.jpg" />
 </div>
 
 ## 3. 具体实现
