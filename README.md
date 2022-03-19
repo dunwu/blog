@@ -83,36 +83,34 @@
 ## 6. 计算机网络
 
 > 如果你是做通信领域的开发，或者是 Web 应用的开发，那就或多或少需要了解一些计算机网络的知识 。
->
-> 本人做 C 程序员时，从事过两年通信领域的开发，整理了一些基本的计算机网络知识点，汇总于此。
 
-[计算机网络面试题](https://github.com/dunwu/blog/blob/master/source/_posts/network/network-interview.md) 💯
+- [网络通信知识点面经](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/网络通信知识点面经.md)
+- [计算机网络指南](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/计算机网络指南.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
 
 ### 6.1. 网络分层
 
-> 理解计算机网络，首先需要从宏观层面了解计算机网络通信的分层结构。最有代表性的是 OSI 七层结构模型，但现实中更流行的是五层结构模型（本人也比较倾向于这种模型）。
+> 理解计算机网络，首先需要从宏观层面了解计算机网络通信的分层结构。最有代表性的是 OSI 七层结构模型，但现实中更流行的是五层结构模型。
 >
 > 了解网络分层结构，需要了解每个网络层级在网络通信中的定位，以及这个层级主要的通信设备、通信协议。
 
-- [计算机网络指南](https://github.com/dunwu/blog/blob/master/source/_posts/network/network-guide.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
-- [物理层](https://github.com/dunwu/blog/blob/master/source/_posts/network/network-physical.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
-- [链路层](https://github.com/dunwu/blog/blob/master/source/_posts/network/network-data-link.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-- [网络层](https://github.com/dunwu/blog/blob/master/source/_posts/network/network-network.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
-- [传输层](https://github.com/dunwu/blog/blob/master/source/_posts/network/network-transport.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
-- [应用层](https://github.com/dunwu/blog/blob/master/source/_posts/network/network-application.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [物理层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/物理层.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+- [数据链路层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/数据链路层.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+- [网络层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/网络层.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
+- [传输层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/传输层.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- [应用层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/应用层.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 
-### 6.2. 重要技术
+### 6.2. 网络技术
 
 > 对计算机网络分层有了基本的认知后，可以根据个人的工作、学习需要，针对性的会接触到的协议或技术加深理解。
 
-- [HTTP](https://github.com/dunwu/blog/blob/master/source/_posts/network/http.md)
-- [DNS](https://github.com/dunwu/blog/blob/master/source/_posts/network/dns.md)
-- [TCP](https://github.com/dunwu/blog/blob/master/source/_posts/network/tcp.md)
-- [UDP](https://github.com/dunwu/blog/blob/master/source/_posts/network/udp.md)
-- [ICMP](https://github.com/dunwu/blog/blob/master/source/_posts/network/icmp.md)
-- [WebSocket](https://github.com/dunwu/blog/blob/master/source/_posts/network/websocket.md)
-- [CDN](https://github.com/dunwu/blog/blob/master/source/_posts/network/cdn.md)
-- [VPN](https://github.com/dunwu/blog/blob/master/source/_posts/network/vpn.md)
+- [HTTP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/http.md)
+- [DNS](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/dns.md)
+- [TCP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/tcp.md)
+- [UDP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/udp.md)
+- [ICMP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/icmp.md)
+- [WebSocket](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/websocket.md)
+- [CDN](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/cdn.md)
+- [VPN](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/vpn.md)
 
 ## 7. 大数据
 
