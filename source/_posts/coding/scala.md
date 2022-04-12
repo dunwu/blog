@@ -2,7 +2,7 @@
 title: 一篇文章让你彻底掌握 Scala
 categories: ['编程']
 tags: ['编程', 'scala']
-date: 2021-04-14 15:27
+date: 2021-04-14 15:27:00
 ---
 
 # Scala 入门

@@ -1,6 +1,6 @@
 ---
 title: 关于我
-date: 2020-02-01 22:53
+date: 2020-02-01 22:53:00
 type: 'about'
 comments: false
 ---

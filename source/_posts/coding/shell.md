@@ -2,7 +2,7 @@
 title: 一篇文章让你彻底掌握 Shell
 categories: ['编程']
 tags: ['编程', 'shell']
-date: 2017-11-17 18:16
+date: 2017-11-17 18:16:00
 ---
 
 > 由于 bash 是 Linux 标准默认的 shell 解释器，可以说 bash 是 shell 编程的基础。

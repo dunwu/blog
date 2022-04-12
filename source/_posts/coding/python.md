@@ -2,7 +2,7 @@
 title: 一篇文章让你彻底掌握 Python
 categories: ['编程']
 tags: ['编程', 'python']
-date: 2018-06-28 16:52
+date: 2018-06-28 16:52:00
 ---
 
 > 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
