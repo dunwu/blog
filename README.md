@@ -119,33 +119,36 @@
 
 > 如果你是做通信领域的开发，或者是 Web 应用的开发，那就或多或少需要了解一些计算机网络的知识 。
 
-- [网络通信知识点面经](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/网络通信知识点面经.md)
-- [计算机网络指南](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/计算机网络指南.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
+> 如果你是做通信领域的开发，或者是 Web 应用的开发，那就或多或少需要了解一些计算机网络的知识 。
 
-### 6.1. 网络分层
+- [计算机网络面试总结](source/_posts/网络/01.计算机网络面试总结.md)
+- [计算机网络指南](source/_posts/网络/02.计算机网络指南.md) - 关键词：核心概念、拓扑结构、作用范围、性能指标、体系结构
+
+### 网络分层
 
 > 理解计算机网络，首先需要从宏观层面了解计算机网络通信的分层结构。最有代表性的是 OSI 七层结构模型，但现实中更流行的是五层结构模型。
 >
 > 了解网络分层结构，需要了解每个网络层级在网络通信中的定位，以及这个层级主要的通信设备、通信协议。
 
-- [物理层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/物理层.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
-- [数据链路层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/数据链路层.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
-- [网络层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/网络层.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
-- [传输层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/传输层.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
-- [应用层](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/应用层.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
+- [计算机网络之物理层](source/_posts/网络/01.网络分层/01.物理层.md) - 关键词：调制、解调、数字信号、模拟信号、通信媒介、信道复用
+- [计算机网络之数据链路层](source/_posts/网络/01.网络分层/02.数据链路层.md) - 关键词：点对点信道、广播信道、`PPP`、`CSMA/CD`、局域网、以太网、`MAC`、适配器、集线器、网桥、交换机
+- [计算机网络之网络层](source/_posts/网络/01.网络分层/03.网络层.md) - 关键词：`IP`、`ICMP`、`ARP`、路由
+- [计算机网络之传输层](source/_posts/网络/01.网络分层/04.传输层.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
+- [计算机网络之应用层](source/_posts/网络/01.网络分层/05.应用层.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 
-### 6.2. 网络技术
+### 网络协议
 
-> 对计算机网络分层有了基本的认知后，可以根据个人的工作、学习需要，针对性的会接触到的协议或技术加深理解。
+- [超文本传输协议 HTTP](source/_posts/网络/02.网络协议/01.HTTP.md)
+- [域名系统协议 DNS](source/_posts/网络/02.网络协议/02.DNS)
+- [传输控制协议 TCP](source/_posts/网络/02.网络协议/03.TCP.md)
+- [用户数据报协议 UDP](source/_posts/网络/02.网络协议/04.UDP.md)
+- [ICMP](source/_posts/网络/02.网络协议/05.ICMP.md)
 
-- [HTTP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/http.md)
-- [DNS](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/dns.md)
-- [TCP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/tcp.md)
-- [UDP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/udp.md)
-- [ICMP](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/icmp.md)
-- [WebSocket](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/websocket.md)
-- [CDN](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/cdn.md)
-- [VPN](https://github.com/dunwu/dunwu.github.io/blob/master/docs/network/vpn.md)
+### 网络技术
+
+- [WebSocket](source/_posts/网络/03.网络技术/01.WebSocket.md)
+- [CDN](source/_posts/网络/03.网络技术/02.CDN.md)
+- [VPN](source/_posts/网络/03.网络技术/03.VPN.md)
 
 ## 7. 大数据
 
