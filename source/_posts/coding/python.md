@@ -1,7 +1,11 @@
 ---
 title: 一篇文章让你彻底掌握 Python
-categories: ['编程']
-tags: ['编程', 'python']
+categories:
+  - 编程
+tags:
+  - 编程
+  - python
+abbrlink: 30b41516
 date: 2018-06-28 16:52:00
 ---
 

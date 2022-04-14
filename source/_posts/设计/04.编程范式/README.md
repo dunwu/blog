@@ -1,11 +1,12 @@
 ---
 title: 编程范式
-categories: 
+categories:
   - 设计
   - 编程范式
-tags: 
+tags:
   - 设计
   - 编程范式
+abbrlink: 98a12616
 date: 2021-04-29 16:05:03
 ---
 

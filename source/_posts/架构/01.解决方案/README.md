@@ -1,12 +1,13 @@
 ---
 title: README
+categories:
+  - 架构
+  - 解决方案
+tags:
+  - 架构
+  - 解决方案
+abbrlink: 77cd4175
 date: 2021-11-08 08:15:33
-categories: 
-  - 架构
-  - 解决方案
-tags: 
-  - 架构
-  - 解决方案
 ---
 
 # 解决方案

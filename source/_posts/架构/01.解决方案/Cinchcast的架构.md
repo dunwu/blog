@@ -1,12 +1,13 @@
 ---
 title: Cinchcast 的架构
+categories:
+  - 架构
+  - 解决方案
+tags:
+  - 架构
+  - 解决方案
+abbrlink: 57ce02bb
 date: 2021-11-08 08:15:33
-categories: 
-  - 架构
-  - 解决方案
-tags: 
-  - 架构
-  - 解决方案
 ---
 
 # Cinchcast 的架构

@@ -1,7 +1,11 @@
 ---
 title: 一篇文章让你彻底掌握 Shell
-categories: ['编程']
-tags: ['编程', 'shell']
+categories:
+  - 编程
+tags:
+  - 编程
+  - shell
+abbrlink: '41049874'
 date: 2017-11-17 18:16:00
 ---
 

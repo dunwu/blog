@@ -1,11 +1,12 @@
 ---
 title: 设计模式
-categories: 
+categories:
   - 设计
   - 设计模式
-tags: 
+tags:
   - 设计
   - 设计模式
+abbrlink: 364ea8cc
 date: 2020-08-10 10:59:18
 ---
 

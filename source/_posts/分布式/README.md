@@ -1,10 +1,11 @@
 ---
 title: 分布式
+categories:
+  - 分布式
+tags:
+  - 分布式
+abbrlink: fe3c2cd2
 date: 2019-03-08 13:16:53
-categories: 
-  - 分布式
-tags: 
-  - 分布式
 ---
 
 # 分布式

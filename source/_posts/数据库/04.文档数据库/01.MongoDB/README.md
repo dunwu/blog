@@ -1,14 +1,15 @@
 ---
 title: MongoDB 教程
+categories:
+  - 数据库
+  - 文档数据库
+  - MongoDB
+tags:
+  - 数据库
+  - 文档数据库
+  - MongoDB
+abbrlink: 18ca68ec
 date: 2020-09-09 20:47:14
-categories: 
-  - 数据库
-  - 文档数据库
-  - MongoDB
-tags: 
-  - 数据库
-  - 文档数据库
-  - MongoDB
 ---
 
 # MongoDB 教程

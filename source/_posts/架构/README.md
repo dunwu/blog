@@ -1,10 +1,11 @@
 ---
 title: 架构设计
+categories:
+  - 架构
+tags:
+  - 架构
+abbrlink: 2582d3b8
 date: 2019-03-08 13:16:53
-categories: 
-  - 架构
-tags: 
-  - 架构
 ---
 
 # 架构设计

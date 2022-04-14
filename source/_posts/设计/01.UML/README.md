@@ -1,12 +1,13 @@
 ---
 title: README
+categories:
+  - 设计
+  - UML
+tags:
+  - 设计
+  - UML
+abbrlink: 77cd4175
 date: 2020-08-10 10:59:18
-categories: 
-  - 设计
-  - UML
-tags: 
-  - 设计
-  - UML
 ---
 # UML 教程
 

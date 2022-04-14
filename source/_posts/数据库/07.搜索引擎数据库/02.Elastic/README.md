@@ -1,14 +1,15 @@
 ---
 title: Elastic 技术栈
+categories:
+  - 数据库
+  - 搜索引擎数据库
+  - Elastic
+tags:
+  - 数据库
+  - 搜索引擎数据库
+  - Elastic
+abbrlink: f85b36c8
 date: 2022-04-11 16:52:35
-categories: 
-  - 数据库
-  - 搜索引擎数据库
-  - Elastic
-tags: 
-  - 数据库
-  - 搜索引擎数据库
-  - Elastic
 ---
 
 # Elastic 技术栈

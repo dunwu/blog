@@ -1,7 +1,12 @@
 ---
 title: 合理对文档进行归类
-categories: ['效率提升', '规范']
-tags: ['效率提升', '规范']
+categories:
+  - 效率提升
+  - 规范
+tags:
+  - 效率提升
+  - 规范
+abbrlink: c76e2e58
 date: 2018-12-11 10:23:22
 ---
 

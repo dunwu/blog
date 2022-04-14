@@ -1,7 +1,11 @@
 ---
 title: Mac 常用技巧总结
-categories: ['操作系统']
-tags: ['操作系统', 'Mac']
+categories:
+  - 操作系统
+tags:
+  - 操作系统
+  - Mac
+abbrlink: 7d18a982
 date: 2019-05-07 20:35:00
 ---
 

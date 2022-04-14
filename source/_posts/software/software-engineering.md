@@ -1,7 +1,11 @@
 ---
 title: 软件工程入门指南
-categories: ['软件工程']
-tags: ['软件工程', '管理']
+categories:
+  - 软件工程
+tags:
+  - 软件工程
+  - 管理
+abbrlink: f9246006
 date: 2017-11-20 17:35:00
 ---
 

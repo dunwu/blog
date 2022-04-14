@@ -1,12 +1,13 @@
 ---
 title: 数据库中间件和代理
-date: 2022-04-11 16:52:35
-categories: 
+categories:
   - 数据库
   - 数据库中间件
-tags: 
+tags:
   - 数据库
   - 中间件
+abbrlink: adb7697e
+date: 2022-04-11 16:52:35
 ---
 
 # 数据库中间件和代理

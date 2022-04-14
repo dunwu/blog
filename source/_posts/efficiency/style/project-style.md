@@ -1,7 +1,12 @@
 ---
 title: 合理规划项目
-categories: ['效率提升', '规范']
-tags: ['效率提升', '规范']
+categories:
+  - 效率提升
+  - 规范
+tags:
+  - 效率提升
+  - 规范
+abbrlink: d89d9b4c
 date: 2019-03-18 19:26:20
 ---
 

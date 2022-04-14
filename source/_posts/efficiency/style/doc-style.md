@@ -1,7 +1,12 @@
 ---
 title: 合理编排技术文档
-categories: ['效率提升', '规范']
-tags: ['效率提升', '规范']
+categories:
+  - 效率提升
+  - 规范
+tags:
+  - 效率提升
+  - 规范
+abbrlink: 3cdd6cc2
 date: 2018-12-11 10:23:22
 ---
 

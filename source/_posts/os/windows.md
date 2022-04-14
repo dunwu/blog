@@ -1,7 +1,11 @@
 ---
-title:  Windows 常用技巧总结
-categories: ['操作系统']
-tags: ['操作系统', 'Windows']
+title: Windows 常用技巧总结
+categories:
+  - 操作系统
+tags:
+  - 操作系统
+  - Windows
+abbrlink: 88c0ee7
 date: 2019-05-07 20:35:00
 ---
 
