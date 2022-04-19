@@ -1,22 +1,20 @@
 ---
 title: {{ title }}
 date: {{ date }}
-categories: ['','']
-tags: ['','']
+categories: 
+  -
+tags:
+  -
 ---
 
-# Title
-
-> 📦 本文已归档到：「[blog](https://github.com/dunwu/blog)」
-
-<!-- TOC depthFrom:2 depthTo:3 -->
-
-<!-- /TOC -->
+# XXX
 
 ## 简介
 
+### 什么是XXX
+
+### XXX有什么用
+
+## XXX原理
+
 ## 参考资料
-
-
-
-
