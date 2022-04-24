@@ -1,11 +1,11 @@
 ---
 title: Java 监控诊断
-categories:
+categories: 
   - 编程
   - Java
   - 软件
   - 监控诊断
-tags:
+tags: 
   - Java
   - 监控
   - 诊断

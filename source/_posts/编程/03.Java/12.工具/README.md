@@ -1,13 +1,13 @@
 ---
 title: Java 工具
-categories:
+categories: 
   - 编程
   - Java
   - 工具
-tags:
+tags: 
   - Java
   - 工具
-abbrlink: '13035347'
+abbrlink: 13035347
 date: 2022-02-18 08:53:11
 hidden: true
 ---
@@ -34,10 +34,10 @@ hidden: true
 
 ### Java 测试工具
 
-- [Freemark](04.测试/01.Junit.md)
-- [Velocity](04.测试/02.Mockito.md)
-- [Thymeleaf](04.测试/03.Jmeter.md)
-- [Thymeleaf](04.测试/04.JMH.md)
+- [Junit](04.测试/01.Junit.md)
+- [Mockito](04.测试/02.Mockito.md)
+- [Jmeter](04.测试/03.Jmeter.md)
+- [JMH](04.测试/04.JMH.md)
 
 ### 其他
 

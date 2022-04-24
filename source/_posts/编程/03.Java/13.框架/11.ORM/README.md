@@ -1,11 +1,11 @@
 ---
 title: Java ORM 框架
-categories:
+categories: 
   - 编程
   - Java
   - 框架
   - ORM
-tags:
+tags: 
   - Java
   - 框架
   - ORM

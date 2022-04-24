@@ -1,10 +1,10 @@
 ---
 title: Java 框架
-categories:
+categories: 
   - 编程
   - Java
   - 框架
-tags:
+tags: 
   - Java
   - 框架
 abbrlink: b3f7d0e8
@@ -26,8 +26,8 @@ hidden: true
 
 ### ORM
 
-- [Mybatis 快速入门](01.ORM/01.Mybatis快速入门.md)
-- [Mybatis 原理](01.ORM/02.Mybatis原理.md)
+- [Mybatis 快速入门](11.ORM/01.Mybatis快速入门.md)
+- [Mybatis 原理](11.ORM/02.Mybatis原理.md)
 
 ### 安全
 
@@ -37,16 +37,16 @@ hidden: true
 >
 > spring-security 功能更丰富，也比 shiro 更复杂。值得一提的是由于 spring-security 是 spring 团队开发，所以集成 spring 和 spring-boot 框架更容易。
 
-- [Shiro](02.安全/01.Shiro.md)
-- [SpringSecurity](02.安全/02.SpringSecurity.md)
+- [Shiro](12.安全/01.Shiro.md)
+- [SpringSecurity](12.安全/02.SpringSecurity.md)
 
 ### IO
 
-- [Netty](03.IO/01.Netty.md)
+- [Netty](13.IO/01.Netty.md)
 
 ### 微服务
 
-- [Dubbo](04.微服务/01.Dubbo.md)
+- [Dubbo](14.微服务/01.Dubbo.md)
 
 ## 📚 资料
 

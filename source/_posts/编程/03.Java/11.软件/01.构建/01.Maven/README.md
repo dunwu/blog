@@ -1,11 +1,11 @@
 ---
 title: Maven 教程
-categories:
+categories: 
   - 编程
   - Java
   - 软件
   - 构建
-tags:
+tags: 
   - Java
   - 构建
   - Maven

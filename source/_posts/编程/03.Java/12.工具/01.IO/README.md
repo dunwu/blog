@@ -1,11 +1,11 @@
 ---
 title: Java 序列化工具
-categories:
+categories: 
   - 编程
   - Java
   - 工具
   - IO
-tags:
+tags: 
   - Java
   - IO
   - 序列化

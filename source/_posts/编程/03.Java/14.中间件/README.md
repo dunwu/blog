@@ -1,10 +1,10 @@
 ---
 title: Java 中间件
-categories:
+categories: 
   - 编程
   - Java
   - 中间件
-tags:
+tags: 
   - 编程
   - Java
   - 中间件
@@ -24,10 +24,10 @@ date: 2022-04-09 15:11:37
 >
 > 如果想深入学习各种消息队列产品，建议先了解一下 [消息队列基本原理](https://github.com/dunwu/blog/blob/master/source/_posts/theory/mq.md) ，有助于理解消息队列特性的实现和设计思路。
 
-- [消息队列面试](01.消息队列/01.消息队列面试.md)
-- [消息队列基本原理](01.消息队列/02.消息队列基本原理.md)
-- [RocketMQ](01.消息队列/03.RocketMQ.md)
-- [ActiveMQ](01.消息队列/04.ActiveMQ.md)
+- [消息队列面试](01.MQ/01.消息队列面试.md)
+- [消息队列基本原理](01.MQ/02.消息队列基本原理.md)
+- [RocketMQ](01.MQ/03.RocketMQ.md)
+- [ActiveMQ](01.MQ/04.ActiveMQ.md)
 
 #### 缓存
 

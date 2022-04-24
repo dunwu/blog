@@ -1,11 +1,11 @@
 ---
 title: Java 和消息队列
-categories:
+categories: 
   - 编程
   - Java
   - 中间件
   - MQ
-tags:
+tags: 
   - Java
   - 中间件
   - MQ

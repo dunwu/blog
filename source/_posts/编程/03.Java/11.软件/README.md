@@ -1,11 +1,11 @@
 ---
 title: Java 软件
-categories:
+categories: 
   - 编程
   - Java
   - 软件
   - IDE
-tags:
+tags: 
   - Java
 abbrlink: bd90f980
 date: 2022-02-18 08:53:11

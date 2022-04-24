@@ -1,11 +1,11 @@
 ---
 title: Java 缓存
-categories:
+categories: 
   - 编程
   - Java
   - 中间件
   - 缓存
-tags:
+tags: 
   - Java
   - 中间件
   - 缓存

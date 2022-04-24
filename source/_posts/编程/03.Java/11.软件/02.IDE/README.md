@@ -1,11 +1,11 @@
 ---
 title: Java IDE
-categories:
+categories: 
   - 编程
   - Java
   - 软件
   - IDE
-tags:
+tags: 
   - Java
   - IDE
 abbrlink: c44dd053
