@@ -1,15 +1,14 @@
 ---
 title: JavaSE
-categories:
-  - 编程
+date: 2022-05-06 09:19:33
+categories: 
   - Java
   - JavaSE
-tags:
+tags: 
   - Java
   - JavaSE
 permalink: /pages/69d2f8/
 abbrlink: 2b32338b
-date: 2022-05-06 09:19:33
 hidden: true
 ---
 

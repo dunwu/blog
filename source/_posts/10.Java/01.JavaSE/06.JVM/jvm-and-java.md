@@ -2,7 +2,6 @@
 title: jvm-and-java
 date: 2020-10-16 20:29:24
 categories: 
-  - 编程
   - Java
   - JavaSE
   - JVM

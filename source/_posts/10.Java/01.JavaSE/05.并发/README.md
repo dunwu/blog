@@ -2,7 +2,6 @@
 title: Java 并发
 date: 2020-06-04 13:51:01
 categories: 
-  - 编程
   - Java
   - JavaSE
   - 并发

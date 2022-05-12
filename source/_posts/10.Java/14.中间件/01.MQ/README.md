@@ -2,7 +2,6 @@
 title: Java 和消息队列
 date: 2022-02-17 22:34:30
 categories: 
-  - 编程
   - Java
   - 中间件
   - MQ
@@ -25,9 +24,24 @@ hidden: true
 
 ## 内容
 
-- [消息队列面试](01.消息队列面试.md)
-- [消息队列基本原理](02.消息队列基本原理.md)
-- [Kafka 教程](https://dunwu.github.io/bigdata-tutorial/kafka) 📚
+### 综合
+
+- [消息队列面试](01.综合/01.消息队列面试.md)
+- [消息队列基本原理](01.综合/02.消息队列基本原理.md)
+
+### Kafka
+
+- [Kafka 快速入门](02.Kafka/01.Kafka快速入门.md)
+- [Kafka 生产者](02.Kafka/02.Kafka生产者.md)
+- [Kafka 消费者](02.Kafka/03.Kafka消费者.md)
+- [Kafka 集群](02.Kafka/04.Kafka集群.md)
+- [Kafka 可靠传输](02.Kafka/05.Kafka可靠传输.md)
+- [Kafka 存储](02.Kafka/06.Kafka存储.md)
+- [Kafka 流式处理](02.Kafka/07.Kafka流式处理.md)
+- [Kafka 运维](02.Kafka/08.Kafka运维.md)
+
+### 其他 MQ
+
 - [RocketMQ](03.RocketMQ.md)
 - [ActiveMQ](04.ActiveMQ.md)
 

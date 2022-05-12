@@ -2,7 +2,6 @@
 title: Tomcat 教程
 date: 2022-02-18 08:53:11
 categories: 
-  - 编程
   - Java
   - JavaEE
   - 服务器

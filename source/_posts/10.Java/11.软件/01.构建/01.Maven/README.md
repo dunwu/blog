@@ -2,7 +2,6 @@
 title: Maven 教程
 date: 2020-08-04 15:20:54
 categories: 
-  - 编程
   - Java
   - 软件
   - 构建

@@ -14,16 +14,10 @@ hidden: true
 
 ## 📖 内容
 
-### CI
-
-### CD
-
-### 工具
-
 - [如何优雅的玩转 Git](01.效能/99.工具/01.Markdown.md)
 
 ## 📚 资料
 
 ## 🚪 传送
 
-◾ 🏠 [我的知识图谱](https://github.com/dunwu/warterdrop) ◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [我的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾

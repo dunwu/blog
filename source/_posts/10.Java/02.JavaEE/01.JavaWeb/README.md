@@ -2,7 +2,6 @@
 title: JavaWeb
 date: 2020-02-07 23:04:47
 categories: 
-  - 编程
   - Java
   - JavaEE
   - JavaWeb

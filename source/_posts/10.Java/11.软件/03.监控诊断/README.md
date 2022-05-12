@@ -2,7 +2,6 @@
 title: Java 监控诊断
 date: 2020-02-11 17:48:32
 categories: 
-  - 编程
   - Java
   - 软件
   - 监控诊断
