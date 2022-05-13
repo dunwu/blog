@@ -1,12 +1,12 @@
 ---
 title: README
 date: 2020-09-09 17:53:08
-categories: 
+categories:
   - Java
   - 中间件
   - MQ
   - Kafka
-tags: 
+tags:
   - MQ
   - Kafka
 permalink: /pages/328f1c/
@@ -56,6 +56,8 @@ hidden: true
   - [消息队列高手课](https://time.geekbang.org/column/intro/100032301)
 - **文章**
   - [Introduction and Overview of Apache Kafka](https://www.slideshare.net/mumrah/kafka-talk-tri-hug)
+  - [The Log: What every software engineer should know about real-time data’s unifying abstraction](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)
+  - [《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying) - 上面文章的译文
 
 ## 🚪 传送
 
