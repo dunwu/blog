@@ -1,12 +1,12 @@
 ---
 title: Elasticsearch 教程
 date: 2022-04-11 16:52:35
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - 搜索引擎数据库
   - Elasticsearch
-tags: 
+tags:
   - 数据库
   - 搜索引擎数据库
   - Elasticsearch
@@ -27,11 +27,9 @@ hidden: true
 
 ### [Elasticsearch 简介](03.Elasticsearch简介.md)
 
-### [Elasticsearch Rest API](11.ElasticsearchRestApi.md)
-
-### [ElasticSearch Java API 之 High Level REST Client](12.ElasticsearchHighLevelRestJavaApi.md)
-
 ### [Elasticsearch 索引管理](04.Elasticsearch索引.md)
+
+### [Elasticsearch 映射](05.Elasticsearch映射.md)
 
 ### [Elasticsearch 查询](05.Elasticsearch查询.md)
 
@@ -43,11 +41,15 @@ hidden: true
 
 ### [Elasticsearch 分析器](09.Elasticsearch分析器.md)
 
+### [Elasticsearch 性能优化](10.Elasticsearch性能优化.md)
+
+### [Elasticsearch Rest API](11.ElasticsearchRestApi.md)
+
+### [ElasticSearch Java API 之 High Level REST Client](12.ElasticsearchHighLevelRestJavaApi.md)
+
 ### [Elasticsearch 集群和分片](13.Elasticsearch集群和分片.md)
 
 ### [Elasticsearch 运维](20.Elasticsearch运维.md)
-
-### [Elasticsearch 性能优化](10.Elasticsearch性能优化.md)
 
 ## 📚 资料
 
@@ -74,4 +76,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [我的IT知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [我的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾

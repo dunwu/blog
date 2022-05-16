@@ -319,6 +319,7 @@
 - [Elasticsearch 快速入门](source/_posts/01.计算机科学/02.数据库/07.搜索引擎数据库/01.Elasticsearch/02.Elasticsearch快速入门.md)
 - [Elasticsearch 简介](source/_posts/01.计算机科学/02.数据库/07.搜索引擎数据库/01.Elasticsearch/03.Elasticsearch简介.md)
 - [Elasticsearch 索引](source/_posts/01.计算机科学/02.数据库/07.搜索引擎数据库/01.Elasticsearch/04.Elasticsearch索引.md)
+- [Elasticsearch 映射](source/_posts/01.计算机科学/02.数据库/07.搜索引擎数据库/01.Elasticsearch/05.Elasticsearch映射.md)
 - [Elasticsearch 查询](source/_posts/01.计算机科学/02.数据库/07.搜索引擎数据库/01.Elasticsearch/05.Elasticsearch查询.md)
 - [Elasticsearch 高亮](source/_posts/01.计算机科学/02.数据库/07.搜索引擎数据库/01.Elasticsearch/06.Elasticsearch高亮.md)
 - [Elasticsearch 排序](source/_posts/01.计算机科学/02.数据库/07.搜索引擎数据库/01.Elasticsearch/07.Elasticsearch排序.md)
