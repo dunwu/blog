@@ -1,11 +1,11 @@
 ---
 title: 数据库中间件和代理
 date: 2022-04-11 16:52:35
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - 数据库中间件
-tags: 
+tags:
   - 数据库
   - 中间件
 permalink: /pages/addb05/

@@ -1,12 +1,12 @@
 ---
 title: Mysql 教程
 date: 2020-02-10 14:27:39
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - 关系型数据库
   - Mysql
-tags: 
+tags:
   - 数据库
   - 关系型数据库
   - Mysql

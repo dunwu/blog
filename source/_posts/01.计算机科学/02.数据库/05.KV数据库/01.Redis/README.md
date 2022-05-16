@@ -1,12 +1,12 @@
 ---
 title: Redis 教程
 date: 2020-02-10 14:27:39
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - KV数据库
   - Redis
-tags: 
+tags:
   - 数据库
   - KV数据库
   - Redis

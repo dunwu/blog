@@ -1,11 +1,11 @@
 ---
 title: Java 容器
 date: 2020-06-04 13:51:01
-categories: 
+categories:
   - Java
   - JavaSE
   - 容器
-tags: 
+tags:
   - Java
   - JavaSE
   - 容器

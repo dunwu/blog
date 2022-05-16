@@ -1,11 +1,11 @@
 ---
 title: 数据库综合
 date: 2022-04-11 16:52:35
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - 数据库综合
-tags: 
+tags:
   - 数据库
   - 综合
 permalink: /pages/3c3c45/

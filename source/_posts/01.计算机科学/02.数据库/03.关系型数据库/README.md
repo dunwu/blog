@@ -1,11 +1,11 @@
 ---
 title: 关系型数据库
 date: 2022-04-11 16:52:35
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - 关系型数据库
-tags: 
+tags:
   - 数据库
   - 关系型数据库
 permalink: /pages/bb43eb/

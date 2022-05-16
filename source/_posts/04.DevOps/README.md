@@ -1,9 +1,9 @@
 ---
 title: DevOps
 date: 2022-04-27 20:26:27
-categories: 
+categories:
   - DevOps
-tags: 
+tags:
   - DevOps
 permalink: /pages/1883b8/
 abbrlink: a7787d29

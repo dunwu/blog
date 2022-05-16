@@ -1,10 +1,10 @@
 ---
 title: UML
 date: 2020-08-10 10:59:18
-categories: 
+categories:
   - 设计
   - UML
-tags: 
+tags:
   - 设计
   - UML
 permalink: /pages/13ccb0/

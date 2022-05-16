@@ -1,10 +1,10 @@
 ---
 title: 设计模式
 date: 2020-08-10 10:59:18
-categories: 
+categories:
   - 设计
   - 设计模式
-tags: 
+tags:
   - 设计
   - 设计模式
 permalink: /pages/81b0f2/

@@ -1,12 +1,12 @@
 ---
 title: 关系型数据库综合知识
 date: 2020-07-16 11:14:07
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - 关系型数据库
   - 综合
-tags: 
+tags:
   - 数据库
   - 关系型数据库
 permalink: /pages/22f2e3/

@@ -1,9 +1,9 @@
 ---
 title: Java 教程
 date: 2022-04-27 18:23:47
-categories: 
+categories:
   - Java
-tags: 
+tags:
   - Java
 permalink: /pages/0d2474/
 abbrlink: 98aae892

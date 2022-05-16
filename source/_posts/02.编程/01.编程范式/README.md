@@ -1,10 +1,10 @@
 ---
 title: 编程范式
 date: 2021-04-29 16:05:03
-categories: 
+categories:
   - 编程
   - 编程范式
-tags: 
+tags:
   - 设计
   - 编程范式
 permalink: /pages/34f6f0/

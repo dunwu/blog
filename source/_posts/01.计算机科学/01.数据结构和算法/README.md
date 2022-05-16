@@ -1,10 +1,10 @@
 ---
 title: README
 date: 2022-04-27 10:30:10
-categories: 
+categories:
   - 计算机科学
   - 数据结构和算法
-tags: 
+tags:
   - 数据结构和算法
 permalink: /pages/3ccbd4/
 abbrlink: 77cd4175

@@ -1,10 +1,10 @@
 ---
 title: 计算机网络
 date: 2020-02-03 10:56:00
-categories: 
+categories:
   - 计算机科学
   - 网络
-tags: 
+tags:
   - 网络
 permalink: /pages/b39653/
 abbrlink: e255a10a

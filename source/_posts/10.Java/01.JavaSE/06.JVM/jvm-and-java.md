@@ -1,11 +1,11 @@
 ---
 title: jvm-and-java
 date: 2020-10-16 20:29:24
-categories: 
+categories:
   - Java
   - JavaSE
   - JVM
-tags: 
+tags:
   - Java
   - JavaSE
   - JVM

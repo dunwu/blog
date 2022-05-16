@@ -1,11 +1,11 @@
 ---
 title: Java IO
 date: 2020-06-04 13:51:01
-categories: 
+categories:
   - Java
   - JavaSE
   - IO
-tags: 
+tags:
   - Java
   - JavaSE
   - IO

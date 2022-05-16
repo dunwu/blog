@@ -1,10 +1,10 @@
 ---
 title: 重构
 date: 2021-04-29 16:05:03
-categories: 
+categories:
   - 设计
   - 重构
-tags: 
+tags:
   - 设计
   - 重构
 permalink: /pages/d200c3/

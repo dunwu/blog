@@ -1,10 +1,10 @@
 ---
 title: 分布式
 date: 2019-03-08 13:16:53
-categories: 
+categories:
   - 计算机科学
   - 分布式
-tags: 
+tags:
   - 分布式
 permalink: /pages/f21e8c/
 abbrlink: fe3c2cd2

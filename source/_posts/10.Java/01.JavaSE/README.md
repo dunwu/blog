@@ -1,10 +1,10 @@
 ---
 title: JavaSE
 date: 2022-05-06 09:19:33
-categories: 
+categories:
   - Java
   - JavaSE
-tags: 
+tags:
   - Java
   - JavaSE
 permalink: /pages/69d2f8/

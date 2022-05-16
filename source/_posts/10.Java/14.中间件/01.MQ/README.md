@@ -1,11 +1,11 @@
 ---
 title: Java 和消息队列
 date: 2022-02-17 22:34:30
-categories: 
+categories:
   - Java
   - 中间件
   - MQ
-tags: 
+tags:
   - Java
   - 中间件
   - MQ

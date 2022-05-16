@@ -1,10 +1,10 @@
 ---
 title: Java 中间件
 date: 2022-04-09 15:11:37
-categories: 
+categories:
   - Java
   - 中间件
-tags: 
+tags:
   - 编程
   - Java
   - 中间件

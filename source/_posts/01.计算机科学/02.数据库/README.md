@@ -1,10 +1,10 @@
 ---
 title: 数据库
 date: 2022-02-22 21:01:01
-categories: 
+categories:
   - 计算机科学
   - 数据库
-tags: 
+tags:
   - 数据库
 permalink: /pages/012488/
 abbrlink: 14ea6df7

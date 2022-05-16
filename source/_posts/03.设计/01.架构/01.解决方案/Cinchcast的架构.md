@@ -1,11 +1,11 @@
 ---
 title: Cinchcast 的架构
 date: 2021-11-08 08:15:33
-categories: 
+categories:
   - 设计
   - 架构
   - 解决方案
-tags: 
+tags:
   - 架构
   - 解决方案
 permalink: /pages/3f25aa/

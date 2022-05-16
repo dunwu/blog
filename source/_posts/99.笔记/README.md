@@ -2,7 +2,7 @@
 title: 笔记
 date: 2022-05-12 16:51:42
 categories: 
-  - 100.笔记
+  - 笔记
 tags: 
   - 笔记
 permalink: /pages/aa2c27/

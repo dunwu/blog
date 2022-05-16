@@ -1,12 +1,12 @@
 ---
 title: Elastic 技术栈
 date: 2022-04-11 16:52:35
-categories: 
+categories:
   - 计算机科学
   - 数据库
   - 搜索引擎数据库
   - Elastic
-tags: 
+tags:
   - 数据库
   - 搜索引擎数据库
   - Elastic

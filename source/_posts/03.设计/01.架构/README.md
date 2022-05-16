@@ -1,10 +1,10 @@
 ---
 title: 架构
 date: 2019-03-08 13:16:53
-categories: 
+categories:
   - 设计
   - 架构
-tags: 
+tags:
   - 架构
 permalink: /pages/d9e5d2/
 abbrlink: 2582d3b8

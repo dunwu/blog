@@ -1,9 +1,9 @@
 ---
 title: 设计
 date: 2022-04-27 17:26:27
-categories: 
+categories:
   - 设计
-tags: 
+tags:
   - 编程
 permalink: /pages/8ea43c/
 abbrlink: 4fcba313

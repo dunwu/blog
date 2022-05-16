@@ -1,11 +1,11 @@
 ---
 title: JavaWeb
 date: 2020-02-07 23:04:47
-categories: 
+categories:
   - Java
   - JavaEE
   - JavaWeb
-tags: 
+tags:
   - JavaWeb
 permalink: /pages/50f49f/
 abbrlink: 99720b1c

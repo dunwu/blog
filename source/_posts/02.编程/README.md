@@ -1,9 +1,9 @@
 ---
 title: 编程
 date: 2022-04-27 17:11:50
-categories: 
+categories:
   - 编程
-tags: 
+tags:
   - 编程
 permalink: /pages/f85bac/
 abbrlink: 47867b98

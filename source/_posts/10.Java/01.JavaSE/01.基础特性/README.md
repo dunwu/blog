@@ -1,11 +1,11 @@
 ---
 title: Java 基础特性
 date: 2020-06-04 13:51:01
-categories: 
+categories:
   - Java
   - JavaSE
   - 基础特性
-tags: 
+tags:
   - Java
   - JavaSE
 permalink: /pages/8ea213/
