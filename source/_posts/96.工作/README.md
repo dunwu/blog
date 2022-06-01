@@ -1,9 +1,9 @@
 ---
 title: 工作
 date: 2022-04-27 20:26:27
-categories: 
+categories:
   - 工作
-tags: 
+tags:
   - 工作
 permalink: /pages/1cd051/
 abbrlink: 29206147

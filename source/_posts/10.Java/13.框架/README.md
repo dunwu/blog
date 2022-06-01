@@ -1,10 +1,10 @@
 ---
 title: Java 框架
 date: 2022-02-18 08:53:11
-categories: 
+categories:
   - Java
   - 框架
-tags: 
+tags:
   - Java
   - 框架
 permalink: /pages/e373d7/

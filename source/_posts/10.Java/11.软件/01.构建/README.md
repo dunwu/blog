@@ -1,11 +1,11 @@
 ---
 title: Java 构建
 date: 2020-08-04 15:20:54
-categories: 
+categories:
   - Java
   - 软件
   - 构建
-tags: 
+tags:
   - Java
   - 构建
 permalink: /pages/d1859b/

@@ -1,11 +1,11 @@
 ---
 title: Java ORM 框架
 date: 2022-02-17 22:34:30
-categories: 
+categories:
   - Java
   - 框架
   - ORM
-tags: 
+tags:
   - Java
   - 框架
   - ORM
