@@ -183,10 +183,6 @@ hidden: true
 
 - [Shiro](13.框架/13.IO/01.Netty.md)
 
-#### 微服务
-
-- [Dubbo](13.框架/14.微服务/01.Dubbo.md)
-
 ### Java 中间件
 
 #### MQ

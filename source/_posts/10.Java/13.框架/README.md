@@ -44,10 +44,6 @@ hidden: true
 
 - [Netty](13.IO/01.Netty.md)
 
-### 微服务
-
-- [Dubbo](14.微服务/01.Dubbo.md)
-
 ## 📚 资料
 
 - **Mybatis**
