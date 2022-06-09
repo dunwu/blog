@@ -9,7 +9,6 @@ tags:
   - 架构
   - 解决方案
 permalink: /pages/c38eff/
-abbrlink: 77cd4175
 hidden: true
 ---
 

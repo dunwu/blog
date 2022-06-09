@@ -10,7 +10,6 @@ tags:
   - 监控
   - 诊断
 permalink: /pages/3d16d3/
-abbrlink: 7af21817
 hidden: true
 ---
 

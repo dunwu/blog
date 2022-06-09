@@ -10,7 +10,6 @@ tags:
   - IO
   - 序列化
 permalink: /pages/08b504/
-abbrlink: 53c50fed
 hidden: true
 ---
 

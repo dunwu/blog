@@ -9,7 +9,6 @@ tags:
   - DevOps
   - Git
 permalink: /pages/d107ad/
-abbrlink: 77cd4175
 hidden: true
 ---
 

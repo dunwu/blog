@@ -10,7 +10,6 @@ tags:
   - 中间件
   - MQ
 permalink: /pages/dfe847/
-abbrlink: 71639a39
 hidden: true
 ---
 

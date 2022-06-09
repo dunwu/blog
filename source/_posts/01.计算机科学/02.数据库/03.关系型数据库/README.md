@@ -9,7 +9,6 @@ tags:
   - 数据库
   - 关系型数据库
 permalink: /pages/bb43eb/
-abbrlink: 34b9ddab
 hidden: true
 ---
 

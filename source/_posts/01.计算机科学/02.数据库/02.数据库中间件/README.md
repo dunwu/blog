@@ -9,7 +9,6 @@ tags:
   - 数据库
   - 中间件
 permalink: /pages/addb05/
-abbrlink: adb7697e
 hidden: true
 ---
 

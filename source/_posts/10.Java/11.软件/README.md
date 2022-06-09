@@ -7,7 +7,6 @@ categories:
 tags:
   - Java
 permalink: /pages/2cb045/
-abbrlink: bd90f980
 hidden: true
 ---
 

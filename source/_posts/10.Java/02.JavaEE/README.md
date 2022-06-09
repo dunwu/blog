@@ -8,7 +8,6 @@ tags:
   - Java
   - JavaEE
 permalink: /pages/80a822/
-abbrlink: 37aa865c
 hidden: true
 ---
 

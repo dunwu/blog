@@ -9,7 +9,6 @@ tags:
   - Java
   - 测试
 permalink: /pages/2cecc3/
-abbrlink: 1d69b41b
 hidden: true
 ---
 

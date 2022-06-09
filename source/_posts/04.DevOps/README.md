@@ -6,7 +6,6 @@ categories:
 tags:
   - DevOps
 permalink: /pages/1883b8/
-abbrlink: a7787d29
 hidden: true
 ---
 

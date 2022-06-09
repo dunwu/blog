@@ -10,7 +10,6 @@ tags:
   - 框架
   - ORM
 permalink: /pages/fe879a/
-abbrlink: 2f780626
 hidden: true
 ---
 

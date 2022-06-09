@@ -11,7 +11,6 @@ tags:
   - 关系型数据库
   - Mysql
 permalink: /pages/a5b63b/
-abbrlink: 4b832ddf
 hidden: true
 ---
 

@@ -8,7 +8,6 @@ tags:
   - Java
   - JavaSE
 permalink: /pages/69d2f8/
-abbrlink: 2b32338b
 hidden: true
 ---
 

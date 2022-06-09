@@ -7,7 +7,6 @@ categories:
 tags:
   - 数据结构和算法
 permalink: /pages/3ccbd4/
-abbrlink: 77cd4175
 hidden: true
 ---
 

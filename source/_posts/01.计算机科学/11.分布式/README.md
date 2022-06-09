@@ -7,7 +7,6 @@ categories:
 tags:
   - 分布式
 permalink: /pages/f21e8c/
-abbrlink: fe3c2cd2
 hidden: true
 ---
 

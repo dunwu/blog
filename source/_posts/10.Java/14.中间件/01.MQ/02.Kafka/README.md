@@ -10,7 +10,6 @@ tags:
   - MQ
   - Kafka
 permalink: /pages/328f1c/
-abbrlink: 77cd4175
 hidden: true
 ---
 

@@ -10,7 +10,6 @@ tags:
   - JavaSE
   - IO
 permalink: /pages/e285c8/
-abbrlink: b4224212
 hidden: true
 ---
 

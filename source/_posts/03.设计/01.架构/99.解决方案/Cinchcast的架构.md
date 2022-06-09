@@ -9,7 +9,6 @@ tags:
   - 架构
   - 解决方案
 permalink: /pages/3f25aa/
-abbrlink: 57ce02bb
 ---
 
 # Cinchcast 的架构

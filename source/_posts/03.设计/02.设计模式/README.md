@@ -8,7 +8,6 @@ tags:
   - 设计
   - 设计模式
 permalink: /pages/81b0f2/
-abbrlink: 364ea8cc
 hidden: true
 ---
 
