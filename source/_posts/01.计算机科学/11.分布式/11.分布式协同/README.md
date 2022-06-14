@@ -1,9 +1,14 @@
 ---
+title: 分布式协同
 date: 2022-06-11 10:46:35
 categories:
   - 计算机科学
   - 分布式
   - 分布式协同
+tags:
+  - 分布式
+  - 分布式协同
+permalink: /pages/52c8b1/
 hidden: true
 ---
 
@@ -24,4 +29,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [我的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾

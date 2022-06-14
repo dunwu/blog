@@ -33,4 +33,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾
+◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾

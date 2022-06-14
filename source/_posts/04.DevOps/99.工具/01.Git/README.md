@@ -65,4 +65,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 🏠 [dunwu.github.io 首页](https://dunwu.github.io/) ◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾
+◾ 🏠 [dunwu.github.io 首页](https://dunwu.github.io/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾

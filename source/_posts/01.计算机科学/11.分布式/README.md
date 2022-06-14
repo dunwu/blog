@@ -33,7 +33,7 @@ hidden: true
 
 - 集群
 - [分布式复制](11.分布式协同/02.分布式复制.md)
-- 分区
+- [分布式分区](11.分布式协同/03.分布式分区.md)
 - 选主
 - [分布式事务](11.分布式协同/05.分布式事务.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`MQ 消息`、`SAGA`
 - [分布式锁](11.分布式协同/06.分布式锁.md) - 关键词：`数据库`、`Redis`、`ZooKeeper`、`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`
@@ -129,4 +129,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [我的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [我的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
