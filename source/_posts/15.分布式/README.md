@@ -23,7 +23,7 @@ hidden: true
 
 ### 分布式理论
 
-- [分布式理论](01.分布式理论/01.分布式理论.md) - 关键词：`拜占庭将军`、`CAP`、`BASE`、`错误的分布式假设`
+- [分布式理论](01.分布式理论/01.分布式基础理论.md) - 关键词：`拜占庭将军`、`CAP`、`BASE`、`错误的分布式假设`
 - [分布式算法 Paxos](01.分布式理论/02.分布式算法Paxos.md) - 关键词：`共识性算法`
 - [分布式算法 Raft](01.分布式理论/03.分布式算法Raft.md) - 关键词：`共识性算法`
 - [分布式算法 Gossip](01.分布式理论/04.分布式算法Gossip.md) - 关键词：`数据传播`
@@ -39,9 +39,9 @@ hidden: true
 
 ### 分布式调度
 
-- [流量控制](12.分布式调度/01.流量控制.md) - 关键词：`限流`、`熔断`、`降级`、`计数器法`、`时间窗口法`、`令牌桶法`、`漏桶法`
+- [服务路由](12.分布式调度/01.服务路由.md) - 关键词：`路由`、`条件路由`、`脚本路由`、`标签路由`
 - [负载均衡](12.分布式调度/02.负载均衡.md) - 关键词：`轮询`、`随机`、`最少连接`、`源地址哈希`、`一致性哈希`、`虚拟 hash 槽`
-- [服务路由](12.分布式调度/03.服务路由.md) - 关键词：`路由`、`条件路由`、`脚本路由`、`标签路由`
+- [流量控制](12.分布式调度/03.流量控制.md) - 关键词：`限流`、`熔断`、`降级`、`计数器法`、`时间窗口法`、`令牌桶法`、`漏桶法`
 - [分布式会话](12.分布式调度/10.分布式会话.md) - 关键词：`粘性 Session`、`Session 复制共享`、`基于缓存的 session 共享`
 - [分布式 ID](12.分布式调度/04.分布式ID.md) - 关键词：`UUID`、`自增序列`、`雪花算法`、`Leaf`
 
@@ -55,8 +55,10 @@ hidden: true
 
 #### RPC 综合
 
-- [RPC 基本原理](21.分布式通信/01.RPC/00.RPC综合/01.RPC基本原理.md)
-- [服务注册和发现](21.分布式通信/01.RPC/00.RPC综合/02.服务注册和发现.md)
+- [RPC 基础](21.分布式通信/01.RPC/00.RPC综合/01.RPC基础.md)
+- [RPC 进阶](21.分布式通信/01.RPC/00.RPC综合/02.RPC进阶.md)
+- [RPC 高级](21.分布式通信/01.RPC/00.RPC综合/03.RPC高级.md)
+- [服务注册和发现](21.分布式通信/01.RPC/00.RPC综合/11.服务注册和发现.md)
 
 ### MQ
 
@@ -89,7 +91,9 @@ hidden: true
 
 ## 📚 资料
 
-### 分布式理论
+### 分布式理论资料
+
+#### 分布式理论综合资料
 
 - [The Google File System](https://static.googleusercontent.com/media/research.google.com/en//archive/gfs-sosp2003.pdf)：Google 三大经典论文之一
 - [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf)：Google 三大经典论文之一
@@ -97,32 +101,77 @@ hidden: true
 - [分布式系统原理与范型](https://book.douban.com/subject/11691266/)：书原名 Distributed Systems Principles and Paradigms。经典分布式教程，介绍了分布式系统的七大核心原理，并给出了大量的例子；系统讲述了分布式系统的概念和技术，包括通信、进程、命名、同步化、一致性和复制、容错以及安全等。
 - [The fallacies of distributed computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing)
 - [Distributed Systems for fun and profit](http://book.mixu.net/distsys/single-page.html)：全书分为五章，讲述了扩展性、可用性、性能和容错等基础知识，FLP 不可能性和 CAP 定理，探讨了大量的一致性模型；讨论了时间和顺序，及时钟的各种用法。随后，探讨了复制问题，如何防止差异，以及如何接受差异。此外，每章末尾都给出了针对本章内容的扩展阅读资源列表，这些资料是对本书内容的很好补充。
+- [分布式技术原理与算法解析](https://time.geekbang.org/column/intro/100036401) - 极客时间教程
+- [分布式协议与算法实战](https://time.geekbang.org/column/intro/100046101) - 极客时间教程
 
-### 分布式算法
+#### Paxos 资料
 
-- **Paxos**
-  - [Part-time Parliament 论文](https://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf) - Lamport 的 Paxos 论文。这篇论文很权威，但较为晦涩难懂。
-  - [Paxos Made Simple 论文](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)
-  - [Paxos 算法详解](https://zhuanlan.zhihu.com/p/31780743)
-  - Neat Algorithms - Paxos
-  - [Wiki - Paxos 算法](https://zh.wikipedia.org/w/index.php?title=Paxos%E7%AE%97%E6%B3%95)
-  - [一致性算法（Paxos、Raft、Zab）](https://www.bilibili.com/video/BV1TW411M7Fx?from=search&seid=11524608198747599965)
-  - [Raft 作者讲解 Paxos 视频](https://www.bilibili.com/video/av36556594)
-  - [Paxos 算法讲解视频](https://www.youtube.com/watch?v=d7nAGI_NZPk)
-- **Raft**
-  - [Raft 一致性算法论文原文](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf)
-  - [Raft 一致性算法论文译文](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
-  - [Raft 作者讲解视频](https://www.youtube.com/watch?v=YbZ3zDzDnrw&feature=youtu.be)
-  - [Raft 作者讲解视频对应的 PPT](http://www2.cs.uh.edu/~paris/6360/PowerPoint/Raft.ppt)
-  - [Raft 算法详解](https://zhuanlan.zhihu.com/p/32052223)
-  - [Raft: Understandable Distributed Consensus](http://thesecretlivesofdata.com/raft) - 一个动画教程
-  - [The Raft Consensus Algorithm](https://raft.github.io/) - 一个交互式动画教程
+- [Part-time Parliament 论文](https://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf) - Lamport 的 Paxos 论文。这篇论文很权威，但较为晦涩难懂。
+- [Paxos Made Simple 论文](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)
+- [Paxos 算法详解](https://zhuanlan.zhihu.com/p/31780743)
+- Neat Algorithms - Paxos
+- [Wiki - Paxos 算法](https://zh.wikipedia.org/w/index.php?title=Paxos%E7%AE%97%E6%B3%95)
+- [一致性算法（Paxos、Raft、Zab）](https://www.bilibili.com/video/BV1TW411M7Fx?from=search&seid=11524608198747599965)
+- [Raft 作者讲解 Paxos 视频](https://www.bilibili.com/video/av36556594)
+- [Paxos 算法讲解视频](https://www.youtube.com/watch?v=d7nAGI_NZPk)
 
-### 分布式架构
+#### Raft 资料
+
+- [Raft 一致性算法论文原文](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf)
+- [Raft 一致性算法论文译文](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
+- [Raft 作者讲解视频](https://www.youtube.com/watch?v=YbZ3zDzDnrw&feature=youtu.be)
+- [Raft 作者讲解视频对应的 PPT](http://www2.cs.uh.edu/~paris/6360/PowerPoint/Raft.ppt)
+- [Raft 算法详解](https://zhuanlan.zhihu.com/p/32052223)
+- [Raft: Understandable Distributed Consensus](http://thesecretlivesofdata.com/raft) - 一个动画教程
+- [The Raft Consensus Algorithm](https://raft.github.io/) - 一个交互式动画教程
+
+#### Goosip 资料
+
+- [Epidemic Algorithms for Replicated Database Maintenance](http://bitsavers.trailing-edge.com/pdf/xerox/parc/techReports/CSL-89-1_Epidemic_Algorithms_for_Replicated_Database_Maintenance.pdf)
+- [P2P 网络核心技术：Gossip 协议](https://zhuanlan.zhihu.com/p/41228196)
+- [INTRODUCTION TO GOSSIP](https://managementfromscratch.wordpress.com/2016/04/01/introduction-to-gossip/)
+- [Goosip 协议仿真动画](https://flopezluis.github.io/gossip-simulator/)
+
+### 分布式架构资料
 
 - [An introduction to distributed systems](https://github.com/aphyr/distsys-class) - 这是一份分布式系统的提纲挈领的介绍，几乎涵盖了所有知识点，并辅以简洁并切中要害的说明文字，适合初学者了解知识全貌，快速与现有知识结合，形成知识体系。
 
-### 分布式存储
+### 分布式通信资料
+
+#### RPC 资料
+
+- [RPC 实战与核心原理](https://time.geekbang.org/column/intro/100046201) - 极客时间教程
+
+#### MQ 资料
+
+##### MQ 综合资料
+
+- **教程**
+  - [消息队列高手课](https://time.geekbang.org/column/intro/100032301)
+- **文章**
+  - [The Log: What every software engineer should know about real-time data’s unifying abstraction](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)
+  - [《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying) - 上面文章的译文
+
+##### Kafka 资料
+
+- **官方**
+  - [Kafka 官网](http://kafka.apache.org/)
+  - [Kafka Github](https://github.com/apache/kafka)
+  - [Kafka 官方文档](https://kafka.apache.org/documentation/)
+  - [Kafka Confluent 官网](http://kafka.apache.org/)
+  - [Kafka Jira](https://issues.apache.org/jira/projects/KAFKA?selectedItem=com.atlassian.jira.jira-projects-plugin:components-page)
+- **书籍**
+  - [《Kafka 权威指南》](https://item.jd.com/12270295.html)
+  - [《深入理解 Kafka：核心设计与实践原理》](https://item.jd.com/12489649.html)
+  - [《Kafka 技术内幕》](https://item.jd.com/12234113.html)
+- **教程**
+  - [Kafka 中文文档](https://github.com/apachecn/kafka-doc-zh)
+  - [Kafka 核心技术与实战](https://time.geekbang.org/column/intro/100029201)
+  - [Kafka 核心源码解读](https://time.geekbang.org/column/intro/304)
+- **文章**
+  - [Introduction and Overview of Apache Kafka](https://www.slideshare.net/mumrah/kafka-talk-tri-hug)
+
+### 分布式存储资料
 
 - [《数据密集型应用系统设计》](https://book.douban.com/subject/30329536/) - 这可能是目前最好的分布式存储书籍，强力推荐【进阶】
 
