@@ -30,6 +30,11 @@ hidden: true
   - [逆流而上：阿里巴巴技术成长之路](https://item.jd.com/12238227.html) - 主要以运维的视角阐述系统运维中遇到的困难，定位思路以及解决方法。
 - **教程**
   - [system-design-primer](https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md)
+  - [从 0 开始学微服务](https://time.geekbang.org/column/intro/100014401)
+  - [微服务架构核心 20 讲](https://time.geekbang.org/course/detail/66-2186)
+  - [微服务架构实战 160 讲](https://time.geekbang.org/course/detail/84-17811)
+- **文章**
+  - [Microservices](https://www.martinfowler.com/articles/microservices.html) Martin Fowler 的微服务定义
 
 ## 🚪 传送
 
