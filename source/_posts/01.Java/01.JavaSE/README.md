@@ -29,7 +29,7 @@ hidden: true
 - [Java 控制语句](01.基础特性/07.Java控制语句.md)
 - [Java 异常](01.基础特性/08.Java异常.md)
 - [Java 泛型](01.基础特性/09.Java泛型.md)
-- [Java 反射](01.基础特性/01.Java反射.md)
+- [Java 反射](01.基础特性/10.Java反射.md)
 - [Java 注解](01.基础特性/11.Java注解.md)
 - [Java String 类型](01.基础特性/42.JavaString类型.md)
 
@@ -128,4 +128,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 🏠 [JAVACORE 首页](https://github.com/dunwu/javacore) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾

@@ -6,7 +6,7 @@ categories:
   - 分布式理论
 tags:
   - 分布式
-  - 分布式理论
+  - 理论
 permalink: /pages/86cdf2/
 hidden: true
 ---
@@ -15,10 +15,17 @@ hidden: true
 
 ## 📖 内容
 
-- [分布式基础理论](01.分布式基础理论.md)
-- [分布式算法 Paxos](02.分布式算法Paxos.md)
-- [分布式算法 Raft](03.分布式算法Raft.md)
-- [分布式算法 Gossip](04.分布式算法Gossip.md)
+- [分布式理论](01.分布式基础理论.md) - 关键词：`拜占庭将军`、`CAP`、`BASE`、`错误的分布式假设`
+- [CAP 理论](02.CAP理论.md) - 关键词：`CAP`
+- ACID 理论
+- [BASE 理论](04.BASE理论.md) - 关键词：`BASE`
+- [Paxos 算法](11.Paxos算法.md) - 关键词：`共识性算法`
+- [Raft 算法](12.Raft算法.md) - 关键词：`共识性算法`
+- [Gossip 算法](13.Gossip算法.md) - 关键词：`数据传播`
+- QuorumNWR 算法
+- PBFT 算法
+- PoW 算法
+- ZAB 协议
 
 ## 📚 资料
 

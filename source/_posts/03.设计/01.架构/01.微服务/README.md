@@ -34,7 +34,7 @@ hidden: true
   - [微服务架构核心 20 讲](https://time.geekbang.org/course/detail/66-2186)
   - [微服务架构实战 160 讲](https://time.geekbang.org/course/detail/84-17811)
 - **文章**
-  - [Microservices](https://www.martinfowler.com/articles/microservices.html) Martin Fowler 的微服务定义
+  - [Microservices](https://www.martinfowler.com/articles/microservices.html) Martin Fowler 与 James Lewis 对微服务的定义
 
 ## 🚪 传送
 
