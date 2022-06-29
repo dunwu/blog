@@ -24,7 +24,7 @@ hidden: true
 ### 分布式理论
 
 - **理论**
-  - [分布式理论](01.分布式理论/01.分布式基础理论.md) - 关键词：`拜占庭将军`、`CAP`、`BASE`、`错误的分布式假设`
+  - [分布式基础理论](01.分布式理论/01.分布式基础理论.md) - 关键词：`拜占庭将军`、`CAP`、`BASE`、`错误的分布式假设`
 - **算法**
   - [分布式算法 Paxos](01.分布式理论/11.Paxos算法.md) - 关键词：`共识性算法`
   - [分布式算法 Raft](01.分布式理论/12.Raft算法.md) - 关键词：`共识性算法`
@@ -119,8 +119,8 @@ hidden: true
 
 #### Raft 资料
 
-- [Raft 一致性算法论文原文](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf)
-- [Raft 一致性算法论文译文](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
+- [Raft 算法论文原文](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf)
+- [Raft 算法论文译文](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
 - [Raft 作者讲解视频](https://www.youtube.com/watch?v=YbZ3zDzDnrw&feature=youtu.be)
 - [Raft 作者讲解视频对应的 PPT](http://www2.cs.uh.edu/~paris/6360/PowerPoint/Raft.ppt)
 - [Raft 算法详解](https://zhuanlan.zhihu.com/p/32052223)
