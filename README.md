@@ -355,12 +355,19 @@
 
 #### 分布式协同
 
-- 集群
-- [分布式复制](source/_posts/15.分布式/11.分布式协同/02.分布式复制.md)
-- 分区
-- 选主
-- [分布式事务](source/_posts/15.分布式/11.分布式协同/05.分布式事务.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`MQ 消息`、`SAGA`
-- [分布式锁](source/_posts/15.分布式/11.分布式协同/06.分布式锁.md) - 关键词：`数据库`、`Redis`、`ZooKeeper`、`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`
+- **分布式协同综合**
+  - 集群
+  - [分布式复制](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/02.分布式复制.md)
+  - 分区
+  - 选主
+  - [分布式事务](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/05.分布式事务.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`MQ 消息`、`SAGA`
+  - [分布式锁](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/06.分布式锁.md) - 关键词：`数据库`、`Redis`、`ZooKeeper`、`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`
+- **ZooKeeper**
+  - [ZooKeeper 原理](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeper原理.md)
+  - [ZooKeeper 命令](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeper命令.md)
+  - [ZooKeeper 运维](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeper运维.md)
+  - [ZooKeeper Java Api](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeperJavaApi.md)
+  - [ZooKeeper Acl](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeperAcl.md)
 
 #### 分布式调度
 
