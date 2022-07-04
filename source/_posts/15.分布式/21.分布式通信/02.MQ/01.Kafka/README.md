@@ -1,5 +1,5 @@
 ---
-title: README
+title: Kafka 教程
 date: 2020-09-09 17:53:08
 categories:
   - 分布式
@@ -56,7 +56,7 @@ hidden: true
 - **文章**
   - [Introduction and Overview of Apache Kafka](https://www.slideshare.net/mumrah/kafka-talk-tri-hug)
   - [The Log: What every software engineer should know about real-time data’s unifying abstraction](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)
-  - [《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying) - 上面文章的译文
+  - [《日志：每个软件工程师都应该知道的有关实时数据的统一抽象》](https://github.com/oldratlee/translations/blob/master/log-what-every-software-engineer-should-know-about-real-time-datas-unifying/README.md) - 上面文章的译文
 
 ## 🚪 传送
 
