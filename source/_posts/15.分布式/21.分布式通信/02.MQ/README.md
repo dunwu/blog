@@ -39,10 +39,13 @@ hidden: true
 - [Kafka 流式处理](01.Kafka/07.Kafka流式处理.md)
 - [Kafka 运维](01.Kafka/08.Kafka运维.md)
 
+### RocketMQ
+
+- [RocketMQ](02.RocketMQ/01.RocketMQ快速入门.md)
+
 ### 其他 MQ
 
 - [ActiveMQ](99.其他MQ/01.ActiveMQ.md)
-- [RocketMQ](99.其他MQ/02.RocketMQ.md)
 
 ## 技术对比
 
