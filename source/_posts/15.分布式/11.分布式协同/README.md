@@ -24,9 +24,9 @@ hidden: true
   - [分布式锁](01.分布式协同综合/06.分布式锁.md) - 关键词：`数据库`、`Redis`、`ZooKeeper`、`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`
 - **ZooKeeper**
   - [ZooKeeper 原理](02.ZooKeeper/01.ZooKeeper原理.md)
-  - [ZooKeeper 命令](02.ZooKeeper/02.ZooKeeper命令.md)
-  - [ZooKeeper 运维](02.ZooKeeper/03.ZooKeeper运维.md)
-  - [ZooKeeper Java Api](02.ZooKeeper/04.ZooKeeperJavaApi.md)
+  - [ZooKeeper Java Api](02.ZooKeeper/02.ZooKeeperJavaApi.md)
+  - [ZooKeeper 命令](02.ZooKeeper/03.ZooKeeper命令.md)
+  - [ZooKeeper 运维](02.ZooKeeper/04.ZooKeeper运维.md)
   - [ZooKeeper Acl](02.ZooKeeper/05.ZooKeeperAcl.md)
 
 ## 📚 资料

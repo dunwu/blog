@@ -389,11 +389,11 @@
   - [分布式事务](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/05.分布式事务.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`MQ 消息`、`SAGA`
   - [分布式锁](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/06.分布式锁.md) - 关键词：`数据库`、`Redis`、`ZooKeeper`、`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`
 - **ZooKeeper**
-  - [ZooKeeper 原理](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeper原理.md)
-  - [ZooKeeper 命令](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeper命令.md)
-  - [ZooKeeper 运维](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeper运维.md)
-  - [ZooKeeper Java Api](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeperJavaApi.md)
-  - [ZooKeeper Acl](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/ZooKeeperAcl.md)
+  - [ZooKeeper 原理](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/01.ZooKeeper原理.md)
+  - [ZooKeeper Java Api](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/02.ZooKeeperJavaApi.md)
+  - [ZooKeeper 命令](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/03.ZooKeeper命令.md)
+  - [ZooKeeper 运维](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/04.ZooKeeper运维.md)
+  - [ZooKeeper Acl](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/05.ZooKeeperAcl.md)
 
 #### 分布式调度
 
@@ -436,10 +436,15 @@
 - [Kafka 流式处理](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/07.Kafka流式处理.md)
 - [Kafka 运维](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/08.Kafka运维.md)
 
+##### RocketMQ
+
+- [RocketMQ 快速入门](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/01.RocketMQ快速入门.md)
+- [RocketMQ 基本原理](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/02.RocketMQ基本原理.md)
+- [RocketMQ Faq](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/99.RocketMQFaq.md)
+
 ##### 其他 MQ
 
 - [ActiveMQ](source/_posts/15.分布式/21.分布式通信/02.MQ/99.其他MQ/01.ActiveMQ.md)
-- [RocketMQ](source/_posts/15.分布式/21.分布式通信/02.MQ/99.其他MQ/02.RocketMQ.md)
 
 #### 分布式存储
 
