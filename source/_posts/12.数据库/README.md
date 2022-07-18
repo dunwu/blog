@@ -48,28 +48,28 @@ hidden: true
 
 #### 分布式理论
 
-- [分布式理论](https://dunwu.github.io/design/pages/367308/)
-- [深入剖析共识性算法 Paxos](https://dunwu.github.io/design/pages/874539/)
-- [深入剖析共识性算法 Raft](https://dunwu.github.io/design/pages/e40812/)
-- [分布式算法 Gossip](https://dunwu.github.io/design/pages/d15993/)
+- [分布式理论](https://dunwu.github.io/waterdrop/pages/367308/)
+- [深入剖析共识性算法 Paxos](https://dunwu.github.io/waterdrop/pages/874539/)
+- [深入剖析共识性算法 Raft](https://dunwu.github.io/waterdrop/pages/e40812/)
+- [分布式算法 Gossip](https://dunwu.github.io/waterdrop/pages/d15993/)
 
 #### 分布式关键技术
 
 ##### 流量调度
 
-- [流量控制](https://dunwu.github.io/design/pages/282676/)
-- [深入浅出负载均衡](https://dunwu.github.io/design/pages/b7ca44/)
-- [服务路由](https://dunwu.github.io/design/pages/d04ece/)
-- [分布式会话基本原理](https://dunwu.github.io/design/pages/3e66c2/)
+- [流量控制](https://dunwu.github.io/waterdrop/pages/282676/)
+- [深入浅出负载均衡](https://dunwu.github.io/waterdrop/pages/b7ca44/)
+- [服务路由](https://dunwu.github.io/waterdrop/pages/d04ece/)
+- [分布式会话基本原理](https://dunwu.github.io/waterdrop/pages/3e66c2/)
 
 ##### 数据调度
 
-- [缓存基本原理](https://dunwu.github.io/design/pages/471208/)
-- [读写分离基本原理](https://dunwu.github.io/design/pages/7da6ca/)
-- [分库分表基本原理](https://dunwu.github.io/design/pages/103382/)
-- [分布式 ID 基本原理](https://dunwu.github.io/design/pages/0b2e59/)
-- [分布式事务基本原理](https://dunwu.github.io/design/pages/910bad/)
-- [分布式锁基本原理](https://dunwu.github.io/design/pages/69360c/)
+- [缓存基本原理](https://dunwu.github.io/waterdrop/pages/471208/)
+- [读写分离基本原理](https://dunwu.github.io/waterdrop/pages/7da6ca/)
+- [分库分表基本原理](https://dunwu.github.io/waterdrop/pages/103382/)
+- [分布式 ID 基本原理](https://dunwu.github.io/waterdrop/pages/0b2e59/)
+- [分布式事务基本原理](https://dunwu.github.io/waterdrop/pages/910bad/)
+- [分布式锁基本原理](https://dunwu.github.io/waterdrop/pages/69360c/)
 
 ### 其他
 
@@ -86,11 +86,13 @@ hidden: true
 
 > [关系型数据库](03.关系型数据库) 整理主流关系型数据库知识点。
 
-### 公共知识
+### 关系型数据库综合
 
 - [关系型数据库面试总结](03.关系型数据库/01.综合/01.关系型数据库面试.md) 💯
-- [SQL Cheat Sheet](03.关系型数据库/01.综合/02.SqlCheatSheet.md) 是一个 SQL 入门教程。
-- [扩展 SQL](03.关系型数据库/01.综合/03.扩展SQL.md) 是一个 SQL 入门教程。
+- [SQL 语法基础特性](03.关系型数据库/01.综合/02.SQL语法基础特性.md)
+- [SQL 语法高级特性](03.关系型数据库/01.综合/03.SQL语法高级特性.md)
+- [扩展 SQL](03.关系型数据库/01.综合/03.扩展SQL.md)
+- [SQL Cheat Sheet](03.关系型数据库/01.综合/99.SqlCheatSheet.md)
 
 ### Mysql
 

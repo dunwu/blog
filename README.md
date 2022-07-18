@@ -246,7 +246,7 @@
 ##### 公共知识
 
 - [关系型数据库面试总结](source/_posts/12.数据库/03.关系型数据库/01.综合/01.关系型数据库面试.md) 💯
-- [SQL Cheat Sheet](source/_posts/12.数据库/03.关系型数据库/01.综合/02.SqlCheatSheet.md) 是一个 SQL 入门教程。
+- [SQL 必知必会](source/_posts/12.数据库/03.关系型数据库/01.综合/03.SQL必知必会.md) 是一个 SQL 入门教程。
 - [扩展 SQL](source/_posts/12.数据库/03.关系型数据库/01.综合/03.扩展SQL.md) 是一个 SQL 入门教程。
 
 ##### Mysql
