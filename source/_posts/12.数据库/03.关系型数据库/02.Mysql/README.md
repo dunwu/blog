@@ -27,7 +27,7 @@ hidden: true
 
 > 关键词：`ACID`、`AUTOCOMMIT`、`事务隔离级别`、`死锁`、`分布式事务`
 
-![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200716074533.png)
+![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20220721072721.png)
 
 ### [Mysql 锁](04.Mysql锁.md)
 
