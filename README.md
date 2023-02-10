@@ -33,6 +33,8 @@
 
 ## Java
 
+> [Java 面试总结](source/_posts/01.Java/01.JavaSE/99.Java面试.md) 💯
+
 ### JavaSE
 
 #### [Java 基础特性](source/_posts/01.Java/01.JavaSE/01.基础特性)
@@ -178,7 +180,7 @@
 #### Java IO
 
 - [JSON 序列化](source/_posts/01.Java/12.工具/01.IO/01.JSON序列化.md) - [fastjson](https://github.com/alibaba/fastjson)、[Jackson](https://github.com/FasterXML/jackson)、[Gson](https://github.com/google/gson)
-- [二进制序列化](source/_posts/01.Java/12.工具/01.IO/02.二进制序列化.md) - [Protobuf](https://developers.google.com/protocol-buffers)、[Thrift](https://thrift.apache.org/)、[Hessian](source/_posts/02.编程/http://hessian.caucho.com/)、[Kryo](https://github.com/EsotericSoftware/kryo)、[FST](https://github.com/RuedigerMoeller/fast-serialization)
+- [二进制序列化](source/_posts/01.Java/12.工具/01.IO/02.二进制序列化.md) - [Protobuf](https://developers.google.com/protocol-buffers)、[Thrift](https://thrift.apache.org/)、[Hessian](http://hessian.caucho.com/)、[Kryo](https://github.com/EsotericSoftware/kryo)、[FST](https://github.com/RuedigerMoeller/fast-serialization)
 
 #### JavaBean 工具
 
@@ -225,20 +227,35 @@
 - [Spring IoC](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/02.SpringIoC.md)
 - [Spring 依赖查找](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/03.Spring依赖查找.md)
 - [Spring 依赖注入](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/04.Spring依赖注入.md)
+- [Spring IoC 依赖来源](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/05.SpringIoC依赖来源.md)
+- [Spring Bean 作用域](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/06.SpringBean作用域.md)
+- [Spring Bean 生命周期](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/07.SpringBean生命周期.md)
+- [Spring 配置元数据](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/08.Spring配置元数据.md)
 - [Spring AOP](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/10.SpringAop.md)
-- [Spring 资源管理](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/11.Spring资源管理.md)
-- [SpringBoot 教程之快速入门](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/21.SpringBoot之快速入门.md)
-- [SpringBoot 之属性加载](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/22.SpringBoot之属性加载.md)
-- [SpringBoot 之 Profile](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/23.SpringBoot之Profile.md)
+- [Spring 资源管理](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/20.Spring资源管理.md)
+- [Spring 校验](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/21.Spring校验.md)
+- [Spring 数据绑定](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/22.Spring数据绑定.md)
+- [Spring 类型转换](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/23.Spring类型转换.md)
+- [Spring EL 表达式](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/24.SpringEL.md)
+- [Spring 事件](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/25.Spring事件.md)
+- [Spring 国际化](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/26.Spring国际化.md)
+- [Spring 泛型处理](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/27.Spring泛型处理.md)
+- [Spring 注解](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/28.Spring注解.md)
+- [Spring Environment 抽象](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/29.SpringEnvironment抽象.md)
+- [SpringBoot 教程之快速入门](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/31.SpringBoot之快速入门.md)
+- [SpringBoot 之属性加载](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/32.SpringBoot之属性加载.md)
+- [SpringBoot 之 Profile](source/_posts/01.Java/13.框架/01.Spring/01.Spring核心/33.SpringBoot之Profile.md)
 
 ##### 数据
 
-- [Spring 连接数据源](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/01.Spring连接数据源.md)
+- [Spring 之数据源](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/01.Spring之数据源.md)
 - [Spring 之 JDBC](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/02.Spring之JDBC.md)
 - [Spring 之事务](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/03.Spring之事务.md)
-- [SpringBoot 之 Mybatis](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/22.SpringBoot之Mybatis.md)
-- [SpringBoot 之 MongoDB](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/23.SpringBoot之MongoDB.md)
-- [SpringBoot 之 Elasticsearch](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/24.SpringBoot之Elasticsearch.md)
+- [Spring 之 JPA](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/04.Spring之JPA.md)
+- [Spring 集成 Mybatis](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/10.Spring集成Mybatis.md)
+- [Spring 访问 Redis](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/21.Spring访问Redis.md)
+- [Spring 访问 MongoDB](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/22.Spring访问MongoDB.md)
+- [Spring 访问 Elasticsearch](source/_posts/01.Java/13.框架/01.Spring/02.Spring数据/23.Spring访问Elasticsearch.md)
 
 ##### Web
 
@@ -345,8 +362,10 @@
 ##### 公共知识
 
 - [关系型数据库面试总结](source/_posts/12.数据库/03.关系型数据库/01.综合/01.关系型数据库面试.md) 💯
-- [SQL 必知必会](source/_posts/12.数据库/03.关系型数据库/01.综合/03.SQL必知必会.md) 是一个 SQL 入门教程。
-- [扩展 SQL](source/_posts/12.数据库/03.关系型数据库/01.综合/03.扩展SQL.md) 是一个 SQL 入门教程。
+- [SQL 语法基础特性](source/_posts/12.数据库/03.关系型数据库/01.综合/02.SQL语法基础特性.md)
+- [SQL 语法高级特性](source/_posts/12.数据库/03.关系型数据库/01.综合/03.SQL语法高级特性.md)
+- [扩展 SQL](source/_posts/12.数据库/03.关系型数据库/01.综合/03.扩展SQL.md)
+- [SQL Cheat Sheet](source/_posts/12.数据库/03.关系型数据库/01.综合/99.SqlCheatSheet.md)
 
 ##### Mysql
 
@@ -671,6 +690,19 @@
   - [正则表达式极简教程](source/_posts/04.DevOps/99.工具/99.其他/01.正则表达式.md)
 
 ## 工作
+
+### 方法论
+
+- [效率提升方法论](source/_posts/96.工作/01.效能/01.方法论/01.效率提升方法论.md)
+- [话术](source/_posts/96.工作/01.效能/01.方法论/03.话术.md)
+
+### 规范
+
+- [技术文档规范](source/_posts/96.工作/01.效能/02.规范/01.技术文档规范.md)
+- [目录管理规范](source/_posts/96.工作/01.效能/02.规范/02.目录管理规范.md)
+- [代码工程规范](source/_posts/96.工作/01.效能/02.规范/03.代码工程规范.md)
+
+### 工具
 
 - [Markdown 极简教程](source/_posts/96.工作/01.效能/99.工具/01.Markdown.md)
 

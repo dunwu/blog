@@ -1,5 +1,5 @@
 ---
-title: 分布式协同
+title: 分布式协同综合
 date: 2022-06-11 10:46:35
 categories:
   - 分布式
@@ -8,7 +8,7 @@ categories:
 tags:
   - 分布式
   - 分布式协同
-permalink: /pages/52c8b1/
+permalink: /pages/2fe804/
 hidden: true
 ---
 
