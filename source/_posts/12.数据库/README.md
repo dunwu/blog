@@ -26,7 +26,7 @@ hidden: true
   </a>
 
   <a href="https://github.com/dunwu/db-tutorial/commits/master">
-      <img alt="commit" class="no-zoom" src="https://img.shields.io/github/workflow/status/dunwu/db-tutorial/CI?style=for-the-badge">
+      <img alt="build" class="no-zoom" src="https://img.shields.io/github/actions/workflow/status/dunwu/db-tutorial/deploy.yml?style=for-the-badge">
   </a>
 
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">
@@ -48,28 +48,28 @@ hidden: true
 
 #### 分布式理论
 
-- [分布式理论](https://dunwu.github.io/waterdrop/pages/367308/)
-- [深入剖析共识性算法 Paxos](https://dunwu.github.io/waterdrop/pages/874539/)
-- [深入剖析共识性算法 Raft](https://dunwu.github.io/waterdrop/pages/e40812/)
-- [分布式算法 Gossip](https://dunwu.github.io/waterdrop/pages/d15993/)
+- [分布式一致性](https://dunwu.github.io/blog/pages/dac0e2/)
+- [深入剖析共识性算法 Paxos](https://dunwu.github.io/blog/pages/874539/)
+- [深入剖析共识性算法 Raft](https://dunwu.github.io/blog/pages/e40812/)
+- [分布式算法 Gossip](https://dunwu.github.io/blog/pages/d15993/)
 
 #### 分布式关键技术
 
 ##### 流量调度
 
-- [流量控制](https://dunwu.github.io/waterdrop/pages/282676/)
-- [深入浅出负载均衡](https://dunwu.github.io/waterdrop/pages/b7ca44/)
-- [服务路由](https://dunwu.github.io/waterdrop/pages/d04ece/)
-- [分布式会话基本原理](https://dunwu.github.io/waterdrop/pages/3e66c2/)
+- [流量控制](https://dunwu.github.io/blog/pages/282676/)
+- [负载均衡](https://dunwu.github.io/blog/pages/98a1c1/)
+- [服务路由](https://dunwu.github.io/blog/pages/d04ece/)
+- [分布式会话基本原理](https://dunwu.github.io/blog/pages/3e66c2/)
 
 ##### 数据调度
 
-- [缓存基本原理](https://dunwu.github.io/waterdrop/pages/471208/)
-- [读写分离基本原理](https://dunwu.github.io/waterdrop/pages/7da6ca/)
-- [分库分表基本原理](https://dunwu.github.io/waterdrop/pages/103382/)
-- [分布式 ID 基本原理](https://dunwu.github.io/waterdrop/pages/0b2e59/)
-- [分布式事务基本原理](https://dunwu.github.io/waterdrop/pages/910bad/)
-- [分布式锁基本原理](https://dunwu.github.io/waterdrop/pages/69360c/)
+- [缓存基本原理](https://dunwu.github.io/blog/pages/471208/)
+- [读写分离基本原理](https://dunwu.github.io/blog/pages/7da6ca/)
+- [分库分表基本原理](https://dunwu.github.io/blog/pages/103382/)
+- [分布式 ID 基本原理](https://dunwu.github.io/blog/pages/0b2e59/)
+- [分布式事务基本原理](https://dunwu.github.io/blog/pages/910bad/)
+- [分布式锁基本原理](https://dunwu.github.io/blog/pages/69360c/)
 
 ### 其他
 
