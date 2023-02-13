@@ -41,6 +41,7 @@ git add -A
 git commit -m "${msg}"
 # 推送到github gh-pages分支
 git push -f "${GITHUB_URL}" master:gh-pages
-git push -f "${GITEE_URL}" master:gh-pages
+#由于仓库容量超出gitee限制，停止push
+#git push -f "${GITEE_URL}" master:gh-pages
 
 rm -rf ${ROOT_DIR}/.temp
