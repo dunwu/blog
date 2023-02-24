@@ -1,18 +1,12 @@
 ---
-home: true
-heroImage: img/bg.gif
-heroText: BIGDATA TUTORIAL
-tagline: ☕ BIGDATA TUTORIAL 是一个大数据教程。
-bannerBg: none
-postList: none
-footer: CC-BY-SA-4.0 Licensed | Copyright © 2019-Now Dunwu
-title: README
+title: 大数据教程
 date: 2023-02-10 14:52:25
-permalink: /pages/fc832f/
 categories:
   - 大数据
 tags:
-  -
+  - 大数据
+permalink: /pages/fc832f/
+hidden: true
 ---
 
 <p align="center">
