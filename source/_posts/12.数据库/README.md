@@ -155,12 +155,10 @@ hidden: true
 
 ### HBase
 
-> [HBase](https://dunwu.github.io/bigdata-tutorial/hbase) 📚 因为常用于大数据项目，所以将其文档和源码整理在 [bigdata-tutorial](https://dunwu.github.io/bigdata-tutorial/) 项目中。
-
-- [HBase 原理](https://github.com/dunwu/bigdata-tutorial/blob/master/docs/hbase/HBase原理.md) ⚡
-- [HBase 命令](https://github.com/dunwu/bigdata-tutorial/blob/master/docs/hbase/HBase命令.md)
-- [HBase 应用](https://github.com/dunwu/bigdata-tutorial/blob/master/docs/hbase/HBase应用.md)
-- [HBase 运维](https://github.com/dunwu/bigdata-tutorial/blob/master/docs/hbase/HBase运维.md)
+- [HBase 简介](06.列式数据库/01.hbase/01.HBase简介.md)
+- [HBase 原来](06.列式数据库/01.hbase/02.HBase原理.md)
+- [HBase 命令](06.列式数据库/01.hbase/03.HBase命令.md)
+- [HBase 运维](06.列式数据库/01.hbase/04.HBase运维.md)
 
 ## 搜索引擎数据库
 
