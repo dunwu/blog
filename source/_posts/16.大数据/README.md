@@ -94,12 +94,21 @@ hidden: true
 
 ## 📚 资料
 
-- [《Hadoop 权威指南（第四版）》](https://item.jd.com/12109713.html)
-- [《Spark 技术内幕 深入解析 Spark 内核架构设计与实现原理》](https://book.douban.com/subject/26649141/)
-- [《Spark.The.Definitive.Guide》](https://book.douban.com/subject/27035127/)
-- [《HBase 权威指南》](https://book.douban.com/subject/10748460/)
-- [《Hive 编程指南》](https://book.douban.com/subject/25791255/)
-- [BigData-Notes](https://github.com/heibaiying/BigData-Notes)
+- **综合**
+  - **教程**
+    - [从 0 开始学大数据](https://time.geekbang.org/column/intro/100020201)
+    - [BigData-Notes](https://github.com/heibaiying/BigData-Notes)
+  - **论文**
+    - [The Google File System](https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/gfs-sosp2003.pdf) - Google 大数据三驾马车之一
+    - [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf) - Google 大数据三驾马车之一
+    - [MapReduce: Simplified Data Processing on Large Clusters](https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/mapreduce-osdi04.pdf) - Google 大数据三驾马车之一
+- **Hadoop**
+  - [《Hadoop 权威指南（第四版）》](https://item.jd.com/12109713.html)
+  - [《HBase 权威指南》](https://book.douban.com/subject/10748460/)
+  - [《Hive 编程指南》](https://book.douban.com/subject/25791255/)
+- **Spark**
+  - [《Spark 技术内幕 深入解析 Spark 内核架构设计与实现原理》](https://book.douban.com/subject/26649141/)
+  - [《Spark.The.Definitive.Guide》](https://book.douban.com/subject/27035127/)
 - **ZooKeeper**
   - **官方**
     - [ZooKeeper 官网](http://zookeeper.apache.org/)

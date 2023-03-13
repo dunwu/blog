@@ -2,7 +2,8 @@
 title: HBase 教程
 date: 2020-09-09 17:53:08
 categories:
-  - 大数据
+  - 数据库
+  - 列式数据库
   - hbase
 tags:
   - 大数据
