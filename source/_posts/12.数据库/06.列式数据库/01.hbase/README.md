@@ -17,9 +17,10 @@ hidden: true
 ## 📖 内容
 
 - [HBase 简介](01.HBase简介.md)
-- [HBase 原理](02.HBase原理.md)
-- [HBase 命令](03.HBase命令.md)
-- [HBase 运维](04.HBase运维.md)
+- [HBase 应用](02.HBase应用.md)
+- [HBase 原理](03.HBase原理.md)
+- [HBase 命令](04.HBase命令.md)
+- [HBase 运维](05.HBase运维.md)
 
 ## 📚 资料
 

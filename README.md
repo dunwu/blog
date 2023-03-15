@@ -429,9 +429,9 @@
 ##### HBase
 
 - [HBase 简介](source/_posts/12.数据库/06.列式数据库/01.hbase/01.HBase简介.md)
-- [HBase 原来](source/_posts/12.数据库/06.列式数据库/01.hbase/02.HBase原理.md)
-- [HBase 命令](source/_posts/12.数据库/06.列式数据库/01.hbase/03.HBase命令.md)
-- [HBase 运维](source/_posts/12.数据库/06.列式数据库/01.hbase/04.HBase运维.md)
+- [HBase 原来](source/_posts/12.数据库/06.列式数据库/01.hbase/03.HBase原理.md)
+- [HBase 命令](source/_posts/12.数据库/06.列式数据库/01.hbase/04.HBase命令.md)
+- [HBase 运维](source/_posts/12.数据库/06.列式数据库/01.hbase/05.HBase运维.md)
 
 #### 搜索引擎数据库
 
