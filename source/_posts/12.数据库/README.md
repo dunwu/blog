@@ -155,10 +155,15 @@ hidden: true
 
 ### HBase
 
-- [HBase 简介](06.列式数据库/01.hbase/01.HBase简介.md)
-- [HBase 原来](06.列式数据库/01.hbase/03.HBase原理.md)
-- [HBase 命令](06.列式数据库/01.hbase/04.HBase命令.md)
-- [HBase 运维](06.列式数据库/01.hbase/05.HBase运维.md)
+- [HBase 快速入门](06.列式数据库/01.HBase/01.HBase快速入门.md)
+- [HBase 数据模型](06.列式数据库/01.HBase/02.HBase数据模型.md)
+- [HBase Schema 设计](06.列式数据库/01.HBase/03.HBaseSchema设计.md)
+- [HBase 架构](06.列式数据库/01.HBase/04.HBase架构.md)
+- [HBase 过滤器](06.列式数据库/01.HBase/04.HBase过滤器.md)
+- [HBase 协处理器](06.列式数据库/01.HBase/05.HBase协处理器.md)
+- [HBase Java API](06.列式数据库/01.HBase/10.HBaseJavaApi.md)
+- [HBase 运维](06.列式数据库/01.HBase/21.HBase运维.md)
+- [HBase 命令](06.列式数据库/01.HBase/22.HBase命令.md)
 
 ## 搜索引擎数据库
 

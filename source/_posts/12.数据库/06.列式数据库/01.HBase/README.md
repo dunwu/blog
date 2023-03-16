@@ -4,7 +4,7 @@ date: 2020-09-09 17:53:08
 categories:
   - 数据库
   - 列式数据库
-  - hbase
+  - HBase
 tags:
   - 大数据
   - HBase
@@ -16,11 +16,17 @@ hidden: true
 
 ## 📖 内容
 
-- [HBase 简介](01.HBase简介.md)
-- [HBase 应用](02.HBase应用.md)
-- [HBase 原理](03.HBase原理.md)
-- [HBase 命令](04.HBase命令.md)
-- [HBase 运维](05.HBase运维.md)
+- [HBase 快速入门](01.HBase快速入门.md)
+- [HBase 数据模型](02.HBase数据模型.md)
+- [HBase Schema 设计](03.HBaseSchema设计.md)
+- [HBase 架构](04.HBase架构.md)
+- [HBase 过滤器](04.HBase过滤器.md)
+- [HBase 协处理器](05.HBase协处理器.md)
+- [HBase Java API](10.HBaseJavaApi.md)
+- [HBase 运维](21.HBase运维.md)
+- [HBase 命令](22.HBase命令.md)
+- HBase 配置
+- HBase 灾备
 
 ## 📚 资料
 
