@@ -432,9 +432,10 @@
 - [HBase 数据模型](source/_posts/12.数据库/06.列式数据库/01.HBase/02.HBase数据模型.md)
 - [HBase Schema 设计](source/_posts/12.数据库/06.列式数据库/01.HBase/03.HBaseSchema设计.md)
 - [HBase 架构](source/_posts/12.数据库/06.列式数据库/01.HBase/04.HBase架构.md)
-- [HBase 过滤器](source/_posts/12.数据库/06.列式数据库/01.HBase/04.HBase过滤器.md)
-- [HBase 协处理器](source/_posts/12.数据库/06.列式数据库/01.HBase/05.HBase协处理器.md)
-- [HBase Java API](source/_posts/12.数据库/06.列式数据库/01.HBase/10.HBaseJavaApi.md)
+- [HBase Java API 基础特性](source/_posts/12.数据库/06.列式数据库/01.HBase/10.HBaseJavaApi基础特性.md)
+- [HBase Java API 高级特性之过滤器](source/_posts/12.数据库/06.列式数据库/01.HBase/11.HBaseJavaApi高级特性之过滤器.md)
+- [HBase Java API 高级特性之协处理器](source/_posts/12.数据库/06.列式数据库/01.HBase/12.HBaseJavaApi高级特性之协处理器.md)
+- [HBase Java API 其他高级特性](source/_posts/12.数据库/06.列式数据库/01.HBase/13.HBaseJavaApi其他高级特性.md)
 - [HBase 运维](source/_posts/12.数据库/06.列式数据库/01.HBase/21.HBase运维.md)
 - [HBase 命令](source/_posts/12.数据库/06.列式数据库/01.HBase/22.HBase命令.md)
 

@@ -20,9 +20,10 @@ hidden: true
 - [HBase 数据模型](02.HBase数据模型.md)
 - [HBase Schema 设计](03.HBaseSchema设计.md)
 - [HBase 架构](04.HBase架构.md)
-- [HBase 过滤器](04.HBase过滤器.md)
-- [HBase 协处理器](05.HBase协处理器.md)
-- [HBase Java API](10.HBaseJavaApi.md)
+- [HBase Java API 基础特性](10.HBaseJavaApi基础特性.md)
+- [HBase Java API 高级特性之过滤器](11.HBaseJavaApi高级特性之过滤器.md)
+- [HBase Java API 高级特性之协处理器](12.HBaseJavaApi高级特性之协处理器.md)
+- [HBase Java API 其他高级特性](13.HBaseJavaApi其他高级特性.md)
 - [HBase 运维](21.HBase运维.md)
 - [HBase 命令](22.HBase命令.md)
 - HBase 配置
@@ -42,6 +43,7 @@ hidden: true
 - **文章**
   - [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/bigtable-osdi06.pdf)
   - [Intro to HBase](https://www.slideshare.net/alexbaranau/intro-to-hbase)
+  - [深入理解 Hbase 架构](https://segmentfault.com/a/1190000019959411)
 
 ## 🚪 传送
 
