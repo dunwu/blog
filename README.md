@@ -698,7 +698,7 @@
 ### 监控
 
 - [监控体系](source/_posts/04.DevOps/03.监控/01.监控体系.md)
-- [链路监控](source/_posts/04.DevOps/03.监控/02.链路监控.md)
+- [链路监控](source/_posts/04.DevOps/03.监控/02.链路追踪.md)
 
 ### 工具
 
