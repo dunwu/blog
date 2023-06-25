@@ -9,16 +9,21 @@ tags:
   - 设计
   - 架构
   - 微服务
+  - 分布式
 permalink: /pages/559360/
 hidden: true
 ---
 
 # 微服务
 
+> **微服务是一种架构模式**，它提倡将一个单一应用拆分为一些**可独立运行**、**可协同工作**的**小的服务**。在微服务架构中，每个小服务都拥有独立的进程和轻量级通信。这些服务是围绕业务能力构建的，并且可以通过全自动化部署机制独立部署。这些服务会使用最小规模的集中式管理能力(例如 Docker) ，可以用不同的编程语言编写并使用不同的数据存储技术。
+
 ## 📖 内容
 
-- [微服务简介](01.微服务简介.md) - 关键词：`微服务`
-- [微服务基本原理](02.微服务基本原理.md) - 关键词：`微服务`、`序列化`、`动态代理`、`通信`、`服务注册发现`、`健康检查`、`路由`、`负载均衡`、`容错处理`、`优雅上线下线`、`限流`、`熔断`、`业务分组`
+- [微服务简介](01.微服务简介.md) - 关键词：`定义`、`演进`、`利弊`、`如何拆分`、`容量规划`、`核心组件`
+- [微服务之注册和发现](02.微服务之注册和发现.md) - 关键词：`服务定义`、`注册中心`、`元数据`、`健康检查`、`服务订阅`、`一致性`
+- [微服务之服务调用](03.微服务之服务调用.md) - 关键词：`RPC`、`通信协议`、`传输方式`、`序列化`
+- [微服务基本原理](10.微服务基本原理.md) - 关键词：`微服务`、`序列化`、`动态代理`、`通信`、`服务注册发现`、`健康检查`、`路由`、`负载均衡`、`容错处理`、`优雅上线下线`、`限流`、`熔断`、`业务分组`
 
 ## 📚 资料
 
@@ -31,11 +36,12 @@ hidden: true
 - **教程**
   - [system-design-primer](https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md)
   - [从 0 开始学微服务](https://time.geekbang.org/column/intro/100014401)
-  - [微服务架构核心 20 讲](https://time.geekbang.org/course/detail/66-2186)
-  - [微服务架构实战 160 讲](https://time.geekbang.org/course/detail/84-17811)
+  - [微服务架构核心 20 讲](https://time.geekbang.org/course/intro/100003901)
+  - [微服务架构实战 160 讲](https://time.geekbang.org/course/intro/84)
+  - [RPC 实战与核心原理](https://time.geekbang.org/column/intro/100046201)
 - **文章**
   - [Microservices](https://www.martinfowler.com/articles/microservices.html) Martin Fowler 与 James Lewis 对微服务的定义
 
 ## 🚪 传送
 
-◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾

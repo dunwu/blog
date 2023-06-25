@@ -34,8 +34,8 @@ hidden: true
 - **教程**
   - [system-design-primer](https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md)
   - [从 0 开始学微服务](https://time.geekbang.org/column/intro/100014401)
-  - [微服务架构核心 20 讲](https://time.geekbang.org/course/detail/66-2186)
-  - [微服务架构实战 160 讲](https://time.geekbang.org/course/detail/84-17811)
+  - [微服务架构核心 20 讲](https://time.geekbang.org/course/intro/100003901)
+  - [微服务架构实战 160 讲](https://time.geekbang.org/course/intro/84)
 
 ## 🚪 传送
 
