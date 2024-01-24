@@ -10,6 +10,7 @@ tags:
   - IDE
 permalink: /pages/8695a7/
 hidden: true
+index: false
 ---
 
 # Java IDE

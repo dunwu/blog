@@ -7,6 +7,7 @@ tags:
   - 编程
 permalink: /pages/8ea43c/
 hidden: true
+index: false
 ---
 
 # 设计
@@ -97,9 +98,9 @@ hidden: true
 
 ### UML
 
-- [UML 快速入门](11.UML/01.UML快速入门.md)
-- [UML 结构建模图](11.UML/02.UML结构建模图.md)
-- [UML 行为建模图](11.UML/03.UML行为建模图.md)
+- [UML 快速入门](05.UML/01.UML快速入门.md)
+- [UML 结构建模图](05.UML/02.UML结构建模图.md)
+- [UML 行为建模图](05.UML/03.UML行为建模图.md)
 
 ## 📚 资料
 
@@ -122,4 +123,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

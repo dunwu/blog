@@ -11,6 +11,7 @@ tags:
   - 缓存
 permalink: /pages/c4efe9/
 hidden: true
+index: false
 ---
 
 # Java 缓存
@@ -19,13 +20,11 @@ hidden: true
 >
 > 如果想深入学习缓存，建议先了解一下 [缓存基本原理](https://dunwu.github.io/design/distributed/分布式缓存.html)，有助于理解缓存的特性、原理，使用缓存常见的问题及解决方案。
 
-![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200710163555.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200710163555.png)
 
 ## 📖 内容
 
-- [缓存面试题](01.缓存面试题.md)
 - [Java 缓存框架](02.Java缓存中间件.md)
-- [Memcached 快速入门](03.Memcached.md)
 - [Ehcache 快速入门](04.Ehcache.md)
 - [Java 缓存库](05.Java进程内缓存.md)
 - [Http 缓存](06.Http缓存.md)
@@ -46,4 +45,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

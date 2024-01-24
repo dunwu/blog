@@ -11,6 +11,7 @@ tags:
   - 容器
 permalink: /pages/9eb49b/
 hidden: true
+index: false
 ---
 
 # Java 容器
@@ -54,4 +55,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 🏠 [JAVACORE 首页](https://github.com/dunwu/javacore) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 🏠 [JAVACORE 首页](https://github.com/dunwu/javacore) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/waterdrop/) ◾

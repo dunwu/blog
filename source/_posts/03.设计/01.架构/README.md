@@ -8,6 +8,7 @@ tags:
   - 架构
 permalink: /pages/d9e5d2/
 hidden: true
+index: false
 ---
 
 # 架构
@@ -76,4 +77,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

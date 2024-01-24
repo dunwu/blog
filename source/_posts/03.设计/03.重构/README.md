@@ -9,6 +9,7 @@ tags:
   - 重构
 permalink: /pages/d200c3/
 hidden: true
+index: false
 ---
 
 # 重构
@@ -17,7 +18,7 @@ hidden: true
 >
 > **重构的目的是为了提高代码的质量和性能**。
 
-![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20210430112157.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20210430112157.png)
 
 ## 📖 内容
 
@@ -37,4 +38,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

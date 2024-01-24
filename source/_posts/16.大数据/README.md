@@ -7,6 +7,7 @@ tags:
   - 大数据
 permalink: /pages/fc832f/
 hidden: true
+index: false
 ---
 
 <p align="center">
@@ -59,38 +60,18 @@ hidden: true
 - [Hive DML](02.hive/06.HiveDML.md)
 - [Hive 运维](02.hive/07.Hive运维.md)
 
-### [HBASE](03.hbase)
-
-- [HBase 原理](03.hbase/01.HBase原理.md)
-- [HBase 命令](03.hbase/02.HBase命令.md)
-- [HBase 运维](03.hbase/03.HBase运维.md)
-
-### [ZooKeeper](04.zookeeper)
-
-> ZooKeeper 是 Apache 的顶级项目。**ZooKeeper 为分布式应用提供了高效且可靠的分布式协调服务，提供了诸如统一命名服务、配置管理和分布式锁等分布式的基础服务。在解决分布式数据一致性方面，ZooKeeper 并没有直接采用 Paxos 算法，而是采用了名为 ZAB 的一致性协议**。
->
-> ZooKeeper 主要用来解决分布式集群中应用系统的一致性问题，它能提供基于类似于文件系统的目录节点树方式的数据存储。但是 ZooKeeper 并不是用来专门存储数据的，它的作用主要是用来**维护和监控存储数据的状态变化。通过监控这些数据状态的变化，从而可以达到基于数据的集群管理**。
->
-> 很多大名鼎鼎的框架都基于 ZooKeeper 来实现分布式高可用，如：Dubbo、Kafka 等。
-
-- [ZooKeeper 原理](04.zookeeper/01.ZooKeeper原理.md)
-- [ZooKeeper 命令](04.zookeeper/02.ZooKeeper命令.md)
-- [ZooKeeper 运维](04.zookeeper/03.ZooKeeper运维.md)
-- [ZooKeeper Java API](04.zookeeper/04.ZooKeeperJavaApi.md)
-- [ZooKeeper ACL](04.zookeeper/05.ZooKeeperAcl.md)
-
 ### Kafka
 
-> **[Kafka](https://dunwu.github.io/blog/pages/328f1c/) 是一个分布式流处理平台，此外，它也被广泛应用于消息队列**。
+> **[Kafka](https://dunwu.github.io/waterdrop/pages/328f1c/) 是一个分布式流处理平台，此外，它也被广泛应用于消息队列**。
 
-- [Kafka 快速入门](https://dunwu.github.io/blog/pages/a697a6/)
-- [Kafka 生产者](https://dunwu.github.io/blog/pages/141b2e/)
-- [Kafka 消费者](https://dunwu.github.io/blog/pages/41a171/)
-- [Kafka 集群](https://dunwu.github.io/blog/pages/fc8f54/)
-- [Kafka 可靠传输](https://dunwu.github.io/blog/pages/481bdd/)
-- [Kafka 存储](https://dunwu.github.io/blog/pages/8de948/)
-- [Kafka 流式处理](https://dunwu.github.io/blog/pages/55f66f/)
-- [Kafka 运维](https://dunwu.github.io/blog/pages/21011e/)
+- [Kafka 快速入门](https://dunwu.github.io/waterdrop/pages/a697a6/)
+- [Kafka 生产者](https://dunwu.github.io/waterdrop/pages/141b2e/)
+- [Kafka 消费者](https://dunwu.github.io/waterdrop/pages/41a171/)
+- [Kafka 集群](https://dunwu.github.io/waterdrop/pages/fc8f54/)
+- [Kafka 可靠传输](https://dunwu.github.io/waterdrop/pages/481bdd/)
+- [Kafka 存储](https://dunwu.github.io/waterdrop/pages/8de948/)
+- [Kafka 流式处理](https://dunwu.github.io/waterdrop/pages/55f66f/)
+- [Kafka 运维](https://dunwu.github.io/waterdrop/pages/21011e/)
 
 ## 📚 资料
 
@@ -146,4 +127,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

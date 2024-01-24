@@ -13,6 +13,7 @@ tags:
   - SpringBoot
 permalink: /pages/6bb8c1/
 hidden: true
+index: false
 ---
 
 # Spring 其他

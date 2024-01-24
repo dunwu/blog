@@ -9,6 +9,7 @@ tags:
   - Flink
 permalink: /pages/5c85bd/
 hidden: true
+index: false
 ---
 
 # Flink 教程
@@ -44,4 +45,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

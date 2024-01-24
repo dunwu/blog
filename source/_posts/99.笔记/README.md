@@ -7,11 +7,16 @@ tags:
   - 笔记
 permalink: /pages/aa2c27/
 hidden: true
+index: false
 ---
 
 # 笔记
 
 ## 📖 内容
+
+### Java
+
+- [《玩转 Spring 全家桶》笔记](01.Java/01.玩转Spring全家桶笔记.md)
 
 ### 设计
 
@@ -37,7 +42,8 @@ hidden: true
 - **分布式理论**
   - [《分布式协议与算法实战》笔记](15.分布式/01.分布式理论/01.分布式协议与算法实战笔记.md)
 - **分布式通信**
-  - [《RPC 实战与核心原理》](15.分布式/21.分布式通信/01.RPC实战与核心原理.md)
+  - [《RPC 实战与核心原理》](15.分布式/21.分布式通信/01.RPC实战与核心原理笔记.md)
+  - [《Dubbo 源码解读与实战笔记》](15.分布式/21.分布式通信/02.Dubbo源码解读与实战笔记.md)
   - [《消息队列高手课学习》笔记](15.分布式/21.分布式通信/11.消息队列高手课笔记.md)
   - [《Kafka 核心源码解读》笔记](15.分布式/21.分布式通信/13.Kafka核心源码解读笔记.md)
   - [《RocketMQ 技术内幕》笔记](15.分布式/21.分布式通信/15.RocketMQ技术内幕笔记.md)
@@ -61,4 +67,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

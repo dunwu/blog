@@ -9,6 +9,7 @@ tags:
   - 工具
 permalink: /pages/1123e1/
 hidden: true
+index: false
 ---
 
 # Java 工具
@@ -52,4 +53,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

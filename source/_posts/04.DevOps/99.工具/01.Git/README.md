@@ -10,11 +10,12 @@ tags:
   - Git
 permalink: /pages/d107ad/
 hidden: true
+index: false
 ---
 
 # Git 教程
 
-![git脑图](https://raw.githubusercontent.com/dunwu/images/dev/cs/web/git/git-summary.png)
+![git脑图](https://raw.githubusercontent.com/dunwu/images/master/cs/web/git/git-summary.png)
 
 ## 📖 内容
 
@@ -65,4 +66,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 🏠 [dunwu.github.io 首页](https://dunwu.github.io/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 🏠 [dunwu.github.io 首页](https://dunwu.github.io/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/waterdrop/) ◾

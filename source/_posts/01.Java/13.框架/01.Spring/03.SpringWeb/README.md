@@ -14,6 +14,7 @@ tags:
   - Web
 permalink: /pages/e2586a/
 hidden: true
+index: false
 ---
 
 # Spring Web

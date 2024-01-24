@@ -9,6 +9,7 @@ tags:
   - JavaWeb
 permalink: /pages/50f49f/
 hidden: true
+index: false
 ---
 
 # ☕ JavaWeb

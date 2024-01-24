@@ -13,6 +13,7 @@ tags:
   - SpringBoot
 permalink: /pages/9e0b67/
 hidden: true
+index: false
 ---
 
 # Spring 综述
@@ -39,4 +40,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [我的博客](https://github.com/dunwu/blog) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

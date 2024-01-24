@@ -11,6 +11,7 @@ tags:
   - Elasticsearch
 permalink: /pages/74675e/
 hidden: true
+index: false
 ---
 
 # Elasticsearch 教程
@@ -74,4 +75,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

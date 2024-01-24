@@ -10,6 +10,7 @@ tags:
   - 分布式协同
 permalink: /pages/1b41b6/
 hidden: true
+index: false
 ---
 
 # ZooKeeper
@@ -26,11 +27,11 @@ hidden: true
 
 ### [ZooKeeper 原理](01.ZooKeeper原理.md)
 
-### [ZooKeeper 命令](02.ZooKeeper命令.md)
+### [ZooKeeper Java Api](02.ZooKeeperJavaApi.md)
 
-### [ZooKeeper 运维](03.ZooKeeper运维.md)
+### [ZooKeeper 命令](03.ZooKeeper命令.md)
 
-### [ZooKeeper Java Api](04.ZooKeeperJavaApi.md)
+### [ZooKeeper 运维](04.ZooKeeper运维.md)
 
 ### [ZooKeeper Acl](05.ZooKeeperAcl.md)
 
@@ -55,4 +56,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

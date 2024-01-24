@@ -11,6 +11,7 @@ tags:
   - 并发
 permalink: /pages/6e5393/
 hidden: true
+index: false
 ---
 
 # Java 并发
@@ -25,15 +26,15 @@ hidden: true
 
 > **关键词：`进程`、`线程`、`安全性`、`活跃性`、`性能`、`死锁`、`饥饿`、`上下文切换`**
 
-![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200701113445.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200701113445.png)
 
 ### [Java 线程基础](02.Java线程基础.md)
 
 > **关键词：`Thread`、`Runnable`、`Callable`、`Future`、`wait`、`notify`、`notifyAll`、`join`、`sleep`、`yeild`、`线程状态`、`线程通信`**
 
-![img](https://raw.githubusercontent.com/dunwu/images/dev/snap/20200630221707.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200630221707.png)
 
-![img](https://raw.githubusercontent.com/dunwu/images/dev/cs/java/javacore/concurrent/java-thread_1.png)
+![img](https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/concurrent/java-thread_1.png)
 
 ### [Java 并发核心机制](03.Java并发核心机制.md)
 
@@ -78,4 +79,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 🏠 [JAVACORE 首页](https://github.com/dunwu/javacore) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 🏠 [JAVACORE 首页](https://github.com/dunwu/javacore) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/waterdrop/) ◾

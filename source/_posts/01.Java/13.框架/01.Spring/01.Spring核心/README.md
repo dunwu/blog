@@ -13,6 +13,7 @@ tags:
   - SpringBoot
 permalink: /pages/5e7c20/
 hidden: true
+index: false
 ---
 
 # Spring 核心

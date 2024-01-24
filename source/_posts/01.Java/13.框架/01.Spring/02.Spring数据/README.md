@@ -14,6 +14,7 @@ tags:
   - 数据库
 permalink: /pages/b912d1/
 hidden: true
+index: false
 ---
 
 # Spring 数据篇

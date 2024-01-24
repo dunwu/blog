@@ -10,6 +10,7 @@ tags:
   - JavaSE
 permalink: /pages/016137/
 hidden: true
+index: false
 ---
 
 # Java 高级特性
@@ -61,4 +62,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 🏠 [JAVACORE 首页](https://github.com/dunwu/javacore) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 🏠 [JAVACORE 首页](https://github.com/dunwu/javacore) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/waterdrop/) ◾

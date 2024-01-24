@@ -9,6 +9,7 @@ tags:
   - 综合
 permalink: /pages/ad9b6a/
 hidden: true
+index: false
 ---
 
 # 大数据综合

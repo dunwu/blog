@@ -11,6 +11,7 @@ tags:
   - 服务器
 permalink: /pages/e3f3f3/
 hidden: true
+index: false
 ---
 
 # Java 服务器
@@ -35,4 +36,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

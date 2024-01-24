@@ -1,5 +1,5 @@
 ---
-title: 数据库中间件和代理
+title: 数据库中间件
 date: 2022-04-11 16:52:35
 categories:
   - 数据库
@@ -9,9 +9,10 @@ tags:
   - 中间件
 permalink: /pages/addb05/
 hidden: true
+index: false
 ---
 
-# 数据库中间件和代理
+# 数据库中间件
 
 ## 📖 内容
 
@@ -30,4 +31,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

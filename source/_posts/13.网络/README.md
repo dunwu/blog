@@ -7,6 +7,7 @@ tags:
   - 网络
 permalink: /pages/b39653/
 hidden: true
+index: false
 ---
 
 # 计算机网络
@@ -68,4 +69,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

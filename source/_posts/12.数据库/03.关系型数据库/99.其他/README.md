@@ -10,6 +10,7 @@ tags:
   - 关系型数据库
 permalink: /pages/ca9888/
 hidden: true
+index: false
 ---
 
 # 关系型数据库其他知识
@@ -24,4 +25,4 @@ hidden: true
 
 ## 🚪 传送
 
-◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾ 🎯 [钝悟的博客](https://dunwu.github.io/blog/) ◾
+◾ 💧 [钝悟的 IT 知识图谱](https://dunwu.github.io/waterdrop/) ◾

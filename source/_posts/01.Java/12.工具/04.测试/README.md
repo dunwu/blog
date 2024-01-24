@@ -10,6 +10,7 @@ tags:
   - 测试
 permalink: /pages/2cecc3/
 hidden: true
+index: false
 ---
 
 # Java 测试
