@@ -8,7 +8,7 @@ categories:
 tags:
   - 架构
   - 解决方案
-permalink: /pages/3f25aa/
+permalink: /pages/c0063bdf/
 ---
 
 # Cinchcast 的架构

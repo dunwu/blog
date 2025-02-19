@@ -7,7 +7,7 @@ categories:
 tags:
   - 设计
   - 设计模式
-permalink: /pages/81b0f2/
+permalink: /pages/fe8df8f0/
 hidden: true
 index: false
 ---

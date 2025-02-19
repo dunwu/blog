@@ -8,7 +8,7 @@ categories:
 tags:
   - Java
   - 测试
-permalink: /pages/2cecc3/
+permalink: /pages/cffa3952/
 hidden: true
 index: false
 ---

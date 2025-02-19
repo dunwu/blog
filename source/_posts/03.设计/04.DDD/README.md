@@ -7,7 +7,7 @@ categories:
 tags:
   - 设计
   - DDD
-permalink: /pages/833925/
+permalink: /pages/53db812a/
 hidden: true
 index: false
 ---

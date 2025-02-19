@@ -6,7 +6,7 @@ categories:
   - 网络技术
 tags:
   - 网络
-permalink: /pages/75570a/
+permalink: /pages/12e30b8d/
 hidden: true
 index: false
 ---

@@ -7,7 +7,7 @@ categories:
 tags:
   - 设计
   - 重构
-permalink: /pages/d200c3/
+permalink: /pages/7f65f5c2/
 hidden: true
 index: false
 ---

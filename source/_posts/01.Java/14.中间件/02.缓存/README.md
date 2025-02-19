@@ -9,7 +9,7 @@ tags:
   - Java
   - 中间件
   - 缓存
-permalink: /pages/c4efe9/
+permalink: /pages/1420c34e/
 hidden: true
 index: false
 ---

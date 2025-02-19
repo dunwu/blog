@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - HBase
-permalink: /pages/417be6/
+permalink: /pages/ed5e0d7f/
 hidden: true
 index: false
 ---

@@ -9,7 +9,7 @@ tags:
   - 数据库
   - 搜索引擎数据库
   - Elastic
-permalink: /pages/7bf7f7/
+permalink: /pages/a263510e/
 hidden: true
 index: false
 ---
@@ -18,11 +18,11 @@ index: false
 
 > **Elastic 技术栈通常被用来作为日志采集、检索、可视化的解决方案。**
 >
-> ELK 是 elastic 公司旗下三款产品 [Elasticsearch](https://www.elastic.co/products/elasticsearch) 、[Logstash](https://www.elastic.co/products/logstash) 、[Kibana](https://www.elastic.co/products/kibana) 的首字母组合。
+> ELK 是 elastic 公司旗下三款产品 [Elasticsearch](https://www.elastic.co/elasticsearch) 、[Logstash](https://www.elastic.co/products/logstash) 、[Kibana](https://www.elastic.co/kibana) 的首字母组合。
 >
 > [Logstash](https://www.elastic.co/products/logstash) 传输和处理你的日志、事务或其他数据。
 >
-> [Kibana](https://www.elastic.co/products/kibana) 将 Elasticsearch 的数据分析并渲染为可视化的报表。
+> [Kibana](https://www.elastic.co/kibana) 将 Elasticsearch 的数据分析并渲染为可视化的报表。
 >
 > Elastic 技术栈，在 ELK 的基础上扩展了一些新的产品，如：[Beats](https://www.elastic.co/products/beats) 、[X-Pack](https://www.elastic.co/products/x-pack) 。
 

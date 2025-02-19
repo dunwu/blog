@@ -12,7 +12,7 @@ tags:
   - Spring
   - SpringBoot
   - IO
-permalink: /pages/56581b/
+permalink: /pages/c9519a1f/
 hidden: true
 index: false
 ---

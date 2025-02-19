@@ -9,7 +9,7 @@ tags:
   - Java
   - 框架
   - ORM
-permalink: /pages/fe879a/
+permalink: /pages/1e4215bc/
 hidden: true
 index: false
 ---

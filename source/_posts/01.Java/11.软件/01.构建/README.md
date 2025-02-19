@@ -8,7 +8,7 @@ categories:
 tags:
   - Java
   - 构建
-permalink: /pages/d1859b/
+permalink: /pages/afbb2faf/
 hidden: true
 index: false
 ---

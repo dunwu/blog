@@ -8,7 +8,7 @@ categories:
 tags:
   - DevOps
   - Git
-permalink: /pages/d107ad/
+permalink: /pages/7f7a45cf/
 hidden: true
 index: false
 ---

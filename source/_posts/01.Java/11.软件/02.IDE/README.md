@@ -8,7 +8,7 @@ categories:
 tags:
   - Java
   - IDE
-permalink: /pages/8695a7/
+permalink: /pages/57a22368/
 hidden: true
 index: false
 ---

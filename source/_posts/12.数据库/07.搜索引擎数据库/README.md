@@ -7,7 +7,7 @@ categories:
 tags:
   - 数据库
   - 搜索引擎数据库
-permalink: /pages/82c9ce/
+permalink: /pages/6436d6bf/
 hidden: true
 index: false
 ---
@@ -20,49 +20,29 @@ index: false
 
 > Elasticsearch 是一个基于 Lucene 的搜索和数据分析工具，它提供了一个分布式服务。Elasticsearch 是遵从 Apache 开源条款的一款开源产品，是当前主流的企业级搜索引擎。
 
-#### [Elasticsearch 面试总结](01.Elasticsearch/01.Elasticsearch面试总结.md)
-
-#### [Elasticsearch 快速入门](01.Elasticsearch/02.Elasticsearch快速入门.md)
-
-#### [Elasticsearch 简介](01.Elasticsearch/03.Elasticsearch简介.md)
-
-#### [Elasticsearch 索引](01.Elasticsearch/04.Elasticsearch索引.md)
-
-#### [Elasticsearch 查询](01.Elasticsearch/05.Elasticsearch查询.md)
-
-#### [Elasticsearch 高亮](01.Elasticsearch/06.Elasticsearch高亮.md)
-
-#### [Elasticsearch 排序](01.Elasticsearch/07.Elasticsearch排序.md)
-
-#### [Elasticsearch 聚合](01.Elasticsearch/08.Elasticsearch聚合.md)
-
-#### [Elasticsearch 分析器](01.Elasticsearch/09.Elasticsearch分析器.md)
-
-#### [Elasticsearch 性能优化](01.Elasticsearch/10.Elasticsearch性能优化.md)
-
-#### [Elasticsearch Rest API](01.Elasticsearch/11.ElasticsearchRestApi.md)
-
-#### [ElasticSearch Java API 之 High Level REST Client](01.Elasticsearch/12.ElasticsearchHighLevelRestJavaApi.md)
-
-#### [Elasticsearch 集群和分片](01.Elasticsearch/13.Elasticsearch集群和分片.md)
-
-#### [Elasticsearch 运维](01.Elasticsearch/20.Elasticsearch运维.md)
+- [Elasticsearch 简介](01.Elasticsearch/Elasticsearch_简介.md)
+- [Elasticsearch 存储](01.Elasticsearch/Elasticsearch_存储.md)
+- [Elasticsearch 搜索（上）](01.Elasticsearch/Elasticsearch_搜索上.md)
+- [Elasticsearch 搜索（下）](01.Elasticsearch/Elasticsearch_搜索下.md)
+- [Elasticsearch 聚合](01.Elasticsearch/Elasticsearch_聚合.md)
+- [Elasticsearch 分析](01.Elasticsearch/Elasticsearch_分析.md)
+- [Elasticsearch DSL](01.Elasticsearch/Elasticsearch_DSL.md)
+- [Elasticsearch 集群](01.Elasticsearch/Elasticsearch_集群.md)
+- [Elasticsearch 优化](01.Elasticsearch/Elasticsearch_优化.md)
+- [Elasticsearch 运维](01.Elasticsearch/Elasticsearch_运维.md)
+- [Elasticsearch API](01.Elasticsearch/Elasticsearch_API.md)
+- [ElasticSearch API 之 High Level REST Client](01.Elasticsearch/Elasticsearch_API_HighLevelRest.md)
+- [Elasticsearch 面试](01.Elasticsearch/Elasticsearch_面试.md) 💯
 
 ### Elastic
 
-#### [Elastic 快速入门](02.Elastic/01.Elastic快速入门.md)
-
-#### [Elastic 技术栈之 Filebeat](02.Elastic/02.Elastic技术栈之Filebeat.md)
-
-#### [Filebeat 运维](02.Elastic/03.Filebeat运维.md)
-
-#### [Elastic 技术栈之 Kibana](02.Elastic/04.Elastic技术栈之Kibana.md)
-
-#### [Kibana 运维](02.Elastic/05.Kibana运维.md)
-
-#### [Elastic 技术栈之 Logstash](02.Elastic/06.Elastic技术栈之Logstash.md)
-
-#### [Logstash 运维](02.Elastic/07.Logstash运维.md)
+-  [Elastic 快速入门](02.Elastic/01.Elastic快速入门.md)
+-  [Elastic 技术栈之 Filebeat](02.Elastic/02.Elastic技术栈之Filebeat.md)
+-  [Filebeat 运维](02.Elastic/03.Filebeat运维.md)
+-  [Elastic 技术栈之 Kibana](02.Elastic/04.Elastic技术栈之Kibana.md)
+-  [Kibana 运维](02.Elastic/05.Kibana运维.md)
+-  [Elastic 技术栈之 Logstash](02.Elastic/06.Elastic技术栈之Logstash.md)
+-  [Logstash 运维](02.Elastic/07.Logstash运维.md)
 
 ## 📚 资料
 

@@ -12,7 +12,7 @@ tags:
   - Spring
   - SpringBoot
   - 数据库
-permalink: /pages/b912d1/
+permalink: /pages/63e37fe3/
 hidden: true
 index: false
 ---

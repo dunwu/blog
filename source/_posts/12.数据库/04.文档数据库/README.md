@@ -7,7 +7,7 @@ categories:
 tags:
   - 数据库
   - 文档数据库
-permalink: /pages/d1dc5f/
+permalink: /pages/4b2d2f5c/
 hidden: true
 index: false
 ---
@@ -18,25 +18,15 @@ index: false
 
 ### MongoDB
 
-#### [MongoDB 应用指南](01.MongoDB/01.MongoDB应用指南.md)
-
-#### [MongoDB 的 CRUD 操作](01.MongoDB/02.MongoDB的CRUD操作.md)
-
-#### [MongoDB 聚合操作](01.MongoDB/03.MongoDB的聚合操作.md)
-
-#### [MongoDB 事务](01.MongoDB/04.MongoDB事务.md)
-
-#### [MongoDB 建模](01.MongoDB/05.MongoDB建模.md)
-
-#### [MongoDB 建模示例](01.MongoDB/06.MongoDB建模示例.md)
-
-#### [MongoDB 索引](01.MongoDB/07.MongoDB索引.md)
-
-#### [MongoDB 复制](01.MongoDB/08.MongoDB复制.md)
-
-#### [MongoDB 分片](01.MongoDB/09.MongoDB分片.md)
-
-#### [MongoDB 运维](01.MongoDB/20.MongoDB运维.md)
+- [MongoDB 简介](01.MongoDB/MongoDB_简介.md)
+- [MongoDB CRUD](01.MongoDB/MongoDB_CRUD.md)
+- [MongoDB 聚合](01.MongoDB/MongoDB_聚合.md)
+- [MongoDB 事务](01.MongoDB/MongoDB_事务.md)
+- [MongoDB 建模](01.MongoDB/MongoDB_建模.md)
+- [MongoDB 索引](01.MongoDB/MongoDB_索引.md)
+- [MongoDB 复制](01.MongoDB/MongoDB_复制.md)
+- [MongoDB 分片](01.MongoDB/MongoDB_分片.md)
+- [MongoDB 运维](01.MongoDB/MongoDB_运维.md)
 
 ## 📚 资料
 

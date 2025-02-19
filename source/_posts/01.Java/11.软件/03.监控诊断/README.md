@@ -9,7 +9,7 @@ tags:
   - Java
   - 监控
   - 诊断
-permalink: /pages/3d16d3/
+permalink: /pages/bc2f8c2a/
 hidden: true
 index: false
 ---

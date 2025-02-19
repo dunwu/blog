@@ -5,7 +5,7 @@ categories:
   - 编程
 tags:
   - 编程
-permalink: /pages/f85bac/
+permalink: /pages/47a444a4/
 hidden: true
 index: false
 ---

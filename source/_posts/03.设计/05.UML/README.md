@@ -7,7 +7,7 @@ categories:
 tags:
   - 设计
   - UML
-permalink: /pages/13ccb0/
+permalink: /pages/845dbfe4/
 hidden: true
 index: false
 ---

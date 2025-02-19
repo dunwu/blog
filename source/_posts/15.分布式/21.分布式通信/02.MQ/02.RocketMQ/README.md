@@ -8,7 +8,7 @@ categories:
   - RocketMQ
 tags:
   - MQ
-permalink: /pages/13dc3a/
+permalink: /pages/4b74671e/
 hidden: true
 index: false
 ---
@@ -17,8 +17,8 @@ index: false
 
 ## 📖 内容
 
-- [RocketMQ 快速入门](01.RocketMQ快速入门.md)
-- [RocketMQ 基本原理](02.RocketMQ基本原理.md)
+- [RocketMQ 快速入门](RocketMQ快速入门)
+- [RocketMQ 基本原理](RocketMQ基本原理)
 
 ## 📚 资料
 

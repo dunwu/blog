@@ -8,7 +8,7 @@ categories:
 tags:
   - 数据库
   - 关系型数据库
-permalink: /pages/22f2e3/
+permalink: /pages/853cc908/
 hidden: true
 index: false
 ---
@@ -17,13 +17,8 @@ index: false
 
 ## 📖 内容
 
-### [数据库系统概论](01.数据库系统概论.md)
-
-### [SQL 语法速成](02.SQL语法.md)
-
-### [扩展 SQL](03.扩展SQL.md)
-
-### [SQL Cheat Sheet](99.SqlCheatSheet.md)
+- [关系数据库简介](关系数据库简介.md)
+- [SQL 语法](SQL语法.md)
 
 ## 📚 资料
 

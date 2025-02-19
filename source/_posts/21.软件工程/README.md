@@ -5,7 +5,7 @@ categories:
   - 软件工程
 tags:
   - 软件工程
-permalink: /pages/40d1d0/
+permalink: /pages/b74c7c77/
 hidden: true
 index: false
 ---
@@ -19,7 +19,7 @@ index: false
 - [人月神话](https://book.douban.com/subject/26358448/)
 - [人件](https://book.douban.com/subject/25956450/)
 - [构建之法](https://book.douban.com/subject/25965995/)
-- [软件工程之美](https://time.geekbang.org/column/intro/100023701)
+- [极客时间教程 - 软件工程之美](https://time.geekbang.org/column/intro/100023701)
 
 ## 🚪 传送
 

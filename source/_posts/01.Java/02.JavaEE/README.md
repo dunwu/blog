@@ -7,7 +7,7 @@ categories:
 tags:
   - Java
   - JavaEE
-permalink: /pages/80a822/
+permalink: /pages/7e4834de/
 hidden: true
 index: false
 ---

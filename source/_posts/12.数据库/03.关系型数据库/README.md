@@ -7,7 +7,7 @@ categories:
 tags:
   - 数据库
   - 关系型数据库
-permalink: /pages/bb43eb/
+permalink: /pages/97156163/
 hidden: true
 index: false
 ---
@@ -18,21 +18,20 @@ index: false
 
 ### 关系型数据库综合
 
-- [SQL 语法速成](01.综合/02.SQL语法.md)
-- [扩展 SQL](01.综合/03.扩展SQL.md)
-- [SQL Cheat Sheet](01.综合/99.SqlCheatSheet.md)
+- [关系数据库简介](01.综合/关系数据库简介.md)
+- [SQL 语法](01.综合/SQL语法.md)
 
 ### Mysql
 
-- [Mysql 架构](02.Mysql/01.Mysql架构.md)
-- [Mysql 存储引擎](02.Mysql/02.Mysql存储引擎.md)
-- [Mysql 索引](02.Mysql/03.Mysql索引.md)
-- [Mysql 事务](02.Mysql/04.Mysql事务.md)
-- [Mysql 锁](02.Mysql/05.Mysql锁.md)
-- [Mysql 高可用](02.Mysql/06.Mysql高可用.md)
-- [Mysql 优化](02.Mysql/07.Mysql优化.md)
-- [Mysql 运维](02.Mysql/20.Mysql运维.md)
-- [Mysql 面试](02.Mysql/99.Mysql面试.md)
+- [Mysql 架构](02.Mysql/Mysql_架构)
+- [Mysql 存储引擎](02.Mysql/Mysql_存储引擎)
+- [Mysql 索引](02.Mysql/Mysql_索引)
+- [Mysql 事务](02.Mysql/Mysql_事务)
+- [Mysql 锁](02.Mysql/Mysql_锁)
+- [Mysql 高可用](02.Mysql/Mysql_高可用)
+- [Mysql 优化](02.Mysql/Mysql_优化)
+- [Mysql 运维](02.Mysql/Mysql_运维)
+- [Mysql 面试](02.Mysql/Mysql_面试)
 
 ### 其他
 

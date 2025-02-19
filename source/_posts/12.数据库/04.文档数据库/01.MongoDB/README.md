@@ -9,7 +9,7 @@ tags:
   - 数据库
   - 文档数据库
   - MongoDB
-permalink: /pages/b1a116/
+permalink: /pages/4b8aff19/
 hidden: true
 index: false
 ---
@@ -24,30 +24,21 @@ index: false
 
 ## 📖 内容
 
-### [MongoDB 应用指南](01.MongoDB应用指南.md)
-
-### [MongoDB 的 CRUD 操作](02.MongoDB的CRUD操作.md)
-
-### [MongoDB 聚合操作](03.MongoDB的聚合操作.md)
-
-### [MongoDB 事务](04.MongoDB事务.md)
-
-### [MongoDB 建模](05.MongoDB建模.md)
-
-### [MongoDB 建模示例](06.MongoDB建模示例.md)
-
-### [MongoDB 索引](07.MongoDB索引.md)
-
-### [MongoDB 复制](08.MongoDB复制.md)
-
-### [MongoDB 分片](09.MongoDB分片.md)
-
-### [MongoDB 运维](20.MongoDB运维.md)
+- [MongoDB 简介](MongoDB_简介.md)
+- [MongoDB CRUD](MongoDB_CRUD.md)
+- [MongoDB 聚合](MongoDB_聚合.md)
+- [MongoDB 事务](MongoDB_事务.md)
+- [MongoDB 建模](MongoDB_建模.md)
+- [MongoDB 索引](MongoDB_索引.md)
+- [MongoDB 复制](MongoDB_复制.md)
+- [MongoDB 分片](MongoDB_分片.md)
+- [MongoDB 运维](MongoDB_运维.md)
 
 ## 📚 资料
 
 - **官方**
   - [MongoDB 官网](https://www.mongodb.com/)
+  - [MongoDB 官方手册](https://www.mongodb.com/zh-cn/docs/manual/)
   - [MongoDB Github](https://github.com/mongodb/mongo)
   - [MongoDB 官方免费教程](https://university.mongodb.com/)
 - **教程**

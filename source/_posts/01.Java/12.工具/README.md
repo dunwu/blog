@@ -7,7 +7,7 @@ categories:
 tags:
   - Java
   - 工具
-permalink: /pages/1123e1/
+permalink: /pages/c85e7820/
 hidden: true
 index: false
 ---

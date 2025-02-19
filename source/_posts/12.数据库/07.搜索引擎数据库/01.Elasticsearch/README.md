@@ -1,4 +1,5 @@
 ---
+icon: logos:elasticsearch
 title: Elasticsearch 教程
 date: 2022-04-11 16:52:35
 categories:
@@ -9,7 +10,7 @@ tags:
   - 数据库
   - 搜索引擎数据库
   - Elasticsearch
-permalink: /pages/74675e/
+permalink: /pages/f457d8c3/
 hidden: true
 index: false
 ---
@@ -20,35 +21,19 @@ index: false
 
 ## 📖 内容
 
-### [Elasticsearch 面试总结](01.Elasticsearch面试总结.md) 💯
-
-### [Elasticsearch 快速入门](02.Elasticsearch快速入门.md)
-
-### [Elasticsearch 简介](03.Elasticsearch简介.md)
-
-### [Elasticsearch 索引管理](04.Elasticsearch索引.md)
-
-### [Elasticsearch 映射](05.Elasticsearch映射.md)
-
-### [Elasticsearch 查询](05.Elasticsearch查询.md)
-
-### [Elasticsearch 高亮](06.Elasticsearch高亮.md)
-
-### [Elasticsearch 排序](07.Elasticsearch排序.md)
-
-### [Elasticsearch 聚合](08.Elasticsearch聚合.md)
-
-### [Elasticsearch 分析器](09.Elasticsearch分析器.md)
-
-### [Elasticsearch 性能优化](10.Elasticsearch性能优化.md)
-
-### [Elasticsearch Rest API](11.ElasticsearchRestApi.md)
-
-### [ElasticSearch Java API 之 High Level REST Client](12.ElasticsearchHighLevelRestJavaApi.md)
-
-### [Elasticsearch 集群和分片](13.Elasticsearch集群和分片.md)
-
-### [Elasticsearch 运维](20.Elasticsearch运维.md)
+- [Elasticsearch 简介](Elasticsearch_简介.md)
+- [Elasticsearch 存储](Elasticsearch_存储.md)
+- [Elasticsearch 搜索（上）](Elasticsearch_搜索上.md)
+- [Elasticsearch 搜索（下）](Elasticsearch_搜索下.md)
+- [Elasticsearch 聚合](Elasticsearch_聚合.md)
+- [Elasticsearch 分析](Elasticsearch_分析.md)
+- [Elasticsearch 集群](Elasticsearch_集群.md)
+- [Elasticsearch 架构](Elasticsearch_架构.md)
+- [Elasticsearch 优化](Elasticsearch_优化.md)
+- [Elasticsearch 运维](Elasticsearch_运维.md)
+- [Elasticsearch API](Elasticsearch_API.md)
+- [ElasticSearch API 之 High Level REST Client](Elasticsearch_API_HighLevelRest.md)
+- [Elasticsearch 面试](Elasticsearch_面试.md) 💯
 
 ## 📚 资料
 
@@ -61,7 +46,9 @@ index: false
   - [《Elasticsearch 实战》](https://book.douban.com/subject/30380439/)
 - **教程**
   - [ELK Stack 权威指南](https://github.com/chenryn/logstash-best-practice-cn)
+  - [极客时间教程 - Elasticsearch 核心技术与实战](https://time.geekbang.org/course/detail/100030501-102659)
   - [Elasticsearch 教程](https://www.knowledgedict.com/tutorial/elasticsearch-intro.html)
+  - [Elasticsearch 从入门到实践](https://www.itshujia.com/books/elasticsearch)
 - **文章**
   - [Elasticsearch+Logstash+Kibana 教程](https://www.cnblogs.com/xing901022/p/4704319.html)
   - [ELK（Elasticsearch、Logstash、Kibana）安装和配置](https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md)

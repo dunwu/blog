@@ -7,7 +7,7 @@ categories:
 tags:
   - 设计
   - 编程范式
-permalink: /pages/34f6f0/
+permalink: /pages/7a94ec4e/
 hidden: true
 index: false
 ---

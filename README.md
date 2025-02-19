@@ -33,83 +33,71 @@
 
 ## Java
 
-> [Java 面试总结](source/_posts/01.Java/01.JavaSE/99.Java面试.md) 💯
+### JavaCore
 
-### JavaSE
+#### [Java 基础特性](source/_posts/01.Java/01.JavaCore/01.基础特性)
 
-#### [Java 基础特性](source/_posts/01.Java/01.JavaSE/01.基础特性)
+- [Java 基础语法特性](source/_posts/01.Java/01.JavaCore/01.基础特性/Java基础语法.md)
+- [Java 基本数据类型](source/_posts/01.Java/01.JavaCore/01.基础特性/Java基本数据类型.md)
+- [Java 面向对象](source/_posts/01.Java/01.JavaCore/01.基础特性/Java面向对象.md)
+- [Java 方法](source/_posts/01.Java/01.JavaCore/01.基础特性/Java方法.md)
+- [Java 数组](source/_posts/01.Java/01.JavaCore/01.基础特性/Java数组.md)
+- [Java 枚举](source/_posts/01.Java/01.JavaCore/01.基础特性/Java枚举.md)
+- [Java 控制语句](source/_posts/01.Java/01.JavaCore/01.基础特性/Java控制语句.md)
+- [Java 异常](source/_posts/01.Java/01.JavaCore/01.基础特性/Java异常.md)
+- [Java 泛型](source/_posts/01.Java/01.JavaCore/01.基础特性/Java泛型.md)
+- [Java 反射](source/_posts/01.Java/01.JavaCore/01.基础特性/Java反射.md)
+- [Java 注解](source/_posts/01.Java/01.JavaCore/01.基础特性/Java注解.md)
+- [Java String 类型](source/_posts/01.Java/01.JavaCore/01.基础特性/JavaString类型.md)
 
-- [Java 开发环境](source/_posts/01.Java/01.JavaSE/01.基础特性/00.Java开发环境.md)
-- [Java 基础语法特性](source/_posts/01.Java/01.JavaSE/01.基础特性/01.Java基础语法.md)
-- [Java 基本数据类型](source/_posts/01.Java/01.JavaSE/01.基础特性/02.Java基本数据类型.md)
-- [Java 面向对象](source/_posts/01.Java/01.JavaSE/01.基础特性/03.Java面向对象.md)
-- [Java 方法](source/_posts/01.Java/01.JavaSE/01.基础特性/04.Java方法.md)
-- [Java 数组](source/_posts/01.Java/01.JavaSE/01.基础特性/05.Java数组.md)
-- [Java 枚举](source/_posts/01.Java/01.JavaSE/01.基础特性/06.Java枚举.md)
-- [Java 控制语句](source/_posts/01.Java/01.JavaSE/01.基础特性/07.Java控制语句.md)
-- [Java 异常](source/_posts/01.Java/01.JavaSE/01.基础特性/08.Java异常.md)
-- [Java 泛型](source/_posts/01.Java/01.JavaSE/01.基础特性/09.Java泛型.md)
-- [Java 反射](source/_posts/01.Java/01.JavaSE/01.基础特性/10.Java反射.md)
-- [Java 注解](source/_posts/01.Java/01.JavaSE/01.基础特性/11.Java注解.md)
-- [Java String 类型](source/_posts/01.Java/01.JavaSE/01.基础特性/42.JavaString类型.md)
+#### [Java 高级特性](source/_posts/01.Java/01.JavaCore/02.高级特性)
 
-#### [Java 高级特性](source/_posts/01.Java/01.JavaSE/02.高级特性)
+- [Java 正则](source/_posts/01.Java/01.JavaCore/02.高级特性/Java正则.md) - 关键词：Pattern、Matcher、捕获与非捕获、反向引用、零宽断言、贪婪与懒惰、元字符、DFA、NFA
+- [Java 编码和加密](source/_posts/01.Java/01.JavaCore/02.高级特性/Java编码和加密.md) - 关键词：Base64、消息摘要、数字签名、对称加密、非对称加密、MD5、SHA、HMAC、AES、DES、DESede、RSA
+- [Java 国际化](source/_posts/01.Java/01.JavaCore/02.高级特性/Java国际化.md) - 关键词：Locale、ResourceBundle、NumberFormat、DateFormat、MessageFormat
+- [Java JDK8](source/_posts/01.Java/01.JavaCore/02.高级特性/JDK8特性.md) - 关键词：Stream、lambda、Optional、@FunctionalInterface
+- [Java SPI](source/_posts/01.Java/01.JavaCore/02.高级特性/JavaSPI.md) - 关键词：SPI、ClassLoader
+- [JavaAgent](source/_posts/01.Java/01.JavaCore/02.高级特性/JavaAgent.md)
 
-- [Java 正则从入门到精通](source/_posts/01.Java/01.JavaSE/02.高级特性/01.Java正则.md) - 关键词：`Pattern`、`Matcher`、`捕获与非捕获`、`反向引用`、`零宽断言`、`贪婪与懒惰`、`元字符`、`DFA`、`NFA`
-- [Java 编码和加密](source/_posts/01.Java/01.JavaSE/02.高级特性/02.Java编码和加密.md) - 关键词：`Base64`、`消息摘要`、`数字签名`、`对称加密`、`非对称加密`、`MD5`、`SHA`、`HMAC`、`AES`、`DES`、`DESede`、`RSA`
-- [Java 国际化](source/_posts/01.Java/01.JavaSE/02.高级特性/03.Java国际化.md) - 关键词：`Locale`、`ResourceBundle`、`NumberFormat`、`DateFormat`、`MessageFormat`
-- [Java JDK8](source/_posts/01.Java/01.JavaSE/02.高级特性/04.JDK8.md) - 关键词：`Stream`、`lambda`、`Optional`、`@FunctionalInterface`
-- [Java SPI](source/_posts/01.Java/01.JavaSE/02.高级特性/05.JavaSPI.md) - 关键词：`SPI`、`ClassLoader`
+#### [Java 容器](source/_posts/01.Java/01.JavaCore/03.容器)
 
-#### [Java 容器](source/_posts/01.Java/01.JavaSE/03.容器)
+- [Java 容器简介](source/_posts/01.Java/01.JavaCore/03.容器/Java容器简介.md) - 关键词：泛型、Iterable、Iterator、Comparable、Comparator、Cloneable、fail-fast
+- [Java 容器之 List](source/_posts/01.Java/01.JavaCore/03.容器/Java容器之List.md) - 关键词：List、ArrayList、LinkedList
+- [Java 容器之 Map](source/_posts/01.Java/01.JavaCore/03.容器/Java容器之Map.md) - 关键词：Map、HashMap、TreeMap、LinkedHashMap、WeakHashMap
+- [Java 容器之 Set](source/_posts/01.Java/01.JavaCore/03.容器/Java容器之Set.md) - 关键词：Set、HashSet、TreeSet、LinkedHashSet、EmumSet
+- [Java 容器之 Queue](source/_posts/01.Java/01.JavaCore/03.容器/Java容器之Queue.md) - 关键词：Queue、Deque、ArrayDeque、LinkedList、PriorityQueue
+- [Java 容器之 Stream](source/_posts/01.Java/01.JavaCore/03.容器/Java容器之Stream.md)
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200221175550.png)
+#### [Java IO](source/_posts/01.Java/01.JavaCore/04.IO)
 
-- [Java 容器简介](source/_posts/01.Java/01.JavaSE/03.容器/01.Java容器简介.md) - 关键词：`Collection`、`泛型`、`Iterable`、`Iterator`、`Comparable`、`Comparator`、`Cloneable`、`fail-fast`
-- [Java 容器之 List](source/_posts/01.Java/01.JavaSE/03.容器/02.Java容器之List.md) - 关键词：`List`、`ArrayList`、`LinkedList`
-- [Java 容器之 Map](source/_posts/01.Java/01.JavaSE/03.容器/03.Java容器之Map.md) - 关键词：`Map`、`HashMap`、`TreeMap`、`LinkedHashMap`、`WeakHashMap`
-- [Java 容器之 Set](source/_posts/01.Java/01.JavaSE/03.容器/04.Java容器之Set.md) - 关键词：`Set`、`HashSet`、`TreeSet`、`LinkedHashSet`、`EmumSet`
-- [Java 容器之 Queue](source/_posts/01.Java/01.JavaSE/03.容器/05.Java容器之Queue.md) - 关键词：`Queue`、`Deque`、`ArrayDeque`、`LinkedList`、`PriorityQueue`
-- [Java 容器之 Stream](source/_posts/01.Java/01.JavaSE/03.容器/06.Java容器之Stream.md)
+- [Java I/O 之 简介](source/_posts/01.Java/01.JavaCore/04.IO/JavaIO简介.md) - 关键词：BIO、NIO、AIO
+- [Java I/O 之 BIO](source/_posts/01.Java/01.JavaCore/04.IO/JavaIO之BIO.md) - 关键词：BIO、InputStream、OutputStream、Reader、Writer、File、Socket、ServerSocket
+- [Java I/O 之 NIO](source/_posts/01.Java/01.JavaCore/04.IO/JavaIO之NIO.md) - 关键词：NIO、Channel、Buffer、Selector、多路复用
+- [Java I/O 之序列化](source/_posts/01.Java/01.JavaCore/04.IO/JavaIO之序列化.md) - 关键词：Serializable、serialVersionUID、transient、Externalizable
 
-#### [Java IO](source/_posts/01.Java/01.JavaSE/04.IO)
+#### [Java 并发](source/_posts/01.Java/01.JavaCore/05.并发)
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200630205329.png)
+- [Java 并发简介](source/_posts/01.Java/01.JavaCore/05.并发/Java并发简介.md) - 关键词：并发、线程、安全性、活跃性、性能、死锁、活锁
+- [Java 并发之内存模型](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之内存模型.md) - 关键词：JMM、Happens-Before、内存屏障、volatile、synchronized、final、指令重排序
+- [Java 并发之线程](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之线程.md) - 关键词：Thread、Runnable、Callable、Future、FutureTask、线程生命周期
+- [Java 并发之锁](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之锁.md) - 关键词：锁、Lock、Condition、ReentrantLock、ReentrantReadWriteLock、StampedLock
+- [Java 并发之无锁](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之无锁.md) - 关键词：CAS、ThreadLocal、Immutability、Copy-on-Write
+- [Java 并发之 AQS](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之AQS.md) - 关键词：AQS、独占锁、共享锁
+- [Java 并发之容器](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之容器.md) - 关键词：ConcurrentHashMap、CopyOnWriteArrayList
+- [Java 并发之线程池](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之线程池.md) - 关键词：Executor、ExecutorService、ThreadPoolExecutor、Executors
+- [Java 并发之同步工具](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之同步工具.md) - 关键词：Semaphore、CountDownLatch、CyclicBarrier
+- [Java 并发之分工工具](source/_posts/01.Java/01.JavaCore/05.并发/Java并发之分工工具.md) - 关键词：CompletableFuture、CompletionStage、ForkJoinPool
 
-- [Java IO 模型](source/_posts/01.Java/01.JavaSE/04.IO/01.JavaIO模型.md) - 关键词：`InputStream`、`OutputStream`、`Reader`、`Writer`、`阻塞`
-- [Java NIO](source/_posts/01.Java/01.JavaSE/04.IO/02.JavaNIO.md) - 关键词：`Channel`、`Buffer`、`Selector`、`非阻塞`、`多路复用`
-- [Java 序列化](source/_posts/01.Java/01.JavaSE/04.IO/03.Java序列化.md) - 关键词：`Serializable`、`serialVersionUID`、`transient`、`Externalizable`、`writeObject`、`readObject`
-- [Java 网络编程](source/_posts/01.Java/01.JavaSE/04.IO/04.Java网络编程.md) - 关键词：`Socket`、`ServerSocket`、`DatagramPacket`、`DatagramSocket`
-- [Java IO 工具类](source/_posts/01.Java/01.JavaSE/04.IO/05.JavaIO工具类.md) - 关键词：`File`、`RandomAccessFile`、`System`、`Scanner`
+#### [Java 虚拟机](source/_posts/01.Java/01.JavaCore/06.JVM)
 
-#### [Java 并发](source/_posts/01.Java/01.JavaSE/05.并发)
-
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200221175827.png)
-
-- [Java 并发简介](source/_posts/01.Java/01.JavaSE/05.并发/01.Java并发简介.md) - 关键词：`进程`、`线程`、`安全性`、`活跃性`、`性能`、`死锁`、`饥饿`、`上下文切换`
-- [Java 线程基础](source/_posts/01.Java/01.JavaSE/05.并发/02.Java线程基础.md) - 关键词：`Thread`、`Runnable`、`Callable`、`Future`、`wait`、`notify`、`notifyAll`、`join`、`sleep`、`yeild`、`线程状态`、`线程通信`
-- [Java 并发核心机制](source/_posts/01.Java/01.JavaSE/05.并发/03.Java并发核心机制.md) - 关键词：`synchronized`、`volatile`、`CAS`、`ThreadLocal`
-- [Java 并发锁](source/_posts/01.Java/01.JavaSE/05.并发/04.Java锁.md) - 关键词：`AQS`、`ReentrantLock`、`ReentrantReadWriteLock`、`Condition`
-- [Java 原子类](source/_posts/01.Java/01.JavaSE/05.并发/05.Java原子类.md) - 关键词：`CAS`、`Atomic`
-- [Java 并发容器](source/_posts/01.Java/01.JavaSE/05.并发/06.Java并发和容器.md) - 关键词：`ConcurrentHashMap`、`CopyOnWriteArrayList`
-- [Java 线程池](source/_posts/01.Java/01.JavaSE/05.并发/07.Java线程池.md) - 关键词：`Executor`、`ExecutorService`、`ThreadPoolExecutor`、`Executors`
-- [Java 并发工具类](source/_posts/01.Java/01.JavaSE/05.并发/08.Java并发工具类.md) - 关键词：`CountDownLatch`、`CyclicBarrier`、`Semaphore`
-- [Java 内存模型](source/_posts/01.Java/01.JavaSE/05.并发/09.Java内存模型.md) - 关键词：`JMM`、`volatile`、`synchronized`、`final`、`Happens-Before`、`内存屏障`
-- [ForkJoin 框架](source/_posts/01.Java/01.JavaSE/05.并发/10.ForkJoin框架.md)
-
-#### [Java 虚拟机](source/_posts/01.Java/01.JavaSE/06.JVM)
-
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200628154803.png)
-
-- [JVM 体系结构](source/_posts/01.Java/01.JavaSE/06.JVM/01.JVM体系结构.md)
-- [JVM 内存区域](source/_posts/01.Java/01.JavaSE/06.JVM/02.JVM内存区域.md) - 关键词：`程序计数器`、`虚拟机栈`、`本地方法栈`、`堆`、`方法区`、`运行时常量池`、`直接内存`、`OutOfMemoryError`、`StackOverflowError`
-- [JVM 垃圾收集](source/_posts/01.Java/01.JavaSE/06.JVM/03.JVM垃圾收集.md) - 关键词：`GC Roots`、`Serial`、`Parallel`、`CMS`、`G1`、`Minor GC`、`Full GC`
-- [JVM 字节码](source/_posts/01.Java/01.JavaSE/06.JVM/05.JVM字节码.md) - 关键词：`bytecode`、`asm`、`javassist`
-- [JVM 类加载](source/_posts/01.Java/01.JavaSE/06.JVM/04.JVM类加载.md) - 关键词：`ClassLoader`、`双亲委派`
-- [JVM 命令行工具](source/_posts/01.Java/01.JavaSE/06.JVM/11.JVM命令行工具.md) - 关键词：`jps`、`jstat`、`jmap` 、`jstack`、`jhat`、`jinfo`
-- [JVM GUI 工具](source/_posts/01.Java/01.JavaSE/06.JVM/12.JVM_GUI工具.md) - 关键词：`jconsole`、`jvisualvm`、`MAT`、`JProfile`、`Arthas`
-- [JVM 实战](source/_posts/01.Java/01.JavaSE/06.JVM/21.JVM实战.md) - 关键词：`配置`、`调优`
-- [Java 故障诊断](source/_posts/01.Java/01.JavaSE/06.JVM/22.Java故障诊断.md) - 关键词：`CPU`、`内存`、`磁盘`、`网络`、`GC`
+- [Java 虚拟机简介](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机简介.md)
+- [Java 虚拟机之内存区域](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机之内存区域.md) - 关键词：`程序计数器`、`虚拟机栈`、`本地方法栈`、`堆`、`方法区`、`运行时常量池`、`直接内存`、`OutOfMemoryError`、`StackOverflowError`
+- [Java 虚拟机之垃圾收集](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机之垃圾收集.md) - 关键词：`GC Roots`、`Serial`、`Parallel`、`CMS`、`G1`、`Minor GC`、`Full GC`
+- [Java 虚拟机之字节码](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机之字节码.md) - 关键词：`bytecode`、`asm`、`javassist`
+- [Java 虚拟机之类加载](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机之类加载.md) - 关键词：`ClassLoader`、`双亲委派`
+- [Java 虚拟机之工具](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机之工具.md) - 关键词：`jps`、`jstat`、`jmap` 、`jstack`、`jhat`、`jinfo`、`jconsole`、`jvisualvm`、`MAT`、`JProfile`、`Arthas`
+- [Java 虚拟机之故障处理](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机之故障处理.md) - 关键词：`CPU`、`内存`、`磁盘`、`网络`、`GC`
+- [Java 虚拟机之调优](source/_posts/01.Java/01.JavaCore/06.JVM/Java虚拟机之调优.md) - 关键词：`配置`、`调优`
 
 ### JavaEE
 
@@ -151,7 +139,7 @@
   - [Maven 实战问题和最佳实践](source/_posts/01.Java/11.软件/01.构建/01.Maven/04.Maven实战问题和最佳实践.md)
   - [Maven 教程之发布 jar 到私服或中央仓库](source/_posts/01.Java/11.软件/01.构建/01.Maven/05.Maven教程之发布jar到私服或中央仓库.md)
   - [Maven 插件之代码检查](source/_posts/01.Java/11.软件/01.构建/01.Maven/06.Maven插件之代码检查.md)
-- [Ant 简易教程](source/_posts/01.Java/11.软件/01.构建/03.Ant.md)
+- [Ant 简易教程](source/_posts/01.Java/11.软件/01.构建/02.Ant.md)
 
 #### Java IDE
 
@@ -259,7 +247,12 @@
 
 ##### Web
 
-- [Spring WebMvc](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/01.SpringWebMvc.md)
+- [SpringWeb 综述](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/01.SpringWeb综述.md)
+- [SpringWeb 应用](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/02.SpringWeb应用.md)
+- [DispatcherServlet](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/03.DispatcherServlet.md)
+- [Spring 过滤器](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/04.Spring过滤器.md)
+- [Spring 跨域](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/05.Spring跨域.md)
+- [Spring 视图](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/06.Spring视图.md)
 - [SpringBoot 之应用 EasyUI](source/_posts/01.Java/13.框架/01.Spring/03.SpringWeb/21.SpringBoot之应用EasyUI.md)
 
 ##### IO
@@ -308,9 +301,7 @@
 >
 > 如果想深入学习缓存，建议先了解一下 [缓存基本原理](https://dunwu.github.io/design/distributed/分布式缓存.html)，有助于理解缓存的特性、原理，使用缓存常见的问题及解决方案。
 
-- [缓存面试题](source/_posts/01.Java/14.中间件/02.缓存/01.缓存面试题.md)
 - [Java 缓存中间件](source/_posts/01.Java/14.中间件/02.缓存/02.Java缓存中间件.md)
-- [Memcached 快速入门](source/_posts/01.Java/14.中间件/02.缓存/03.Memcached.md)
 - [Ehcache 快速入门](source/_posts/01.Java/14.中间件/02.缓存/04.Ehcache.md)
 - [Java 进程内缓存](source/_posts/01.Java/14.中间件/02.缓存/05.Java进程内缓存.md)
 - [Http 缓存](source/_posts/01.Java/14.中间件/02.缓存/06.Http缓存.md)
@@ -319,9 +310,7 @@
 
 - [Hystrix](source/_posts/01.Java/14.中间件/03.流量控制/01.Hystrix.md)
 
-## 计算机科学
-
-### 数据结构和算法
+## 数据结构和算法
 
 - **综合**
   - [数据结构和算法指南](source/_posts/11.数据结构和算法/00.综合/01.数据结构和算法指南.md)
@@ -342,54 +331,41 @@
 - [跳表](source/_posts/11.数据结构和算法/04.跳表.md) - 关键词：**`多级索引`**
 - [图](source/_posts/11.数据结构和算法/05.图.md)
 
-### 数据库
+## 数据库
 
-#### 数据库综合
+### 数据库综合
 
 - [Nosql 技术选型](source/_posts/12.数据库/01.数据库综合/01.Nosql技术选型.md)
 - [数据结构与数据库索引](source/_posts/12.数据库/01.数据库综合/02.数据结构与数据库索引.md)
 
-#### 数据库中间件
+### 数据库中间件
 
 - [ShardingSphere 简介](source/_posts/12.数据库/02.数据库中间件/01.Shardingsphere/01.ShardingSphere简介.md)
 - [ShardingSphere Jdbc](source/_posts/12.数据库/02.数据库中间件/01.Shardingsphere/02.ShardingSphereJdbc.md)
 - [版本管理中间件 Flyway](source/_posts/12.数据库/02.数据库中间件/02.Flyway.md)
 
-#### 关系型数据库
+### 关系型数据库
 
 > [关系型数据库](source/_posts/12.数据库/03.关系型数据库) 整理主流关系型数据库知识点。
 
-##### 公共知识
+#### 公共知识
 
-- [关系型数据库面试总结](source/_posts/12.数据库/03.关系型数据库/01.综合/01.关系型数据库面试.md) 💯
-- [SQL 语法基础特性](source/_posts/12.数据库/03.关系型数据库/01.综合/02.SQL语法基础特性.md)
-- [SQL 语法高级特性](source/_posts/12.数据库/03.关系型数据库/01.综合/03.SQL语法高级特性.md)
-- [扩展 SQL](source/_posts/12.数据库/03.关系型数据库/01.综合/03.扩展SQL.md)
-- [SQL Cheat Sheet](source/_posts/12.数据库/03.关系型数据库/01.综合/99.SqlCheatSheet.md)
+- [关系数据库简介](source/_posts/12.数据库/03.关系型数据库/01.综合/关系数据库简介.md)
+- [SQL 语法](source/_posts/12.数据库/03.关系型数据库/01.综合/SQL语法.md)
 
-##### Mysql
+#### [Mysql 教程](source/_posts/12.数据库/03.关系型数据库/02.Mysql)
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200716103611.png)
+[Mysql 架构](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_架构)、[Mysql 存储引擎](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_存储引擎)、[Mysql 索引](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_索引)、[Mysql 事务](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_事务)、[Mysql 锁](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_锁)、[Mysql 高可用](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_高可用)、[Mysql 优化](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_优化)、[Mysql 运维](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_运维)、[Mysql 面试](source/_posts/12.数据库/03.关系型数据库/02.Mysql/Mysql_面试)
 
-- [Mysql 应用指南](source/_posts/12.数据库/03.关系型数据库/02.Mysql/01.Mysql应用指南.md) ⚡
-- [Mysql 工作流](source/_posts/12.数据库/03.关系型数据库/02.Mysql/02.MySQL工作流.md) - 关键词：`连接`、`缓存`、`语法分析`、`优化`、`执行引擎`、`redo log`、`bin log`、`两阶段提交`
-- [Mysql 事务](source/_posts/12.数据库/03.关系型数据库/02.Mysql/03.Mysql事务.md) - 关键词：`ACID`、`AUTOCOMMIT`、`事务隔离级别`、`死锁`、`分布式事务`
-- [Mysql 锁](source/_posts/12.数据库/03.关系型数据库/02.Mysql/04.Mysql锁.md) - 关键词：`乐观锁`、`表级锁`、`行级锁`、`意向锁`、`MVCC`、`Next-key 锁`
-- [Mysql 索引](source/_posts/12.数据库/03.关系型数据库/02.Mysql/05.Mysql索引.md) - 关键词：`Hash`、`B 树`、`聚簇索引`、`回表`
-- [Mysql 性能优化](source/_posts/12.数据库/03.关系型数据库/02.Mysql/06.Mysql性能优化.md)
-- [Mysql 运维](source/_posts/12.数据库/03.关系型数据库/02.Mysql/20.Mysql运维.md) 🔨
-- [Mysql 配置](source/_posts/12.数据库/03.关系型数据库/02.Mysql/21.Mysql配置.md) 🔨
-- [Mysql 问题](source/_posts/12.数据库/03.关系型数据库/02.Mysql/99.Mysql常见问题.md)
-
-##### 其他
+#### 其他
 
 - [PostgreSQL 应用指南](source/_posts/12.数据库/03.关系型数据库/99.其他/01.PostgreSQL.md)
 - [H2 应用指南](source/_posts/12.数据库/03.关系型数据库/99.其他/02.H2.md)
 - [SqLite 应用指南](source/_posts/12.数据库/03.关系型数据库/99.其他/03.Sqlite.md)
 
-#### 文档数据库
+### 文档数据库
 
-##### MongoDB
+#### MongoDB
 
 > MongoDB 是一个基于文档的分布式数据库，由 C++ 语言编写。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。
 >
@@ -397,36 +373,42 @@
 >
 > MongoDB 最大的特点是它支持的查询语言非常强大，其语法有点类似于面向对象的查询语言，几乎可以实现类似关系数据库单表查询的绝大部分功能，而且还支持对数据建立索引。
 
-- [MongoDB 应用指南](source/_posts/12.数据库/04.文档数据库/01.MongoDB/01.MongoDB应用指南.md)
-- [MongoDB 的 CRUD 操作](source/_posts/12.数据库/04.文档数据库/01.MongoDB/02.MongoDB的CRUD操作.md)
-- [MongoDB 聚合操作](source/_posts/12.数据库/04.文档数据库/01.MongoDB/03.MongoDB的聚合操作.md)
-- [MongoDB 事务](source/_posts/12.数据库/04.文档数据库/01.MongoDB/04.MongoDB事务.md)
-- [MongoDB 建模](source/_posts/12.数据库/04.文档数据库/01.MongoDB/05.MongoDB建模.md)
-- [MongoDB 建模示例](source/_posts/12.数据库/04.文档数据库/01.MongoDB/06.MongoDB建模示例.md)
-- [MongoDB 索引](source/_posts/12.数据库/04.文档数据库/01.MongoDB/07.MongoDB索引.md)
-- [MongoDB 复制](source/_posts/12.数据库/04.文档数据库/01.MongoDB/08.MongoDB复制.md)
-- [MongoDB 分片](source/_posts/12.数据库/04.文档数据库/01.MongoDB/09.MongoDB分片.md)
-- [MongoDB 运维](source/_posts/12.数据库/04.文档数据库/01.MongoDB/20.MongoDB运维.md)
+- [MongoDB 简介](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_简介.md)
+- [MongoDB CRUD](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_CRUD.md)
+- [MongoDB 聚合](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_聚合.md)
+- [MongoDB 事务](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_事务.md)
+- [MongoDB 建模](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_建模.md)
+- [MongoDB 索引](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_索引.md)
+- [MongoDB 复制](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_复制.md)
+- [MongoDB 分片](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_分片.md)
+- [MongoDB 运维](source/_posts/12.数据库/04.文档数据库/01.MongoDB/MongoDB_运维.md)
 
-#### KV 数据库
+### KV 数据库
 
-##### Redis
+#### [Redis](source/_posts/12.数据库/05.KV数据库/01.Redis)
 
-![img](https://raw.githubusercontent.com/dunwu/images/master/snap/20200713105627.png)
+- [Redis 基本数据类型](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_数据类型.md) - 关键词：`String`、`Hash`、`List`、`Set`、`Zset`
+- [Redis 高级数据类型](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_数据类型二.md) - 关键词：`BitMap`、`HyperLogLog`、`Geo`、`Stream`
+- [Redis 数据结构](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_数据结构.md) - 关键词：`对象`、`SDS`、`链表`、`字典`、`跳表`、`整数集合`、`压缩列表`
+- [Redis 内存管理](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_内存管理.md) - 关键词：`定时删除`、`惰性删除`、`定期删除`、`LRU`、`LFU`
+- [Redis 持久化](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_持久化.md) - 关键词：`RDB`、`AOF`、`SAVE`、`BGSAVE`、`appendfsync`
+- [Redis 事件](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_事件.md) - 关键词：`文件事件`、`时间事件`
+- [Redis 复制](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_复制.md) - 关键词：`SLAVEOF`、`SYNC`、`PSYNC`、`命令传播`、`心跳`
+- [Redis 哨兵](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_哨兵.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`Raft`
+- [Redis 集群](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_集群.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`分区`、`Raft`、`Gossip`
+- [Redis 订阅](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_订阅.md) - 关键词：`订阅`、`SUBSCRIBE`、`PSUBSCRIBE`、`PUBLISH`、`观察者模式`
+- [Redis 独立功能](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_事务.md) - 关键词：`事务`、`ACID`、`MULTI`、`EXEC`、`DISCARD`、`WATCH`
+- [Redis 管道](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_管道.md) - 关键词：`Pipeline`
+- [Redis 脚本](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_脚本.md) - 关键词：`Lua`
+- [Redis 运维](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_运维.md) - 关键词：`安装`、`配置`、`命令`、`集群`、`客户端`
+- [Redis 实战](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_实战.md) - 关键词：`缓存`、`分布式锁`、`布隆过滤器`
+- [Redis 面试](source/_posts/12.数据库/05.KV数据库/01.Redis/Redis_面试.md) - 关键词：`面试`
 
-- [Redis 面试总结](source/_posts/12.数据库/05.KV数据库/01.Redis/01.Redis面试总结.md) 💯
-- [Redis 应用指南](source/_posts/12.数据库/05.KV数据库/01.Redis/02.Redis应用指南.md) ⚡ - 关键词：`内存淘汰`、`事件`、`事务`、`管道`、`发布与订阅`
-- [Redis 数据类型和应用](source/_posts/12.数据库/05.KV数据库/01.Redis/03.Redis数据类型和应用.md) - 关键词：`STRING`、`HASH`、`LIST`、`SET`、`ZSET`、`BitMap`、`HyperLogLog`、`Geo`
-- [Redis 持久化](source/_posts/12.数据库/05.KV数据库/01.Redis/04.Redis持久化.md) - 关键词：`RDB`、`AOF`、`SAVE`、`BGSAVE`、`appendfsync`
-- [Redis 复制](source/_posts/12.数据库/05.KV数据库/01.Redis/05.Redis复制.md) - 关键词：`SLAVEOF`、`SYNC`、`PSYNC`、`REPLCONF ACK`
-- [Redis 哨兵](source/_posts/12.数据库/05.KV数据库/01.Redis/06.Redis哨兵.md) - 关键词：`Sentinel`、`PING`、`INFO`、`Raft`
-- [Redis 集群](source/_posts/12.数据库/05.KV数据库/01.Redis/07.Redis集群.md) - 关键词：`CLUSTER MEET`、`Hash slot`、`MOVED`、`ASK`、`SLAVEOF no one`、`redis-trib`
-- [Redis 实战](source/_posts/12.数据库/05.KV数据库/01.Redis/08.Redis实战.md) - 关键词：`缓存`、`分布式锁`、`布隆过滤器`
-- [Redis 运维](source/_posts/12.数据库/05.KV数据库/01.Redis/20.Redis运维.md) 🔨 - 关键词：`安装`、`命令`、`集群`、`客户端`
+#### [Redis](source/_posts/12.数据库/05.KV数据库/02.Memcached.md)
 
-#### 列式数据库
+### 列式数据库
 
-##### HBase
+#### HBase
 
 - [HBase 快速入门](source/_posts/12.数据库/06.列式数据库/01.HBase/01.HBase快速入门.md)
 - [HBase 数据模型](source/_posts/12.数据库/06.列式数据库/01.HBase/02.HBase数据模型.md)
@@ -439,28 +421,26 @@
 - [HBase 运维](source/_posts/12.数据库/06.列式数据库/01.HBase/21.HBase运维.md)
 - [HBase 命令](source/_posts/12.数据库/06.列式数据库/01.HBase/22.HBase命令.md)
 
-#### 搜索引擎数据库
+### 搜索引擎数据库
 
-##### Elasticsearch
+#### Elasticsearch
 
 > Elasticsearch 是一个基于 Lucene 的搜索和数据分析工具，它提供了一个分布式服务。Elasticsearch 是遵从 Apache 开源条款的一款开源产品，是当前主流的企业级搜索引擎。
 
-- [Elasticsearch 面试总结](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/01.Elasticsearch面试总结.md) 💯
-- [Elasticsearch 快速入门](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/02.Elasticsearch快速入门.md)
-- [Elasticsearch 简介](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/03.Elasticsearch简介.md)
-- [Elasticsearch 索引](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/04.Elasticsearch索引.md)
-- [Elasticsearch 查询](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/05.Elasticsearch查询.md)
-- [Elasticsearch 高亮](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/06.Elasticsearch高亮.md)
-- [Elasticsearch 排序](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/07.Elasticsearch排序.md)
-- [Elasticsearch 聚合](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/08.Elasticsearch聚合.md)
-- [Elasticsearch 分析器](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/09.Elasticsearch分析器.md)
-- [Elasticsearch 性能优化](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/10.Elasticsearch性能优化.md)
-- [Elasticsearch Rest API](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/11.ElasticsearchRestApi.md)
-- [ElasticSearch Java API 之 High Level REST Client](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/12.ElasticsearchHighLevelRestJavaApi.md)
-- [Elasticsearch 集群和分片](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/13.Elasticsearch集群和分片.md)
-- [Elasticsearch 运维](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/20.Elasticsearch运维.md)
+- [Elasticsearch 简介](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_简介.md)
+- [Elasticsearch 存储](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_存储.md)
+- [Elasticsearch 搜索（上）](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_搜索上.md)
+- [Elasticsearch 搜索（下）](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_搜索下.md)
+- [Elasticsearch 聚合](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_聚合.md)
+- [Elasticsearch 分析](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_分析.md)
+- [Elasticsearch 集群](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_集群.md)
+- [Elasticsearch 优化](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_优化.md)
+- [Elasticsearch 运维](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_运维.md)
+- [Elasticsearch API](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_API.md)
+- [ElasticSearch API 之 High Level REST Client](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_API_HighLevelRest.md)
+- [Elasticsearch 面试](source/_posts/12.数据库/07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_面试.md) 💯
 
-##### Elastic
+#### Elastic
 
 - [Elastic 快速入门](source/_posts/12.数据库/07.搜索引擎数据库/02.Elastic/01.Elastic快速入门.md)
 - [Elastic 技术栈之 Filebeat](source/_posts/12.数据库/07.搜索引擎数据库/02.Elastic/02.Elastic技术栈之Filebeat.md)
@@ -470,11 +450,11 @@
 - [Elastic 技术栈之 Logstash](source/_posts/12.数据库/07.搜索引擎数据库/02.Elastic/06.Elastic技术栈之Logstash.md)
 - [Logstash 运维](source/_posts/12.数据库/07.搜索引擎数据库/02.Elastic/07.Logstash运维.md)
 
-### 网络
+## 网络
 
 > 如果你是做通信领域的开发，或者是 Web 应用的开发，那就或多或少需要了解一些计算机网络的知识 。
 
-#### 网络综合
+### 网络综合
 
 > 理解计算机网络，首先需要从宏观层面了解计算机网络通信的分层结构。最有代表性的是 OSI 七层结构模型，但现实中更流行的是五层结构模型。
 >
@@ -489,7 +469,7 @@
   - [计算机网络之传输层](source/_posts/13.网络/01.网络综合/14.传输层.md) - 关键词：`UDP`、`TCP`、滑动窗口、拥塞控制、三次握手
   - [计算机网络之应用层](source/_posts/13.网络/01.网络综合/15.应用层.md) - 关键词：`HTTP`、`DNS`、`FTP`、`TELNET`、`DHCP`
 
-#### 网络协议
+### 网络协议
 
 - [超文本传输协议 HTTP](source/_posts/13.网络/02.网络协议/01.HTTP.md)
 - [域名系统协议 DNS](source/_posts/13.网络/02.网络协议/02.DNS)
@@ -497,34 +477,34 @@
 - [用户数据报协议 UDP](source/_posts/13.网络/02.网络协议/04.UDP.md)
 - [ICMP](source/_posts/13.网络/02.网络协议/05.ICMP.md)
 
-#### 网络技术
+### 网络技术
 
 - [WebSocket](source/_posts/13.网络/03.网络技术/01.WebSocket.md)
 - [CDN](source/_posts/13.网络/03.网络技术/02.CDN.md)
 - [VPN](source/_posts/13.网络/03.网络技术/03.VPN.md)
 
-### 分布式
+## 分布式
 
-#### 分布式综合
+### [分布式综合](source/_posts/15.分布式/00.分布式综合)
 
-- [分布式面试总结](source/_posts/15.分布式/00.分布式综合/99.分布式面试.md)
+- [逻辑时钟](source/_posts/15.分布式/00.分布式综合/逻辑时钟.md) - 关键词：`逻辑时钟`、`向量时钟`、`版本时钟`、`全序`、`偏序`
+- [CAP 和 BASE](source/_posts/15.分布式/00.分布式综合/CAP&BASE.md) - 关键词：`ACID`、`CAP`、`BASE`、`一致性`
+- [拜占庭将军问题](source/_posts/15.分布式/00.分布式综合/拜占庭将军问题.md) - 关键词：`共识`
+- [分布式算法 Paxos](source/_posts/15.分布式/00.分布式综合/Paxos.md) - 关键词：`共识`、`Paxos`
+- [分布式算法 Raft](source/_posts/15.分布式/00.分布式综合/Raft.md) - 关键词：`共识`、`Raft`
+- [分布式算法 Gossip](source/_posts/15.分布式/00.分布式综合/Gossip.md) - 关键词：`Gossip`
+- [ZAB 协议](source/_posts/15.分布式/00.分布式综合/Zab.md) - 关键词：`共识`、`ZAB`、`ZooKeeper`
+- [分布式综合面试](source/_posts/15.分布式/00.分布式综合/分布式综合面试.md)
 
-#### 分布式理论
-
-- [分布式理论](source/_posts/15.分布式/01.分布式理论/01.分布式基础理论.md) - 关键词：`拜占庭将军`、`CAP`、`BASE`、`错误的分布式假设`
-- [分布式算法 Paxos](source/_posts/15.分布式/01.分布式理论/11.Paxos算法.md) - 关键词：`共识性算法`
-- [分布式算法 Raft](source/_posts/15.分布式/01.分布式理论/12.Raft算法.md) - 关键词：`共识性算法`
-- [分布式算法 Gossip](source/_posts/15.分布式/01.分布式理论/13.Gossip算法.md) - 关键词：`数据传播`
-
-#### 分布式协同
+### [分布式协同](source/_posts/15.分布式/11.分布式协同)
 
 - **分布式协同综合**
-  - 集群
-  - [分布式复制](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/02.分布式复制.md)
-  - 分区
-  - 选主
-  - [分布式事务](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/05.分布式事务.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`MQ 消息`、`SAGA`
-  - [分布式锁](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/06.分布式锁.md) - 关键词：`数据库`、`Redis`、`ZooKeeper`、`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`
+  - [分布式复制](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/分布式复制.md) - 关键词：`主从`、`多主`、`无主`
+  - [分布式分区](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/分布式分区.md) - 关键词：`分区再均衡`、`路由`
+  - [分布式共识](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/分布式共识.md) - 关键词：`共识`、`广播`、`epoch`、`quorum`
+  - [分布式事务](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/分布式事务.md) - 关键词：`2PC`、`3PC`、`TCC`、`本地消息表`、`消息事务`、`SAGA`
+  - [分布式锁](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/分布式锁.md) - 关键词：`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`、`公平性`
+  - [分布式 ID](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/分布式ID.md) - 关键词：`UUID`、`自增序列`、`雪花算法`、`Leaf`
 - **ZooKeeper**
   - [ZooKeeper 原理](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/01.ZooKeeper原理.md)
   - [ZooKeeper Java Api](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/02.ZooKeeperJavaApi.md)
@@ -532,62 +512,56 @@
   - [ZooKeeper 运维](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/04.ZooKeeper运维.md)
   - [ZooKeeper Acl](source/_posts/15.分布式/11.分布式协同/02.ZooKeeper/05.ZooKeeperAcl.md)
 
-#### 分布式调度
+### [分布式调度](source/_posts/15.分布式/12.分布式调度)
 
-- [流量控制](source/_posts/15.分布式/12.分布式调度/03.流量控制.md) - 关键词：`限流`、`熔断`、`降级`、`计数器法`、`时间窗口法`、`令牌桶法`、`漏桶法`
-- [负载均衡](source/_posts/15.分布式/12.分布式调度/02.负载均衡.md) - 关键词：`轮询`、`随机`、`最少连接`、`源地址哈希`、`一致性哈希`、`虚拟 hash 槽`
-- [服务路由](source/_posts/15.分布式/12.分布式调度/01.服务路由.md) - 关键词：`路由`、`条件路由`、`脚本路由`、`标签路由`
-- [分布式会话](source/_posts/15.分布式/12.分布式调度/10.分布式会话.md) - 关键词：`粘性 Session`、`Session 复制共享`、`基于缓存的 session 共享`
-- [分布式 ID](source/_posts/15.分布式/12.分布式调度/04.分布式ID.md) - 关键词：`UUID`、`自增序列`、`雪花算法`、`Leaf`
+- [服务注册和发现](source/_posts/15.分布式/12.分布式调度/服务注册和发现.md) - 关键词：`服务注册`、`服务发现`、`元数据`
+- [负载均衡](source/_posts/15.分布式/12.分布式调度/负载均衡.md) - 关键词：`轮询`、`随机`、`最少连接`、`源地址哈希`、`一致性哈希`、`虚拟 hash 槽`
+- [流量控制](source/_posts/15.分布式/12.分布式调度/流量控制.md) - 关键词：`限流`、`熔断`、`降级`、`计数器法`、`时间窗口法`、`令牌桶法`、`漏桶法`
+- [路由和网关](source/_posts/15.分布式/12.分布式调度/网关路由.md) - 关键词：`路由`、`条件路由`、`脚本路由`、`标签路由`
 
-#### 分布式高可用
+### 分布式高可用
 
-- [服务容错](source/_posts/15.分布式/13.分布式高可用/02.服务容错.md)
+- [服务容错](source/_posts/15.分布式/11.分布式协同/01.分布式协同综合/服务容错.md)
 
-#### 分布式通信
+### [分布式通信](source/_posts/15.分布式/21.分布式通信)
 
-#### RPC
+#### [RPC](source/_posts/15.分布式/21.分布式通信/01.RPC)
 
-##### RPC 综合
+- [Dubbo 面试](source/_posts/15.分布式/21.分布式通信/01.RPC/Dubbo面试.md)
+- [RPC 面试](source/_posts/15.分布式/21.分布式通信/01.RPC/RPC面试.md)
 
-- [RPC 基础](source/_posts/15.分布式/21.分布式通信/01.RPC/00.RPC综合/01.RPC基础.md)
-- [RPC 进阶](source/_posts/15.分布式/21.分布式通信/01.RPC/00.RPC综合/02.RPC进阶.md)
-- [RPC 高级](source/_posts/15.分布式/21.分布式通信/01.RPC/00.RPC综合/03.RPC高级.md)
-- [服务注册和发现](source/_posts/15.分布式/21.分布式通信/01.RPC/00.RPC综合/11.服务注册和发现.md)
+#### [MQ](source/_posts/15.分布式/21.分布式通信/02.MQ)
 
-#### MQ
+##### [MQ 综合](source/_posts/15.分布式/21.分布式通信/02.MQ/00.MQ综合)
 
-##### MQ 综合
+- [MQ 面试](source/_posts/15.分布式/21.分布式通信/02.MQ/00.MQ综合/MQ面试.md)
 
-- [消息队列面试](source/_posts/15.分布式/21.分布式通信/02.MQ/00.MQ综合/01.消息队列面试.md)
-- [消息队列基本原理](source/_posts/15.分布式/21.分布式通信/02.MQ/00.MQ综合/02.消息队列基本原理.md)
+##### [Kafka](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka)
 
-##### Kafka
+- [Kafka 快速入门](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka快速入门.md)
+- [Kafka 生产](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka生产.md)
+- [Kafka 消费](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka消费.md)
+- [Kafka 集群](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka集群.md)
+- [Kafka 可靠传输](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka可靠传输.md)
+- [Kafka 存储](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka存储.md)
+- [Kafka 流式处理](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka流式处理.md)
+- [Kafka 运维](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/Kafka运维.md)
 
-- [Kafka 快速入门](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/01.Kafka快速入门.md)
-- [Kafka 生产者](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/02.Kafka生产者.md)
-- [Kafka 消费者](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/03.Kafka消费者.md)
-- [Kafka 集群](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/04.Kafka集群.md)
-- [Kafka 可靠传输](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/05.Kafka可靠传输.md)
-- [Kafka 存储](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/06.Kafka存储.md)
-- [Kafka 流式处理](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/07.Kafka流式处理.md)
-- [Kafka 运维](source/_posts/15.分布式/21.分布式通信/02.MQ/01.Kafka/08.Kafka运维.md)
+##### [RocketMQ](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ)
 
-##### RocketMQ
-
-- [RocketMQ 快速入门](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/01.RocketMQ快速入门.md)
-- [RocketMQ 基本原理](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/02.RocketMQ基本原理.md)
-- [RocketMQ Faq](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/99.RocketMQFaq.md)
+- [RocketMQ 快速入门](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/RocketMQ快速入门.md)
+- [RocketMQ 基本原理](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/RocketMQ基本原理.md)
+- [RocketMQ Faq](source/_posts/15.分布式/21.分布式通信/02.MQ/02.RocketMQ/RocketMQFaq.md)
 
 ##### 其他 MQ
 
-- [ActiveMQ](source/_posts/15.分布式/21.分布式通信/02.MQ/99.其他MQ/01.ActiveMQ.md)
+- [ActiveMQ](source/_posts/15.分布式/21.分布式通信/02.MQ/99.其他MQ/ActiveMQ.md)
 
-#### 分布式存储
+### [分布式存储](source/_posts/15.分布式/22.分布式存储)
 
-- [数据缓存](source/_posts/15.分布式/22.分布式存储/01.数据缓存.md) - 关键词：`进程内缓存`、`分布式缓存`、`缓存雪崩`、`缓存穿透`、`缓存击穿`、`缓存更新`、`缓存预热`、`缓存降级`
-- [读写分离](source/_posts/15.分布式/22.分布式存储/02.读写分离.md)
-- [分库分表](source/_posts/15.分布式/22.分布式存储/03.分库分表.md) - 关键词：`分片`、`路由`、`迁移`、`扩容`、`双写`、`聚合`
+- [分布式缓存](source/_posts/15.分布式/22.分布式存储/分布式缓存.md) - 关键词：`进程内缓存`、`分布式缓存`、`缓存雪崩`、`缓存穿透`、`缓存击穿`、`缓存更新`、`缓存预热`、`缓存降级`
+- [读写分离](source/_posts/15.分布式/22.分布式存储/读写分离.md)
+- [分库分表](source/_posts/15.分布式/22.分布式存储/分库分表.md) - 关键词：`分片`、`路由`、`迁移`、`扩容`、`双写`、`聚合`
 
 ## 编程
 
@@ -620,8 +594,10 @@
 
 #### 微服务
 
-- [微服务简介](source/_posts/03.设计/01.架构/01.微服务/01.微服务简介.md)
-- [微服务基本原理](source/_posts/03.设计/01.架构/01.微服务/02.微服务基本原理.md)
+- [微服务简介](source/_posts/03.设计/01.架构/01.微服务/01.微服务简介.md) - 关键词：`定义`、`演进`、`利弊`、`如何拆分`、`容量规划`、`核心组件`
+- [微服务之注册和发现](source/_posts/03.设计/01.架构/01.微服务/02.微服务之注册和发现.md) - 关键词：`服务定义`、`注册中心`、`元数据`、`健康检查`、`服务订阅`、`一致性`
+- [微服务之服务调用](source/_posts/03.设计/01.架构/01.微服务/03.微服务之服务调用.md) - 关键词：`RPC`、`通信协议`、`传输方式`、`序列化`
+- [微服务基本原理](source/_posts/03.设计/01.架构/01.微服务/10.微服务基本原理.md) - 关键词：`微服务`、`序列化`、`动态代理`、`通信`、`服务注册发现`、`健康检查`、`路由`、`负载均衡`、`容错处理`、`优雅上线下线`、`限流`、`熔断`、`业务分组`
 
 #### 安全
 
@@ -685,9 +661,9 @@
 
 ### UML
 
-- [UML 快速入门](source/_posts/03.设计/11.UML/01.UML快速入门.md)
-- [UML 结构建模图](source/_posts/03.设计/11.UML/02.UML结构建模图.md)
-- [UML 行为建模图](source/_posts/03.设计/11.UML/03.UML行为建模图.md)
+- [UML 快速入门](source/_posts/03.设计/05.UML/01.UML快速入门.md)
+- [UML 结构建模图](source/_posts/03.设计/05.UML/02.UML结构建模图.md)
+- [UML 行为建模图](source/_posts/03.设计/05.UML/03.UML行为建模图.md)
 
 ## DevOps
 

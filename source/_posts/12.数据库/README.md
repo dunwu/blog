@@ -5,7 +5,7 @@ categories:
   - 数据库
 tags:
   - 数据库
-permalink: /pages/48b310/
+permalink: /pages/23fe4586/
 hidden: true
 index: false
 ---
@@ -53,11 +53,11 @@ index: false
 
 - [`关系型数据库综合知识`](03.关系型数据库/01.综合)
 
-  [`扩展 SQL`](03.关系型数据库/01.综合/03.扩展SQL.md)、[`SQL 语法速成`](03.关系型数据库/01.综合/02.SQL语法.md)、[`SQL Cheat Sheet`](03.关系型数据库/01.综合/99.SqlCheatSheet.md)
+  [关系数据库简介](03.关系型数据库/01.综合/关系数据库简介.md)、[SQL 语法](03.关系型数据库/01.综合/SQL语法.md)
 
 - [Mysql 教程](03.关系型数据库/02.Mysql)
 
-  [Mysql 架构](03.关系型数据库/02.Mysql/01.Mysql架构.md)、[Mysql 存储引擎](03.关系型数据库/02.Mysql/02.Mysql存储引擎.md)、[Mysql 索引](03.关系型数据库/02.Mysql/03.Mysql索引.md)、[Mysql 事务](03.关系型数据库/02.Mysql/04.Mysql事务.md)、[Mysql 锁](03.关系型数据库/02.Mysql/05.Mysql锁.md)、[Mysql 高可用](03.关系型数据库/02.Mysql/06.Mysql高可用.md)、[Mysql 优化](03.关系型数据库/02.Mysql/07.Mysql优化.md)、[Mysql 运维](03.关系型数据库/02.Mysql/20.Mysql运维.md)、[Mysql 面试](03.关系型数据库/02.Mysql/99.Mysql面试.md)
+  [Mysql 架构](03.关系型数据库/02.Mysql/Mysql_架构)、[Mysql 存储引擎](03.关系型数据库/02.Mysql/Mysql_存储引擎)、[Mysql 索引](03.关系型数据库/02.Mysql/Mysql_索引)、[Mysql 事务](03.关系型数据库/02.Mysql/Mysql_事务)、[Mysql 锁](03.关系型数据库/02.Mysql/Mysql_锁)、[Mysql 高可用](03.关系型数据库/02.Mysql/Mysql_高可用)、[Mysql 优化](03.关系型数据库/02.Mysql/Mysql_优化)、[Mysql 运维](03.关系型数据库/02.Mysql/Mysql_运维)、[Mysql 面试](03.关系型数据库/02.Mysql/Mysql_面试)
 
 ### [列式数据库](06.列式数据库)
 
@@ -81,27 +81,66 @@ index: false
 
 ### [搜索引擎数据库](07.搜索引擎数据库)
 
-- [`Elastic 技术栈`](07.搜索引擎数据库/02.Elastic)
+#### Elasticsearch
 
-  [`Elastic 技术栈之 Filebeat`](07.搜索引擎数据库/02.Elastic/02.Elastic技术栈之Filebeat.md)、[`Elastic 技术栈之 Kibana`](07.搜索引擎数据库/02.Elastic/04.Elastic技术栈之Kibana.md)、[`Elastic 技术栈之 Logstash`](07.搜索引擎数据库/02.Elastic/06.Elastic技术栈之Logstash.md)、[`Elastic 快速入门`](07.搜索引擎数据库/02.Elastic/01.Elastic快速入门.md)、[`Filebeat 运维`](07.搜索引擎数据库/02.Elastic/03.Filebeat运维.md)、[`Kibana 运维`](07.搜索引擎数据库/02.Elastic/05.Kibana运维.md)、[`Logstash 运维`](07.搜索引擎数据库/02.Elastic/07.Logstash运维.md)
+- [Elasticsearch 简介](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_简介.md)
+- [Elasticsearch 存储](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_存储.md)
+- [Elasticsearch 搜索（上）](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_搜索上.md)
+- [Elasticsearch 搜索（下）](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_搜索下.md)
+- [Elasticsearch 聚合](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_聚合.md)
+- [Elasticsearch 分析](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_分析.md)
+- [Elasticsearch DSL](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_DSL.md)
+- [Elasticsearch 集群](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_集群.md)
+- [Elasticsearch 优化](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_优化.md)
+- [Elasticsearch 运维](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_运维.md)
+- [Elasticsearch API](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_API.md)
+- [ElasticSearch API 之 High Level REST Client](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_API_HighLevelRest.md)
+- [Elasticsearch 面试](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_面试.md) 💯
 
-- [`Elasticsearch 教程`](07.搜索引擎数据库/01.Elasticsearch)
+#### Elastic
 
-  [`Elasticsearch 查询`](07.搜索引擎数据库/01.Elasticsearch/05.Elasticsearch查询.md)、[`Elasticsearch 分析器`](07.搜索引擎数据库/01.Elasticsearch/09.Elasticsearch分析器.md)、[`Elasticsearch 高亮搜索及显示`](07.搜索引擎数据库/01.Elasticsearch/06.Elasticsearch高亮.md)、[`Elasticsearch 集群和分片`](07.搜索引擎数据库/01.Elasticsearch/13.Elasticsearch集群和分片.md)、[`Elasticsearch 简介`](07.搜索引擎数据库/01.Elasticsearch/03.Elasticsearch简介.md)、[`Elasticsearch 聚合`](07.搜索引擎数据库/01.Elasticsearch/08.Elasticsearch聚合.md)、[`Elasticsearch 快速入门`](07.搜索引擎数据库/01.Elasticsearch/02.Elasticsearch快速入门.md)、[`Elasticsearch 面试总结`](07.搜索引擎数据库/01.Elasticsearch/01.Elasticsearch面试总结.md)、[`Elasticsearch 排序`](07.搜索引擎数据库/01.Elasticsearch/07.Elasticsearch排序.md)、[`Elasticsearch 索引`](07.搜索引擎数据库/01.Elasticsearch/04.Elasticsearch索引.md)、[`Elasticsearch 性能优化`](07.搜索引擎数据库/01.Elasticsearch/10.Elasticsearch性能优化.md)、[`Elasticsearch 映射`](07.搜索引擎数据库/01.Elasticsearch/05.Elasticsearch映射.md)、[`Elasticsearch 运维`](07.搜索引擎数据库/01.Elasticsearch/20.Elasticsearch运维.md)、[`ElasticSearch Java API 之 High Level REST Client`](07.搜索引擎数据库/01.Elasticsearch/12.ElasticsearchHighLevelRestJavaApi.md)、[`Elasticsearch Rest API`](07.搜索引擎数据库/01.Elasticsearch/11.ElasticsearchRestApi.md)
+- [Elastic 快速入门](07.搜索引擎数据库/02.Elastic/01.Elastic快速入门.md)
+- [Elastic 技术栈之 Filebeat](07.搜索引擎数据库/02.Elastic/02.Elastic技术栈之Filebeat.md)
+- [Filebeat 运维](07.搜索引擎数据库/02.Elastic/03.Filebeat运维.md)
+- [Elastic 技术栈之 Kibana](07.搜索引擎数据库/02.Elastic/04.Elastic技术栈之Kibana.md)
+- [Kibana 运维](07.搜索引擎数据库/02.Elastic/05.Kibana运维.md)
+- [Elastic 技术栈之 Logstash](07.搜索引擎数据库/02.Elastic/06.Elastic技术栈之Logstash.md)
+- [Logstash 运维](07.搜索引擎数据库/02.Elastic/07.Logstash运维.md)
 
 ### [文档数据库](04.文档数据库)
 
-- [`MongoDB 教程`](04.文档数据库/01.MongoDB)
-
-  [`MongoDB 的 CRUD 操作`](04.文档数据库/01.MongoDB/02.MongoDB的CRUD操作.md)、[`MongoDB 的聚合操作`](04.文档数据库/01.MongoDB/03.MongoDB的聚合操作.md)、[`MongoDB 分片`](04.文档数据库/01.MongoDB/09.MongoDB分片.md)、[`MongoDB 复制`](04.文档数据库/01.MongoDB/08.MongoDB复制.md)、[`MongoDB 建模`](04.文档数据库/01.MongoDB/05.MongoDB建模.md)、[`MongoDB 建模示例`](04.文档数据库/01.MongoDB/06.MongoDB建模示例.md)、[`MongoDB 事务`](04.文档数据库/01.MongoDB/04.MongoDB事务.md)、[`MongoDB 索引`](04.文档数据库/01.MongoDB/07.MongoDB索引.md)、[`MongoDB 应用指南`](04.文档数据库/01.MongoDB/01.MongoDB应用指南.md)、[`MongoDB 运维`](04.文档数据库/01.MongoDB/20.MongoDB运维.md)
+- [MongoDB 简介](04.文档数据库/01.MongoDB/MongoDB_简介.md)
+- [MongoDB CRUD](04.文档数据库/01.MongoDB/MongoDB_CRUD.md)
+- [MongoDB 聚合](04.文档数据库/01.MongoDB/MongoDB_聚合.md)
+- [MongoDB 事务](04.文档数据库/01.MongoDB/MongoDB_事务.md)
+- [MongoDB 建模](04.文档数据库/01.MongoDB/MongoDB_建模.md)
+- [MongoDB 索引](04.文档数据库/01.MongoDB/MongoDB_索引.md)
+- [MongoDB 复制](04.文档数据库/01.MongoDB/MongoDB_复制.md)
+- [MongoDB 分片](04.文档数据库/01.MongoDB/MongoDB_分片.md)
+- [MongoDB 运维](04.文档数据库/01.MongoDB/MongoDB_运维.md)
 
 ### [KV 数据库](05.KV数据库)
 
-- [**Redis 教程**](05.KV数据库/01.Redis)
+#### [Redis](05.KV数据库/01.Redis)
 
-  [Redis 基本数据类型](05.KV数据库/01.Redis/01.Redis基本数据类型.md)、[Redis 高级数据类型](05.KV数据库/01.Redis/02.Redis高级数据类型.md)、[Redis 数据结构](05.KV数据库/01.Redis/03.Redis数据结构.md)、[Redis 过期删除和内存淘汰](05.KV数据库/01.Redis/11.Redis过期删除和内存淘汰.md)、[Redis 持久化](05.KV数据库/01.Redis/12.Redis持久化.md)、[Redis 事件](05.KV数据库/01.Redis/13.Redis事件.md)、[Redis 复制](05.KV数据库/01.Redis/21.Redis复制.md)、[Redis 哨兵](05.KV数据库/01.Redis/22.Redis哨兵.md)、[Redis 集群](05.KV数据库/01.Redis/23.Redis集群.md)、[Redis 发布订阅](05.KV数据库/01.Redis/31.Redis发布订阅.md)、[Redis 独立功能](05.KV数据库/01.Redis/32.Redis事务.md)、[Redis 管道](05.KV数据库/01.Redis/33.Redis管道.md)、[Redis 脚本](05.KV数据库/01.Redis/34.Redis脚本.md)、[Redis 运维](05.KV数据库/01.Redis/41.Redis运维.md)、[Redis 实战](05.KV数据库/01.Redis/42.Redis实战.md)、[Redis 面试](05.KV数据库/01.Redis/99.Redis面试.md)
+- [Redis 基本数据类型](05.KV数据库/01.Redis/Redis_数据类型.md) - 关键词：`String`、`Hash`、`List`、`Set`、`Zset`
+- [Redis 高级数据类型](05.KV数据库/01.Redis/Redis_数据类型二.md) - 关键词：`BitMap`、`HyperLogLog`、`Geo`、`Stream`
+- [Redis 数据结构](05.KV数据库/01.Redis/Redis_数据结构.md) - 关键词：`对象`、`SDS`、`链表`、`字典`、`跳表`、`整数集合`、`压缩列表`
+- [Redis 内存管理](05.KV数据库/01.Redis/Redis_内存管理.md) - 关键词：`定时删除`、`惰性删除`、`定期删除`、`LRU`、`LFU`
+- [Redis 持久化](05.KV数据库/01.Redis/Redis_持久化.md) - 关键词：`RDB`、`AOF`、`SAVE`、`BGSAVE`、`appendfsync`
+- [Redis 事件](05.KV数据库/01.Redis/Redis_事件.md) - 关键词：`文件事件`、`时间事件`
+- [Redis 复制](05.KV数据库/01.Redis/Redis_复制.md) - 关键词：`SLAVEOF`、`SYNC`、`PSYNC`、`命令传播`、`心跳`
+- [Redis 哨兵](05.KV数据库/01.Redis/Redis_哨兵.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`Raft`
+- [Redis 集群](05.KV数据库/01.Redis/Redis_集群.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`分区`、`Raft`、`Gossip`
+- [Redis 订阅](05.KV数据库/01.Redis/Redis_订阅.md) - 关键词：`订阅`、`SUBSCRIBE`、`PSUBSCRIBE`、`PUBLISH`、`观察者模式`
+- [Redis 独立功能](05.KV数据库/01.Redis/Redis_事务.md) - 关键词：`事务`、`ACID`、`MULTI`、`EXEC`、`DISCARD`、`WATCH`
+- [Redis 管道](05.KV数据库/01.Redis/Redis_管道.md) - 关键词：`Pipeline`
+- [Redis 脚本](05.KV数据库/01.Redis/Redis_脚本.md) - 关键词：`Lua`
+- [Redis 运维](05.KV数据库/01.Redis/Redis_运维.md) - 关键词：`安装`、`配置`、`命令`、`集群`、`客户端`
+- [Redis 实战](05.KV数据库/01.Redis/Redis_实战.md) - 关键词：`缓存`、`分布式锁`、`布隆过滤器`
+- [Redis 面试](05.KV数据库/01.Redis/Redis_面试.md) - 关键词：`面试`
 
-- [Memcached 快速入门](05.KV数据库/02.Memcached.md)
+#### [Redis](05.KV数据库/02.Memcached.md)
 
 ## 资料 📚
 

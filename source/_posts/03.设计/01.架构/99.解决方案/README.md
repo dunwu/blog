@@ -8,7 +8,7 @@ categories:
 tags:
   - 架构
   - 解决方案
-permalink: /pages/c38eff/
+permalink: /pages/efd318eb/
 hidden: true
 index: false
 ---
