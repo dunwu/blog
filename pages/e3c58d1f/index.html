@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Java 容器面试二MapHashMap 和 Hashtable 的区别Hashtable 是早期 Java 类库提供的一个哈希表实现，本身是同步的，不支持 null 键和值，由于同步导致的性能开销，所以已经很少被推荐使用。 HashMap 是应用更加广泛的哈希表实现，行为上大致上与 HashTable 一致，主要区别在于 HashMap 不是同步的，支持 null 键和值等。 二者的主要差别如下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 容器面试二">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/e3c58d1f/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Java 容器面试二MapHashMap 和 Hashtable 的区别Hashtable 是早期 Java 类库提供的一个哈希表实现，本身是同步的，不支持 null 键和值，由于同步导致的性能开销，所以已经很少被推荐使用。 HashMap 是应用更加广泛的哈希表实现，行为上大致上与 HashTable 一致，主要区别在于 HashMap 不是同步的，支持 null 键和值等。 二者的主要差别如下">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://camo.githubusercontent.com/944543a8d68c07837ae4e21d1109bf590808e261cb508bdc7a94f1e7f11d5864/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a646b312e375f686173686d61702e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/0645f636024f751eec39d72725429f531081e88caec417355d6b153c8b3362f8/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661375f636f6e63757272656e74686173686d61702e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/2a0628afc8c086f443e6c989246737ab99c88d774f376b05df2853ed7d48dffe/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661385f636f6e63757272656e74686173686d61702e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/0645f636024f751eec39d72725429f531081e88caec417355d6b153c8b3362f8/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661375f636f6e63757272656e74686173686d61702e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/2a0628afc8c086f443e6c989246737ab99c88d774f376b05df2853ed7d48dffe/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661385f636f6e63757272656e74686173686d61702e706e67">
+<meta property="article:published_time" content="2024-07-02T23:44:02.000Z">
+<meta property="article:modified_time" content="2025-03-31T23:27:25.835Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="容器">
+<meta property="article:tag" content="JavaSE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/944543a8d68c07837ae4e21d1109bf590808e261cb508bdc7a94f1e7f11d5864/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a646b312e375f686173686d61702e706e67">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/e3c58d1f/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/e3c58d1f/","path":"/pages/e3c58d1f/","title":"Java 容器面试二"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java 容器面试二 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">430</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">130</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">503</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-%E5%AE%B9%E5%99%A8%E9%9D%A2%E8%AF%95%E4%BA%8C"><span class="nav-number">1.</span> <span class="nav-text">Java 容器面试二</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">1.1.</span> <span class="nav-text">Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap-%E5%92%8C-Hashtable-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.1.</span> <span class="nav-text">HashMap 和 Hashtable 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap-%E5%92%8C-HashSet-%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.2.</span> <span class="nav-text">HashMap 和 HashSet 区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap%E3%80%81TreeMap%E3%80%81LinkedHashMap-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.3.</span> <span class="nav-text">HashMap、TreeMap、LinkedHashMap 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashSet-%E5%A6%82%E4%BD%95%E6%A3%80%E6%9F%A5%E9%87%8D%E5%A4%8D%EF%BC%9F"><span class="nav-number">1.1.4.</span> <span class="nav-text">HashSet 如何检查重复？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap-%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.5.</span> <span class="nav-text">HashMap 的底层实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK1-8-%E4%B9%8B%E5%89%8D"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">JDK1.8 之前</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK1-8-%E4%B9%8B%E5%90%8E"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">JDK1.8 之后</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap-%E7%9A%84%E9%95%BF%E5%BA%A6%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-2-%E7%9A%84%E5%B9%82%E6%AC%A1%E6%96%B9"><span class="nav-number">1.1.6.</span> <span class="nav-text">HashMap 的长度为什么是 2 的幂次方</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%93%8D%E4%BD%9C%E5%AF%BC%E8%87%B4%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.7.</span> <span class="nav-text">HashMap 多线程操作导致死循环问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8%EF%BC%9F"><span class="nav-number">1.1.8.</span> <span class="nav-text">HashMap 为什么线程不安全？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentHashMap-%E5%92%8C-Hashtable-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.9.</span> <span class="nav-text">ConcurrentHashMap 和 Hashtable 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentHashMap-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F-%E5%BA%95%E5%B1%82%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.10.</span> <span class="nav-text">ConcurrentHashMap 线程安全的具体实现方式&#x2F;底层具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK1-8-%E4%B9%8B%E5%89%8D-1"><span class="nav-number">1.1.10.1.</span> <span class="nav-text">JDK1.8 之前</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK1-8-%E4%B9%8B%E5%90%8E-1"><span class="nav-number">1.1.10.2.</span> <span class="nav-text">JDK1.8 之后</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK-1-7-%E5%92%8C-JDK-1-8-%E7%9A%84-ConcurrentHashMap-%E5%AE%9E%E7%8E%B0%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="nav-number">1.1.11.</span> <span class="nav-text">JDK 1.7 和 JDK 1.8 的 ConcurrentHashMap 实现有什么不同？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentHashMap-%E4%B8%BA%E4%BB%80%E4%B9%88-key-%E5%92%8C-value-%E4%B8%8D%E8%83%BD%E4%B8%BA-null%EF%BC%9F"><span class="nav-number">1.1.12.</span> <span class="nav-text">ConcurrentHashMap 为什么 key 和 value 不能为 null？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentHashMap-%E8%83%BD%E4%BF%9D%E8%AF%81%E5%A4%8D%E5%90%88%E6%93%8D%E4%BD%9C%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7%E5%90%97%EF%BC%9F"><span class="nav-number">1.1.13.</span> <span class="nav-text">ConcurrentHashMap 能保证复合操作的原子性吗？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Collections-%E5%B7%A5%E5%85%B7%E7%B1%BB%EF%BC%88%E4%B8%8D%E9%87%8D%E8%A6%81%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">Collections 工具类（不重要）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.1.</span> <span class="nav-text">排序操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%EF%BC%8C%E6%9B%BF%E6%8D%A2%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.2.</span> <span class="nav-text">查找，替换操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E6%8E%A7%E5%88%B6"><span class="nav-number">1.2.3.</span> <span class="nav-text">同步控制</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">503</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">430</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/e3c58d1f/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java 容器面试二 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 容器面试二<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/99.%E9%9D%A2%E8%AF%95/Java%E5%AE%B9%E5%99%A8%E9%9D%A2%E8%AF%95%E4%BA%8C.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-07-03 07:44:02" itemprop="dateCreated datePublished" datetime="2024-07-03T07:44:02+08:00">2024-07-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-01 07:27:25" itemprop="dateModified" datetime="2025-04-01T07:27:25+08:00">2025-04-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">面试</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>14k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Java-容器面试二"><a href="#Java-容器面试二" class="headerlink" title="Java 容器面试二"></a>Java 容器面试二</h1><h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><h3 id="HashMap-和-Hashtable-的区别"><a href="#HashMap-和-Hashtable-的区别" class="headerlink" title="HashMap 和 Hashtable 的区别"></a>HashMap 和 Hashtable 的区别</h3><p>Hashtable 是早期 Java 类库提供的一个哈希表实现，本身是同步的，不支持 null 键和值，由于同步导致的性能开销，所以已经很少被推荐使用。</p>
+<p>HashMap 是应用更加广泛的哈希表实现，行为上大致上与 HashTable 一致，主要区别在于 HashMap 不是同步的，支持 null 键和值等。</p>
+<p>二者的主要差别如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>HashMap</th>
+<th>Hashtable</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>线程安全</td>
+<td>非线程安全</td>
+<td>线程安全（主要方法都用 <code>synchronized</code> 修饰）</td>
+</tr>
+<tr>
+<td>效率</td>
+<td>性能好</td>
+<td>性能差：互斥锁，势必影响性能</td>
+</tr>
+<tr>
+<td>初始化容量</td>
+<td>初始容量为 16</td>
+<td>初始容量为 11</td>
+</tr>
+<tr>
+<td>扩容方式</td>
+<td>2N（N 为当前容量）</td>
+<td>2N + 1</td>
+</tr>
+<tr>
+<td>是否允许空值</td>
+<td>允许存储 null 的 key 和 value</td>
+<td>不允许存储 null 的 key 和 value</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>线程是否安全：</strong> <code>HashMap</code> 是非线程安全的，<code>Hashtable</code> 是线程安全的，因为 <code>Hashtable</code> 内部的方法基本都经过<code>synchronized</code> 修饰。（如果你要保证线程安全的话就使用 <code>ConcurrentHashMap</code> 吧！）；</li>
+<li><strong>效率：</strong> 因为线程安全的问题，<code>HashMap</code> 要比 <code>Hashtable</code> 效率高一点。另外，<code>Hashtable</code> 基本被淘汰，不要在代码中使用它；</li>
+<li><strong>对 Null key 和 Null value 的支持：</strong> <code>HashMap</code> 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个；Hashtable 不允许有 null 键和 null 值，否则会抛出 <code>NullPointerException</code>。</li>
+<li><strong>初始容量大小和每次扩充容量大小的不同：</strong> ① 创建时如果不指定容量初始值，<code>Hashtable</code> 默认的初始大小为 11，之后每次扩充，容量变为原来的 2n+1。<code>HashMap</code> 默认的初始化大小为 16。之后每次扩充，容量变为原来的 2 倍。② 创建时如果给定了容量初始值，那么 <code>Hashtable</code> 会直接使用你给定的大小，而 <code>HashMap</code> 会将其扩充为 2 的幂次方大小（<code>HashMap</code> 中的<code>tableSizeFor()</code>方法保证，下面给出了源代码）。也就是说 <code>HashMap</code> 总是使用 2 的幂作为哈希表的大小，后面会介绍到为什么是 2 的幂次方。</li>
+<li><strong>底层数据结构：</strong> JDK1.8 以后的 <code>HashMap</code> 在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为 8）时，将链表转化为红黑树（将链表转换成红黑树前会判断，如果当前数组的长度小于 64，那么会选择先进行数组扩容，而不是转换为红黑树），以减少搜索时间（后文中我会结合源码对这一过程进行分析）。<code>Hashtable</code> 没有这样的机制。</li>
+</ul>
+<p><strong><code>HashMap</code> 中带有初始容量的构造函数：</strong></p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Illegal initial capacity: &quot;</span> +</span><br><span class="line">                                           initialCapacity);</span><br><span class="line">    <span class="keyword">if</span> (initialCapacity &gt; MAXIMUM_CAPACITY)</span><br><span class="line">        initialCapacity = MAXIMUM_CAPACITY;</span><br><span class="line">    <span class="keyword">if</span> (loadFactor &lt;= <span class="number">0</span> || Float.isNaN(loadFactor))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Illegal load factor: &quot;</span> +</span><br><span class="line">                                           loadFactor);</span><br><span class="line">    <span class="keyword">this</span>.loadFactor = loadFactor;</span><br><span class="line">    <span class="keyword">this</span>.threshold = tableSizeFor(initialCapacity);</span><br><span class="line">&#125;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">HashMap</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(initialCapacity, DEFAULT_LOAD_FACTOR);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面这个方法保证了 <code>HashMap</code> 总是使用 2 的幂作为哈希表的大小。</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Returns a <span class="built_in">power</span> of two size for the given target capacity.</span><br><span class="line"> */</span><br><span class="line">static final <span class="built_in">int</span> tableSizeFor(<span class="built_in">int</span> cap) &#123;</span><br><span class="line">    <span class="built_in">int</span> <span class="built_in">n</span> = cap - <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">n</span> |= <span class="built_in">n</span> &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">n</span> |= <span class="built_in">n</span> &gt;&gt;&gt; <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">n</span> |= <span class="built_in">n</span> &gt;&gt;&gt; <span class="number">4</span>;</span><br><span class="line">    <span class="built_in">n</span> |= <span class="built_in">n</span> &gt;&gt;&gt; <span class="number">8</span>;</span><br><span class="line">    <span class="built_in">n</span> |= <span class="built_in">n</span> &gt;&gt;&gt; <span class="number">16</span>;</span><br><span class="line">    return (<span class="built_in">n</span> &lt; <span class="number">0</span>) ? <span class="number">1</span> <span class="symbol">:</span> (<span class="built_in">n</span> &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY <span class="symbol">:</span> <span class="built_in">n</span> + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="HashMap-和-HashSet-区别"><a href="#HashMap-和-HashSet-区别" class="headerlink" title="HashMap 和 HashSet 区别"></a>HashMap 和 HashSet 区别</h3><p>如果你看过 <code>HashSet</code> 源码的话就应该知道：<code>HashSet</code> 底层就是基于 <code>HashMap</code> 实现的。（<code>HashSet</code> 的源码非常非常少，因为除了 <code>clone()</code>、<code>writeObject()</code>、<code>readObject()</code>是 <code>HashSet</code> 自己不得不实现之外，其他方法都是直接调用 <code>HashMap</code> 中的方法。</p>
+<table>
+<thead>
+<tr>
+<th><code>HashMap</code></th>
+<th><code>HashSet</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>实现了 <code>Map</code> 接口</td>
+<td>实现 <code>Set</code> 接口</td>
+</tr>
+<tr>
+<td>存储键值对</td>
+<td>仅存储对象</td>
+</tr>
+<tr>
+<td>调用 <code>put()</code>向 map 中添加元素</td>
+<td>调用 <code>add()</code>方法向 <code>Set</code> 中添加元素</td>
+</tr>
+<tr>
+<td><code>HashMap</code> 使用键（Key）计算 <code>hashcode</code></td>
+<td><code>HashSet</code> 使用成员对象来计算 <code>hashcode</code> 值，对于两个对象来说 <code>hashcode</code> 可能相同，所以<code>equals()</code>方法用来判断对象的相等性</td>
+</tr>
+</tbody></table>
+<h3 id="HashMap、TreeMap、LinkedHashMap-的区别"><a href="#HashMap、TreeMap、LinkedHashMap-的区别" class="headerlink" title="HashMap、TreeMap、LinkedHashMap 的区别"></a>HashMap、TreeMap、LinkedHashMap 的区别</h3><p>大部分使用 Map 的场景，通常就是放入、访问或者删除，而对顺序没有特别要求，HashMap 在这种情况下基本是最好的选择。<strong>HashMap 的性能表现非常依赖于哈希码的有效性，请务必掌握 hashCode 和 equals 的一些基本约定</strong>，比如：</p>
+<ul>
+<li>equals 相等，hashCode 一定要相等。</li>
+<li>重写了 hashCode 也要重写 equals。</li>
+<li>hashCode 需要保持一致性，状态改变返回的哈希值仍然要一致。</li>
+<li>equals 的对称、反射、传递等特性。</li>
+</ul>
+<p>LinkedHashMap 和 TreeMap 都可以保证某种顺序，但二者还是非常不同的。</p>
+<ul>
+<li>LinkedHashMap 通常提供的是遍历顺序符合插入顺序，它的实现是通过为条目（键值对）维护一个双向链表。注意，通过特定构造函数，我们可以创建反映访问顺序的实例，所谓的 put、get、compute 等，都算作“访问”。</li>
+<li>对于 TreeMap，它的整体顺序是由键的顺序关系决定的，通过 Comparator 或 Comparable（自然顺序）来决定。</li>
+</ul>
+<h3 id="HashSet-如何检查重复？"><a href="#HashSet-如何检查重复？" class="headerlink" title="HashSet 如何检查重复？"></a>HashSet 如何检查重复？</h3><p>以下内容摘自我的 Java 启蒙书《Head first java》第二版：</p>
+<blockquote>
+<p>当你把对象加入<code>HashSet</code>时，<code>HashSet</code> 会先计算对象的<code>hashcode</code>值来判断对象加入的位置，同时也会与其他加入的对象的 <code>hashcode</code> 值作比较，如果没有相符的 <code>hashcode</code>，<code>HashSet</code> 会假设对象没有重复出现。但是如果发现有相同 <code>hashcode</code> 值的对象，这时会调用<code>equals()</code>方法来检查 <code>hashcode</code> 相等的对象是否真的相同。如果两者相同，<code>HashSet</code> 就不会让加入操作成功。</p>
+</blockquote>
+<p>在 JDK1.8 中，<code>HashSet</code>的<code>add()</code>方法只是简单的调用了<code>HashMap</code>的<code>put()</code>方法，并且判断了一下返回值以确保是否有重复元素。直接看一下<code>HashSet</code>中的源码：</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Returns: true if this set did not already contain the specified element</span></span><br><span class="line"><span class="comment">// 返回值：当 set 中没有包含 add 的元素时返回真</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="built_in">add</span>(E e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">map</span>.<span class="property">put</span>(e, PRESENT)==<span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而在<code>HashMap</code>的<code>putVal()</code>方法中也能看到如下说明：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Returns : previous value, or null if none</span></span><br><span class="line"><span class="comment">// 返回值：如果插入位置没有元素返回 null，否则返回上一个元素</span></span><br><span class="line"><span class="function"><span class="keyword">final</span> V <span class="title">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span></span><br><span class="line"><span class="params"><span class="function">                   <span class="type">boolean</span> evict)</span> </span>&#123;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，在 JDK1.8 中，实际上无论<code>HashSet</code>中是否已经存在了某元素，<code>HashSet</code>都会直接插入，只是会在<code>add()</code>方法的返回值处告诉我们插入前是否存在相同元素。</p>
+<h3 id="HashMap-的底层实现"><a href="#HashMap-的底层实现" class="headerlink" title="HashMap 的底层实现"></a>HashMap 的底层实现</h3><h4 id="JDK1-8-之前"><a href="#JDK1-8-之前" class="headerlink" title="JDK1.8 之前"></a>JDK1.8 之前</h4><p>JDK1.8 之前 <code>HashMap</code> 底层是 <strong>数组和链表</strong> 结合在一起使用也就是 <strong>链表散列</strong>。HashMap 通过 key 的 <code>hashcode</code> 经过扰动函数处理过后得到 hash 值，然后通过 <code>(n - 1) &amp; hash</code> 判断当前元素存放的位置（这里的 n 指的是数组的长度），如果当前位置存在元素的话，就判断该元素与要存入的元素的 hash 值以及 key 是否相同，如果相同的话，直接覆盖，不相同就通过拉链法解决冲突。</p>
+<p>所谓扰动函数指的就是 HashMap 的 <code>hash</code> 方法。使用 <code>hash</code> 方法也就是扰动函数是为了防止一些实现比较差的 <code>hashCode()</code> 方法 换句话说使用扰动函数之后可以减少碰撞。</p>
+<p><strong>JDK 1.8 HashMap 的 hash 方法源码：</strong></p>
+<p>JDK 1.8 的 hash 方法相比于 JDK 1.7 hash 方法更加简化，但是原理不变。</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">hash</span>(<span class="built_in">Object</span> <span class="built_in">key</span>) &#123;</span><br><span class="line">    <span class="type">int</span> h;</span><br><span class="line">    <span class="comment">// key.hashCode()：返回散列值也就是 hashcode</span></span><br><span class="line">    <span class="comment">// ^：按位异或</span></span><br><span class="line">    <span class="comment">// &gt;&gt;&gt;: 无符号右移，忽略符号位，空位都以 0 补齐</span></span><br><span class="line">    <span class="title function_">return</span> (<span class="built_in">key</span> == <span class="literal">null</span>) ? <span class="number">0</span> : (h = <span class="built_in">key</span>.<span class="property">hashCode</span>()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对比一下 JDK1.7 的 HashMap 的 hash 方法源码。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">hash</span><span class="params">(<span class="type">int</span> h)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// This function ensures that hashCodes that differ only by</span></span><br><span class="line">    <span class="comment">// constant multiples at each bit position have a bounded</span></span><br><span class="line">    <span class="comment">// number of collisions (approximately 8 at default load factor).</span></span><br><span class="line"></span><br><span class="line">    h ^= (h &gt;&gt;&gt; <span class="number">20</span>) ^ (h &gt;&gt;&gt; <span class="number">12</span>);</span><br><span class="line">    <span class="keyword">return</span> h ^ (h &gt;&gt;&gt; <span class="number">7</span>) ^ (h &gt;&gt;&gt; <span class="number">4</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相比于 JDK1.8 的 hash 方法 ，JDK 1.7 的 hash 方法的性能会稍差一点点，因为毕竟扰动了 4 次。</p>
+<p>所谓 <strong>“拉链法”</strong> 就是：将链表和数组相结合。也就是说创建一个链表数组，数组中每一格就是一个链表。若遇到哈希冲突，则将冲突的值加到链表中即可。</p>
+<h4 id="JDK1-8-之后"><a href="#JDK1-8-之后" class="headerlink" title="JDK1.8 之后"></a>JDK1.8 之后</h4><p>相比于之前的版本， JDK1.8 之后在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为 8）（将链表转换成红黑树前会判断，如果当前数组的长度小于 64，那么会选择先进行数组扩容，而不是转换为红黑树）时，将链表转化为红黑树，以减少搜索时间。</p>
+<blockquote>
+<p>TreeMap、TreeSet 以及 JDK1.8 之后的 HashMap 底层都用到了红黑树。红黑树就是为了解决二叉查找树的缺陷，因为二叉查找树在某些情况下会退化成一个线性结构。</p>
+</blockquote>
+<p>我们来结合源码分析一下 <code>HashMap</code> 链表到红黑树的转换。</p>
+<p><strong>1、 <code>putVal</code> 方法中执行链表转红黑树的判断逻辑。</strong></p>
+<p>链表的长度大于 8 的时候，就执行 <code>treeifyBin</code> （转换红黑树）的逻辑。</p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 遍历链表</span></span><br><span class="line"><span class="keyword">for</span> (int binCount = <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">    <span class="comment">// 遍历到链表最后一个节点</span></span><br><span class="line">    <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">        p.next = newNode(<span class="built_in">hash</span>, key, value, <span class="literal">null</span>);</span><br><span class="line">        <span class="comment">// 如果链表元素个数大于 TREEIFY_THRESHOLD（8）</span></span><br><span class="line">        <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">            <span class="comment">// 红黑树转换（并不会直接转换成红黑树）</span></span><br><span class="line">            treeifyBin(<span class="literal">tab</span>, <span class="built_in">hash</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (e.<span class="built_in">hash</span> == <span class="built_in">hash</span> &amp;&amp;</span><br><span class="line">        ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.<span class="built_in">equals</span>(k))))</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    p = e;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、<code>treeifyBin</code> 方法中判断是否真的转换为红黑树。</strong></p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">final <span class="keyword">void</span> treeifyBin(Node&lt;K,V&gt;[] <span class="literal">tab</span>, int <span class="built_in">hash</span>) &#123;</span><br><span class="line">    int n, index; Node&lt;K,V&gt; e;</span><br><span class="line">    <span class="comment">// 判断当前数组的长度是否小于 64</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">tab</span> == <span class="literal">null</span> || (n = <span class="literal">tab</span>.<span class="built_in">length</span>) &lt; MIN_TREEIFY_CAPACITY)</span><br><span class="line">        <span class="comment">// 如果当前数组的长度小于 64，那么会选择先进行数组扩容</span></span><br><span class="line">        <span class="built_in">resize</span>();</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ((e = <span class="literal">tab</span>[index = (n - <span class="number">1</span>) &amp; <span class="built_in">hash</span>]) != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 否则才将列表转换为红黑树</span></span><br><span class="line"></span><br><span class="line">        TreeNode&lt;K,V&gt; hd = <span class="literal">null</span>, tl = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            TreeNode&lt;K,V&gt; p = replacementTreeNode(e, <span class="literal">null</span>);</span><br><span class="line">            <span class="keyword">if</span> (tl == <span class="literal">null</span>)</span><br><span class="line">                hd = p;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                p.prev = tl;</span><br><span class="line">                tl.next = p;</span><br><span class="line">            &#125;</span><br><span class="line">            tl = p;</span><br><span class="line">        &#125; <span class="keyword">while</span> ((e = e.next) != <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">if</span> ((<span class="literal">tab</span>[index] = hd) != <span class="literal">null</span>)</span><br><span class="line">            hd.treeify(<span class="literal">tab</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将链表转换成红黑树前会判断，如果当前数组的长度小于 64，那么会选择先进行数组扩容，而不是转换为红黑树。</p>
+<h3 id="HashMap-的长度为什么是-2-的幂次方"><a href="#HashMap-的长度为什么是-2-的幂次方" class="headerlink" title="HashMap 的长度为什么是 2 的幂次方"></a>HashMap 的长度为什么是 2 的幂次方</h3><p>为了能让 HashMap 存取高效，尽量较少碰撞，也就是要尽量把数据分配均匀。我们上面也讲到了过了，Hash 值的范围值-2147483648 到 2147483647，前后加起来大概 40 亿的映射空间，只要哈希函数映射得比较均匀松散，一般应用是很难出现碰撞的。但问题是一个 40 亿长度的数组，内存是放不下的。所以这个散列值是不能直接拿来用的。用之前还要先做对数组的长度取模运算，得到的余数才能用来要存放的位置也就是对应的数组下标。</p>
+<p><strong>这个算法应该如何设计呢？</strong></p>
+<p>我们首先可能会想到采用 % 取余的操作来实现。但是，重点来了：“<strong>取余 (%) 操作中如果除数是 2 的幂次则等价于与其除数减一的与 (&amp;) 操作</strong>（也就是说 hash%length&#x3D;&#x3D;hash&amp;(length-1) 的前提是 length 是 2 的 n 次方；）。” 并且 <strong>采用二进制位操作 &amp; 相对于 % 能够提高运算效率</strong>，这就解释了 HashMap 的长度为什么是 2 的幂次方。</p>
+<h3 id="HashMap-多线程操作导致死循环问题"><a href="#HashMap-多线程操作导致死循环问题" class="headerlink" title="HashMap 多线程操作导致死循环问题"></a>HashMap 多线程操作导致死循环问题</h3><p>JDK1.7 及之前版本的 <code>HashMap</code> 在多线程环境下扩容操作可能存在死循环问题，这是由于当一个桶位中有多个元素需要进行扩容时，多个线程同时对链表进行操作，头插法可能会导致链表中的节点指向错误的位置，从而形成一个环形链表，进而使得查询元素的操作陷入死循环无法结束。</p>
+<p>为了解决这个问题，JDK1.8 版本的 HashMap 采用了尾插法而不是头插法来避免链表倒置，使得插入的节点永远都是放在链表的末尾，避免了链表中的环形结构。但是还是不建议在多线程下使用 <code>HashMap</code>，因为多线程下使用 <code>HashMap</code> 还是会存在数据覆盖的问题。并发环境下，推荐使用 <code>ConcurrentHashMap</code> 。</p>
+<p>一般面试中这样介绍就差不多，不需要记各种细节，个人觉得也没必要记。如果想要详细了解 <code>HashMap</code> 扩容导致死循环问题，可以看看耗子叔的这篇文章：<a target="_blank" rel="noopener" href="https://coolshell.cn/articles/9606.html">Java HashMap 的死循环</a>。</p>
+<h3 id="HashMap-为什么线程不安全？"><a href="#HashMap-为什么线程不安全？" class="headerlink" title="HashMap 为什么线程不安全？"></a>HashMap 为什么线程不安全？</h3><p>JDK1.7 及之前版本，在多线程环境下，<code>HashMap</code> 扩容时会造成死循环和数据丢失的问题。</p>
+<p>数据丢失这个在 JDK1.7 和 JDK 1.8 中都存在，这里以 JDK 1.8 为例进行介绍。</p>
+<p>JDK 1.8 后，在 <code>HashMap</code> 中，多个键值对可能会被分配到同一个桶（bucket），并以链表或红黑树的形式存储。多个线程对 <code>HashMap</code> 的 <code>put</code> 操作会导致线程不安全，具体来说会有数据覆盖的风险。</p>
+<p>举个例子：</p>
+<ul>
+<li>两个线程 1,2 同时进行 put 操作，并且发生了哈希冲突（hash 函数计算出的插入下标是相同的）。</li>
+<li>不同的线程可能在不同的时间片获得 CPU 执行的机会，当前线程 1 执行完哈希冲突判断后，由于时间片耗尽挂起。线程 2 先完成了插入操作。</li>
+<li>随后，线程 1 获得时间片，由于之前已经进行过 hash 碰撞的判断，所有此时会直接进行插入，这就导致线程 2 插入的数据被线程 1 覆盖了。</li>
+</ul>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">put</span>(K <span class="built_in">key</span>, V value) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">putVal</span>(<span class="title function_">hash</span>(<span class="built_in">key</span>), <span class="built_in">key</span>, value, <span class="literal">false</span>, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span>(<span class="type">int</span> hash, K <span class="built_in">key</span>, V value, <span class="type">boolean</span> onlyIfAbsent,</span><br><span class="line">                   <span class="type">boolean</span> evict) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="comment">// 判断是否出现 hash 碰撞</span></span><br><span class="line">    <span class="comment">// (n - 1) &amp; hash 确定元素存放在哪个桶中，桶为空，新生成结点放入桶中（此时，这个结点是放在数组中）</span></span><br><span class="line">    <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">        tab[i] = <span class="title function_">newNode</span>(hash, <span class="built_in">key</span>, value, <span class="literal">null</span>);</span><br><span class="line">    <span class="comment">// 桶中已经存在元素（处理 hash 冲突）</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有一种情况是这两个线程同时 <code>put</code> 操作导致 <code>size</code> 的值不正确，进而导致数据覆盖的问题：</p>
+<ol>
+<li>线程 1 执行 <code>if(++size &gt; threshold)</code> 判断时，假设获得 <code>size</code> 的值为 10，由于时间片耗尽挂起。</li>
+<li>线程 2 也执行 <code>if(++size &gt; threshold)</code> 判断，获得 <code>size</code> 的值也为 10，并将元素插入到该桶位中，并将 <code>size</code> 的值更新为 11。</li>
+<li>随后，线程 1 获得时间片，它也将元素放入桶位中，并将 size 的值更新为 11。</li>
+<li>线程 1、2 都执行了一次 <code>put</code> 操作，但是 <code>size</code> 的值只增加了 1，也就导致实际上只有一个元素被添加到了 <code>HashMap</code> 中。</li>
+</ol>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">put</span>(K <span class="built_in">key</span>, V value) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="title function_">putVal</span>(<span class="title function_">hash</span>(<span class="built_in">key</span>), <span class="built_in">key</span>, value, <span class="literal">false</span>, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span>(<span class="type">int</span> hash, K <span class="built_in">key</span>, V value, <span class="type">boolean</span> onlyIfAbsent,</span><br><span class="line">                   <span class="type">boolean</span> evict) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="comment">// 实际大小大于阈值则扩容</span></span><br><span class="line">    <span class="keyword">if</span> (++<span class="built_in">size</span> &gt; threshold)</span><br><span class="line">        <span class="title function_">resize</span>();</span><br><span class="line">    <span class="comment">// 插入后回调</span></span><br><span class="line">    <span class="title function_">afterNodeInsertion</span>(evict);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ConcurrentHashMap-和-Hashtable-的区别"><a href="#ConcurrentHashMap-和-Hashtable-的区别" class="headerlink" title="ConcurrentHashMap 和 Hashtable 的区别"></a>ConcurrentHashMap 和 Hashtable 的区别</h3><p><code>ConcurrentHashMap</code> 和 <code>Hashtable</code> 的区别主要体现在实现线程安全的方式上不同。</p>
+<ul>
+<li><strong>底层数据结构：</strong> JDK1.7 的 <code>ConcurrentHashMap</code> 底层采用 <strong>分段的数组+链表</strong> 实现，JDK1.8 采用的数据结构跟 <code>HashMap1.8</code> 的结构一样，数组+链表&#x2F;红黑二叉树。<code>Hashtable</code> 和 JDK1.8 之前的 <code>HashMap</code> 的底层数据结构类似都是采用 <strong>数组+链表</strong> 的形式，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突而存在的；</li>
+<li>实现线程安全的方式（重要）：<ul>
+<li>在 JDK1.7 的时候，<code>ConcurrentHashMap</code> 对整个桶数组进行了分割分段 (<code>Segment</code>，分段锁），每一把锁只锁容器其中一部分数据（下面有示意图），多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。</li>
+<li>到了 JDK1.8 的时候，<code>ConcurrentHashMap</code> 已经摒弃了 <code>Segment</code> 的概念，而是直接用 <code>Node</code> 数组+链表+红黑树的数据结构来实现，并发控制使用 <code>synchronized</code> 和 CAS 来操作。（JDK1.6 以后 <code>synchronized</code> 锁做了很多优化） 整个看起来就像是优化过且线程安全的 <code>HashMap</code>，虽然在 JDK1.8 中还能看到 <code>Segment</code> 的数据结构，但是已经简化了属性，只是为了兼容旧版本；</li>
+<li><strong><code>Hashtable</code>（同一把锁）</strong> : 使用 <code>synchronized</code> 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。</li>
+</ul>
+</li>
+</ul>
+<p>下面，我们再来看看两者底层数据结构的对比图。</p>
+<p><strong>Hashtable</strong> :</p>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/944543a8d68c07837ae4e21d1109bf590808e261cb508bdc7a94f1e7f11d5864/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a646b312e375f686173686d61702e706e67"><img src="https://camo.githubusercontent.com/944543a8d68c07837ae4e21d1109bf590808e261cb508bdc7a94f1e7f11d5864/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a646b312e375f686173686d61702e706e67" alt="Hashtable 的内部结构"></a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/chengxiao/p/6842045.html%3E">https://www.cnblogs.com/chengxiao/p/6842045.html%3E</a></p>
+<p><strong>JDK1.7 的 ConcurrentHashMap</strong>：</p>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/0645f636024f751eec39d72725429f531081e88caec417355d6b153c8b3362f8/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661375f636f6e63757272656e74686173686d61702e706e67"><img src="https://camo.githubusercontent.com/0645f636024f751eec39d72725429f531081e88caec417355d6b153c8b3362f8/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661375f636f6e63757272656e74686173686d61702e706e67" alt="Java7 ConcurrentHashMap 存储结构"></a></p>
+<p><code>ConcurrentHashMap</code> 是由 <code>Segment</code> 数组结构和 <code>HashEntry</code> 数组结构组成。</p>
+<p><code>Segment</code> 数组中的每个元素包含一个 <code>HashEntry</code> 数组，每个 <code>HashEntry</code> 数组属于链表结构。</p>
+<p><strong>JDK1.8 的 ConcurrentHashMap</strong>：</p>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/2a0628afc8c086f443e6c989246737ab99c88d774f376b05df2853ed7d48dffe/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661385f636f6e63757272656e74686173686d61702e706e67"><img src="https://camo.githubusercontent.com/2a0628afc8c086f443e6c989246737ab99c88d774f376b05df2853ed7d48dffe/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661385f636f6e63757272656e74686173686d61702e706e67" alt="Java8 ConcurrentHashMap 存储结构"></a></p>
+<p>JDK1.8 的 <code>ConcurrentHashMap</code> 不再是 <strong>Segment 数组 + HashEntry 数组 + 链表</strong>，而是 <strong>Node 数组 + 链表 &#x2F; 红黑树</strong>。不过，Node 只能用于链表的情况，红黑树的情况需要使用 **<code>TreeNode</code>**。当冲突链表达到一定长度时，链表会转换成红黑树。</p>
+<p><code>TreeNode</code>是存储红黑树节点，被<code>TreeBin</code>包装。<code>TreeBin</code>通过<code>root</code>属性维护红黑树的根结点，因为红黑树在旋转的时候，根结点可能会被它原来的子节点替换掉，在这个时间点，如果有其他线程要写这棵红黑树就会发生线程不安全问题，所以在 <code>ConcurrentHashMap</code> 中<code>TreeBin</code>通过<code>waiter</code>属性维护当前使用这棵红黑树的线程，来防止其他线程的进入。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">static <span class="keyword">final</span> <span class="keyword">class</span> <span class="symbol">TreeBin</span>&lt;<span class="symbol">K,<span class="symbol">V</span></span>&gt; <span class="symbol">extends</span> <span class="symbol">Node</span>&lt;<span class="symbol">K,<span class="symbol">V</span></span>&gt; &#123;</span><br><span class="line">        TreeNode&lt;K,V&gt; root;</span><br><span class="line">        volatile TreeNode&lt;K,V&gt; first;</span><br><span class="line">        volatile Thread waiter;</span><br><span class="line">        volatile <span class="built_in">int</span> lockState;</span><br><span class="line">        <span class="comment">// values for lockState</span></span><br><span class="line">        static <span class="keyword">final</span> <span class="built_in">int</span> WRITER = <span class="number">1</span>; <span class="comment">// set while holding write lock</span></span><br><span class="line">        static <span class="keyword">final</span> <span class="built_in">int</span> WAITER = <span class="number">2</span>; <span class="comment">// set when waiting for write lock</span></span><br><span class="line">        static <span class="keyword">final</span> <span class="built_in">int</span> READER = <span class="number">4</span>; <span class="comment">// increment value for setting read lock</span></span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ConcurrentHashMap-线程安全的具体实现方式-底层具体实现"><a href="#ConcurrentHashMap-线程安全的具体实现方式-底层具体实现" class="headerlink" title="ConcurrentHashMap 线程安全的具体实现方式&#x2F;底层具体实现"></a>ConcurrentHashMap 线程安全的具体实现方式&#x2F;底层具体实现</h3><h4 id="JDK1-8-之前-1"><a href="#JDK1-8-之前-1" class="headerlink" title="JDK1.8 之前"></a>JDK1.8 之前</h4><p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/0645f636024f751eec39d72725429f531081e88caec417355d6b153c8b3362f8/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661375f636f6e63757272656e74686173686d61702e706e67"><img src="https://camo.githubusercontent.com/0645f636024f751eec39d72725429f531081e88caec417355d6b153c8b3362f8/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661375f636f6e63757272656e74686173686d61702e706e67" alt="Java7 ConcurrentHashMap 存储结构"></a></p>
+<p>首先将数据分为一段一段（这个“段”就是 <code>Segment</code>）的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据时，其他段的数据也能被其他线程访问。</p>
+<p><strong><code>ConcurrentHashMap</code> 是由 <code>Segment</code> 数组结构和 <code>HashEntry</code> 数组结构组成</strong>。</p>
+<p><code>Segment</code> 继承了 <code>ReentrantLock</code>, 所以 <code>Segment</code> 是一种可重入锁，扮演锁的角色。<code>HashEntry</code> 用于存储键值对数据。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">static <span class="class"><span class="keyword">class</span> <span class="title">Segment&lt;K</span>,<span class="title">V&gt;</span> <span class="keyword">extends</span> <span class="title">ReentrantLock</span> <span class="title">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个 <code>ConcurrentHashMap</code> 里包含一个 <code>Segment</code> 数组，<code>Segment</code> 的个数一旦<strong>初始化就不能改变</strong>。 <code>Segment</code> 数组的大小默认是 16，也就是说默认可以同时支持 16 个线程并发写。</p>
+<p><code>Segment</code> 的结构和 <code>HashMap</code> 类似，是一种数组和链表结构，一个 <code>Segment</code> 包含一个 <code>HashEntry</code> 数组，每个 <code>HashEntry</code> 是一个链表结构的元素，每个 <code>Segment</code> 守护着一个 <code>HashEntry</code> 数组里的元素，当对 <code>HashEntry</code> 数组的数据进行修改时，必须首先获得对应的 <code>Segment</code> 的锁。也就是说，对同一 <code>Segment</code> 的并发写入会被阻塞，不同 <code>Segment</code> 的写入是可以并发执行的。</p>
+<h4 id="JDK1-8-之后-1"><a href="#JDK1-8-之后-1" class="headerlink" title="JDK1.8 之后"></a>JDK1.8 之后</h4><p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/2a0628afc8c086f443e6c989246737ab99c88d774f376b05df2853ed7d48dffe/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661385f636f6e63757272656e74686173686d61702e706e67"><img src="https://camo.githubusercontent.com/2a0628afc8c086f443e6c989246737ab99c88d774f376b05df2853ed7d48dffe/68747470733a2f2f6f73732e6a61766167756964652e636e2f6769746875622f6a61766167756964652f6a6176612f636f6c6c656374696f6e2f6a617661385f636f6e63757272656e74686173686d61702e706e67" alt="Java8 ConcurrentHashMap 存储结构"></a></p>
+<p>Java 8 几乎完全重写了 <code>ConcurrentHashMap</code>，代码量从原来 Java 7 中的 1000 多行，变成了现在的 6000 多行。</p>
+<p><code>ConcurrentHashMap</code> 取消了 <code>Segment</code> 分段锁，采用 <code>Node + CAS + synchronized</code> 来保证并发安全。数据结构跟 <code>HashMap</code> 1.8 的结构类似，数组+链表&#x2F;红黑二叉树。Java 8 在链表长度超过一定阈值（8）时将链表（寻址时间复杂度为 O(N)）转换为红黑树（寻址时间复杂度为 O(log(N))）。</p>
+<p>Java 8 中，锁粒度更细，<code>synchronized</code> 只锁定当前链表或红黑二叉树的首节点，这样只要 hash 不冲突，就不会产生并发，就不会影响其他 Node 的读写，效率大幅提升。</p>
+<h3 id="JDK-1-7-和-JDK-1-8-的-ConcurrentHashMap-实现有什么不同？"><a href="#JDK-1-7-和-JDK-1-8-的-ConcurrentHashMap-实现有什么不同？" class="headerlink" title="JDK 1.7 和 JDK 1.8 的 ConcurrentHashMap 实现有什么不同？"></a>JDK 1.7 和 JDK 1.8 的 ConcurrentHashMap 实现有什么不同？</h3><ul>
+<li><strong>线程安全实现方式</strong>：JDK 1.7 采用 <code>Segment</code> 分段锁来保证安全， <code>Segment</code> 是继承自 <code>ReentrantLock</code>。JDK1.8 放弃了 <code>Segment</code> 分段锁的设计，采用 <code>Node + CAS + synchronized</code> 保证线程安全，锁粒度更细，<code>synchronized</code> 只锁定当前链表或红黑二叉树的首节点。</li>
+<li><strong>Hash 碰撞解决方法</strong> : JDK 1.7 采用拉链法，JDK1.8 采用拉链法结合红黑树（链表长度超过一定阈值时，将链表转换为红黑树）。</li>
+<li><strong>并发度</strong>：JDK 1.7 最大并发度是 Segment 的个数，默认是 16。JDK 1.8 最大并发度是 Node 数组的大小，并发度更大。</li>
+</ul>
+<h3 id="ConcurrentHashMap-为什么-key-和-value-不能为-null？"><a href="#ConcurrentHashMap-为什么-key-和-value-不能为-null？" class="headerlink" title="ConcurrentHashMap 为什么 key 和 value 不能为 null？"></a>ConcurrentHashMap 为什么 key 和 value 不能为 null？</h3><p><code>ConcurrentHashMap</code> 的 key 和 value 不能为 null 主要是为了避免二义性。null 是一个特殊的值，表示没有对象或没有引用。如果你用 null 作为键，那么你就无法区分这个键是否存在于 <code>ConcurrentHashMap</code> 中，还是根本没有这个键。同样，如果你用 null 作为值，那么你就无法区分这个值是否是真正存储在 <code>ConcurrentHashMap</code> 中的，还是因为找不到对应的键而返回的。</p>
+<p>拿 get 方法取值来说，返回的结果为 null 存在两种情况：</p>
+<ul>
+<li>值没有在集合中 ；</li>
+<li>值本身就是 null。</li>
+</ul>
+<p>这也就是二义性的由来。</p>
+<p>具体可以参考 <a target="_blank" rel="noopener" href="https://javaguide.cn/java/collection/concurrent-hash-map-source-code.html">ConcurrentHashMap 源码分析</a> 。</p>
+<p>多线程环境下，存在一个线程操作该 <code>ConcurrentHashMap</code> 时，其他的线程将该 <code>ConcurrentHashMap</code> 修改的情况，所以无法通过 <code>containsKey(key)</code> 来判断否存在这个键值对，也就没办法解决二义性问题了。</p>
+<p>与此形成对比的是，<code>HashMap</code> 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个。如果传入 null 作为参数，就会返回 hash 值为 0 的位置的值。单线程环境下，不存在一个线程操作该 HashMap 时，其他的线程将该 <code>HashMap</code> 修改的情况，所以可以通过 <code>contains(key)</code>来做判断是否存在这个键值对，从而做相应的处理，也就不存在二义性问题。</p>
+<p>也就是说，多线程下无法正确判定键值对是否存在（存在其他线程修改的情况），单线程是可以的（不存在其他线程修改的情况）。</p>
+<p>如果你确实需要在 ConcurrentHashMap 中使用 null 的话，可以使用一个特殊的静态空对象来代替 null。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">static</span> <span class="keyword">final</span> Object <span class="literal">NULL</span> = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br></pre></td></tr></table></figure>
+
+<p>最后，再分享一下 <code>ConcurrentHashMap</code> 作者本人 (Doug Lea) 对于这个问题的回答：</p>
+<blockquote>
+<p>The main reason that nulls aren’t allowed in ConcurrentMaps (ConcurrentHashMaps, ConcurrentSkipListMaps) is that ambiguities that may be just barely tolerable in non-concurrent maps can’t be accommodated. The main one is that if <code>map.get(key)</code> returns <code>null</code>, you can’t detect whether the key explicitly maps to <code>null</code> vs the key isn’t mapped. In a non-concurrent map, you can check this via <code>map.contains(key)</code>, but in a concurrent one, the map might have changed between calls.</p>
+</blockquote>
+<p>翻译过来之后的，大致意思还是单线程下可以容忍歧义，而多线程下无法容忍。</p>
+<h3 id="ConcurrentHashMap-能保证复合操作的原子性吗？"><a href="#ConcurrentHashMap-能保证复合操作的原子性吗？" class="headerlink" title="ConcurrentHashMap 能保证复合操作的原子性吗？"></a>ConcurrentHashMap 能保证复合操作的原子性吗？</h3><p><code>ConcurrentHashMap</code> 是线程安全的，意味着它可以保证多个线程同时对它进行读写操作时，不会出现数据不一致的情况，也不会导致 JDK1.7 及之前版本的 <code>HashMap</code> 多线程操作导致死循环问题。但是，这并不意味着它可以保证所有的复合操作都是原子性的，一定不要搞混了！</p>
+<p>复合操作是指由多个基本操作（如<code>put</code>、<code>get</code>、<code>remove</code>、<code>containsKey</code>等）组成的操作，例如先判断某个键是否存在<code>containsKey(key)</code>，然后根据结果进行插入或更新<code>put(key, value)</code>。这种操作在执行过程中可能会被其他线程打断，导致结果不符合预期。</p>
+<p>例如，有两个线程 A 和 B 同时对 <code>ConcurrentHashMap</code> 进行复合操作，如下：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 线程 A</span><br><span class="line"><span class="keyword">if</span> (!<span class="built_in">map</span>.containsKey(<span class="built_in">key</span>)) &#123;</span><br><span class="line"><span class="built_in">map</span>.<span class="built_in">put</span>(<span class="built_in">key</span>, value);</span><br><span class="line">&#125;</span><br><span class="line">// 线程 B</span><br><span class="line"><span class="keyword">if</span> (!<span class="built_in">map</span>.containsKey(<span class="built_in">key</span>)) &#123;</span><br><span class="line"><span class="built_in">map</span>.<span class="built_in">put</span>(<span class="built_in">key</span>, anotherValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果线程 A 和 B 的执行顺序是这样：</p>
+<ol>
+<li>线程 A 判断 map 中不存在 key</li>
+<li>线程 B 判断 map 中不存在 key</li>
+<li>线程 B 将 (key, anotherValue) 插入 map</li>
+<li>线程 A 将 (key, value) 插入 map</li>
+</ol>
+<p>那么最终的结果是 (key, value)，而不是预期的 (key, anotherValue)。这就是复合操作的非原子性导致的问题。</p>
+<p><strong>那如何保证 <code>ConcurrentHashMap</code> 复合操作的原子性呢？</strong></p>
+<p><code>ConcurrentHashMap</code> 提供了一些原子性的复合操作，如 <code>putIfAbsent</code>、<code>compute</code>、<code>computeIfAbsent</code> 、<code>computeIfPresent</code>、<code>merge</code>等。这些方法都可以接受一个函数作为参数，根据给定的 key 和 value 来计算一个新的 value，并且将其更新到 map 中。</p>
+<p>上面的代码可以改写为：</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 线程 A</span></span><br><span class="line"><span class="built_in">map</span>.<span class="property">putIfAbsent</span>(<span class="built_in">key</span>, value);</span><br><span class="line"><span class="comment">// 线程 B</span></span><br><span class="line"><span class="built_in">map</span>.<span class="property">putIfAbsent</span>(<span class="built_in">key</span>, anotherValue);</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 线程 A</span></span><br><span class="line"><span class="built_in">map</span>.<span class="property">computeIfAbsent</span>(<span class="built_in">key</span>, k -&gt; value);</span><br><span class="line"><span class="comment">// 线程 B</span></span><br><span class="line"><span class="built_in">map</span>.<span class="property">computeIfAbsent</span>(<span class="built_in">key</span>, k -&gt; anotherValue);</span><br></pre></td></tr></table></figure>
+
+<p>很多同学可能会说了，这种情况也能加锁同步呀！确实可以，但不建议使用加锁的同步机制，违背了使用 <code>ConcurrentHashMap</code> 的初衷。在使用 <code>ConcurrentHashMap</code> 的时候，尽量使用这些原子性的复合操作方法来保证原子性。</p>
+<h2 id="Collections-工具类（不重要）"><a href="#Collections-工具类（不重要）" class="headerlink" title="Collections 工具类（不重要）"></a>Collections 工具类（不重要）</h2><p><strong><code>Collections</code> 工具类常用方法</strong>:</p>
+<ul>
+<li>排序</li>
+<li>查找，替换操作</li>
+<li>同步控制（不推荐，需要线程安全的集合类型时请考虑使用 JUC 包下的并发集合）</li>
+</ul>
+<h3 id="排序操作"><a href="#排序操作" class="headerlink" title="排序操作"></a>排序操作</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">reverse</span><span class="params">(List list)</span><span class="comment">//反转</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">shuffle</span><span class="params">(List list)</span><span class="comment">//随机排序</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">sort</span><span class="params">(List list)</span><span class="comment">//按自然排序的升序排序</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">sort</span><span class="params">(List list, Comparator c)</span><span class="comment">//定制排序，由 Comparator 控制排序逻辑</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">swap</span><span class="params">(List list, <span class="type">int</span> i , <span class="type">int</span> j)</span><span class="comment">//交换两个索引位置的元素</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">rotate</span><span class="params">(List list, <span class="type">int</span> distance)</span><span class="comment">//旋转。当 distance 为正数时，将 list 后 distance 个元素整体移到前面。当 distance 为负数时，将 list 的前 distance 个元素整体移到后面</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="查找，替换操作"><a href="#查找，替换操作" class="headerlink" title="查找，替换操作"></a>查找，替换操作</h3><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">binarySearch</span>(List list, <span class="built_in">Object</span> <span class="built_in">key</span>)<span class="comment">//对 List 进行二分查找，返回索引，注意 List 必须是有序的</span></span><br><span class="line"><span class="type">int</span> <span class="built_in">max</span>(Collection coll)<span class="comment">//根据元素的自然顺序，返回最大的元素。 类比 int min(Collection coll)</span></span><br><span class="line"><span class="type">int</span> <span class="built_in">max</span>(Collection coll, Comparator c)<span class="comment">//根据定制排序，返回最大元素，排序规则由 Comparatator 类控制。类比 int min(Collection coll, Comparator c)</span></span><br><span class="line"><span class="keyword">void</span> <span class="built_in">fill</span>(List list, <span class="built_in">Object</span> obj)<span class="comment">//用指定的元素代替指定 list 中的所有元素</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">frequency</span>(Collection c, <span class="built_in">Object</span> o)<span class="comment">//统计元素出现次数</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">indexOfSubList</span>(List list, List target)<span class="comment">//统计 target 在 list 中第一次出现的索引，找不到则返回-1，类比 int lastIndexOfSubList(List source, list target)</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">replaceAll</span>(List list, <span class="built_in">Object</span> oldVal, <span class="built_in">Object</span> newVal)<span class="comment">//用新元素替换旧元素</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="同步控制"><a href="#同步控制" class="headerlink" title="同步控制"></a>同步控制</h3><p><code>Collections</code> 提供了多个<code>synchronizedXxx()</code>方法·，该方法可以将指定集合包装成线程同步的集合，从而解决多线程并发访问集合时的线程安全问题。</p>
+<p>我们知道 <code>HashSet</code>，<code>TreeSet</code>，<code>ArrayList</code>,<code>LinkedList</code>,<code>HashMap</code>,<code>TreeMap</code> 都是线程不安全的。<code>Collections</code> 提供了多个静态方法可以把他们包装成线程同步的集合。</p>
+<p><strong>最好不要用下面这些方法，效率非常低，需要线程安全的集合类型时请考虑使用 JUC 包下的并发集合。</strong></p>
+<p>方法如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">synchronizedCollection</span><span class="params">(Collection&lt;T&gt;  c)</span></span> <span class="comment">//返回指定 collection 支持的同步（线程安全的）collection。</span></span><br><span class="line"><span class="function"><span class="title">synchronizedList</span><span class="params">(List&lt;T&gt; list)</span></span><span class="comment">//返回指定列表支持的同步（线程安全的）List。</span></span><br><span class="line"><span class="function"><span class="title">synchronizedMap</span><span class="params">(Map&lt;K,V&gt; m)</span></span> <span class="comment">//返回由指定映射支持的同步（线程安全的）Map。</span></span><br><span class="line"><span class="function"><span class="title">synchronizedSet</span><span class="params">(Set&lt;T&gt; s)</span></span> <span class="comment">//返回指定 set 支持的同步（线程安全的）set。</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/e3c58d1f/" title="Java 容器面试二">https://dunwu.github.io/blog/pages/e3c58d1f/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/%E5%AE%B9%E5%99%A8/" rel="tag"># 容器</a>
+              <a href="/blog/tags/JavaSE/" rel="tag"># JavaSE</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/46c1e340/" rel="prev" title="Java 虚拟机面试一">
+                  <i class="fa fa-angle-left"></i> Java 虚拟机面试一
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/d9229779/" rel="next" title="Java 容器面试三">
+                  Java 容器面试三 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">66:31</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"34454f4cb74e47e553158bff0c1bf684"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

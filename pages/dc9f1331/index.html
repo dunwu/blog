@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="深入理解 Java 序列化 序列化简介由于，网络传输的数据必须是二进制数据，但调用方请求的出入参数都是对象。对象是不能直接在网络中传输的，所以需要提前把它转成可传输的二进制，并且要求转换算法是可逆的。  序列化（serialize）：序列化是将对象转换为二进制数据。 反序列化（deserialize）：反序列化是将二进制数据转换为对象。   序列化用途  序列化可以将对象的字节序列持久化——保存在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解 Java 序列化">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/dc9f1331/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="深入理解 Java 序列化 序列化简介由于，网络传输的数据必须是二进制数据，但调用方请求的出入参数都是对象。对象是不能直接在网络中传输的，所以需要提前把它转成可传输的二进制，并且要求转换算法是可逆的。  序列化（serialize）：序列化是将对象转换为二进制数据。 反序列化（deserialize）：反序列化是将二进制数据转换为对象。   序列化用途  序列化可以将对象的字节序列持久化——保存在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220626163533.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619110947.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619111512.png">
+<meta property="article:published_time" content="2019-05-09T11:06:05.000Z">
+<meta property="article:modified_time" content="2025-03-31T23:27:25.831Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JavaCore">
+<meta property="article:tag" content="IO">
+<meta property="article:tag" content="序列化">
+<meta property="article:tag" content="Serializable">
+<meta property="article:tag" content="Externalizable">
+<meta property="article:tag" content="transient">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220626163533.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/dc9f1331/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/dc9f1331/","path":"/pages/dc9f1331/","title":"深入理解 Java 序列化"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解 Java 序列化 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">430</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">130</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">503</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-Java-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">深入理解 Java 序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">序列化简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDK-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.2.</span> <span class="nav-text">JDK 序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ObjectInputStream-%E5%92%8C-ObjectOutputStream"><span class="nav-number">1.2.1.</span> <span class="nav-text">ObjectInputStream 和 ObjectOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Serializable-%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.2.2.</span> <span class="nav-text">Serializable 接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#serialVersionUID"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">serialVersionUID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%BA%8F%E5%88%97%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">默认序列化机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK-%E5%BA%8F%E5%88%97%E5%8C%96%E8%A6%81%E7%82%B9"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">JDK 序列化要点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#transient"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">transient</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Externalizable-%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.2.3.</span> <span class="nav-text">Externalizable 接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Externalizable-%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">Externalizable 接口的替代方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#readResolve-%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">readResolve() 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK-%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.5.</span> <span class="nav-text">JDK 序列化的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">二进制序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Protobuf"><span class="nav-number">1.3.1.</span> <span class="nav-text">Protobuf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Thrift"><span class="nav-number">1.3.2.</span> <span class="nav-text">Thrift</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hessian"><span class="nav-number">1.3.3.</span> <span class="nav-text">Hessian</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kryo"><span class="nav-number">1.3.4.</span> <span class="nav-text">Kryo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FST"><span class="nav-number">1.3.5.</span> <span class="nav-text">FST</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">JSON 序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.1.</span> <span class="nav-text">JSON 是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-%E6%A0%87%E5%87%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">JSON 标准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.4.3.</span> <span class="nav-text">JSON 优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-%E5%BA%93"><span class="nav-number">1.4.4.</span> <span class="nav-text">JSON 库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON-%E7%BC%96%E7%A0%81%E6%8C%87%E5%8D%97"><span class="nav-number">1.4.5.</span> <span class="nav-text">JSON 编码指南</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="nav-number">1.5.</span> <span class="nav-text">序列化技术选型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.5.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">503</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">430</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/dc9f1331/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解 Java 序列化 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解 Java 序列化<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/04.IO/JavaIO%E4%B9%8B%E5%BA%8F%E5%88%97%E5%8C%96.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-05-09 19:06:05" itemprop="dateCreated datePublished" datetime="2019-05-09T19:06:05+08:00">2019-05-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-01 07:27:25" itemprop="dateModified" datetime="2025-04-01T07:27:25+08:00">2025-04-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/IO/" itemprop="url" rel="index"><span itemprop="name">IO</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>15k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="深入理解-Java-序列化"><a href="#深入理解-Java-序列化" class="headerlink" title="深入理解 Java 序列化"></a>深入理解 Java 序列化</h1><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220626163533.png" alt="img"></p>
+<h2 id="序列化简介"><a href="#序列化简介" class="headerlink" title="序列化简介"></a>序列化简介</h2><p>由于，网络传输的数据必须是二进制数据，但调用方请求的出入参数都是对象。对象是不能直接在网络中传输的，所以需要提前把它转成可传输的二进制，并且要求转换算法是可逆的。</p>
+<ul>
+<li><strong>序列化（serialize）</strong>：序列化是将对象转换为二进制数据。</li>
+<li><strong>反序列化（deserialize）</strong>：反序列化是将二进制数据转换为对象。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619110947.png" alt="img"></p>
+<p><strong>序列化用途</strong></p>
+<ul>
+<li>序列化可以将对象的字节序列持久化——保存在内存、文件、数据库中。</li>
+<li>在网络上传送对象的字节序列。</li>
+<li>RMI（远程方法调用）</li>
+</ul>
+<h2 id="JDK-序列化"><a href="#JDK-序列化" class="headerlink" title="JDK 序列化"></a>JDK 序列化</h2><p>JDK 中内置了一种序列化方式。</p>
+<h3 id="ObjectInputStream-和-ObjectOutputStream"><a href="#ObjectInputStream-和-ObjectOutputStream" class="headerlink" title="ObjectInputStream 和 ObjectOutputStream"></a>ObjectInputStream 和 ObjectOutputStream</h3><p>Java 通过对象输入输出流来实现序列化和反序列化：</p>
+<ul>
+<li><code>java.io.ObjectOutputStream</code> 类的 <code>writeObject()</code> 方法可以实现序列化；</li>
+<li><code>java.io.ObjectInputStream</code> 类的 <code>readObject()</code> 方法用于实现反序列化。</li>
+</ul>
+<p>序列化和反序列化示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeDemo01</span> &#123;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Sex</span> &#123;</span><br><span class="line">        MALE,</span><br><span class="line">        FEMALE</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">age</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">private</span> Sex sex;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">()</span> &#123; &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">(String name, Integer age, Sex sex)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.name = name;</span><br><span class="line">            <span class="built_in">this</span>.age = age;</span><br><span class="line">            <span class="built_in">this</span>.sex = sex;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Person&#123;&quot;</span> + <span class="string">&quot;name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> + <span class="string">&quot;, age=&quot;</span> + age + <span class="string">&quot;, sex=&quot;</span> + sex + <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 序列化</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(String filename)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">File</span> <span class="variable">f</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(filename); <span class="comment">// 定义保存路径</span></span><br><span class="line">        <span class="type">OutputStream</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(f); <span class="comment">// 文件输出流</span></span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(out); <span class="comment">// 对象输出流</span></span><br><span class="line">        oos.writeObject(<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Jack&quot;</span>, <span class="number">30</span>, Sex.MALE)); <span class="comment">// 保存对象</span></span><br><span class="line">        oos.close();</span><br><span class="line">        out.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 反序列化</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">deserialize</span><span class="params">(String filename)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="type">File</span> <span class="variable">f</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(filename); <span class="comment">// 定义保存路径</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(f); <span class="comment">// 文件输入流</span></span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(in); <span class="comment">// 对象输入流</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject(); <span class="comment">// 读取对象</span></span><br><span class="line">        ois.close();</span><br><span class="line">        in.close();</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">String</span> <span class="variable">filename</span> <span class="operator">=</span> <span class="string">&quot;d:/text.dat&quot;</span>;</span><br><span class="line">        serialize(filename);</span><br><span class="line">        deserialize(filename);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// Person&#123;name=&#x27;Jack&#x27;, age=30, sex=MALE&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>JDK 的序列化过程是怎样完成的呢？</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619111512.png" alt="img"></p>
+<p>图来自 RPC 实战与核心原理 - 序列化</p>
+<p>序列化过程就是在读取对象数据的时候，不断加入一些特殊分隔符，这些特殊分隔符用于在反序列化过程中截断用，这就像是文章中的标点符号被用于断句一样。</p>
+<ul>
+<li>头部数据用来声明序列化协议、序列化版本，用于高低版本向后兼容。</li>
+<li>对象数据主要包括类名、签名、属性名、属性类型及属性值，当然还有开头结尾等数据，除了属性值属于真正的对象值，其他都是为了反序列化用的元数据。</li>
+<li>存在对象引用、继承的情况下，就是递归遍历“写对象”逻辑。</li>
+</ul>
+<blockquote>
+<p>🔔 注意：使用 Java 对象序列化，在保存对象时，会把其状态保存为一组字节，在未来，再将这些字节组装成对象。必须注意地是，对象序列化保存的是对象的”状态”，即它的成员变量。由此可知，<strong>对象序列化不会关注类中的静态变量</strong>。</p>
+</blockquote>
+<h3 id="Serializable-接口"><a href="#Serializable-接口" class="headerlink" title="Serializable 接口"></a>Serializable 接口</h3><p><strong>被序列化的类必须属于 <code>Enum</code>、<code>Array</code> 和 <code>Serializable</code> 类型其中的任何一种，否则将抛出 <code>NotSerializableException</code> 异常</strong>。这是因为：在序列化操作过程中会对类型进行检查，如果不满足序列化类型要求，就会抛出异常。</p>
+<p>【示例】<code>NotSerializableException</code> 错误</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnSerializeDemo</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123; <span class="comment">// 其他内容略 &#125;</span></span><br><span class="line">    <span class="comment">// 其他内容略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：结果就是出现如下异常信息。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> <span class="keyword">thread</span> <span class="string">&quot;main&quot;</span> java.io.NotSerializableException:</span><br><span class="line"><span class="params">...</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="serialVersionUID"><a href="#serialVersionUID" class="headerlink" title="serialVersionUID"></a>serialVersionUID</h4><p>请注意 <code>serialVersionUID</code> 字段，你可以在 Java 世界的无数类中看到这个字段。</p>
+<p><code>serialVersionUID</code> 有什么作用，如何使用 <code>serialVersionUID</code>？</p>
+<p><strong><code>serialVersionUID</code> 是 Java 为每个序列化类产生的版本标识</strong>。它可以用来保证在反序列时，发送方发送的和接受方接收的是可兼容的对象。如果接收方接收的类的 <code>serialVersionUID</code> 与发送方发送的 <code>serialVersionUID</code> 不一致，会抛出 <code>InvalidClassException</code>。</p>
+<p>如果可序列化类没有显式声明 <code>serialVersionUID</code>，则序列化运行时将基于该类的各个方面计算该类的默认 <code>serialVersionUID</code> 值。尽管这样，还是<strong>建议在每一个序列化的类中显式指定 <code>serialVersionUID</code> 的值</strong>。因为不同的 jdk 编译很可能会生成不同的 <code>serialVersionUID</code> 默认值，从而导致在反序列化时抛出 <code>InvalidClassExceptions</code> 异常。</p>
+<p><strong><code>serialVersionUID</code> 字段必须是 <code>static final long</code> 类型</strong>。</p>
+<p>我们来举个例子：</p>
+<p>（1）有一个可序列化类 Person</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String address;</span><br><span class="line">    <span class="comment">// 构造方法、get、set 方法略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）开发过程中，对 Person 做了修改，增加了一个字段 email，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> String address;</span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="comment">// 构造方法、get、set 方法略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于这个类和老版本不兼容，我们需要修改版本号：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">2L</span>;</span><br></pre></td></tr></table></figure>
+
+<p>再次进行反序列化，则会抛出 <code>InvalidClassException</code> 异常。</p>
+<p>综上所述，我们大概可以清楚：**<code>serialVersionUID</code> 用于控制序列化版本是否兼容**。若我们认为修改的可序列化类是向后兼容的，则不修改 <code>serialVersionUID</code>。</p>
+<h4 id="默认序列化机制"><a href="#默认序列化机制" class="headerlink" title="默认序列化机制"></a>默认序列化机制</h4><p>如果仅仅只是让某个类实现 <code>Serializable</code> 接口，而没有其它任何处理的话，那么就会使用默认序列化机制。</p>
+<p>使用默认机制，在序列化对象时，不仅会序列化当前对象本身，还会对其父类的字段以及该对象引用的其它对象也进行序列化。同样地，这些其它对象引用的另外对象也将被序列化，以此类推。所以，如果一个对象包含的成员变量是容器类对象，而这些容器所含有的元素也是容器类对象，那么这个序列化的过程就会较复杂，开销也较大。</p>
+<blockquote>
+<p>🔔 注意：这里的父类和引用对象既然要进行序列化，那么它们当然也要满足序列化要求：<strong>被序列化的类必须属于 Enum、Array 和 Serializable 类型其中的任何一种</strong>。</p>
+</blockquote>
+<h4 id="JDK-序列化要点"><a href="#JDK-序列化要点" class="headerlink" title="JDK 序列化要点"></a>JDK 序列化要点</h4><p>Java 的序列化能保证对象状态的持久保存，但是遇到一些对象结构复杂的情况还是难以处理，这里归纳一下：</p>
+<ul>
+<li>父类是 <code>Serializable</code>，所有子类都可以被序列化。</li>
+<li>子类是 <code>Serializable</code> ，父类不是，则子类可以正确序列化，但父类的属性不会被序列化（不报错，数据丢失）。</li>
+<li>如果序列化的属性是对象，则这个对象也必须是 <code>Serializable</code> ，否则报错。</li>
+<li>反序列化时，如果对象的属性有修改或删减，则修改的部分属性会丢失，但不会报错。</li>
+<li>反序列化时，如果 <code>serialVersionUID</code> 被修改，则反序列化会失败。</li>
+</ul>
+<h4 id="transient"><a href="#transient" class="headerlink" title="transient"></a>transient</h4><p>在现实应用中，有些时候不能使用默认序列化机制。比如，希望在序列化过程中忽略掉敏感数据，或者简化序列化过程。下面将介绍若干影响序列化的方法。</p>
+<p><strong>序列化时，默认序列化机制会忽略被声明为 <code>transient</code> 的字段</strong>，该字段的内容在序列化后无法访问。</p>
+<p>我们将 SerializeDemo01 示例中的内部类 Person 的 age 字段声明为 <code>transient</code>，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeDemo02</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">        <span class="keyword">transient</span> <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">age</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 其他内容略</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 其他内容略</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// name: Jack, age: null, sex: MALE</span></span><br></pre></td></tr></table></figure>
+
+<p>从输出结果可以看出，age 字段没有被序列化。</p>
+<h3 id="Externalizable-接口"><a href="#Externalizable-接口" class="headerlink" title="Externalizable 接口"></a>Externalizable 接口</h3><p>无论是使用 <code>transient</code> 关键字，还是使用 <code>writeObject()</code> 和 <code>readObject()</code> 方法，其实都是基于 <code>Serializable</code> 接口的序列化。</p>
+<p>JDK 中提供了另一个序列化接口–<code>Externalizable</code>。</p>
+<p><strong>可序列化类实现 <code>Externalizable</code> 接口之后，基于 <code>Serializable</code> 接口的默认序列化机制就会失效</strong>。</p>
+<p>我们来基于 SerializeDemo02 再次做一些改动，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExternalizeDemo01</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Externalizable</span> &#123;</span><br><span class="line">        <span class="keyword">transient</span> <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">age</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 其他内容略</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeObject</span><span class="params">(ObjectOutputStream out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            out.defaultWriteObject();</span><br><span class="line">            out.writeInt(age);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">            in.defaultReadObject();</span><br><span class="line">            age = in.readInt();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">writeExternal</span><span class="params">(ObjectOutput out)</span> <span class="keyword">throws</span> IOException &#123; &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">readExternal</span><span class="params">(ObjectInput in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     <span class="comment">// 其他内容略</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// call Person()</span></span><br><span class="line"><span class="comment">// name: null, age: null, sex: null</span></span><br></pre></td></tr></table></figure>
+
+<p>从该结果，一方面可以看出 Person 对象中任何一个字段都没有被序列化。另一方面，如果细心的话，还可以发现这此次序列化过程调用了 Person 类的无参构造方法。</p>
+<ul>
+<li><strong><code>Externalizable</code> 继承于 <code>Serializable</code>，它增添了两个方法：<code>writeExternal()</code> 与 <code>readExternal()</code>。这两个方法在序列化和反序列化过程中会被自动调用，以便执行一些特殊操作</strong>。当使用该接口时，序列化的细节需要由程序员去完成。如上所示的代码，由于 <code>writeExternal()</code> 与 <code>readExternal()</code> 方法未作任何处理，那么该序列化行为将不会保存&#x2F;读取任何一个字段。这也就是为什么输出结果中所有字段的值均为空。</li>
+<li>另外，<strong>若使用 <code>Externalizable</code> 进行序列化，当读取对象时，会调用被序列化类的无参构造方法去创建一个新的对象；然后再将被保存对象的字段的值分别填充到新对象中</strong>。这就是为什么在此次序列化过程中 Person 类的无参构造方法会被调用。由于这个原因，实现 <code>Externalizable</code> 接口的类必须要提供一个无参的构造方法，且它的访问权限为 <code>public</code>。</li>
+</ul>
+<p>对上述 Person 类作进一步的修改，使其能够对 name 与 age 字段进行序列化，但要忽略掉 gender 字段，如下代码所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExternalizeDemo02</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Externalizable</span> &#123;</span><br><span class="line">        <span class="keyword">transient</span> <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">age</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 其他内容略</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeObject</span><span class="params">(ObjectOutputStream out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            out.defaultWriteObject();</span><br><span class="line">            out.writeInt(age);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">            in.defaultReadObject();</span><br><span class="line">            age = in.readInt();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">writeExternal</span><span class="params">(ObjectOutput out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            out.writeObject(name);</span><br><span class="line">            out.writeInt(age);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">readExternal</span><span class="params">(ObjectInput in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">            name = (String) in.readObject();</span><br><span class="line">            age = in.readInt();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     <span class="comment">// 其他内容略</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// call Person()</span></span><br><span class="line"><span class="comment">// name: Jack, age: 30, sex: null</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Externalizable-接口的替代方法"><a href="#Externalizable-接口的替代方法" class="headerlink" title="Externalizable 接口的替代方法"></a>Externalizable 接口的替代方法</h4><p>实现 <code>Externalizable</code> 接口可以控制序列化和反序列化的细节。它有一个替代方法：实现 <code>Serializable</code> 接口，并添加 <code>writeObject(ObjectOutputStream out)</code> 与 <code>readObject(ObjectInputStream in)</code> 方法。序列化和反序列化过程中会自动回调这两个方法。</p>
+<p>示例如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeDemo03</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">        <span class="keyword">transient</span> <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">age</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 其他内容略</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeObject</span><span class="params">(ObjectOutputStream out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            out.defaultWriteObject();</span><br><span class="line">            out.writeInt(age);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">            in.defaultReadObject();</span><br><span class="line">            age = in.readInt();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 其他内容略</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 其他内容略</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// name: Jack, age: 30, sex: MALE</span></span><br></pre></td></tr></table></figure>
+
+<p>在 <code>writeObject()</code> 方法中会先调用 <code>ObjectOutputStream</code> 中的 <code>defaultWriteObject()</code> 方法，该方法会执行默认的序列化机制，如上节所述，此时会忽略掉 age 字段。然后再调用 writeInt() 方法显示地将 age 字段写入到 <code>ObjectOutputStream</code> 中。readObject() 的作用则是针对对象的读取，其原理与 writeObject() 方法相同。</p>
+<blockquote>
+<p>🔔 注意：<code>writeObject()</code> 与 <code>readObject()</code> 都是 <code>private</code> 方法，那么它们是如何被调用的呢？毫无疑问，是使用反射。详情可见 <code>ObjectOutputStream</code> 中的 <code>writeSerialData</code> 方法，以及 <code>ObjectInputStream</code> 中的 <code>readSerialData</code> 方法。</p>
+</blockquote>
+<h3 id="readResolve-方法"><a href="#readResolve-方法" class="headerlink" title="readResolve() 方法"></a>readResolve() 方法</h3><p>当我们使用 Singleton 模式时，应该是期望某个类的实例应该是唯一的，但如果该类是可序列化的，那么情况可能会略有不同。此时对第 2 节使用的 Person 类进行修改，使其实现 Singleton 模式，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeDemo04</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Sex</span> &#123;</span><br><span class="line">        MALE, FEMALE</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">transient</span> <span class="keyword">private</span> <span class="type">Integer</span> <span class="variable">age</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">private</span> Sex sex;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Person</span> <span class="variable">instatnce</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Tom&quot;</span>, <span class="number">31</span>, Sex.MALE);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="title function_">Person</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;call Person()&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="title function_">Person</span><span class="params">(String name, Integer age, Sex sex)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.name = name;</span><br><span class="line">            <span class="built_in">this</span>.age = age;</span><br><span class="line">            <span class="built_in">this</span>.sex = sex;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Person <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> instatnce;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeObject</span><span class="params">(ObjectOutputStream out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">            out.defaultWriteObject();</span><br><span class="line">            out.writeInt(age);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">            in.defaultReadObject();</span><br><span class="line">            age = in.readInt();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;name: &quot;</span> + <span class="built_in">this</span>.name + <span class="string">&quot;, age: &quot;</span> + <span class="built_in">this</span>.age + <span class="string">&quot;, sex: &quot;</span> + <span class="built_in">this</span>.sex;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 序列化</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serialize</span><span class="params">(String filename)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">File</span> <span class="variable">f</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(filename); <span class="comment">// 定义保存路径</span></span><br><span class="line">        <span class="type">OutputStream</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(f); <span class="comment">// 文件输出流</span></span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(out); <span class="comment">// 对象输出流</span></span><br><span class="line">        oos.writeObject(<span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&quot;Jack&quot;</span>, <span class="number">30</span>, Sex.MALE)); <span class="comment">// 保存对象</span></span><br><span class="line">        oos.close();</span><br><span class="line">        out.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 反序列化</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">deserialize</span><span class="params">(String filename)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="type">File</span> <span class="variable">f</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(filename); <span class="comment">// 定义保存路径</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(f); <span class="comment">// 文件输入流</span></span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(in); <span class="comment">// 对象输入流</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ois.readObject(); <span class="comment">// 读取对象</span></span><br><span class="line">        ois.close();</span><br><span class="line">        in.close();</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(obj == Person.getInstance());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">String</span> <span class="variable">filename</span> <span class="operator">=</span> <span class="string">&quot;d:/text.dat&quot;</span>;</span><br><span class="line">        serialize(filename);</span><br><span class="line">        deserialize(filename);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// name: Jack, age: null, sex: MALE</span></span><br><span class="line"><span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是，从文件中获取的 Person 对象与 Person 类中的单例对象并不相等。<strong>为了能在单例类中仍然保持序列的特性，可以使用 <code>readResolve()</code> 方法</strong>。在该方法中直接返回 Person 的单例对象。我们在 SerializeDemo04 示例的基础上添加一个 <code>readResolve</code> 方法， 如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SerializeDemo05</span> &#123;</span><br><span class="line">    <span class="comment">// 其他内容略</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException &#123;</span></span><br><span class="line">        <span class="comment">//     in.defaultReadObject();</span></span><br><span class="line">        <span class="comment">//     age = in.readInt();</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 添加此方法</span></span><br><span class="line">        <span class="keyword">private</span> Object <span class="title function_">readResolve</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> instatnce;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 其他内容略</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 其他内容略</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Output:</span></span><br><span class="line"><span class="comment">// name: Tom, age: 31, sex: MALE</span></span><br><span class="line"><span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="JDK-序列化的问题"><a href="#JDK-序列化的问题" class="headerlink" title="JDK 序列化的问题"></a>JDK 序列化的问题</h3><ul>
+<li><strong>无法跨语言</strong>：JDK 序列化目前只适用基于 Java 语言实现的框架，其它语言大部分都没有使用 Java 的序列化框架，也没有实现 JDK 序列化这套协议。因此，如果是两个基于不同语言编写的应用程序相互通信，则无法实现两个应用服务之间传输对象的序列化与反序列化。</li>
+<li><strong>容易被攻击</strong>：对象是通过在 <code>ObjectInputStream</code> 上调用 <code>readObject()</code> 方法进行反序列化的，它可以将类路径上几乎所有实现了 <code>Serializable</code> 接口的对象都实例化。这意味着，在反序列化字节流的过程中，该方法可以执行任意类型的代码，这是非常危险的。对于需要长时间进行反序列化的对象，不需要执行任何代码，也可以发起一次攻击。攻击者可以创建循环对象链，然后将序列化后的对象传输到程序中反序列化，这种情况会导致 <code>hashCode</code> 方法被调用次数呈次方爆发式增长，从而引发栈溢出异常。例如下面这个案例就可以很好地说明。</li>
+<li><strong>序列化后的流太大</strong>：JDK 序列化中使用了 <code>ObjectOutputStream</code> 来实现对象转二进制编码，编码后的数组很大，非常影响存储和传输效率。</li>
+<li><strong>序列化性能太差</strong>：Java 的序列化耗时比较大。序列化的速度也是体现序列化性能的重要指标，如果序列化的速度慢，就会影响网络通信的效率，从而增加系统的响应时间。</li>
+<li><strong>序列化编程限制</strong>：<ul>
+<li>JDK 序列化<strong>一定要实现 <code>Serializable</code> 接口</strong>。</li>
+<li>JDK 序列化**需要关注 <code>serialVersionUID</code>**。</li>
+</ul>
+</li>
+</ul>
+<h2 id="二进制序列化"><a href="#二进制序列化" class="headerlink" title="二进制序列化"></a>二进制序列化</h2><p>上节详细介绍了 JDK 序列化方式，由于其性能不高，且存在很多其他问题，所以业界有了很多其他优秀的二进制序列化库。</p>
+<h3 id="Protobuf"><a href="#Protobuf" class="headerlink" title="Protobuf"></a>Protobuf</h3><p><a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/">Protobuf</a> 是 Google 公司内部的混合语言数据标准，是一种轻便、高效的结构化数据存储格式，可以用于结构化数据序列化，支持 Java、Python、C++、Go 等语言。Protobuf 使用的时候需要定义 IDL（Interface description language），然后使用不同语言的 IDL<br>编译器，生成序列化工具类。</p>
+<p>优点：</p>
+<ul>
+<li>序列化后体积相比 JSON、Hessian 小很多</li>
+<li>序列化反序列化速度很快，不需要通过反射获取类型</li>
+<li>语言和平台无关（基于 IDL），IDL 能清晰地描述语义，所以足以帮助并保证应用程序之间的类型不会丢失，无需类似 XML 解析器</li>
+<li>消息格式升级和兼容性不错，可以做到后向兼容</li>
+<li>支持 Java, C++, Python 三种语言</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>Protobuf 对于具有反射和动态能力的语言来说，用起来很费劲。</li>
+</ul>
+<h3 id="Thrift"><a href="#Thrift" class="headerlink" title="Thrift"></a>Thrift</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/apache/thrift">Thrift</a> 是 apache 开源项目，是一个点对点的 RPC 实现。</p>
+</blockquote>
+<p>它具有以下特性：</p>
+<ul>
+<li>支持多种语言（目前支持 28 种语言，如：C++、go、Java、Php、Python、Ruby 等等）。</li>
+<li>使用了组建大型数据交换及存储工具，对于大型系统中的内部数据传输，相对于 Json 和 xml 在性能上和传输大小上都有明显的优势。</li>
+<li>支持三种比较典型的编码方式（通用二进制编码，压缩二进制编码，优化的可选字段压缩编解码）。</li>
+</ul>
+<h3 id="Hessian"><a href="#Hessian" class="headerlink" title="Hessian"></a>Hessian</h3><p><a target="_blank" rel="noopener" href="http://hessian.caucho.com/">Hessian</a> 是动态类型、二进制、紧凑的，并且可跨语言移植的一种序列化框架。Hessian 协议要比 JDK、JSON 更加紧凑，性能上要比 JDK、JSON 序列化高效很多，而且生成的字节数也更小。</p>
+<p>RPC 框架 Dubbo 就支持 Thrift 和 Hession。</p>
+<p>它具有以下特性：</p>
+<ul>
+<li>支持多种语言。如：Java、Python、C++、C#、PHP、Ruby 等。</li>
+<li>相对其他二进制序列化库较慢。</li>
+</ul>
+<p>Hessian 本身也有问题，官方版本对 Java 里面一些常见对象的类型不支持：</p>
+<ul>
+<li>Linked 系列，LinkedHashMap、LinkedHashSet 等，但是可以通过扩展 CollectionDeserializer 类修复；</li>
+<li>Locale 类，可以通过扩展 ContextSerializerFactory 类修复；</li>
+<li>Byte&#x2F;Short 反序列化的时候变成 Integer。</li>
+</ul>
+<h3 id="Kryo"><a href="#Kryo" class="headerlink" title="Kryo"></a>Kryo</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/EsotericSoftware/kryo">Kryo</a> 是用于 Java 的快速高效的二进制对象图序列化框架。Kryo 还可以执行自动的深拷贝和浅拷贝。 这是从对象到对象的直接复制，而不是从对象到字节的复制。</p>
+</blockquote>
+<p>它具有以下特性：</p>
+<ul>
+<li>速度快，序列化体积小</li>
+<li>官方不支持 Java 以外的其他语言</li>
+</ul>
+<h3 id="FST"><a href="#FST" class="headerlink" title="FST"></a>FST</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/RuedigerMoeller/fast-serialization">FST</a> 是一个 Java 实现二进制序列化库。</p>
+</blockquote>
+<p>它具有以下特性：</p>
+<ul>
+<li>近乎于 100% 兼容 JDK 序列化，且比 JDK 原序列化方式快 10 倍</li>
+<li>2.17 开始与 Android 兼容</li>
+<li>（可选）2.29 开始支持将任何可序列化的对象图编码&#x2F;解码为 JSON（包括共享引用）</li>
+</ul>
+<h2 id="JSON-序列化"><a href="#JSON-序列化" class="headerlink" title="JSON 序列化"></a>JSON 序列化</h2><p>除了二进制序列化方式，还可以选择 JSON 序列化。它的性能比二进制序列化方式差，但是可读性非常好，且广泛应用于 Web 领域。</p>
+<h3 id="JSON-是什么"><a href="#JSON-是什么" class="headerlink" title="JSON 是什么"></a>JSON 是什么</h3><p>JSON 起源于 1999 年的 <a target="_blank" rel="noopener" href="http://javascript.crockford.com/">JS 语言规范 ECMA262 的一个子集</a>（即 15.12 章节描述了格式与解析），后来 2003 年作为一个数据格式 <a target="_blank" rel="noopener" href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf">ECMA404</a>（很囧的序号有不有？）发布。<br>2006 年，作为 <a target="_blank" rel="noopener" href="http://www.ietf.org/rfc/rfc4627.txt">rfc4627</a> 发布，这时规范增加到 18 页，去掉没用的部分，十页不到。</p>
+<p>JSON 的应用很广泛，这里有超过 100 种语言下的 JSON 库：<a target="_blank" rel="noopener" href="http://www.json.org/">json.org</a>。</p>
+<p>更多的可以参考这里，<a target="_blank" rel="noopener" href="https://github.com/burningtree/awesome-json">关于 json 的一切</a>。</p>
+<h3 id="JSON-标准"><a href="#JSON-标准" class="headerlink" title="JSON 标准"></a>JSON 标准</h3><p>这估计是最简单标准规范之一：</p>
+<ul>
+<li>只有两种结构：对象内的键值对集合结构和数组，对象用 <code>&#123;&#125;</code> 表示、内部是 <code>&quot;key&quot;:&quot;value&quot;</code>，数组用 <code>[]</code> 表示，不同值用逗号分开</li>
+<li>基本数值有 7 个： <code>false</code> &#x2F; <code>null</code> &#x2F; <code>true</code> &#x2F; <code>object</code> &#x2F; <code>array</code> &#x2F; <code>number</code> &#x2F; <code>string</code></li>
+<li>再加上结构可以嵌套，进而可以用来表达复杂的数据</li>
+<li>一个简单实例：</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;Image&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Width&quot;</span><span class="punctuation">:</span> <span class="number">800</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Height&quot;</span><span class="punctuation">:</span> <span class="number">600</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;View from 15th Floor&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;Thumbnail&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;Url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://www.example.com/image/481989943&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;Height&quot;</span><span class="punctuation">:</span> <span class="number">125</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;Width&quot;</span><span class="punctuation">:</span> <span class="string">&quot;100&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;IDs&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="number">116</span><span class="punctuation">,</span> <span class="number">943</span><span class="punctuation">,</span> <span class="number">234</span><span class="punctuation">,</span> <span class="number">38793</span><span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>扩展阅读：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="http://www.json.org/json-zh.html">http://www.json.org/json-zh.html</a> - 图文并茂介绍 json 数据形式</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://tools.ietf.org/html/rfc4627">json 的 RFC 文档</a></p>
+</li>
+</ul>
+</blockquote>
+<h3 id="JSON-优缺点"><a href="#JSON-优缺点" class="headerlink" title="JSON 优缺点"></a>JSON 优缺点</h3><p>JSON 优点</p>
+<ul>
+<li>基于纯文本，所以对于人类阅读是很友好的。</li>
+<li>规范简单，所以容易处理，开箱即用，特别是 JS 类的 ECMA 脚本里是内建支持的，可以直接作为对象使用。</li>
+<li>平台无关性，因为类型和结构都是平台无关的，而且好处理，容易实现不同语言的处理类库，可以作为多个不同异构系统之间的数据传输格式协议，特别是在 HTTP&#x2F;REST 下的数据格式。</li>
+</ul>
+<p>JSON 缺点</p>
+<ul>
+<li>性能一般，文本表示的数据一般来说比二进制大得多，在数据传输上和解析处理上都要更影响性能。</li>
+<li>缺乏 schema，跟同是文本数据格式的 XML 比，在类型的严格性和丰富性上要差很多。XML 可以借由 XSD 或 DTD 来定义复杂的格式，并由此来验证 XML 文档是否符合格式要求，甚至进一步的，可以基于 XSD 来生成具体语言的操作代码，例如 apache xmlbeans。并且这些工具组合到一起，形成一套庞大的生态，例如基于 XML 可以实现 SOAP 和 WSDL，一系列的 ws-*规范。但是我们也可以看到 JSON 在缺乏规范的情况下，实际上有更大一些的灵活性，特别是近年来 REST 的快速发展，已经有一些 schema 相关的发展（例如 <a target="_blank" rel="noopener" href="https://spacetelescope.github.io/understanding-json-schema/index.html">理解 JSON Schema</a>，<a target="_blank" rel="noopener" href="http://usingjsonschema.com/downloads/">使用 JSON Schema</a>， <a target="_blank" rel="noopener" href="http://azimi.me/json-schema-view/demo/demo.html">在线 schema 测试</a>)，也有类似于 WSDL 的 <a target="_blank" rel="noopener" href="https://www.w3.org/Submission/wadl/">WADL</a> 出现。</li>
+</ul>
+<h3 id="JSON-库"><a href="#JSON-库" class="headerlink" title="JSON 库"></a>JSON 库</h3><p>Java 中比较流行的 JSON 库有：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">Fastjson</a> - 阿里巴巴开发的 JSON 库，性能十分优秀。</li>
+<li><a target="_blank" rel="noopener" href="http://wiki.fasterxml.com/JacksonHome">Jackson</a> - 社区十分活跃且更新速度很快。Spring 框架默认 JSON 库。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/gson">Gson</a> - 谷歌开发的 JSON 库，目前功能最全的 JSON 库 。</li>
+</ul>
+<p>从性能上来看，一般情况下：Fastjson &gt; Jackson &gt; Gson</p>
+<h3 id="JSON-编码指南"><a href="#JSON-编码指南" class="headerlink" title="JSON 编码指南"></a>JSON 编码指南</h3><blockquote>
+<p>遵循好的设计与编码风格，能提前解决 80%的问题，个人推荐 Google JSON 风格指南。</p>
+<ul>
+<li>英文版 <a target="_blank" rel="noopener" href="https://google.github.io/styleguide/jsoncstyleguide.xml">Google JSON Style Guide</a>：<a target="_blank" rel="noopener" href="https://google.github.io/styleguide/jsoncstyleguide.xml">https://google.github.io/styleguide/jsoncstyleguide.xml</a></li>
+<li>中文版 <a target="_blank" rel="noopener" href="https://github.com/darcyliu/google-styleguide/blob/master/JSONStyleGuide.md">Google JSON 风格指南</a>：<a target="_blank" rel="noopener" href="https://github.com/darcyliu/google-styleguide/blob/master/JSONStyleGuide.md">https://github.com/darcyliu/google-styleguide/blob/master/JSONStyleGuide.md</a></li>
+</ul>
+</blockquote>
+<p>简单摘录如下：</p>
+<ul>
+<li>属性名和值都是用双引号，不要把注释写到对象里面，对象数据要简洁</li>
+<li>不要随意结构化分组对象，推荐是用扁平化方式，层次不要太复杂</li>
+<li>命名方式要有意义，比如单复数表示</li>
+<li>驼峰式命名，遵循 Bean 规范</li>
+<li>使用版本来控制变更冲突</li>
+<li>对于一些关键字，不要拿来做 key</li>
+<li>如果一个属性是可选的或者包含空值或 null 值，考虑从 JSON 中去掉该属性，除非它的存在有很强的语义原因</li>
+<li>序列化枚举类型时，使用 name 而不是 value</li>
+<li>日期要用标准格式处理</li>
+<li>设计好通用的分页参数</li>
+<li>设计好异常处理</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="http://jsonapi.org.cn/format/">JSON API</a> 与 Google JSON 风格指南有很多可以相互参照之处。</p>
+<p><a target="_blank" rel="noopener" href="http://jsonapi.org.cn/format/">JSON API</a> 是数据交互规范，用以定义客户端如何获取与修改资源，以及服务器如何响应对应请求。</p>
+<p>JSON API 设计用来最小化请求的数量，以及客户端与服务器间传输的数据量。在高效实现的同时，无需牺牲可读性、灵活性和可发现性。</p>
+<h2 id="序列化技术选型"><a href="#序列化技术选型" class="headerlink" title="序列化技术选型"></a>序列化技术选型</h2><p>市面上有如此多的序列化技术，那么我们在应用时如何选择呢？</p>
+<p>序列化技术选型，需要考量的维度，根据重要性从高到低，依次有：</p>
+<ul>
+<li><strong>安全性</strong>：是否存在漏洞。如果存在漏洞，就有被攻击的可能性。</li>
+<li><strong>兼容性</strong>：版本升级后的兼容性是否很好，是否支持更多的对象类型，是否是跨平台、跨语言的。服务调用的稳定性与可靠性，要比服务的性能更加重要。</li>
+<li><strong>性能</strong><ul>
+<li><strong>时间开销</strong>：序列化、反序列化的耗时性能自然越小越好。</li>
+<li><strong>空间开销</strong>：序列化后的数据越小越好，这样网络传输效率就高。</li>
+</ul>
+</li>
+<li><strong>易用性</strong>：类库是否轻量化，API 是否简单易懂。</li>
+</ul>
+<p>鉴于以上的考量，序列化技术的选型建议如下：</p>
+<ul>
+<li>JDK 序列化：性能较差，且有很多使用限制，不建议使用。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/thrift">Thrift</a>、<a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf">Protobuf</a>：适用于<strong>对性能敏感，对开发体验要求不高</strong>。</li>
+<li><a target="_blank" rel="noopener" href="http://hessian.caucho.com/doc/hessian-overview.xtp">Hessian</a>：适用于<strong>对开发体验敏感，性能有要求</strong>。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/FasterXML/jackson">Jackson</a>、<a target="_blank" rel="noopener" href="https://github.com/google/gson">Gson</a>、<a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">Fastjson</a>：适用于对序列化后的数据要求有<strong>良好的可读性</strong>（转为 json 、xml 形式）。</li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/2130190/">Java 编程思想</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/3146174/">Java 核心技术（卷 1）</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100028001">极客时间教程 - Java 性能调优实战</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/java/j-lo-serial/index.html">JDK 序列化的高级认识</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.hollischuang.com/archives/1140">http://www.hollischuang.com/archives/1140</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.codenuclear.com/serialization-deserialization-java/">http://www.codenuclear.com/serialization-deserialization-java/</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.blogjava.net/jiangshachina/archive/2012/02/13/369898.html">http://www.blogjava.net/jiangshachina/archive/2012/02/13/369898.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://agapple.iteye.com/blog/859052">https://agapple.iteye.com/blog/859052</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/dc9f1331/" title="深入理解 Java 序列化">https://dunwu.github.io/blog/pages/dc9f1331/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/JavaCore/" rel="tag"># JavaCore</a>
+              <a href="/blog/tags/IO/" rel="tag"># IO</a>
+              <a href="/blog/tags/%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag"># 序列化</a>
+              <a href="/blog/tags/Serializable/" rel="tag"># Serializable</a>
+              <a href="/blog/tags/Externalizable/" rel="tag"># Externalizable</a>
+              <a href="/blog/tags/transient/" rel="tag"># transient</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/613f787a/" rel="prev" title="Spring 集成 Mybatis">
+                  <i class="fa fa-angle-left"></i> Spring 集成 Mybatis
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/167f6345/" rel="next" title="Maven 教程之发布 jar 到私服或中央仓库">
+                  Maven 教程之发布 jar 到私服或中央仓库 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">66:31</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"0b223bbbfbd99fdc472bef00e5409042"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

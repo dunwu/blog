@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="深入理解 Java 注解 本文内容基于 JDK8。注解是 JDK5 引入的，后续 JDK 版本扩展了一些内容，本文中没有明确指明版本的注解都是 JDK5 就已经支持的注解。  简介注解的形式Java 中，注解是以 @ 字符开始的修饰符。如下： 12@Overridevoid mySuperMethod() &amp;#123; ... &amp;#125;  注解可以包含命名或未命名的属性，并且这些属性有值。 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解 Java 注解">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/77a42c51/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="深入理解 Java 注解 本文内容基于 JDK8。注解是 JDK5 引入的，后续 JDK 版本扩展了一些内容，本文中没有明确指明版本的注解都是 JDK5 就已经支持的注解。  简介注解的形式Java 中，注解是以 @ 字符开始的修饰符。如下： 12@Overridevoid mySuperMethod() &amp;#123; ... &amp;#125;  注解可以包含命名或未命名的属性，并且这些属性有值。 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E6%B3%A8%E8%A7%A3%E7%AE%80%E4%BB%8B.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E5%85%83%E6%B3%A8%E8%A7%A3.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E5%86%85%E7%BD%AE%E6%B3%A8%E8%A7%A3.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3.svg">
+<meta property="article:published_time" content="2019-05-06T07:02:02.000Z">
+<meta property="article:modified_time" content="2025-03-31T23:27:25.828Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JavaCore">
+<meta property="article:tag" content="注解">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E6%B3%A8%E8%A7%A3%E7%AE%80%E4%BB%8B.svg">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/77a42c51/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/77a42c51/","path":"/pages/77a42c51/","title":"深入理解 Java 注解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解 Java 注解 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.1/dist/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">430</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">130</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">503</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-Java-%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">深入理解 Java 注解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">注解的形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.1.2.</span> <span class="nav-text">什么是注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">注解的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E7%9A%84%E4%BB%A3%E4%BB%B7"><span class="nav-number">1.1.4.</span> <span class="nav-text">注解的代价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%BA%94%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.1.5.</span> <span class="nav-text">注解的应用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">内置注解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Override"><span class="nav-number">1.2.1.</span> <span class="nav-text">@Override</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deprecated"><span class="nav-number">1.2.2.</span> <span class="nav-text">@Deprecated</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SuppressWarnnings"><span class="nav-number">1.2.3.</span> <span class="nav-text">@SuppressWarnnings</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SafeVarargs"><span class="nav-number">1.2.4.</span> <span class="nav-text">@SafeVarargs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FunctionalInterface"><span class="nav-number">1.2.5.</span> <span class="nav-text">@FunctionalInterface</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%83%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.3.</span> <span class="nav-text">元注解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Retention"><span class="nav-number">1.3.1.</span> <span class="nav-text">@Retention</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Documented"><span class="nav-number">1.3.2.</span> <span class="nav-text">@Documented</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Target"><span class="nav-number">1.3.3.</span> <span class="nav-text">@Target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inherited"><span class="nav-number">1.3.4.</span> <span class="nav-text">@Inherited</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Repeatable"><span class="nav-number">1.3.5.</span> <span class="nav-text">@Repeatable</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.4.</span> <span class="nav-text">自定义注解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.4.1.</span> <span class="nav-text">注解的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E5%B1%9E%E6%80%A7"><span class="nav-number">1.4.2.</span> <span class="nav-text">注解属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.4.3.</span> <span class="nav-text">注解处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.4.4.</span> <span class="nav-text">使用注解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">503</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">430</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/77a42c51/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解 Java 注解 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解 Java 注解<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/01.%E5%9F%BA%E7%A1%80%E7%89%B9%E6%80%A7/Java%E6%B3%A8%E8%A7%A3.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-05-06 15:02:02" itemprop="dateCreated datePublished" datetime="2019-05-06T15:02:02+08:00">2019-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-01 07:27:25" itemprop="dateModified" datetime="2025-04-01T07:27:25+08:00">2025-04-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/%E5%9F%BA%E7%A1%80%E7%89%B9%E6%80%A7/" itemprop="url" rel="index"><span itemprop="name">基础特性</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>17k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="深入理解-Java-注解"><a href="#深入理解-Java-注解" class="headerlink" title="深入理解 Java 注解"></a>深入理解 Java 注解</h1><blockquote>
+<p>本文内容基于 JDK8。注解是 JDK5 引入的，后续 JDK 版本扩展了一些内容，本文中没有明确指明版本的注解都是 JDK5 就已经支持的注解。</p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="注解的形式"><a href="#注解的形式" class="headerlink" title="注解的形式"></a>注解的形式</h3><p>Java 中，注解是以 <code>@</code> 字符开始的修饰符。如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">mySuperMethod</span><span class="params">()</span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>注解可以包含命名或未命名的属性，并且这些属性有值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Author(</span></span><br><span class="line"><span class="meta">   name = &quot;Benjamin Franklin&quot;,</span></span><br><span class="line"><span class="meta">   date = &quot;3/27/2003&quot;</span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>() &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果只有一个名为 value 的属性，那么名称可以省略，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">myMethod</span><span class="params">()</span> &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果注解没有属性，则称为<code>标记注解</code>。如：<code>@Override</code>。</p>
+<h3 id="什么是注解"><a href="#什么是注解" class="headerlink" title="什么是注解"></a>什么是注解</h3><p>从本质上来说，<strong>注解是一种标签，其实质上可以视为一种特殊的注释，如果没有解析它的代码，它并不比普通注释强。</strong></p>
+<p>解析一个注解往往有两种形式：</p>
+<ul>
+<li><strong>编译期直接的扫描</strong> - 编译器的扫描指的是编译器在对 java 代码编译字节码的过程中会检测到某个类或者方法被一些注解修饰，这时它就会对于这些注解进行某些处理。这种情况只适用于 JDK 内置的注解类。</li>
+<li><strong>运行期的反射</strong> - 如果要自定义注解，Java 编译器无法识别并处理这个注解，它只能根据该注解的作用范围来选择是否编译进字节码文件。如果要处理注解，必须利用反射技术，识别该注解以及它所携带的信息，然后做相应的处理。</li>
+</ul>
+<h3 id="注解的作用"><a href="#注解的作用" class="headerlink" title="注解的作用"></a>注解的作用</h3><p>注解有许多用途：</p>
+<ul>
+<li>编译器信息 - 编译器可以使用注解来检测错误或抑制警告。</li>
+<li>编译时和部署时的处理 - 程序可以处理注解信息以生成代码，XML 文件等。</li>
+<li>运行时处理 - 可以在运行时检查某些注解并处理。</li>
+</ul>
+<p>作为 Java 程序员，多多少少都曾经历过被各种配置文件（xml、properties）支配的恐惧。过多的配置文件会使得项目难以维护。个人认为，使用注解以减少配置文件或代码，是注解最大的用处。</p>
+<h3 id="注解的代价"><a href="#注解的代价" class="headerlink" title="注解的代价"></a>注解的代价</h3><p>凡事有得必有失，注解技术同样如此。使用注解也有一定的代价：</p>
+<ul>
+<li>显然，它是一种侵入式编程，那么，自然就存在着增加程序耦合度的问题。</li>
+<li>自定义注解的处理需要在运行时，通过反射技术来获取属性。如果注解所修饰的元素是类的非 public 成员，也可以通过反射获取。这就违背了面向对象的封装性。</li>
+<li>注解所产生的问题，相对而言，更难以 debug 或定位。</li>
+</ul>
+<p>但是，正所谓瑕不掩瑜，注解所付出的代价，相较于它提供的功能而言，还是可以接受的。</p>
+<h3 id="注解的应用范围"><a href="#注解的应用范围" class="headerlink" title="注解的应用范围"></a>注解的应用范围</h3><p>注解可以应用于类、字段、方法和其他程序元素的声明。</p>
+<p>JDK8 开始，注解的应用范围进一步扩大，以下是新的应用范围：</p>
+<p>类实例初始化表达式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="meta">@Interned</span> MyObject();</span><br></pre></td></tr></table></figure>
+
+<p>类型转换：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myString = (<span class="meta">@NonNull</span> String) str;</span><br></pre></td></tr></table></figure>
+
+<p>实现接口的声明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UnmodifiableList</span>&lt;T&gt; implements</span><br><span class="line">    <span class="meta">@Readonly</span> List&lt;<span class="meta">@Readonly</span> T&gt; &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>抛出异常声明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">monitorTemperature</span><span class="params">()</span></span><br><span class="line">    <span class="keyword">throws</span> <span class="meta">@Critical</span> TemperatureException &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="内置注解"><a href="#内置注解" class="headerlink" title="内置注解"></a>内置注解</h2><p>JDK 中内置了以下注解：</p>
+<ul>
+<li><code>@Override</code></li>
+<li><code>@Deprecated</code></li>
+<li><code>@SuppressWarnnings</code></li>
+<li><code>@SafeVarargs</code>（JDK7 引入）</li>
+<li><code>@FunctionalInterface</code>（JDK8 引入）</li>
+</ul>
+<h3 id="Override"><a href="#Override" class="headerlink" title="@Override"></a>@Override</h3><p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/Override.html"><code>@Override</code></a> 用于表明被修饰方法覆写了父类的方法。</strong></p>
+<p>如果试图使用 <code>@Override</code> 标记一个实际上并没有覆写父类的方法时，java 编译器会告警。</p>
+<p><code>@Override</code> 示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OverrideAnnotationDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;getName&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Man</span> <span class="keyword">extends</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;override getName&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         *  放开下面的注释，编译时会告警</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">       <span class="comment">/*</span></span><br><span class="line"><span class="comment">        @Override</span></span><br><span class="line"><span class="comment">        public String getName2() &#123;</span></span><br><span class="line"><span class="comment">            return &quot;override getName2&quot;;</span></span><br><span class="line"><span class="comment">        &#125;</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">per</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Man</span>();</span><br><span class="line">        System.out.println(per.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Deprecated"><a href="#Deprecated" class="headerlink" title="@Deprecated"></a>@Deprecated</h3><p><strong><code>@Deprecated</code> 用于标明被修饰的类或类成员、类方法已经废弃、过时，不建议使用。</strong></p>
+<p><code>@Deprecated</code> 有一定的<strong>延续性</strong>：如果我们在代码中通过继承或者覆盖的方式使用了过时的类或类成员，即使子类或子方法没有标记为 <code>@Deprecated</code>，但编译器仍然会告警。</p>
+<blockquote>
+<p>🔔 注意： <code>@Deprecated</code> 这个注解类型和 javadoc 中的 <code>@deprecated</code> 这个 tag 是有区别的：前者是 java 编译器识别的；而后者是被 javadoc 工具所识别用来生成文档（包含程序成员为什么已经过时、它应当如何被禁止或者替代的描述）。</p>
+</blockquote>
+<p><code>@Deprecated</code> 示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeprecatedAnnotationDemo</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">DeprecatedField</span> &#123;</span><br><span class="line">        <span class="meta">@Deprecated</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">DEPRECATED_FIELD</span> <span class="operator">=</span> <span class="string">&quot;DeprecatedField&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">DeprecatedMethod</span> &#123;</span><br><span class="line">        <span class="meta">@Deprecated</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">print</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;DeprecatedMethod&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Deprecated</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">DeprecatedClass</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">print</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;DeprecatedClass&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(DeprecatedField.DEPRECATED_FIELD);</span><br><span class="line"></span><br><span class="line">        <span class="type">DeprecatedMethod</span> <span class="variable">dm</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DeprecatedMethod</span>();</span><br><span class="line">        System.out.println(dm.print());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="type">DeprecatedClass</span> <span class="variable">dc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DeprecatedClass</span>();</span><br><span class="line">        System.out.println(dc.print());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Output:</span></span><br><span class="line"><span class="comment">//DeprecatedField</span></span><br><span class="line"><span class="comment">//DeprecatedMethod</span></span><br><span class="line"><span class="comment">//DeprecatedClass</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="SuppressWarnnings"><a href="#SuppressWarnnings" class="headerlink" title="@SuppressWarnnings"></a>@SuppressWarnnings</h3><p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/SuppressWarnings.html"><code>@SuppressWarnings</code></a> 用于关闭对类、方法、成员编译时产生的特定警告。</strong></p>
+<p><code>@SuppressWarning</code> 不是一个标记注解。它有一个类型为 <code>String[]</code> 的数组成员，这个数组中存储的是要关闭的告警类型。对于 javac 编译器来讲，对 <code>-Xlint</code> 选项有效的警告名也同样对 <code>@SuppressWarings</code> 有效，同时编译器会忽略掉无法识别的警告名。</p>
+<p><code>@SuppressWarning</code> 示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(&#123;&quot;rawtypes&quot;, &quot;unchecked&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SuppressWarningsAnnotationDemo</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">SuppressDemo</span>&lt;T&gt; &#123;</span><br><span class="line">        <span class="keyword">private</span> T value;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> T <span class="title function_">getValue</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.value;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(T <span class="keyword">var</span>)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.value = <span class="keyword">var</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&#123;&quot;deprecation&quot;&#125;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">SuppressDemo</span> <span class="variable">d</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SuppressDemo</span>();</span><br><span class="line">        d.setValue(<span class="string">&quot;南京&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;地名：&quot;</span> + d.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>@SuppressWarnings</code> 注解的常见参数值的简单说明：</p>
+<ul>
+<li><code>deprecation</code> - 使用了不赞成使用的类或方法时的警告；</li>
+<li><code>unchecked</code> - 执行了未检查的转换时的警告，例如当使用集合时没有用泛型 (Generics) 来指定集合保存的类型;</li>
+<li><code>fallthrough</code> - 当 Switch 程序块直接通往下一种情况而没有 Break 时的警告;</li>
+<li><code>path</code> - 在类路径、源文件路径等中有不存在的路径时的警告;</li>
+<li><code>serial</code> - 当在可序列化的类上缺少 serialVersionUID 定义时的警告;</li>
+<li><code>finally</code> - 任何 finally 子句不能正常完成时的警告;</li>
+<li><code>all</code> - 所有的警告。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(&#123;&quot;uncheck&quot;, &quot;deprecation&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InternalAnnotationDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@SuppressWarnings</span> 标记消除当前类的告警信息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&#123;&quot;deprecation&quot;&#125;)</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">method1</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;call method1&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@Deprecated</span> 标记当前方法为废弃方法，不建议使用</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Deprecated</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">method2</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;call method2&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@Deprecated</span> 标记当前类为废弃类，不建议使用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Deprecated</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">extends</span> <span class="title class_">A</span> &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@Override</span> 标记显示指明当前方法覆写了父类或接口的方法</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">method1</span><span class="params">()</span> &#123; &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">A</span> <span class="variable">obj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">        obj.method1();</span><br><span class="line">        obj.method2();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="SafeVarargs"><a href="#SafeVarargs" class="headerlink" title="@SafeVarargs"></a>@SafeVarargs</h3><p><code>@SafeVarargs</code> 在 JDK7 中引入。</p>
+<p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/SafeVarargs.html"><code>@SafeVarargs</code></a> 的作用是：告诉编译器，在可变长参数中的泛型是类型安全的。可变长参数是使用数组存储的，而数组和泛型不能很好的混合使用。</strong></p>
+<p>简单的说，数组元素的数据类型在编译和运行时都是确定的，而泛型的数据类型只有在运行时才能确定下来。因此，当把一个泛型存储到数组中时，编译器在编译阶段无法确认数据类型是否匹配，因此会给出警告信息；即如果泛型的真实数据类型无法和参数数组的类型匹配，会导致 <code>ClassCastException</code> 异常。</p>
+<p><code>@SafeVarargs</code> 注解使用范围：</p>
+<ul>
+<li><code>@SafeVarargs</code> 注解可以用于构造方法。</li>
+<li><code>@SafeVarargs</code> 注解可以用于 <code>static</code> 或 <code>final</code> 方法。</li>
+</ul>
+<p><code>@SafeVarargs</code> 示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SafeVarargsAnnotationDemo</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 此方法实际上并不安全，不使用此注解，编译时会告警</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SafeVarargs</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">wrongMethod</span><span class="params">(List&lt;String&gt;... stringLists)</span> &#123;</span><br><span class="line">        Object[] array = stringLists;</span><br><span class="line">        List&lt;Integer&gt; tmpList = Arrays.asList(<span class="number">42</span>);</span><br><span class="line">        array[<span class="number">0</span>] = tmpList; <span class="comment">// 语法错误，但是编译不告警</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> stringLists[<span class="number">0</span>].get(<span class="number">0</span>); <span class="comment">// 运行时报 ClassCastException</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        list.add(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">        list.add(<span class="string">&quot;B&quot;</span>);</span><br><span class="line"></span><br><span class="line">        List&lt;String&gt; list2 = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        list.add(<span class="string">&quot;1&quot;</span>);</span><br><span class="line">        list.add(<span class="string">&quot;2&quot;</span>);</span><br><span class="line"></span><br><span class="line">        wrongMethod(list, list2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码，如果不使用 <code>@SafeVarargs</code> ，编译时会告警</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[WARNING] <span class="regexp">/D:/</span>Codes<span class="regexp">/ZP/</span>Java<span class="regexp">/javacore/</span>codes<span class="regexp">/basics/</span>src<span class="regexp">/main/</span>java<span class="regexp">/io/gi</span>thub<span class="regexp">/dunwu/</span>javacore<span class="regexp">/annotation/</span>SafeVarargsAnnotationDemo.java: 某些输入文件使用了未经检查或不安全的操作。</span><br><span class="line">[WARNING] <span class="regexp">/D:/</span>Codes<span class="regexp">/ZP/</span>Java<span class="regexp">/javacore/</span>codes<span class="regexp">/basics/</span>src<span class="regexp">/main/</span>java<span class="regexp">/io/gi</span>thub<span class="regexp">/dunwu/</span>javacore<span class="regexp">/annotation/</span>SafeVarargsAnnotationDemo.java: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。</span><br></pre></td></tr></table></figure>
+
+<h3 id="FunctionalInterface"><a href="#FunctionalInterface" class="headerlink" title="@FunctionalInterface"></a>@FunctionalInterface</h3><p><code>@FunctionalInterface</code> 在 JDK8 引入。</p>
+<p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html"><code>@FunctionalInterface</code></a> 用于指示被修饰的接口是函数式接口。</strong></p>
+<p>需要注意的是，如果一个接口符合”函数式接口”定义，不加 <code>@FunctionalInterface</code> 也没关系；但如果编写的不是函数式接口，却使用 <code>@FunctionInterface</code>，那么编译器会报错。</p>
+<p>什么是函数式接口？</p>
+<p><strong>函数式接口(Functional Interface)就是一个有且仅有一个抽象方法，但是可以有多个非抽象方法的接口</strong>。函数式接口可以被隐式转换为 lambda 表达式。</p>
+<p>函数式接口的特点：</p>
+<ul>
+<li>接口有且只能有个一个抽象方法（抽象方法只有方法定义，没有方法体）。</li>
+<li>不能在接口中覆写 Object 类中的 public 方法（写了编译器也会报错）。</li>
+<li>允许有 default 实现方法。</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FunctionalInterfaceAnnotationDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@FunctionalInterface</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Func1</span>&lt;T&gt; &#123;</span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">printMessage</span><span class="params">(T message)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@FunctionalInterface</span> 修饰的接口中定义两个抽象方法，编译时会报错</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> &lt;T&gt;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="comment">/*@FunctionalInterface</span></span><br><span class="line"><span class="comment">    public interface Func2&lt;T&gt; &#123;</span></span><br><span class="line"><span class="comment">        void printMessage(T message);</span></span><br><span class="line"><span class="comment">        void printMessage2(T message);</span></span><br><span class="line"><span class="comment">    &#125;*/</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Func1</span> <span class="variable">func1</span> <span class="operator">=</span> message -&gt; System.out.println(message);</span><br><span class="line">        func1.printMessage(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">        func1.printMessage(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="元注解"><a href="#元注解" class="headerlink" title="元注解"></a>元注解</h2><p>JDK 中虽然内置了几个注解，但这远远不能满足开发过程中遇到的千变万化的需求。所以我们需要自定义注解，而这就需要用到元注解。</p>
+<p><strong>元注解的作用就是用于定义其它的注解</strong>。</p>
+<p>Java 中提供了以下元注解类型：</p>
+<ul>
+<li><code>@Retention</code></li>
+<li><code>@Target</code></li>
+<li><code>@Documented</code></li>
+<li><code>@Inherited</code>（JDK8 引入）</li>
+<li><code>@Repeatable</code>（JDK8 引入）</li>
+</ul>
+<p>这些类型和它们所支持的类在 <code>java.lang.annotation</code> 包中可以找到。下面我们看一下每个元注解的作用和相应分参数的使用说明。</p>
+<h3 id="Retention"><a href="#Retention" class="headerlink" title="@Retention"></a>@Retention</h3><p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Retention.html"><code>@Retention</code></a> 指明了注解的保留级别。</strong></p>
+<p><code>@Retention</code> 源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(ElementType.ANNOTATION_TYPE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Retention &#123;</span><br><span class="line">    RetentionPolicy <span class="title function_">value</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>RetentionPolicy</code> 是一个枚举类型，它定义了被 <code>@Retention</code> 修饰的注解所支持的保留级别：</p>
+<ul>
+<li><code>RetentionPolicy.SOURCE</code> - 标记的注解仅在源文件中有效，编译器会忽略。</li>
+<li><code>RetentionPolicy.CLASS</code> - 标记的注解在 class 文件中有效，JVM 会忽略。</li>
+<li><code>RetentionPolicy.RUNTIME</code> - 标记的注解在运行时有效。</li>
+</ul>
+<p><code>@Retention</code> 示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.FIELD)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Column &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">name</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;fieldName&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">setFuncName</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;setField&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getFuncName</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;getField&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">defaultDBValue</span><span class="params">()</span> <span class="keyword">default</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Documented"><a href="#Documented" class="headerlink" title="@Documented"></a>@Documented</h3><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Documented.html"><code>@Documented</code></a> 表示无论何时使用指定的注解，都应使用 Javadoc（默认情况下，注释不包含在 Javadoc 中）。更多内容可以参考：<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/javadoc/index.html">Javadoc tools page</a>。</p>
+<p><code>@Documented</code> 示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.FIELD)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Column &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">name</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;fieldName&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">setFuncName</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;setField&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getFuncName</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;getField&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">defaultDBValue</span><span class="params">()</span> <span class="keyword">default</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Target"><a href="#Target" class="headerlink" title="@Target"></a>@Target</h3><p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html"><code>@Target</code></a> 指定注解可以修饰的元素类型。</strong></p>
+<p><code>@Target</code> 源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(ElementType.ANNOTATION_TYPE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Target &#123;</span><br><span class="line">    ElementType[] value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ElementType</code> 是一个枚举类型，它定义了被 <code>@Target</code> 修饰的注解可以应用的范围：</p>
+<ul>
+<li><code>ElementType.ANNOTATION_TYPE</code> - 标记的注解可以应用于注解类型。</li>
+<li><code>ElementType.CONSTRUCTOR</code> - 标记的注解可以应用于构造函数。</li>
+<li><code>ElementType.FIELD</code> - 标记的注解可以应用于字段或属性。</li>
+<li><code>ElementType.LOCAL_VARIABLE</code> - 标记的注解可以应用于局部变量。</li>
+<li><code>ElementType.METHOD</code> - 标记的注解可以应用于方法。</li>
+<li><code>ElementType.PACKAGE</code> - 标记的注解可以应用于包声明。</li>
+<li><code>ElementType.PARAMETER</code> - 标记的注解可以应用于方法的参数。</li>
+<li><code>ElementType.TYPE</code> - 标记的注解可以应用于类的任何元素。</li>
+</ul>
+<p><code>@Target</code> 示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Table &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 数据表名称注解，默认值为类名称</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">tableName</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;className&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Target(ElementType.FIELD)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> NoDBColumn &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Inherited"><a href="#Inherited" class="headerlink" title="@Inherited"></a>@Inherited</h3><p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Inherited.html"><code>@Inherited</code></a> 表示注解类型可以被继承（默认情况下不是这样）</strong>。</p>
+<p>表示自动继承注解类型。 如果注解类型声明中存在 <code>@Inherited</code> 元注解，则注解所修饰类的所有子类都将会继承此注解。</p>
+<blockquote>
+<p>🔔 注意：<code>@Inherited</code> 注解类型是被标注过的类的子类所继承。类并不从它所实现的接口继承注解，方法并不从它所覆写的方法继承注解。</p>
+<p>此外，当 <code>@Inherited</code> 类型标注的注解的 <code>@Retention</code> 是 <code>RetentionPolicy.RUNTIME</code>，则反射 API 增强了这种继承性。如果我们使用 <code>java.lang.reflect</code> 去查询一个 <code>@Inherited</code> 类型的注解时，反射代码检查将展开工作：检查类和其父类，直到发现指定的注解类型被发现，或者到达类继承结构的顶层。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Greeting &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">FontColor</span>&#123; BULE,RED,GREEN&#125;;</span><br><span class="line">    String <span class="title function_">name</span><span class="params">()</span>;</span><br><span class="line">    FontColor <span class="title function_">fontColor</span><span class="params">()</span> <span class="keyword">default</span> FontColor.GREEN;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Repeatable"><a href="#Repeatable" class="headerlink" title="@Repeatable"></a>@Repeatable</h3><p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Repeatable.html"><code>@Repeatable</code></a> 表示注解可以重复使用。</strong></p>
+<p>以 Spring <code>@Scheduled</code> 为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.ANNOTATION_TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Schedules &#123;</span><br><span class="line">	Scheduled[] value();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.METHOD, ElementType.ANNOTATION_TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Repeatable(Schedules.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Scheduled &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>应用示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TaskRunner</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(&quot;0 0/15 * * * ?&quot;)</span></span><br><span class="line">    <span class="meta">@Scheduled(&quot;0 0 12 * ?&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">task1</span><span class="params">()</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="自定义注解"><a href="#自定义注解" class="headerlink" title="自定义注解"></a>自定义注解</h2><p>使用 <code>@interface</code> 自定义注解时，自动继承了 <code>java.lang.annotation.Annotation</code> 接口，由编译程序自动完成其他细节。在定义注解时，不能继承其他的注解或接口。<code>@interface</code> 用来声明一个注解，其中的每一个方法实际上是声明了一个配置参数。方法的名称就是参数的名称，返回值类型就是参数的类型（返回值类型只能是基本类型、Class、String、enum）。可以通过 <code>default</code> 来声明参数的默认值。</p>
+<p>这里，我会通过实现一个名为 <code>RegexValid</code> 的正则校验注解工具来展示自定义注解的全步骤。</p>
+<h3 id="注解的定义"><a href="#注解的定义" class="headerlink" title="注解的定义"></a>注解的定义</h3><p>注解的语法格式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> 注解名 &#123;定义体&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们来定义一个注解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.FIELD, ElementType.PARAMETER&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> RegexValid &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>说明：</p>
+<p>通过上一节对于元注解 <a href="#target"><code>@Target</code></a>、<a href="#retention"><code>@Retention</code></a>、<a href="#documented"><code>@Documented</code></a> 的说明，这里就很容易理解了。</p>
+<ul>
+<li>上面的代码中定义了一个名为 <code>@RegexValid</code> 的注解。</li>
+<li><code>@Documented</code> 表示 <code>@RegexValid</code> 应该使用 javadoc。</li>
+<li><code>@Target(&#123;ElementType.FIELD, ElementType.PARAMETER&#125;)</code> 表示 <code>@RegexValid</code> 可以在类成员或方法参数上修饰。</li>
+<li>@Retention(RetentionPolicy.RUNTIME) 表示 <code>@RegexValid</code> 在运行时有效。</li>
+</ul>
+</blockquote>
+<p>此时，我们已经定义了一个没有任何属性的注解，如果到此为止，它仅仅是一个标记注解。作为正则工具，没有属性可什么也做不了。接下来，我们将为它添加注解属性。</p>
+<h3 id="注解属性"><a href="#注解属性" class="headerlink" title="注解属性"></a>注解属性</h3><p>注解属性的语法形式如下：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-attr">[访问级别修饰符]</span> <span class="selector-attr">[数据类型]</span> 名称() default 默认值;</span><br></pre></td></tr></table></figure>
+
+<p>例如，我们要定义在注解中定义一个名为 value 的字符串属性，其默认值为空字符串，访问级别为默认级别，那么应该定义如下：</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> value() <span class="literal">default</span> <span class="string">&quot;&quot;</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>🔔 注意：**在注解中，我们定义属性时，属性名后面需要加 <code>()</code>**。</p>
+</blockquote>
+<p>定义注解属性有以下要点：</p>
+<ul>
+<li><p><strong>注解属性只能使用 <code>public</code> 或默认访问级别（即不指定访问级别修饰符）修饰</strong>。</p>
+</li>
+<li><p><strong>注解属性的数据类型有限制要求</strong>。支持的数据类型如下：</p>
+<ul>
+<li>所有基本数据类型（byte、char、short、int、long、float、double、boolean）</li>
+<li>String 类型</li>
+<li>Class 类</li>
+<li>enum 类型</li>
+<li>Annotation 类型</li>
+<li>以上所有类型的数组</li>
+</ul>
+</li>
+<li><p><strong>注解属性必须有确定的值，建议指定默认值</strong>。注解属性只能通过指定默认值或使用注解时指定属性值，相较之下，指定默认值的方式更为可靠。注解属性如果是引用类型，不可以为 null。这个约束使得注解处理器很难判断注解属性是默认值，或是使用注解时所指定的属性值。为此，我们设置默认值时，一般会定义一些特殊的值，例如空字符串或者负数。</p>
+</li>
+<li><p>如果注解中只有一个属性值，最好将其命名为 value。因为，指定属性名为 value，在使用注解时，指定 value 的值可以不指定属性名称。</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这两种方式效果相同</span></span><br><span class="line"><span class="meta">@RegexValid(&quot;^((\\+)?86\\s*)?((13[0-9])|(15([0-3]|[5-9]))|(18[0,2,5-9]))\\d&#123;8&#125;$&quot;)</span></span><br><span class="line"><span class="meta">@RegexValid(value = &quot;^((\\+)?86\\s*)?((13[0-9])|(15([0-3]|[5-9]))|(18[0,2,5-9]))\\d&#123;8&#125;$&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<p>了解了注解属性的定义要点，让我们来为 <code>@RegexValid</code> 注解定义几个属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.FIELD, ElementType.PARAMETER&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> RegexValid &#123;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Policy</span> &#123;</span><br><span class="line">        <span class="comment">// @formatter:off</span></span><br><span class="line">        EMPTY(<span class="literal">null</span>),</span><br><span class="line">        DATE(<span class="string">&quot;^(?:(?!0000)[0-9]&#123;4&#125;([-/.]?)(?:(?:0?[1-9]|1[0-2])\\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\\1&quot;</span></span><br><span class="line">            + <span class="string">&quot;(?:29|30)|(?:0?[13578]|1[02])\\1(?:31))|(?:[0-9]&#123;2&#125;(?:0[48]|[2468][048]|[13579][26])|&quot;</span></span><br><span class="line">            + <span class="string">&quot;(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\\2(?:29))$&quot;</span>),</span><br><span class="line">        MAIL(<span class="string">&quot;^[A-Za-z0-9](([_\\.\\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\\.\\-]?[a-zA-Z0-9]+)*)\\.([A-Za-z]&#123;2,&#125;)$&quot;</span>);</span><br><span class="line">        <span class="comment">// @formatter:on</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> String policy;</span><br><span class="line"></span><br><span class="line">        Policy(String policy) &#123;</span><br><span class="line">            <span class="built_in">this</span>.policy = policy;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">getPolicy</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> policy;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String <span class="title function_">value</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">    Policy <span class="title function_">policy</span><span class="params">()</span> <span class="keyword">default</span> Policy.EMPTY;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>说明：</p>
+<p>在上面的示例代码中，我们定义了两个注解属性：<code>String</code> 类型的 value 属性和 <code>Policy</code> 枚举类型的 policy 属性。<code>Policy</code> 枚举中定义了几个默认的正则表达式，这是为了直接使用这几个常用表达式去正则校验。考虑到，我们可能需要自己传入一些自定义正则表达式去校验其他场景，所以定义了 value 属性，允许使用者传入正则表达式。</p>
+</blockquote>
+<p>至此，<code>@RegexValid</code> 的声明已经结束。但是，程序仍不知道如何处理 <code>@RegexValid</code> 这个注解。我们还需要定义注解处理器。</p>
+<h3 id="注解处理器"><a href="#注解处理器" class="headerlink" title="注解处理器"></a>注解处理器</h3><p>如果没有用来读取注解的方法和工作，那么注解也就不会比注释更有用处了。使用注解的过程中，很重要的一部分就是创建于使用注解处理器。JDK5 扩展了反射机制的 API，以帮助程序员快速的构造自定义注解处理器。</p>
+<p><strong><code>java.lang.annotation.Annotation</code> 是一个接口，程序可以通过反射来获取指定程序元素的注解对象，然后通过注解对象来获取注解里面的元数据</strong>。</p>
+<p><code>Annotation</code> 接口源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Annotation</span> &#123;</span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object obj)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    String <span class="title function_">toString</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    Class&lt;? <span class="keyword">extends</span> <span class="title class_">Annotation</span>&gt; annotationType();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>除此之外，Java 中支持<strong>注解处理器接口 <code>java.lang.reflect.AnnotatedElement</code></strong> ，该接口代表程序中可以接受注解的程序元素，该接口主要有如下几个实现类：</p>
+<ul>
+<li><code>Class</code> - 类定义</li>
+<li><code>Constructor</code> - 构造器定义</li>
+<li><code>Field</code> - 累的成员变量定义</li>
+<li><code>Method</code> - 类的方法定义</li>
+<li><code>Package</code> - 类的包定义</li>
+</ul>
+<p><code>java.lang.reflect</code> 包下主要包含一些实现反射功能的工具类。实际上，<code>java.lang.reflect</code> 包所有提供的反射 API 扩充了读取运行时注解信息的能力。当一个注解类型被定义为运行时的注解后，该注解才能是运行时可见，当 class 文件被装载时被保存在 class 文件中的注解才会被虚拟机读取。<br><code>AnnotatedElement</code> 接口是所有程序元素（Class、Method 和 Constructor）的父接口，所以程序通过反射获取了某个类的<code>AnnotatedElement</code> 对象之后，程序就可以调用该对象的如下四个个方法来访问注解信息：</p>
+<ul>
+<li><code>getAnnotation</code> - 返回该程序元素上存在的、指定类型的注解，如果该类型注解不存在，则返回 null。</li>
+<li><code>getAnnotations</code> - 返回该程序元素上存在的所有注解。</li>
+<li><code>isAnnotationPresent</code> - 判断该程序元素上是否包含指定类型的注解，存在则返回 true，否则返回 false。</li>
+<li><code>getDeclaredAnnotations</code> - 返回直接存在于此元素上的所有注释。与此接口中的其他方法不同，该方法将忽略继承的注释。（如果没有注释直接存在于此元素上，则返回长度为零的一个数组。）该方法的调用者可以随意修改返回的数组；这不会对其他调用者返回的数组产生任何影响。</li>
+</ul>
+<p>了解了以上内容，让我们来实现 <code>@RegexValid</code> 的注解处理器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Pattern;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RegexValidUtil</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="title function_">check</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">result</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        Field[] fields = obj.getClass().getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">            <span class="comment">// 判断成员是否被 @RegexValid 注解所修饰</span></span><br><span class="line">            <span class="keyword">if</span> (field.isAnnotationPresent(RegexValid.class)) &#123;</span><br><span class="line">                <span class="type">RegexValid</span> <span class="variable">valid</span> <span class="operator">=</span> field.getAnnotation(RegexValid.class);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 如果 value 为空字符串，说明没有注入自定义正则表达式，改用 policy 属性</span></span><br><span class="line">                <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> valid.value();</span><br><span class="line">                <span class="keyword">if</span> (<span class="string">&quot;&quot;</span>.equals(value)) &#123;</span><br><span class="line">                    RegexValid.<span class="type">Policy</span> <span class="variable">policy</span> <span class="operator">=</span> valid.policy();</span><br><span class="line">                    value = policy.getPolicy();</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 通过设置 setAccessible(true) 来访问私有成员</span></span><br><span class="line">                field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">                <span class="type">Object</span> <span class="variable">fieldObj</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    fieldObj = field.get(obj);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (fieldObj == <span class="literal">null</span>) &#123;</span><br><span class="line">                    sb.append(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line">                        .append(String.format(<span class="string">&quot;%s 类中的 %s 字段不能为空！&quot;</span>, obj.getClass().getName(), field.getName()));</span><br><span class="line">                    result = <span class="literal">false</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (fieldObj <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">                        <span class="type">String</span> <span class="variable">text</span> <span class="operator">=</span> (String) fieldObj;</span><br><span class="line">                        <span class="type">Pattern</span> <span class="variable">p</span> <span class="operator">=</span> Pattern.compile(value);</span><br><span class="line">                        <span class="type">Matcher</span> <span class="variable">m</span> <span class="operator">=</span> p.matcher(text);</span><br><span class="line">                        result = m.matches();</span><br><span class="line">                        <span class="keyword">if</span> (!result) &#123;</span><br><span class="line">                            sb.append(<span class="string">&quot;\n&quot;</span>).append(String.format(<span class="string">&quot;%s 不是合法的 %s ！&quot;</span>, text, field.getName()));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        sb.append(<span class="string">&quot;\n&quot;</span>).append(</span><br><span class="line">                            String.format(<span class="string">&quot;%s 类中的 %s 字段不是字符串类型，不能使用此注解校验！&quot;</span>, obj.getClass().getName(), field.getName()));</span><br><span class="line">                        result = <span class="literal">false</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (sb.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(sb.toString());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>说明：</p>
+<p>以上示例中的注解处理器，执行步骤如下：</p>
+<ol>
+<li>通过 getDeclaredFields 反射方法获取传入对象的所有成员。</li>
+<li>遍历成员，使用 isAnnotationPresent 判断成员是否被指定注解所修饰，如果不是，直接跳过。</li>
+<li>如果成员被注解所修饰，通过 <code>RegexValid valid = field.getAnnotation(RegexValid.class);</code> 这样的形式获取，注解实例化对象，然后，就可以使用 <code>valid.value()</code> 或 <code>valid.policy()</code> 这样的形式获取注解中设定的属性值。</li>
+<li>根据属性值，进行逻辑处理。</li>
+</ol>
+</blockquote>
+<h3 id="使用注解"><a href="#使用注解" class="headerlink" title="使用注解"></a>使用注解</h3><p>完成了以上工作，我们就可以使用自定义注解了，示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RegexValidDemo</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> String name;</span><br><span class="line">        <span class="meta">@RegexValid(policy = RegexValid.Policy.DATE)</span></span><br><span class="line">        <span class="keyword">private</span> String date;</span><br><span class="line">        <span class="meta">@RegexValid(policy = RegexValid.Policy.MAIL)</span></span><br><span class="line">        <span class="keyword">private</span> String mail;</span><br><span class="line">        <span class="meta">@RegexValid(&quot;^((\\+)?86\\s*)?((13[0-9])|(15([0-3]|[5-9]))|(18[0,2,5-9]))\\d&#123;8&#125;$&quot;)</span></span><br><span class="line">        <span class="keyword">private</span> String phone;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">User</span><span class="params">(String name, String date, String mail, String phone)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.name = name;</span><br><span class="line">            <span class="built_in">this</span>.date = date;</span><br><span class="line">            <span class="built_in">this</span>.mail = mail;</span><br><span class="line">            <span class="built_in">this</span>.phone = phone;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;User&#123;&quot;</span> + <span class="string">&quot;name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> + <span class="string">&quot;, date=&#x27;&quot;</span> + date + <span class="string">&#x27;\&#x27;&#x27;</span> + <span class="string">&quot;, mail=&#x27;&quot;</span> + mail + <span class="string">&#x27;\&#x27;&#x27;</span> + <span class="string">&quot;, phone=&#x27;&quot;</span></span><br><span class="line">                + phone + <span class="string">&#x27;\&#x27;&#x27;</span> + <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printDate</span><span class="params">(<span class="meta">@RegexValid(policy = RegexValid.Policy.DATE)</span> String date)</span>&#123;</span><br><span class="line">        System.out.println(date);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Tom&quot;</span>, <span class="string">&quot;1990-01-31&quot;</span>, <span class="string">&quot;xxx@163.com&quot;</span>, <span class="string">&quot;18612341234&quot;</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;Jack&quot;</span>, <span class="string">&quot;2019-02-29&quot;</span>, <span class="string">&quot;sadhgs&quot;</span>, <span class="string">&quot;183xxxxxxxx&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (RegexValidUtil.check(user)) &#123;</span><br><span class="line">            System.out.println(user + <span class="string">&quot;正则校验通过&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (RegexValidUtil.check(user2)) &#123;</span><br><span class="line">            System.out.println(user2 + <span class="string">&quot;正则校验通过&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E6%B3%A8%E8%A7%A3%E7%AE%80%E4%BB%8B.svg" alt="img"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E5%85%83%E6%B3%A8%E8%A7%A3.svg" alt="img"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E5%86%85%E7%BD%AE%E6%B3%A8%E8%A7%A3.svg" alt="img"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/xmind/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3.svg" alt="img"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/2130190/">Java 编程思想</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/3146174/">Java 核心技术（卷 1）</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/3360807/">Effective java</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/java/annotations/">Oracle 官方文档之注解篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/peida/archive/2013/04/24/3036689.html">深入理解 Java：注解（Annotation）自定义注解入门</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/briblue/article/details/73824058">https://blog.csdn.net/briblue/article/details/73824058</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/77a42c51/" title="深入理解 Java 注解">https://dunwu.github.io/blog/pages/77a42c51/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/JavaCore/" rel="tag"># JavaCore</a>
+              <a href="/blog/tags/%E6%B3%A8%E8%A7%A3/" rel="tag"># 注解</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/f47a45e7/" rel="prev" title="JDK8 入门指南">
+                  <i class="fa fa-angle-left"></i> JDK8 入门指南
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/4e47d423/" rel="next" title="深入理解 Java 枚举">
+                  深入理解 Java 枚举 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">66:31</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"833f63ba53710a9fc93b73d2b37c726c"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>
