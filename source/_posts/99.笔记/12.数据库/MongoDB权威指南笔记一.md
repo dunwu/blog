@@ -1,4 +1,5 @@
 ---
+icon: logos:mongodb
 title: 《MongoDB 权威指南》笔记一
 date: 2024-09-29 07:45:34
 categories:
@@ -7,11 +8,15 @@ categories:
 tags:
   - 数据库
   - 文档数据库
-  - MongoDB
+  - mongodb
 permalink: /pages/ee6834b2/
 ---
 
 # 《MongoDB 权威指南》笔记一
+
+[《MongoDB 权威指南》](https://book.douban.com/subject/35688800/) 学习笔记
+
+<!-- more -->
 
 ## 第 1 章 MongoDB 简介
 
@@ -52,7 +57,7 @@ MongoDB 作为分布式存储，自然也具备了分布式的一般特性：
 
 一个 MongoDB 实例可以拥有多个独立的数据库，每个数据库都拥有自己的集合。
 
-每个文档都有一个特殊的键 "\_id"，其在所属的集合中是唯一的。
+每个文档都有一个特殊的键 "`_id`"，其在所属的集合中是唯一的。
 
 MongoDB 自带了一个简单但功能强大的工具：mongo shell。mongo shell 对管理 MongoDB 实例和使用 MongoDB 的查询语言操作数据提供了内置的支持。它也是一个功能齐全的 JavaScript 解释器，用户可以根据需求创建或加载自己的脚本。
 
@@ -248,7 +253,7 @@ MongoDB 基本数据类型如下：
 { "x": { "foo": "bar" } }
 ```
 
-**Object ID** - Object ID 是一个 12 字节的 ID，是文档的唯一标识。MongoDB 中存储的每个文档都必须有一个 "\_id" 键。"\_id" 的值可以是任何类型，但其默认为 ObjectId。在单个集合中，每个文档的 "\_id" 值都必须是唯一的，以确保集合中的每个文档都可以被唯一标识。
+**Object ID** - Object ID 是一个 12 字节的 ID，是文档的唯一标识。MongoDB 中存储的每个文档都必须有一个 "`_id`" 键。"`_id`" 的值可以是任何类型，但其默认为 ObjectId。在单个集合中，每个文档的 "`_id`" 值都必须是唯一的，以确保集合中的每个文档都可以被唯一标识。
 
 ```json
 {"x" : ObjectId()}
@@ -317,7 +322,7 @@ db.collection.insertMany(documents, options)
 
 在当前版本中，MongoDB 能够接受的最大消息长度是 48MB，因此在单次批量插入中能够插入的文档是有限制的。如果尝试插入超过 48MB 的数据，则多数驱动程序会将这个批量插入请求拆分为多个 48MB 的批量插入请求。
 
-MongoDB 会对要插入的数据进行最基本的检查：检查文档的基本结构，如果不存在 "\_id" 字段，则自动添加一个。
+MongoDB 会对要插入的数据进行最基本的检查：检查文档的基本结构，如果不存在 "`_id`" 字段，则自动添加一个。
 
 ### 删除文档
 

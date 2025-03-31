@@ -4,7 +4,6 @@ date: 2019-05-07 20:19:25
 order: 01
 categories:
   - 大数据
-  - spark
 tags:
   - 大数据
   - Spark

@@ -1,17 +1,17 @@
 ---
-title: Hive 分区表和分桶表
+icon: simple-icons:apachehive
+title: Hive 表
 date: 2020-02-24 21:14:47
-order: 02
 categories:
   - 大数据
   - hive
 tags:
   - 大数据
-  - Hive
+  - hive
 permalink: /pages/43113d65/
 ---
 
-# Hive 分区表和分桶表
+# Hive 表
 
 ## 分区表
 
@@ -21,11 +21,7 @@ Hive 中的表对应为 HDFS 上的指定目录，在查询数据时候，默认
 
 **分区为 HDFS 上表目录的子目录**，数据按照分区存储在子目录中。如果查询的 `where` 子句中包含分区条件，则直接从该分区去查找，而不是扫描整个表目录，合理的分区设计可以极大提高查询速度和性能。
 
-> 这里说明一下分区表并非 Hive 独有的概念，实际上这个概念非常常见。比如在我们常用的 Oracle 数据库中，当表中的数据量不断增大，查询数据的速度就会下降，这时也可以对表进行分区。表进行分区后，逻辑上表仍然是一张完整的表，只是将表中的数据存放到多个表空间（物理文件上），这样查询数据时，就不必要每次都扫描整张表，从而提升查询性能。
-
-### 使用场景
-
-通常，在管理大规模数据集的时候都需要进行分区，比如将日志文件按天进行分区，从而保证数据细粒度的划分，使得查询性能得到提升。
+分区表并非 Hive 独有的概念，实际上这个概念非常常见。通常，在管理大规模数据集的时候都需要进行分区，比如将日志文件按天进行分区，从而保证数据细粒度的划分，使得查询性能得到提升。比如，在我们常用的 Oracle 数据库中，当表中的数据量不断增大，查询数据的速度就会下降，这时也可以对表进行分区。表进行分区后，逻辑上表仍然是一张完整的表，只是将表中的数据存放到多个表空间（物理文件上），这样查询数据时，就不必要每次都扫描整张表，从而提升查询性能。
 
 ### 创建分区表
 
@@ -51,15 +47,15 @@ Hive 中的表对应为 HDFS 上的指定目录，在查询数据时候，默认
 加载数据到分区表时候必须要指定数据所处的分区：
 
 ```shell
-# 加载部门编号为20的数据到表中
+# 加载部门编号为 20 的数据到表中
 LOAD DATA LOCAL INPATH "/usr/file/emp20.txt" OVERWRITE INTO TABLE emp_partition PARTITION (deptno=20)
-# 加载部门编号为30的数据到表中
+# 加载部门编号为 30 的数据到表中
 LOAD DATA LOCAL INPATH "/usr/file/emp30.txt" OVERWRITE INTO TABLE emp_partition PARTITION (deptno=30)
 ```
 
 ### 查看分区目录
 
-这时候我们直接查看表目录，可以看到表目录下存在两个子目录，分别是 `deptno=20` 和 `deptno=30`,这就是分区目录，分区目录下才是我们加载的数据文件。
+这时候我们直接查看表目录，可以看到表目录下存在两个子目录，分别是 `deptno=20` 和 `deptno=30`, 这就是分区目录，分区目录下才是我们加载的数据文件。
 
 ```shell
 # hadoop fs -ls  hdfs://hadoop001:8020/hive/emp_partition/
@@ -132,7 +128,7 @@ INSERT INTO TABLE emp_bucket SELECT *  FROM emp;  --这里的 emp 表就是一�
 
 ### 查看分桶文件
 
-bucket(桶) 本质上就是表目录下的具体文件：
+bucket（桶） 本质上就是表目录下的具体文件：
 
 ![img](https://github.com/heibaiying/BigData-Notes/raw/master/pictures/hive-hadoop-bucket.png)
 

@@ -1,13 +1,13 @@
 ---
+icon: simple-icons:apachehive
 title: Hive 常用 DML 操作
 date: 2020-02-24 21:14:47
-order: 06
 categories:
   - 大数据
   - hive
 tags:
   - 大数据
-  - Hive
+  - hive
 permalink: /pages/c6465f21/
 ---
 

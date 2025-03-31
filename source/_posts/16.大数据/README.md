@@ -51,13 +51,14 @@ index: false
 
 ### [HIVE](hive)
 
-- [Hive 入门](hive/Hive入门.md)
+- [Hive 简介](hive/Hive简介.md)
 - [Hive 表](hive/Hive表.md)
 - [Hive 视图和索引](hive/Hive视图和索引.md)
 - [Hive 查询](hive/Hive查询.md)
 - [Hive DDL](hive/HiveDDL.md)
 - [Hive DML](hive/HiveDML.md)
 - [Hive 运维](hive/Hive运维.md)
+- [Hive 面试](hive/Hive面试.md) 💯
 
 ### Kafka
 
@@ -95,6 +96,8 @@ index: false
     - [HDFS 官方文档](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html)
     - [MapReduce 官方文档](https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html)
     - [YARN 官方文档](https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/YARN.html)
+    - [Sqoop Github](https://sqoop.apache.org/)
+    - [Sqoop 官网](https://sqoop.apache.org/)
   - **书籍**
     - [《Hadoop 权威指南（第四版）》](https://book.douban.com/subject/27115351/)
     - [《Hive 编程指南》](https://book.douban.com/subject/25791255/)
@@ -141,9 +144,17 @@ index: false
     - [深入浅出 Zookeeper（一） Zookeeper 架构及 FastLeaderElection 机制](http://www.jasongj.com/zookeeper/fastleaderelection/)
     - [Introduction to Apache ZooKeeper](https://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)
     - [Zookeeper 的优缺点](https://blog.csdn.net/wwwsq/article/details/7644445)
+- **Hive**
+  - [Hive 官网](https://hive.apache.org/)
 - **HBase**
   - **书籍**
     - [《HBase 权威指南》](https://book.douban.com/subject/10748460/)
+- **Flume**
+  - [Flume 官网](https://flume.apache.org/)
+  - [Flume 官方文档](https://flume.apache.org/releases/content/1.11.0/FlumeUserGuide.html)
+- **Sqoop**
+  - [Sqoop Github](https://sqoop.apache.org/)
+  - [Sqoop 官网](https://sqoop.apache.org/)
 
 ## 🚪 传送
 

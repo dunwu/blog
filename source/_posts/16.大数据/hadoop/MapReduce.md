@@ -2,7 +2,6 @@
 icon: devicon:hadoop
 title: MapReduce
 date: 2020-06-22 00:22:25
-order: 03
 categories:
   - 大数据
   - hadoop

@@ -7,11 +7,15 @@ categories:
 tags:
   - 数据库
   - 搜索引擎数据库
-  - Elasticsearch
+  - elasticsearch
 permalink: /pages/bc8326a0/
 ---
 
 # 《极客时间教程 - Elasticsearch 核心技术与实战》笔记一
+
+[极客时间教程 - Elasticsearch 核心技术与实战](https://time.geekbang.org/course/detail/100030501-102659) 学习笔记
+
+<!-- more -->
 
 ## 第一章：概述
 

@@ -1,14 +1,15 @@
 ---
+icon: logos:kafka-icon
 title: Kafka 快速入门
 date: 2020-06-03 09:55:35
 categories:
   - 分布式
   - 分布式通信
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 tags:
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 permalink: /pages/838a5f6a/
 ---
 

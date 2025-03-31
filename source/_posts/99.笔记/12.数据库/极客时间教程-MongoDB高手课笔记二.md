@@ -1,4 +1,5 @@
 ---
+icon: logos:mongodb
 title: 《极客时间教程 - MongoDB 高手课》笔记二
 date: 2024-10-17 07:19:53
 categories:
@@ -7,11 +8,15 @@ categories:
 tags:
   - 数据库
   - 文档数据库
-  - MongoDB
+  - mongodb
 permalink: /pages/463dcaa5/
 ---
 
 # 《极客时间教程 - MongoDB 高手课》笔记二
+
+[极客时间教程 - MongoDB 高手课](https://time.geekbang.org/course/intro/100040001) 学习笔记
+
+<!-- more -->
 
 ## 第三章：分片集群与高级运维之道
 
@@ -309,4 +314,4 @@ TODO：补图
 
 ## 参考资料
 
-- [MongoDB 高手课](https://time.geekbang.org/course/intro/100040001)
+- [极客时间教程 - MongoDB 高手课](https://time.geekbang.org/course/intro/100040001)

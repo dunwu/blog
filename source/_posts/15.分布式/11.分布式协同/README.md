@@ -24,11 +24,11 @@ index: false
   - [分布式锁](01.分布式协同综合/分布式锁.md) - 关键词：`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`、`公平性`
   - [分布式协同面试](01.分布式协同综合/分布式协同面试.md) 💯
 - **ZooKeeper**
-  - [ZooKeeper 原理](02.ZooKeeper/01.ZooKeeper原理.md)
-  - [ZooKeeper Java Api](02.ZooKeeper/02.ZooKeeperJavaApi.md)
-  - [ZooKeeper 命令](02.ZooKeeper/03.ZooKeeper命令.md)
-  - [ZooKeeper 运维](02.ZooKeeper/04.ZooKeeper运维.md)
-  - [ZooKeeper Acl](02.ZooKeeper/05.ZooKeeperAcl.md)
+  - [ZooKeeper 原理](02.ZooKeeper/ZooKeeper原理.md)
+  - [ZooKeeper Java Api](02.ZooKeeper/ZooKeeperJavaApi.md)
+  - [ZooKeeper 命令](02.ZooKeeper/ZooKeeper命令.md)
+  - [ZooKeeper 运维](02.ZooKeeper/ZooKeeper运维.md)
+  - [ZooKeeper Acl](02.ZooKeeper/ZooKeeperAcl.md)
 
 ## 🚪 传送
 

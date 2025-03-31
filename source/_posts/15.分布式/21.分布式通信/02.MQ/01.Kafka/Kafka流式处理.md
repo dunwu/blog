@@ -1,14 +1,15 @@
 ---
+icon: logos:kafka-icon
 title: Kafka 流式处理
 date: 2020-07-24 06:52:07
 categories:
   - 分布式
   - 分布式通信
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 tags:
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 permalink: /pages/640d44c6/
 ---
 

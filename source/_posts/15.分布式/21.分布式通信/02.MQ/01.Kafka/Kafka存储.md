@@ -1,14 +1,15 @@
 ---
+icon: logos:kafka-icon
 title: Kafka 存储
 date: 2021-04-29 08:17:17
 categories:
   - 分布式
   - 分布式通信
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 tags:
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 permalink: /pages/4d7aaaa2/
 ---
 

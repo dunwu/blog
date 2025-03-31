@@ -1,4 +1,5 @@
 ---
+icon: simple-icons:apachehive
 title: Hive 常用 DDL 操作
 date: 2020-02-24 21:14:47
 order: 05
@@ -7,7 +8,7 @@ categories:
   - hive
 tags:
   - 大数据
-  - Hive
+  - hive
 permalink: /pages/32f9d1d4/
 ---
 

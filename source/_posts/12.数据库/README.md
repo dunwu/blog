@@ -45,102 +45,127 @@ index: false
 
 ## 目录
 
-### [关系型数据库](03.关系型数据库)
+### 数据库综合
 
-- [`关系型数据库其他知识`](03.关系型数据库/99.其他)
+- [Nosql 技术选型](01.数据库综合/Nosql技术选型.md)
+- [数据结构与数据库索引](01.数据库综合/数据结构与数据库索引.md)
 
-  [`H2 应用指南`](03.关系型数据库/99.其他/02.H2.md)、[`PostgreSQL 应用指南`](03.关系型数据库/99.其他/01.PostgreSQL.md)、[`sqlite`](03.关系型数据库/99.其他/03.Sqlite.md)
+### 数据库中间件
 
-- [`关系型数据库综合知识`](03.关系型数据库/01.综合)
+- [ShardingSphere](02.数据库中间件/ShardingSphere.md)
+- [Flyway](02.数据库中间件/Flyway.md)
 
-  [关系数据库简介](03.关系型数据库/01.综合/关系数据库简介.md)、[SQL 语法](03.关系型数据库/01.综合/SQL语法.md)
+### 关系型数据库
 
-- [Mysql 教程](03.关系型数据库/02.Mysql)
+> [关系型数据库](03.关系型数据库) 整理主流关系型数据库知识点。
 
-  [Mysql 架构](03.关系型数据库/02.Mysql/Mysql_架构)、[Mysql 存储引擎](03.关系型数据库/02.Mysql/Mysql_存储引擎)、[Mysql 索引](03.关系型数据库/02.Mysql/Mysql_索引)、[Mysql 事务](03.关系型数据库/02.Mysql/Mysql_事务)、[Mysql 锁](03.关系型数据库/02.Mysql/Mysql_锁)、[Mysql 高可用](03.关系型数据库/02.Mysql/Mysql_高可用)、[Mysql 优化](03.关系型数据库/02.Mysql/Mysql_优化)、[Mysql 运维](03.关系型数据库/02.Mysql/Mysql_运维)、[Mysql 面试](03.关系型数据库/02.Mysql/Mysql_面试)
+- [关系数据库简介](03.关系型数据库/关系数据库简介.md)
+- [SQL](03.关系型数据库/SQL.md)
+- [PostgreSQL](03.关系型数据库/PostgreSQL.md)
+- [H2](03.关系型数据库/H2.md)
+- [SqLite](03.关系型数据库/SqLite.md)
 
-### [列式数据库](06.列式数据库)
+#### [MySQL](03.关系型数据库/mysql)
 
-- [`HBase 教程`](06.列式数据库/01.HBase)
+- [MySQL 架构](03.关系型数据库/mysql/MySQL_架构.md)
+- [MySQL 存储引擎](03.关系型数据库/mysql/MySQL_存储引擎.md)
+- [MySQL 索引](03.关系型数据库/mysql/MySQL_索引.md)
+- [MySQL 事务](03.关系型数据库/mysql/MySQL_事务.md)
+- [MySQL 锁](03.关系型数据库/mysql/MySQL_锁.md)
+- [MySQL 复制](03.关系型数据库/mysql/MySQL_复制.md)
+- [MySQL 优化](03.关系型数据库/mysql/MySQL_优化.md)
+- [MySQL 运维](03.关系型数据库/mysql/MySQL_运维.md)
+- [MySQL 面试](03.关系型数据库/mysql/MySQL_面试.md) 💯
+- [MySQL 面试之索引篇](03.关系型数据库/mysql/MySQL_面试_索引.md) 💯
+- [MySQL 面试之事务和锁篇](03.关系型数据库/mysql/MySQL_面试_事务和锁.md) 💯
 
-  [`HBase 架构`](06.列式数据库/01.HBase/04.HBase架构.md)、[`HBase 快速入门`](06.列式数据库/01.HBase/01.HBase快速入门.md)、[`HBase 命令`](06.列式数据库/01.HBase/22.HBase命令.md)、[`HBase 数据模型`](06.列式数据库/01.HBase/02.HBase数据模型.md)、[`HBase 运维`](06.列式数据库/01.HBase/21.HBase运维.md)、[`HBase Java API 高级特性之过滤器`](06.列式数据库/01.HBase/11.HBaseJavaApi高级特性之过滤器.md)、[`HBase Java API 高级特性之协处理器`](06.列式数据库/01.HBase/12.HBaseJavaApi高级特性之协处理器.md)、[`HBase Java API 管理功能`](06.列式数据库/01.HBase/14.HBaseJavaApi管理功能.md)、[`HBase Java API 基础特性`](06.列式数据库/01.HBase/10.HBaseJavaApi基础特性.md)、[`HBase Java API 其他高级特性`](06.列式数据库/01.HBase/13.HBaseJavaApi其他高级特性.md)、[`HBase Schema 设计`](06.列式数据库/01.HBase/03.HBaseSchema设计.md)
+### 文档数据库
 
-- [`Cassandra`](06.列式数据库/02.Cassandra.md)
+#### MongoDB
 
-### [数据库中间件](02.数据库中间件)
+> MongoDB 是一个基于文档的分布式数据库，由 C++ 语言编写。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。
+>
+> MongoDB 是一个介于关系型数据库和非关系型数据库之间的产品。它是非关系数据库当中功能最丰富，最像关系数据库的。它支持的数据结构非常松散，是类似 json 的 bson 格式，因此可以存储比较复杂的数据类型。
+>
+> MongoDB 最大的特点是它支持的查询语言非常强大，其语法有点类似于面向对象的查询语言，几乎可以实现类似关系数据库单表查询的绝大部分功能，而且还支持对数据建立索引。
 
-- [`Shardingsphere`](02.数据库中间件/01.Shardingsphere)
+- [MongoDB 简介](04.文档数据库/mongodb/MongoDB_简介.md)
+- [MongoDB CRUD](04.文档数据库/mongodb/MongoDB_CRUD.md)
+- [MongoDB 聚合](04.文档数据库/mongodb/MongoDB_聚合.md)
+- [MongoDB 索引](04.文档数据库/mongodb/MongoDB_索引.md)
+- [MongoDB 事务](04.文档数据库/mongodb/MongoDB_事务.md)
+- [MongoDB 建模](04.文档数据库/mongodb/MongoDB_建模.md)
+- [MongoDB 复制](04.文档数据库/mongodb/MongoDB_复制.md)
+- [MongoDB 分片](04.文档数据库/mongodb/MongoDB_分片.md)
+- [MongoDB 运维](04.文档数据库/mongodb/MongoDB_运维.md)
+- [MongoDB 面试](04.文档数据库/mongodb/MongoDB_面试.md) 💯
 
-  [`ShardingSphere 简介`](02.数据库中间件/01.Shardingsphere/01.ShardingSphere简介.md)、[`ShardingSphere Jdbc`](02.数据库中间件/01.Shardingsphere/02.ShardingSphereJdbc.md)
+### KV 数据库
 
-- [`版本管理中间件 Flyway`](02.数据库中间件/02.Flyway.md)
+#### [Redis](05.KV数据库/redis)
 
-### [数据库综合](01.数据库综合)
+- [Redis 基本数据类型](05.KV数据库/redis/Redis_数据类型.md) - 关键词：`String`、`Hash`、`List`、`Set`、`Zset`
+- [Redis 高级数据类型](05.KV数据库/redis/Redis_数据类型二.md) - 关键词：`BitMap`、`HyperLogLog`、`Geo`、`Stream`
+- [Redis 数据结构](05.KV数据库/redis/Redis_数据结构.md) - 关键词：`对象`、`SDS`、`链表`、`字典`、`跳表`、`整数集合`、`压缩列表`
+- [Redis 内存管理](05.KV数据库/redis/Redis_内存管理.md) - 关键词：`定时删除`、`惰性删除`、`定期删除`、`LRU`、`LFU`
+- [Redis 持久化](05.KV数据库/redis/Redis_持久化.md) - 关键词：`RDB`、`AOF`、`SAVE`、`BGSAVE`、`appendfsync`
+- [Redis 事件](05.KV数据库/redis/Redis_事件.md) - 关键词：`文件事件`、`时间事件`
+- [Redis 复制](05.KV数据库/redis/Redis_复制.md) - 关键词：`SLAVEOF`、`SYNC`、`PSYNC`、`命令传播`、`心跳`
+- [Redis 哨兵](05.KV数据库/redis/Redis_哨兵.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`Raft`
+- [Redis 集群](05.KV数据库/redis/Redis_集群.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`分区`、`Raft`、`Gossip`
+- [Redis 订阅](05.KV数据库/redis/Redis_订阅.md) - 关键词：`订阅`、`SUBSCRIBE`、`PSUBSCRIBE`、`PUBLISH`、`观察者模式`
+- [Redis 独立功能](05.KV数据库/redis/Redis_事务.md) - 关键词：`事务`、`ACID`、`MULTI`、`EXEC`、`DISCARD`、`WATCH`
+- [Redis 管道](05.KV数据库/redis/Redis_管道.md) - 关键词：`Pipeline`
+- [Redis 脚本](05.KV数据库/redis/Redis_脚本.md) - 关键词：`Lua`
+- [Redis 运维](05.KV数据库/redis/Redis_运维.md) - 关键词：`安装`、`配置`、`命令`、`集群`、`客户端`
+- [Redis 实战](05.KV数据库/redis/Redis_实战.md) - 关键词：`缓存`、`分布式锁`、`布隆过滤器`
+- [Redis 面试](05.KV数据库/redis/Redis_面试.md) - 关键词：`面试`
+- [Redis 面试之数据类型篇](05.KV数据库/redis/Redis_面试_数据类型.md) - 关键词：`面试`
+- [Redis 面试之应用篇](05.KV数据库/redis/Redis_面试_应用.md) - 关键词：`面试`
 
-[`Nosql 技术选型`](01.数据库综合/01.Nosql技术选型.md)、[`数据结构与数据库索引`](01.数据库综合/02.数据结构与数据库索引.md)
+#### [Memcached](05.KV数据库/Memcached.md)
 
-### [搜索引擎数据库](07.搜索引擎数据库)
+### 列式数据库
+
+#### HBase
+
+- [HBase 快速入门](06.列式数据库/hbase/HBase_快速入门.md)
+- [HBase 数据模型](06.列式数据库/hbase/HBase_数据模型.md)
+- [HBase Schema 设计](06.列式数据库/hbase/HBase_Schema.md)
+- [HBase 架构](06.列式数据库/hbase/HBase_架构.md)
+- [HBase Java API 基础特性](06.列式数据库/hbase/HBase_API_基础特性.md)
+- [HBase Java API 高级特性](06.列式数据库/hbase/HBase_API_高级特性.md)
+- [HBase Java API 高级特性之过滤器](06.列式数据库/hbase/HBase_API_高级特性_过滤器.md)
+- [HBase Java API 高级特性之协处理器](06.列式数据库/hbase/HBase_API_高级特性_协处理器.md)
+- [HBase 运维](06.列式数据库/hbase/HBase_运维.md)
+- [HBase 命令](06.列式数据库/hbase/HBase_命令.md)
+- [HBase 面试](06.列式数据库/hbase/HBase_面试.md) 💯
+
+### 搜索引擎数据库
 
 #### Elasticsearch
 
-- [Elasticsearch 简介](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_简介.md)
-- [Elasticsearch 存储](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_存储.md)
-- [Elasticsearch 搜索（上）](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_搜索上.md)
-- [Elasticsearch 搜索（下）](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_搜索下.md)
-- [Elasticsearch 聚合](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_聚合.md)
-- [Elasticsearch 分析](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_分析.md)
-- [Elasticsearch DSL](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_DSL.md)
-- [Elasticsearch 集群](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_集群.md)
-- [Elasticsearch 优化](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_优化.md)
-- [Elasticsearch 运维](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_运维.md)
-- [Elasticsearch API](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_API.md)
-- [ElasticSearch API 之 High Level REST Client](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_API_HighLevelRest.md)
-- [Elasticsearch 面试](07.搜索引擎数据库/01.Elasticsearch/Elasticsearch_面试.md) 💯
+> Elasticsearch 是一个基于 Lucene 的搜索和数据分析工具，它提供了一个分布式服务。Elasticsearch 是遵从 Apache 开源条款的一款开源产品，是当前主流的企业级搜索引擎。
+
+- [Elasticsearch 简介](07.搜索引擎数据库/elasticsearch/Elasticsearch_简介.md)
+- [Elasticsearch 存储](07.搜索引擎数据库/elasticsearch/Elasticsearch_存储.md)
+- [Elasticsearch 搜索（上）](07.搜索引擎数据库/elasticsearch/Elasticsearch_搜索上.md)
+- [Elasticsearch 搜索（下）](07.搜索引擎数据库/elasticsearch/Elasticsearch_搜索下.md)
+- [Elasticsearch 聚合](07.搜索引擎数据库/elasticsearch/Elasticsearch_聚合.md)
+- [Elasticsearch 分析](07.搜索引擎数据库/elasticsearch/Elasticsearch_分析.md)
+- [Elasticsearch 集群](07.搜索引擎数据库/elasticsearch/Elasticsearch_集群.md)
+- [Elasticsearch 优化](07.搜索引擎数据库/elasticsearch/Elasticsearch_优化.md)
+- [Elasticsearch 运维](07.搜索引擎数据库/elasticsearch/Elasticsearch_运维.md)
+- [Elasticsearch API](07.搜索引擎数据库/elasticsearch/Elasticsearch_API.md)
+- [ElasticSearch API 之 High Level REST Client](07.搜索引擎数据库/elasticsearch/Elasticsearch_API_HighLevelRest.md)
+- [Elasticsearch 面试](07.搜索引擎数据库/elasticsearch/Elasticsearch_面试.md) 💯
 
 #### Elastic
 
-- [Elastic 快速入门](07.搜索引擎数据库/02.Elastic/01.Elastic快速入门.md)
-- [Elastic 技术栈之 Filebeat](07.搜索引擎数据库/02.Elastic/02.Elastic技术栈之Filebeat.md)
-- [Filebeat 运维](07.搜索引擎数据库/02.Elastic/03.Filebeat运维.md)
-- [Elastic 技术栈之 Kibana](07.搜索引擎数据库/02.Elastic/04.Elastic技术栈之Kibana.md)
-- [Kibana 运维](07.搜索引擎数据库/02.Elastic/05.Kibana运维.md)
-- [Elastic 技术栈之 Logstash](07.搜索引擎数据库/02.Elastic/06.Elastic技术栈之Logstash.md)
-- [Logstash 运维](07.搜索引擎数据库/02.Elastic/07.Logstash运维.md)
-
-### [文档数据库](04.文档数据库)
-
-- [MongoDB 简介](04.文档数据库/01.MongoDB/MongoDB_简介.md)
-- [MongoDB CRUD](04.文档数据库/01.MongoDB/MongoDB_CRUD.md)
-- [MongoDB 聚合](04.文档数据库/01.MongoDB/MongoDB_聚合.md)
-- [MongoDB 事务](04.文档数据库/01.MongoDB/MongoDB_事务.md)
-- [MongoDB 建模](04.文档数据库/01.MongoDB/MongoDB_建模.md)
-- [MongoDB 索引](04.文档数据库/01.MongoDB/MongoDB_索引.md)
-- [MongoDB 复制](04.文档数据库/01.MongoDB/MongoDB_复制.md)
-- [MongoDB 分片](04.文档数据库/01.MongoDB/MongoDB_分片.md)
-- [MongoDB 运维](04.文档数据库/01.MongoDB/MongoDB_运维.md)
-
-### [KV 数据库](05.KV数据库)
-
-#### [Redis](05.KV数据库/01.Redis)
-
-- [Redis 基本数据类型](05.KV数据库/01.Redis/Redis_数据类型.md) - 关键词：`String`、`Hash`、`List`、`Set`、`Zset`
-- [Redis 高级数据类型](05.KV数据库/01.Redis/Redis_数据类型二.md) - 关键词：`BitMap`、`HyperLogLog`、`Geo`、`Stream`
-- [Redis 数据结构](05.KV数据库/01.Redis/Redis_数据结构.md) - 关键词：`对象`、`SDS`、`链表`、`字典`、`跳表`、`整数集合`、`压缩列表`
-- [Redis 内存管理](05.KV数据库/01.Redis/Redis_内存管理.md) - 关键词：`定时删除`、`惰性删除`、`定期删除`、`LRU`、`LFU`
-- [Redis 持久化](05.KV数据库/01.Redis/Redis_持久化.md) - 关键词：`RDB`、`AOF`、`SAVE`、`BGSAVE`、`appendfsync`
-- [Redis 事件](05.KV数据库/01.Redis/Redis_事件.md) - 关键词：`文件事件`、`时间事件`
-- [Redis 复制](05.KV数据库/01.Redis/Redis_复制.md) - 关键词：`SLAVEOF`、`SYNC`、`PSYNC`、`命令传播`、`心跳`
-- [Redis 哨兵](05.KV数据库/01.Redis/Redis_哨兵.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`Raft`
-- [Redis 集群](05.KV数据库/01.Redis/Redis_集群.md) - 关键词：`高可用`、`监控`、`选主`、`故障转移`、`分区`、`Raft`、`Gossip`
-- [Redis 订阅](05.KV数据库/01.Redis/Redis_订阅.md) - 关键词：`订阅`、`SUBSCRIBE`、`PSUBSCRIBE`、`PUBLISH`、`观察者模式`
-- [Redis 独立功能](05.KV数据库/01.Redis/Redis_事务.md) - 关键词：`事务`、`ACID`、`MULTI`、`EXEC`、`DISCARD`、`WATCH`
-- [Redis 管道](05.KV数据库/01.Redis/Redis_管道.md) - 关键词：`Pipeline`
-- [Redis 脚本](05.KV数据库/01.Redis/Redis_脚本.md) - 关键词：`Lua`
-- [Redis 运维](05.KV数据库/01.Redis/Redis_运维.md) - 关键词：`安装`、`配置`、`命令`、`集群`、`客户端`
-- [Redis 实战](05.KV数据库/01.Redis/Redis_实战.md) - 关键词：`缓存`、`分布式锁`、`布隆过滤器`
-- [Redis 面试](05.KV数据库/01.Redis/Redis_面试.md) - 关键词：`面试`
-
-#### [Redis](05.KV数据库/02.Memcached.md)
+- [Elastic](07.搜索引擎数据库/elastic/Elastic.md)
+- [Kibana](07.搜索引擎数据库/elastic/Kibana.md)
+- [Logstash](07.搜索引擎数据库/elastic/Logstash.md)
+- [Filebeat](07.搜索引擎数据库/elastic/Filebeat.md)
 
 ## 资料 📚
 
@@ -170,11 +195,11 @@ index: false
 - **Oracle 资料**
   - [《Oracle Database 9i/10g/11g 编程艺术》](https://book.douban.com/subject/5402711/)
 
-#### Mysql 资料
+#### MySQL 资料
 
 - **官方**
-  - [Mysql 官网](https://www.mysql.com/)
-  - [Mysql 官方文档](https://dev.mysql.com/doc/)
+  - [MySQL 官网](https://www.mysql.com/)
+  - [MySQL 官方文档](https://dev.mysql.com/doc/)
   - **官方 PPT**
     - [How to Analyze and Tune MySQL Queries for Better Performance](https://www.mysql.com/cn/why-mysql/presentations/tune-mysql-queries-performance/)
     - [MySQL Performance Tuning 101](https://www.mysql.com/cn/why-mysql/presentations/mysql-performance-tuning101/)
@@ -186,7 +211,7 @@ index: false
 - **书籍**
   - [《高性能 MySQL》](https://book.douban.com/subject/23008813/) - 经典，适合 DBA 或作为开发者的参考手册【进阶】
   - [《MySQL 技术内幕：InnoDB 存储引擎》](https://book.douban.com/subject/24708143/)
-  - [《MySQL 必知必会》](https://book.douban.com/subject/3354490/) - Mysql 的基本概念和语法【入门】
+  - [《MySQL 必知必会》](https://book.douban.com/subject/3354490/) - MySQL 的基本概念和语法【入门】
 - **教程**
   - [MySQL 实战 45 讲](https://time.geekbang.org/column/intro/139)
   - [runoob.com MySQL 教程](http://www.runoob.com/mysql/mysql-tutorial.md) - 入门级 SQL 教程
@@ -198,11 +223,11 @@ index: false
   - [Guide to MySQL High Availability](https://www.mysql.com/cn/why-mysql/white-papers/mysql-guide-to-high-availability-solutions/)
   - [Choosing MySQL High Availability Solutions](https://dzone.com/articles/choosing-mysql-high-availability-solutions)
   - [High availability with MariaDB TX: The definitive guide](https://mariadb.com/sites/default/files/content/Whitepaper_High_availability_with_MariaDB-TX.pdf)
-  - Mysql 相关经验
+  - MySQL 相关经验
     - [Booking.com: Evolution of MySQL System Design](https://www.percona.com/live/mysql-conference-2015/sessions/bookingcom-evolution-mysql-system-design) ，Booking.com 的 MySQL 数据库使用的演化，其中有很多不错的经验分享，我相信也是很多公司会遇到的的问题。
     - [Tracking the Money - Scaling Financial Reporting at Airbnb](https://medium.com/airbnb-engineering/tracking-the-money-scaling-financial-reporting-at-airbnb-6d742b80f040) ，Airbnb 的数据库扩展的经验分享。
     - [Why Uber Engineering Switched from Postgres to MySQL](https://eng.uber.com/mysql-migration/) ，无意比较两个数据库谁好谁不好，推荐这篇 Uber 的长文，主要是想让你从中学习到一些经验和技术细节，这是一篇很不错的文章。
-  - Mysql 集群复制
+  - MySQL 集群复制
     - [Monitoring Delayed Replication, With A Focus On MySQL](https://engineering.imvu.com/2013/01/09/monitoring-delayed-replication-with-a-focus-on-mysql/)
     - [Mitigating replication lag and reducing read load with freno](https://githubengineering.com/mitigating-replication-lag-and-reducing-read-load-with-freno/)
     - [Better Parallel Replication for MySQL](https://medium.com/booking-com-infrastructure/better-parallel-replication-for-mysql-14e2d7857813)
@@ -210,12 +235,12 @@ index: false
     - [Evaluating MySQL Parallel Replication Part 3: Benchmarks in Production](https://medium.com/booking-com-infrastructure/evaluating-mysql-parallel-replication-part-3-benchmarks-in-production-db5811058d74)
     - [Evaluating MySQL Parallel Replication Part 4: More Benchmarks in Production](https://medium.com/booking-com-infrastructure/evaluating-mysql-parallel-replication-part-4-more-benchmarks-in-production-49ee255043ab)
     - [Evaluating MySQL Parallel Replication Part 4, Annex: Under the Hood](https://medium.com/booking-com-infrastructure/evaluating-mysql-parallel-replication-part-4-annex-under-the-hood-eb456cf8b2fb)
-  - Mysql 数据分区
+  - MySQL 数据分区
     - [StackOverflow: MySQL sharding approaches?](https://stackoverflow.com/questions/5541421/mysql-sharding-approaches)
     - [Why you don’t want to shard](https://www.percona.com/blog/2009/08/06/why-you-dont-want-to-shard/)
     - [How to Scale Big Data Applications](https://www.percona.com/sites/default/files/presentations/How to Scale Big Data Applications.pdf)
     - [MySQL Sharding with ProxySQL](https://www.percona.com/blog/2016/08/30/mysql-sharding-with-proxysql/)
-  - 各公司的 Mysql 数据分区经验分享
+  - 各公司的 MySQL 数据分区经验分享
     - [MailChimp: Using Shards to Accommodate Millions of Users](https://devs.mailchimp.com/blog/using-shards-to-accommodate-millions-of-users/)
     - [Uber: Code Migration in Production: Rewriting the Sharding Layer of Uber’s Schemaless Datastore](https://eng.uber.com/schemaless-rewrite/)
     - [Sharding & IDs at Instagram](https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c)
@@ -313,10 +338,12 @@ index: false
 - **官方**
   - [MongoDB 官网](https://www.mongodb.com/)
   - [MongoDB Github](https://github.com/mongodb/mongo)
-  - [MongoDB 官方免费教程](https://university.mongodb.com/)
+  - [MongoDB 官方免费教程](https://learn.mongodb.com/)
+- **书籍**
+  - [《MongoDB 权威指南》](https://book.douban.com/subject/35688800/)
 - **教程**
   - [MongoDB 教程](https://www.runoob.com/mongodb/mongodb-tutorial.md)
-  - [MongoDB 高手课](https://time.geekbang.org/course/intro/100040001)
+  - [极客时间教程 - MongoDB 高手课](https://time.geekbang.org/course/intro/100040001)
 - **数据**
   - [mongodb-json-files](https://github.com/ozlerhakan/mongodb-json-files)
 - **文章**

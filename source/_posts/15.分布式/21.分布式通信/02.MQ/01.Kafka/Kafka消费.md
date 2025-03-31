@@ -1,14 +1,15 @@
 ---
+icon: logos:kafka-icon
 title: Kafka 消费
 date: 2021-04-14 15:05:34
 categories:
   - 分布式
   - 分布式通信
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 tags:
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 permalink: /pages/4952bbd2/
 ---
 

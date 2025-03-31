@@ -1,13 +1,13 @@
 ---
+icon: simple-icons:apachehive
 title: Hive 数据查询详解
 date: 2020-02-24 21:14:47
-order: 04
 categories:
   - 大数据
   - hive
 tags:
   - 大数据
-  - Hive
+  - hive
 permalink: /pages/20ca0683/
 ---
 

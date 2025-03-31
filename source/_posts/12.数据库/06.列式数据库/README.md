@@ -18,29 +18,19 @@ index: false
 
 ### HBase
 
-#### [HBase 快速入门](01.HBase/01.HBase快速入门.md)
-
-#### [HBase 数据模型](01.HBase/02.HBase数据模型.md)
-
-#### [HBase Schema 设计](01.HBase/03.HBaseSchema设计.md)
-
-#### [HBase 架构](01.HBase/04.HBase架构.md)
-
-#### [HBase Java API 基础特性](01.HBase/10.HBaseJavaApi基础特性.md)
-
-#### [HBase Java API 高级特性之过滤器](01.HBase/11.HBaseJavaApi高级特性之过滤器.md)
-
-#### [HBase Java API 高级特性之协处理器](01.HBase/12.HBaseJavaApi高级特性之协处理器.md)
-
-#### [HBase Java API 其他高级特性](01.HBase/13.HBaseJavaApi其他高级特性.md)
-
-#### [HBase 运维](01.HBase/21.HBase运维.md)
-
-#### [HBase 命令](01.HBase/22.HBase命令.md)
+- [HBase 快速入门](hbase/HBase_快速入门.md)
+- [HBase 数据模型](hbase/HBase_数据模型.md)
+- [HBase Schema 设计](hbase/HBase_Schema.md)
+- [HBase 架构](hbase/HBase_架构.md)
+- [HBase Java API 基础特性](hbase/HBase_API_基础特性.md)
+- [HBase Java API 高级特性](hbase/HBase_API_高级特性.md)
+- [HBase Java API 高级特性之过滤器](hbase/HBase_API_高级特性_过滤器.md)
+- [HBase Java API 高级特性之协处理器](hbase/HBase_API_高级特性_协处理器.md)
+- [HBase 运维](hbase/HBase_运维.md)
+- [HBase 命令](hbase/HBase_命令.md)
+- [HBase 面试](hbase/HBase_面试.md) 💯
 
 ## 📚 资料
-
-### HBase 资料
 
 - **官方**
   - [HBase 官网](http://hbase.apache.org/)

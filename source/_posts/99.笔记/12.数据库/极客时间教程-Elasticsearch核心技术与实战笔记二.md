@@ -7,11 +7,15 @@ categories:
 tags:
   - 数据库
   - 搜索引擎数据库
-  - Elasticsearch
+  - elasticsearch
 permalink: /pages/87ebfd72/
 ---
 
 # 《极客时间教程 - Elasticsearch 核心技术与实战》笔记二
+
+[极客时间教程 - Elasticsearch 核心技术与实战](https://time.geekbang.org/course/detail/100030501-102659) 学习笔记
+
+<!-- more -->
 
 ## 第四章：深入搜索
 
@@ -1315,7 +1319,7 @@ shard = hash(_routing) % number_of_primary_shards
 
 hash 算法确保离散
 
-默认的 _routing 值是文档 id，可以定制 routing 数值
+默认的 \_routing 值是文档 id，可以定制 routing 数值
 
 这也是设置 setting 中主分片数后，不能随意修改的根本原因。
 
@@ -1333,7 +1337,7 @@ hash 算法确保离散
 
 #### Lucene Index
 
-在 Lucene  中，单个倒排索引文件被称为 Segment。Segment 是自包闭的，不可变更的。多个 Segment 汇总在一起，称为 Lucene 的 Index，其对应的就是 ES 中的 shard
+在 Lucene 中，单个倒排索引文件被称为 Segment。Segment 是自包闭的，不可变更的。多个 Segment 汇总在一起，称为 Lucene 的 Index，其对应的就是 ES 中的 shard
 
 当有新文档写入时，会生成新 Segment，查询时会同时查询所有 Segment，并且对结果汇总。Lucene 中有一个文件，用来记录所有 Segment 信息，叫做 Commit Point。
 
@@ -1399,7 +1403,7 @@ ES 搜索分为两阶段：
 性能问题
 
 - 每个分片上需要查的文档数 = from + size
-- 最终协调节点需要处理 = 主分片数 * ( from + size)
+- 最终协调节点需要处理 = 主分片数 \* ( from + size)
 - 深度分页
 
 相关性算分
@@ -1477,7 +1481,7 @@ POST message/_search?search_type=dfs_query_then_fetch
 
 可以通过设定 sorting 参数，自行设定排序
 
-如果不指定 _score，算分为 null
+如果不指定 \_score，算分为 null
 
 ```shell
 #单字段排序
@@ -1659,7 +1663,7 @@ POST users/_search
     },
     "sort": [
         {"age": "desc"} ,
-        {"_id": "asc"}    
+        {"_id": "asc"}
     ]
 }
 
@@ -1675,7 +1679,7 @@ POST users/_search
           "ZQ0vYGsBrR8X3IP75QqX"],
     "sort": [
         {"age": "desc"} ,
-        {"_id": "asc"}    
+        {"_id": "asc"}
     ]
 }
 

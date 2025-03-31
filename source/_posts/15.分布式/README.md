@@ -39,11 +39,11 @@ index: false
   - [分布式锁](11.分布式协同/01.分布式协同综合/分布式锁.md) - 关键词：`互斥`、`可重入`、`死锁`、`容错`、`自旋尝试`、`公平性`
   - [分布式 ID](11.分布式协同/01.分布式协同综合/分布式ID.md) - 关键词：`UUID`、`自增序列`、`雪花算法`、`Leaf`
 - **ZooKeeper**
-  - [ZooKeeper 原理](11.分布式协同/02.ZooKeeper/01.ZooKeeper原理.md)
-  - [ZooKeeper Java Api](11.分布式协同/02.ZooKeeper/02.ZooKeeperJavaApi.md)
-  - [ZooKeeper 命令](11.分布式协同/02.ZooKeeper/03.ZooKeeper命令.md)
-  - [ZooKeeper 运维](11.分布式协同/02.ZooKeeper/04.ZooKeeper运维.md)
-  - [ZooKeeper Acl](11.分布式协同/02.ZooKeeper/05.ZooKeeperAcl.md)
+  - [ZooKeeper 原理](11.分布式协同/02.ZooKeeper/ZooKeeper原理.md)
+  - [ZooKeeper Java Api](11.分布式协同/02.ZooKeeper/ZooKeeperJavaApi.md)
+  - [ZooKeeper 命令](11.分布式协同/02.ZooKeeper/ZooKeeper命令.md)
+  - [ZooKeeper 运维](11.分布式协同/02.ZooKeeper/ZooKeeper运维.md)
+  - [ZooKeeper Acl](11.分布式协同/02.ZooKeeper/ZooKeeperAcl.md)
 
 ### [分布式调度](12.分布式调度)
 

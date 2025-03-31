@@ -7,11 +7,15 @@ categories:
 tags:
   - 数据库
   - 搜索引擎数据库
-  - Elasticsearch
+  - elasticsearch
 permalink: /pages/0f97fbb0/
 ---
 
 # 《Elasticsearch 实战》笔记
+
+[《Elasticsearch 实战》](https://book.douban.com/subject/30380439/) 学习笔记
+
+<!-- more -->
 
 ## 第 1 章　Elasticsearch 介绍
 

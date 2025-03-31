@@ -11,6 +11,7 @@ tags:
   - hdfs
   - yarn
   - mapreduce
+  - 面试
 permalink: /pages/bbe8ffec/
 ---
 

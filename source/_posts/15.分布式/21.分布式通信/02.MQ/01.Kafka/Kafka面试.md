@@ -1,17 +1,18 @@
 ---
+icon: openmoji:military-medal
 title: Kafka 面试
 cover: https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/mq/kafka/kafka-event-system.png
 date: 2025-02-03 11:15:43
 categories:
   - 分布式
   - 分布式通信
-  - MQ
-  - Kafka
+  - mq
+  - kafka
 tags:
   - Java
   - 中间件
-  - MQ
-  - Kafka
+  - mq
+  - kafka
   - 面试
 permalink: /pages/404a13d7/
 ---

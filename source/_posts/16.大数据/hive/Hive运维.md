@@ -1,13 +1,13 @@
 ---
-title: hive-ops
+icon: simple-icons:apachehive
+title: Hive 运维
 date: 2020-02-24 21:14:47
-order: 07
 categories:
   - 大数据
   - hive
 tags:
   - 大数据
-  - Hive
+  - hive
   - 运维
 permalink: /pages/ffa7d14a/
 ---

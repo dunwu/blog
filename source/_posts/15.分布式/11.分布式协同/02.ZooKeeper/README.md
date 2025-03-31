@@ -7,7 +7,8 @@ categories:
   - ZooKeeper
 tags:
   - 分布式
-  - 分布式协同
+  - 协同
+  - zookeeper
 permalink: /pages/886d8061/
 hidden: true
 index: false
@@ -25,15 +26,12 @@ index: false
 
 ## 📖 内容
 
-### [ZooKeeper 原理](01.ZooKeeper原理.md)
-
-### [ZooKeeper Java Api](02.ZooKeeperJavaApi.md)
-
-### [ZooKeeper 命令](03.ZooKeeper命令.md)
-
-### [ZooKeeper 运维](04.ZooKeeper运维.md)
-
-### [ZooKeeper Acl](05.ZooKeeperAcl.md)
+- [ZooKeeper 原理](ZooKeeper原理.md)
+- [ZooKeeper Java Api](ZooKeeperJavaApi.md)
+- [ZooKeeper 命令](ZooKeeper命令.md)
+- [ZooKeeper 运维](ZooKeeper运维.md)
+- [ZooKeeper Acl](ZooKeeperAcl.md)
+- [ZooKeeper 面试](ZooKeeper面试.md) 💯
 
 ## 📚 资料
 
@@ -43,7 +41,7 @@ index: false
   - [ZooKeeper Github](https://github.com/apache/zookeeper)
   - [Apache Curator 官网](http://curator.apache.org/)
 - **书籍**
-  - [《Hadoop 权威指南（第四版）》](https://item.jd.com/12109713.html)
+  - [《Hadoop 权威指南（第四版）》](https://book.douban.com/subject/27115351/)
   - [《从 Paxos 到 Zookeeper 分布式一致性原理与实践》](https://item.jd.com/11622772.html)
 - **文章**
   - [分布式服务框架 ZooKeeper -- 管理分布式环境中的数据](https://www.ibm.com/developerworks/cn/opensource/os-cn-zookeeper/index.html)
