@@ -13,7 +13,7 @@ tags:
   - redis
   - 持久化
   - CoW
-permalink: /pages/2504588d/
+permalink: /pages/a57cb309/
 ---
 
 # Redis 持久化

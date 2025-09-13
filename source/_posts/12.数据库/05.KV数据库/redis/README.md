@@ -11,7 +11,7 @@ tags:
   - 数据库
   - KV数据库
   - redis
-permalink: /pages/1cdc3dfb/
+permalink: /pages/79c531dd/
 hidden: true
 index: false
 ---

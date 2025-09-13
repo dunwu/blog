@@ -5,12 +5,12 @@ date: 2021-04-14 15:05:34
 categories:
   - 分布式
   - 分布式通信
-  - mq
-  - kafka
+  - MQ
+  - Kafka
 tags:
   - mq
   - kafka
-permalink: /pages/4952bbd2/
+permalink: /pages/50068496/
 ---
 
 # Kafka 消费

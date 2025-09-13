@@ -11,7 +11,7 @@ tags:
   - 搜索引擎数据库
   - elasticsearch
   - 运维
-permalink: /pages/3ce6521e/
+permalink: /pages/35fdbdda/
 ---
 
 # Elasticsearch 运维

@@ -12,7 +12,7 @@ tags:
   - 文档数据库
   - mongodb
   - 聚合
-permalink: /pages/02aefb0c/
+permalink: /pages/9770eefe/
 ---
 
 # MongoDB 聚合

@@ -14,7 +14,7 @@ tags:
   - 日志
   - binlog
   - WAL
-permalink: /pages/b322c2bc/
+permalink: /pages/32f9da1f/
 ---
 
 # MySQL 架构

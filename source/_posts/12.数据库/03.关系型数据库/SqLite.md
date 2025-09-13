@@ -9,7 +9,7 @@ tags:
   - 数据库
   - 关系型数据库
   - sqlite
-permalink: /pages/b4ac0b8f/
+permalink: /pages/9d2583c3/
 ---
 
 # SQLite

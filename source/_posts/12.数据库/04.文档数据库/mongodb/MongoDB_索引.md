@@ -12,7 +12,7 @@ tags:
   - 文档数据库
   - mongodb
   - 索引
-permalink: /pages/567ecac8/
+permalink: /pages/76234dab/
 ---
 
 # MongoDB 索引

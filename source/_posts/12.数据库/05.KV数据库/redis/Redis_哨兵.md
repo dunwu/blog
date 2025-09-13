@@ -15,7 +15,7 @@ tags:
   - 选主
   - 故障转移
   - Raft
-permalink: /pages/10970a97/
+permalink: /pages/d7e7299c/
 ---
 
 # Redis 哨兵
@@ -108,7 +108,7 @@ redis-server /path/to/sentinel.conf --sentinel
 
 ## 选主
 
-> Redis Sentinel 采用 [Raft 协议](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf) 实现了其 Sentinel 选主流程。Raft 是一种共识性算法，想了解其原理，可以参考 [深入剖析共识性算法 Raft](https://dunwu.github.io/waterdrop/pages/9386474c/)。
+> Redis Sentinel 采用 [Raft 协议](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf) 实现了其 Sentinel 选主流程。Raft 是一种共识性算法，想了解其原理，可以参考 [深入剖析共识性算法 Raft](https://dunwu.github.io/waterdrop/pages/3a64eb94/)。
 
 **当一个“主服务器”被判断为“客观下线”时，监视该主服务器的各个 Sentinel 会进行“协商”，选举出一个领头的 Sentinel（Leader），并由领头 Sentinel 对下线主服务器执行“故障转移”操作**。
 

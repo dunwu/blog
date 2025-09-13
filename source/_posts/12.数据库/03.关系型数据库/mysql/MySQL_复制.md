@@ -12,7 +12,7 @@ tags:
   - mysql
   - 复制
   - 读写分离
-permalink: /pages/f3f7b97e/
+permalink: /pages/b903a448/
 ---
 
 # MySQL 复制

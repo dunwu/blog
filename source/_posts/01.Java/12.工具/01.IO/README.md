@@ -16,7 +16,7 @@ index: false
 
 # Java 序列化工具
 
-Java 官方的序列化存在许多问题，因此，很多人更愿意使用优秀的第三方序列化工具来替代 Java 自身的序列化机制。 如果想详细了解 Java 自身序列化方式，可以参考：[Java 序列化](https://dunwu.github.io/waterdrop/pages/76ab164b/)
+Java 官方的序列化存在许多问题，因此，很多人更愿意使用优秀的第三方序列化工具来替代 Java 自身的序列化机制。 如果想详细了解 Java 自身序列化方式，可以参考：[Java 序列化](https://dunwu.github.io/waterdrop/pages/737e5233/)
 
 序列化库技术选型：
 

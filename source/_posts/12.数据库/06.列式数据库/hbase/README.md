@@ -11,7 +11,7 @@ tags:
   - 列式数据库
   - 大数据
   - hbase
-permalink: /pages/ed5e0d7f/
+permalink: /pages/a8b8ce65/
 hidden: true
 index: false
 ---

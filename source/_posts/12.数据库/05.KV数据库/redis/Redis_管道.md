@@ -11,7 +11,7 @@ tags:
   - KV数据库
   - redis
   - Pipeline
-permalink: /pages/85187ea4/
+permalink: /pages/e6cde42a/
 ---
 
 # Redis 管道

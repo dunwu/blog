@@ -9,7 +9,7 @@ tags:
   - 分布式
   - 协同
   - zookeeper
-permalink: /pages/029ebe41/
+permalink: /pages/accb64fe/
 ---
 
 # ZooKeeper Java Api

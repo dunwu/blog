@@ -9,7 +9,7 @@ tags:
   - 大数据
   - hadoop
   - mapreduce
-permalink: /pages/6ef773ed/
+permalink: /pages/18d7f671/
 ---
 
 # MapReduce

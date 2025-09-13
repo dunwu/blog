@@ -141,7 +141,7 @@ Java 领域，常见的序列化技术如下
 - [Hessian](http://hessian.caucho.com/doc/hessian-overview.xtp)：适用于**对开发体验敏感，性能有要求**。
 - [Jackson](https://github.com/FasterXML/jackson)、[Gson](https://github.com/google/gson)、[Fastjson](https://github.com/alibaba/fastjson)：适用于对序列化后的数据要求有**良好的可读性**（转为 json 、xml 形式）。
 
-> 扩展阅读：[深入理解 Java 序列化](https://dunwu.github.io/waterdrop/pages/dc9f1331/)
+> 扩展阅读：[深入理解 Java 序列化](https://dunwu.github.io/waterdrop/pages/737e5233/)
 
 :::
 
@@ -230,7 +230,7 @@ RPC 框架会自动为要调用的接口生成一个代理类。当在项目中�
 
 单纯从代理功能上来看，JDK 默认的代理功能是有一定的局限性的，它要求被代理的类只能是接口。原因是因为生成的代理类会继承 Proxy 类，但 Java 是不支持多重继承的。此外，由于它生成后的代理类是使用反射来完成方法调用的，而这种方式相对直接用编码调用来说，性能会降低。
 
-> 反射+动态代理更多详情可以参考：[深入理解 Java 反射和动态代理](https://dunwu.github.io/waterdrop/pages/31248a53/)
+> 反射+动态代理更多详情可以参考：[深入理解 Java 反射和动态代理](https://dunwu.github.io/waterdrop/pages/1337a0f7/)
 
 :::
 
@@ -271,7 +271,7 @@ RPC 框架依赖的注册中心的服务数据的一致性其实并不需要满�
 
 ### 【中级】负载均衡有哪些策略？
 
-> 负载均衡详情可以参考：[负载均衡基本原理](https://dunwu.github.io/waterdrop/pages/bcf0fb8c/)
+> 负载均衡详情可以参考：[负载均衡基本原理](https://dunwu.github.io/waterdrop/pages/6da58e4b/)
 
 ### 【中级】如何设计自适应的负载均衡？
 

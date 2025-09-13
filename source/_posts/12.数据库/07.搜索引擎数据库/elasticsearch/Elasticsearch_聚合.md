@@ -13,7 +13,7 @@ tags:
   - 聚合
   - 指标
   - 管道
-permalink: /pages/c6244284/
+permalink: /pages/f8ea2ae7/
 ---
 
 # Elasticsearch 聚合

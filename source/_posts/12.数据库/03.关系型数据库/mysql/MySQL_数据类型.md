@@ -11,7 +11,7 @@ tags:
   - 关系型数据库
   - mysql
   - 数据类型
-permalink: /pages/320f00db/
+permalink: /pages/4a421d1e/
 ---
 
 # MySQL 数据类型

@@ -9,7 +9,7 @@ tags:
   - 数据库
   - 关系型数据库
   - postgresql
-permalink: /pages/31bd28da/
+permalink: /pages/c6f64f7b/
 ---
 
 # PostgreSQL

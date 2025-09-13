@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - hive
-permalink: /pages/c6465f21/
+permalink: /pages/f03b2e49/
 ---
 
 # Hive 常用 DML 操作

@@ -12,7 +12,7 @@ tags:
   - 中间件
   - MQ
   - RocketMQ
-permalink: /pages/546c5f8a/
+permalink: /pages/9b5ed9a6/
 ---
 
 # RocketMQ 基本原理

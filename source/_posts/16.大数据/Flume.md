@@ -7,7 +7,7 @@ categories:
 tags:
   - 大数据
   - Flume
-permalink: /pages/c9b51a18/
+permalink: /pages/bd30ced6/
 ---
 
 # Flume

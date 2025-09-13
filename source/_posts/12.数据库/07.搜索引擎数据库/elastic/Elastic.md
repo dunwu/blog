@@ -10,7 +10,7 @@ tags:
   - 数据库
   - 搜索引擎数据库
   - elastic
-permalink: /pages/5ef200a5/
+permalink: /pages/bc341aee/
 ---
 
 # Elastic 快速入门

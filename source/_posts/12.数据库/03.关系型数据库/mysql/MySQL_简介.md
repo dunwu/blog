@@ -11,7 +11,7 @@ tags:
   - 数据库
   - 关系型数据库
   - mysql
-permalink: /pages/d46aa18d/
+permalink: /pages/b175ecc6/
 ---
 
 # MySQL 简介

@@ -9,7 +9,7 @@ tags:
   - 大数据
   - hive
   - 运维
-permalink: /pages/ffa7d14a/
+permalink: /pages/c9cd1487/
 ---
 
 # Hive 运维

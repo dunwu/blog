@@ -11,7 +11,7 @@ tags:
   - 列式数据库
   - 大数据
   - hbase
-permalink: /pages/f033c70f/
+permalink: /pages/d4739660/
 ---
 
 # HBase 数据模型

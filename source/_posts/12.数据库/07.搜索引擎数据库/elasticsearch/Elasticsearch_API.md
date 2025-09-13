@@ -12,7 +12,7 @@ tags:
   - 搜索引擎数据库
   - elasticsearch
   - API
-permalink: /pages/24933bd4/
+permalink: /pages/4c174dbb/
 ---
 
 # ElasticSearch API

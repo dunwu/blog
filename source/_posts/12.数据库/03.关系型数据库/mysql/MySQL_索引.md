@@ -12,7 +12,7 @@ tags:
   - 关系型数据库
   - mysql
   - 索引
-permalink: /pages/2ce0ae87/
+permalink: /pages/2f9875b2/
 ---
 
 # MySQL 索引

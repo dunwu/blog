@@ -12,7 +12,7 @@ tags:
   - redis
   - 订阅
   - 观察者模式
-permalink: /pages/c03b7b4f/
+permalink: /pages/f8784ef0/
 ---
 
 # Redis 发布订阅

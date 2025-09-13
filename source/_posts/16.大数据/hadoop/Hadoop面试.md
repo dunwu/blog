@@ -12,7 +12,7 @@ tags:
   - yarn
   - mapreduce
   - 面试
-permalink: /pages/bbe8ffec/
+permalink: /pages/9da66d60/
 ---
 
 # Hadoop 面试

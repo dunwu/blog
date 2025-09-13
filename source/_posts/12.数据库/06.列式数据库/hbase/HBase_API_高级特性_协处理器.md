@@ -12,7 +12,7 @@ tags:
   - 大数据
   - hbase
   - API
-permalink: /pages/ae009b3b/
+permalink: /pages/bfd041c2/
 ---
 
 # HBase Java API 高级特性之协处理器

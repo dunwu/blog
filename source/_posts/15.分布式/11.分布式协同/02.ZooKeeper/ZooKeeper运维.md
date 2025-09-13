@@ -9,7 +9,7 @@ tags:
   - 分布式
   - 协同
   - zookeeper
-permalink: /pages/c26d08a8/
+permalink: /pages/5b98b2ad/
 ---
 
 # ZooKeeper 运维指南

@@ -15,7 +15,7 @@ tags:
   - 读写锁
   - 悲观锁
   - 乐观锁
-permalink: /pages/a49b76af/
+permalink: /pages/e8b82f62/
 ---
 
 # MySQL 锁

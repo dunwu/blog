@@ -12,7 +12,7 @@ tags:
   - elasticsearch
   - 查询
   - DSL
-permalink: /pages/f8fab8f0/
+permalink: /pages/47b49254/
 ---
 
 # Elasticsearch 搜索（下）

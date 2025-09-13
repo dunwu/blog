@@ -11,7 +11,7 @@ tags:
   - 搜索引擎数据库
   - elasticsearch
   - 性能
-permalink: /pages/a363fdc7/
+permalink: /pages/3d7b99ac/
 ---
 
 # Elasticsearch 优化

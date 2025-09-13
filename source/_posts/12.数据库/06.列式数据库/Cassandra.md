@@ -9,7 +9,7 @@ tags:
   - 数据库
   - 列式数据库
   - cassandra
-permalink: /pages/d62ca29b/
+permalink: /pages/e6171578/
 ---
 
 # Cassandra

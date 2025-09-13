@@ -9,7 +9,7 @@ categories:
 tags:
   - 大数据
   - hive
-permalink: /pages/32f9d1d4/
+permalink: /pages/b903eb35/
 ---
 
 # Hive 常用 DDL 操作

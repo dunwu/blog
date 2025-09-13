@@ -12,7 +12,7 @@ tags:
   - elasticsearch
   - 存储
   - 索引
-permalink: /pages/f648b115/
+permalink: /pages/3f525850/
 ---
 
 # Elasticsearch 架构

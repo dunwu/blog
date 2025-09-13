@@ -5,7 +5,7 @@ cover: https://raw.githubusercontent.com/dunwu/images/master/snap/20250311080391
 date: 2020-07-13 17:03:42
 categories:
   - 数据库
-  - KV 数据库
+  - KV数据库
   - redis
 tags:
   - 数据库
@@ -19,22 +19,16 @@ permalink: /pages/bc315f0e/
 
 ## Redis 数据类型
 
-### 【基础】Redis 支持哪些数据类型？
-
-::: details 要点
+### 【简单】Redis 支持哪些数据类型？
 
 - Redis 支持五种基本数据类型：String（字符串）、Hash（哈希）、List（列表）、Set（集合）、Zset（有序集合）。
 - 随着 Redis 版本升级，又陆续支持以下数据类型： BitMap（2.2 版新增）、HyperLogLog（2.8 版新增）、GEO（3.2 版新增）、Stream（5.0 版新增）。
 
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/202309232155082.png)
+![](https://raw.githubusercontent.com/dunwu/images/master/202506152022430.png)
 
 > **扩展**：[What Redis data structures look like](https://redislabs.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/)
 
-:::
-
-### 【基础】Redis 基础数据类型的常见命令有哪些？
-
-::: details 要点
+### 【简单】Redis 基础数据类型的常见命令有哪些？
 
 #### String 命令
 
@@ -105,11 +99,7 @@ permalink: /pages/bc315f0e/
 
 > **扩展**；[Redis ZSet 类型官方命令文档](https://redis.io/commands#sorted_set)
 
-:::
-
-### 【中级】Redis 各数据类型的应用场景？
-
-::: details 要点
+### 【中等】Redis 各数据类型的应用场景？
 
 - **String（字符串）** - 缓存对象、分布式 Session、分布式锁、计数器、限流器、分布式 ID 等。
 - **Hash（哈希）** - 缓存对象、购物车等。
@@ -123,13 +113,9 @@ permalink: /pages/bc315f0e/
 
 ![](https://raw.githubusercontent.com/dunwu/images/master/snap/202309232144470.jpg)
 
-:::
+### 【困难】Redis 基础数据类型的底层实现是怎样的？
 
-### 【高级】Redis 基础数据类型的底层实现是怎样的？
-
-::: details 要点
-
-![](https://raw.githubusercontent.com/dunwu/images/master/snap/202309241112034.png)
+![](https://raw.githubusercontent.com/dunwu/images/master/202506152022257.png)
 
 - **String 类型** - String 类型的底层数据结构是 SDS。SDS 是 Redis 针对字符串类型的优化，具有以下特性：
   - 常数复杂度获取字符串长度
@@ -148,11 +134,7 @@ permalink: /pages/bc315f0e/
   - 有序集合保存的元素数量小于 `128` 个；
   - 有序集合保存的所有元素成员的长度都小于 `64` 字节；
 
-:::
-
-### 【高级】Redis 为什么用 `listpack` 替代 `ziplist`？
-
-::: details 要点
+### 【困难】Redis 为什么用 `listpack` 替代 `ziplist`？
 
 **`listpack` 是 Redis 5.0 引入的优化结构，用来替代 `ziplist`**，作为 `hash`、`list`、`zset` 数据类型的实现编码之一。
 
@@ -164,10 +146,6 @@ permalink: /pages/bc315f0e/
 | **内存占用** | 预留空间可能浪费        | 按需分配，更紧凑            |
 | **安全性**   | 需手动校验边界          | 内置长度校验，防溢出        |
 | **版本**     | Redis 旧版本            | Redis 5.0+ 的 Hash、ZSet 等 |
-
-:::
-
-::: details 细节
 
 **`ziplist` 的缺陷**
 
@@ -182,11 +160,7 @@ permalink: /pages/bc315f0e/
 - **更强的安全性** - 每个节点记录 **总长度** 和 **校验字段**，避免解析越界。
 - **兼容性与平滑替换** - `listpack` 的 API 设计兼容 `ziplist`，Redis 内部可无缝迁移（如 Hash、ZSet 的底层实现）。
 
-:::
-
-### 【高级】为什么 Zset 用跳表实现而不是红黑树、B+树？
-
-::: details 要点
+### 【困难】为什么 Zset 用跳表实现而不是红黑树、B+树？
 
 - **实现简单性**
   - 跳表的实现比红黑树简单得多，代码更易于维护和调试。
@@ -208,11 +182,7 @@ permalink: /pages/bc315f0e/
   - Redis 的 Zset 需要同时支持按 score 和按 member 查询，跳表+哈希表的组合完美满足这一需求
   - Redis 是内存数据库，不需要考虑 B+树针对磁盘 I/O 优化的特性
 
-:::
-
-### 【高级】跳表的实现原理是什么？
-
-::: details 要点
+### 【困难】跳表的实现原理是什么？
 
 跳表是一种可以实现二分查找的有序链表，通过多级索引提升查找效率。跳表的查找、插入、删除操作的时间复杂度均为 O(log n)，与平衡二叉树（如红黑树）接近。
 
@@ -247,21 +217,13 @@ permalink: /pages/bc315f0e/
 - 索引节点总数为 `n/2 + n/4 + n/8 + … ≈ n`，空间复杂度为 **O(n)**。
 - 可通过调整索引密度（如每 3 个节点抽 1 个）减少空间占用，但会牺牲部分查找效率。
 
-:::
-
-### 【高级】Redis 利用什么机制来实现各种数据结构？
-
-::: details 要点
+### 【困难】Redis 利用什么机制来实现各种数据结构？
 
 Redis 并没有直接使用这些数据结构来实现键值对数据库， 而是基于这些数据结构创建了一个对象系统， 这个系统包含字符串对象、列表对象、哈希对象、集合对象和有序集合对象这五种类型的对象。
 
 Redis 数据库中的每个键值对的键和值都是一个对象。Redis 共有字符串、列表、哈希、集合、有序集合五种类型的对象， 每种类型的对象至少都有两种或以上的编码方式， 不同的编码可以在不同的使用场景上优化对象的使用效率。
 
 服务器在执行某些命令之前， 会先检查给定键的类型能否执行指定的命令， 而检查一个键的类型就是检查键的值对象的类型。
-
-:::
-
-::: details 细节
 
 #### 对象的类型
 
@@ -345,17 +307,9 @@ Redis 会在初始化服务器时， 共享值为 `0` 到 `9999`
 
 如果服务器打开了 `maxmemory` 选项， 并且服务器用于回收内存的算法为 `volatile-lru` 或者 `allkeys-lru` ， 那么当服务器占用的内存数超过了 `maxmemory` 选项所设置的上限值时， 空转时长较高的那部分键会优先被服务器释放， 从而回收内存。
 
-:::
-
-### 【中级】如何使用 Redis 实现排行榜？
-
-::: details 要点
+### 【中等】如何使用 Redis 实现排行榜？
 
 各种排行榜，如：内容平台（视频、歌曲、文章）的播放量/收藏量/评分排行榜；电商网站的销售排行榜等等，都可以基于 Redis zset 类型来实现。
-
-:::
-
-::: details 细节
 
 我们以博文点赞排名为例，dunwu 发表了五篇博文，分别获得赞为 200、40、100、50、150。
 
@@ -416,11 +370,7 @@ Redis 会在初始化服务器时， 共享值为 `0` 到 `9999`
 6) "200"
 ```
 
-:::
-
-### 【中级】如何使用 Redis 实现百万级网页 UV 计数？
-
-::: details 要点
+### 【中等】如何使用 Redis 实现百万级网页 UV 计数？
 
 Redis HyperLogLog 是 Redis 2.8.9 版本新增的数据类型，是一种**用于“统计基数”的数据集合类型**，基数统计就是指统计一个集合中不重复的元素个数。但要注意，**HyperLogLog 是统计规则是基于概率完成的，不是非常准确，标准误算率是 0.81%**（统计结果为 100 万时，实际可能在 99.19 万~100.81 万之间）。
 
@@ -450,11 +400,7 @@ Redis HyperLogLog 是 Redis 2.8.9 版本新增的数据类型，是一种**用�
   PFCOUNT page1:uv  # 返回近似 UV 数（如 100 万）
   ```
 
-:::
-
-### 【中级】如何使用 Redis 实现布隆过滤器？
-
-::: details 要点
+### 【中等】如何使用 Redis 实现布隆过滤器？
 
 布隆过滤器是一种高效的概率数据结构，常用于检测一个元素是否在一个集合中，可以有效减少数据库的查询次数，解决缓存穿透等问题。
 
@@ -469,10 +415,6 @@ Redis HyperLogLog 是 Redis 2.8.9 版本新增的数据类型，是一种**用�
 
 - Redis 提供了一个官方模块 RedisBloom，封装了哈希函数、位图大小等操作，可以直接用于创建和管理布隆过滤器。
 - 使用 `BF.ADD` 来向布隆过滤器添加元素，使用 `BF.EXISTS` 来检查某个元素是否可能存在。
-
-:::
-
-::: details 细节
 
 #### BitMap
 
@@ -554,8 +496,6 @@ RedisBloom 适合**海量数据判断**，且**允许误判**的场景：
 - **空间高效**：节省存储空间
 - **快速查询**：O(1) 时间复杂度
 - **误判率可控**：通过参数调整
-
-:::
 
 ## 参考资料
 

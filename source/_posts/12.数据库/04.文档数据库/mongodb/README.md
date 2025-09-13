@@ -11,7 +11,7 @@ tags:
   - 数据库
   - 文档数据库
   - mongodb
-permalink: /pages/4b8aff19/
+permalink: /pages/10d104dd/
 hidden: true
 index: false
 ---

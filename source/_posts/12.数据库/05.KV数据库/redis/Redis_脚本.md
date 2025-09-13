@@ -11,7 +11,7 @@ tags:
   - KV数据库
   - redis
   - lua
-permalink: /pages/f6008d32/
+permalink: /pages/e524b647/
 ---
 
 # Redis 脚本

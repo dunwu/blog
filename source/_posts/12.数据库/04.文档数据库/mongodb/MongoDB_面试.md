@@ -1,5 +1,5 @@
 ---
-icon: openmoji:military-medal
+icon: logos:mongodb
 title: MongoDB 面试
 cover: https://raw.githubusercontent.com/dunwu/images/master/snap/202503062328094.jpg
 date: 2025-03-04 21:03:08
@@ -21,17 +21,23 @@ permalink: /pages/edc11157/
 
 ## MongoDB 简介
 
-> 扩展阅读：
->
-> - [MongoDB 官方文档之 MongoDB 简介](https://www.mongodb.com/zh-cn/docs/manual/introduction/)
-> - [MongoDB 简史](https://www.infoq.cn/article/3d4suwkc2fvikykemnvw)
-> - [MongoDB 发展历史及各主要版本新特性概述](https://blog.csdn.net/JiekeXu/article/details/143670868)
+::: info 扩展阅读
 
-### 【基础】MongoDB 是什么？
+- [MongoDB 官方文档之 MongoDB 简介](https://www.mongodb.com/zh-cn/docs/manual/introduction/)
+- [MongoDB 简史](https://www.infoq.cn/article/3d4suwkc2fvikykemnvw)
+- [MongoDB 发展历史及各主要版本新特性概述](https://blog.csdn.net/JiekeXu/article/details/143670868)
 
-:::details 要点
+:::
 
-MongoDB 是一个**面向文档**的开源 NoSQL 数据库系统，由 **C++** 编写的。MongoDB 支持“**无模式**”的数据建模，可以存储比较复杂的数据类型，是一款非常流行的 **文档类型数据库** 。
+### 【简单】MongoDB 是什么？
+
+::: tip 关键点
+
+文档数据库、C++、CRUD、聚合、文本搜索、地理空间搜索
+
+:::
+
+MongoDB 是一个**面向文档**的开源 NoSQL 数据库系统，由 **C++** 编写的。MongoDB 支持“**无模式**”的数据建模，可以存储比较复杂的数据类型，是一款非常流行的 **文档型数据库** 。
 
 在高负载的情况下，MongoDB 天然支持水平扩展和高可用，可以很方便地添加更多的节点/实例，以保证服务性能和可用性。在许多场景下，MongoDB 可以用于代替传统的关系型数据库或键/值存储方式，皆在为 Web 应用提供可扩展的高可用高性能数据存储解决方案。
 
@@ -43,51 +49,34 @@ MongoDB 提供了丰富的功能：
 - [**地理空间搜索**](https://www.mongodb.com/zh-cn/docs/manual/tutorial/geospatial-tutorial/)
 - ...
 
+### 【简单】MongoDB 有什么特性？
+
+::: tip 关键点
+
+面向文档、无模式、丰富的数据类型、丰富的查询方式、支持聚合、支持事务、支持压缩、分布式
+
 :::
-
-### 【基础】MongoDB 有什么特性？
-
-:::details 要点
 
 MongoDB 主要有以下特性：
 
-- **面向文档** - MongoDB 将数据记录存储为 [BSON 文档](https://www.mongodb.com/zh-cn/docs/manual/core/document/#std-label-bson-document-format)。BSON 是 [JSON](https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-JSON) 文档的二进制表示形式，尽管它包含的数据类型比 JSON 多。最大 BSON 文档大小为 16 MB。
-- **无模式** - MongoDB 中没有预定义模式（predefined schema），文档键值的类型和大小不是固定的。由于没有固定的模式，因此按需添加或删除字段变得更容易。
-- **丰富的查询方式** - MongoDB 支持基本的 CRUD 以及数据聚合、文本搜索和地理空间查询。
-- **丰富的索引类型** - MongoDB 支持多种类型的索引，包括单字段索引、复合索引、多键索引、哈希索引、文本索引、 地理位置索引等，每种类型的索引有不同的使用场合。
-- **支持 ACID 事务** - NoSQL 通常不支持事务，但 MongoDB 支持事务，且 MongoDB 支持 ACID。
+- **面向文档**：MongoDB 将数据记录存储为 [BSON 文档](https://www.mongodb.com/zh-cn/docs/manual/core/document/#std-label-bson-document-format)。BSON 是 [JSON](https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-JSON) 文档的二进制表示形式，尽管它包含的数据类型比 JSON 多。最大 BSON 文档大小为 16 MB。
+- **无模式**：MongoDB 中没有预定义模式（predefined schema），文档键值的类型和大小不是固定的。由于没有固定的模式，因此按需添加或删除字段变得更容易。
+- **丰富的查询方式**：MongoDB 支持基本的 CRUD 以及数据聚合、文本搜索和地理空间查询。
+- **丰富的索引类型**：MongoDB 支持多种类型的索引，包括单字段索引、复合索引、多键索引、哈希索引、文本索引、 地理位置索引等，每种类型的索引有不同的使用场合。
+- **支持 ACID 事务**：NoSQL 通常不支持事务，但 MongoDB 支持事务，且 MongoDB 支持 ACID。
   - MongoDB 单文档支持原子性，也具备事务的特性。
   - MongoDB 4.0 加入了对多文档事务的支持，但只支持复制集部署模式下的事务，也就是说事务的作用域限制为一个副本集内。
   - MongoDB 4.2 引入了分布式事务，增加了对分片集群上多文档事务的支持，并合并了对副本集上多文档事务的现有支持。
 - **支持压缩**：存储同样的数据所需的资源更少。
-- **支持 map-reduce** - 通过分治的方式完成复杂的聚合任务。不过，从 MongoDB 5.0 开始，map-reduce 已经不被官方推荐使用了，替代方案是 [聚合管道](https://www.mongodb.com/docs/manual/core/aggregation-pipeline/)。聚合管道提供比 map-reduce 更好的性能和可用性。
+- **支持 map-reduce**：通过分治的方式完成复杂的聚合任务。不过，从 MongoDB 5.0 开始，map-reduce 已经不被官方推荐使用了，替代方案是 [聚合管道](https://www.mongodb.com/docs/manual/core/aggregation-pipeline/)。聚合管道提供比 map-reduce 更好的性能和可用性。
 - **支持存储大文件**：MongoDB 的单文档存储空间要求不超过 16MB。对于超过 16MB 的大文件，MongoDB 提供了 GridFS 来进行存储，通过 GridFS，可以将大型数据进行分块处理，然后将这些切分后的小文档保存在数据库中。
 
 MongoDB 作为分布式存储，自然也具备了分布式的一般特性：
 
-- **高可用** - 通过**复制**机制实现**高可用**，提供**数据冗余**和**自动故障转移**能力。在 MongoDB 中，这种机制称为 [**副本集**](https://www.mongodb.com/zh-cn/docs/manual/replication/)。[**副本集**](https://www.mongodb.com/zh-cn/docs/manual/replication/) 是一组 MongoDB 服务器，它们维护相同的数据集，并可提供冗余和提高数据可用性。
-- **高性能** - 通过**分片**机制提供**水平扩容**能力，以支撑海量数据，海量并发。从 3.4 开始，MongoDB 支持基于 [**分片键**](https://www.mongodb.com/zh-cn/docs/manual/core/zone-sharding/#std-label-zone-sharding) 创建数据的 [**区域**](https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-shard-key)。在均衡的集群中，MongoDB 仅将区域覆盖的读写定向到区域内的那些分片。
+- **高可用**：通过**复制**机制实现**高可用**，提供**数据冗余**和**自动故障转移**能力。在 MongoDB 中，这种机制称为 [**副本集**](https://www.mongodb.com/zh-cn/docs/manual/replication/)。[**副本集**](https://www.mongodb.com/zh-cn/docs/manual/replication/) 是一组 MongoDB 服务器，它们维护相同的数据集，并可提供冗余和提高数据可用性。
+- **高性能**：通过**分片**机制提供**水平扩容**能力，以支撑海量数据，海量并发。从 3.4 开始，MongoDB 支持基于 [**分片键**](https://www.mongodb.com/zh-cn/docs/manual/core/zone-sharding/#std-label-zone-sharding) 创建数据的 [**区域**](https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-shard-key)。在均衡的集群中，MongoDB 仅将区域覆盖的读写定向到区域内的那些分片。
 
-:::
-
-### 【基础】MongoDB 适合什么应用场景？
-
-:::details 要点
-
-**MongoDB 的优势在于其数据模型和存储引擎的灵活性、架构的可扩展性以及对强大的索引支持。**
-
-选用 MongoDB 应该充分考虑 MongoDB 的优势，结合实际项目的需求来决定：
-
-- 随着项目的发展，使用类 JSON 格式（BSON）保存数据是否满足项目需求？MongoDB 中的记录就是一个 BSON 文档，它是由键值对组成的数据结构，类似于 JSON 对象，是 MongoDB 中的基本数据单元。
-- 是否需要大数据量的存储？是否需要快速水平扩展？MongoDB 支持分片集群，可以很方便地添加更多的节点（实例），让集群存储更多的数据，具备更强的性能。
-- 是否需要更多类型索引来满足更多应用场景？MongoDB 支持多种类型的索引，包括单字段索引、复合索引、多键索引、哈希索引、文本索引、 地理位置索引等，每种类型的索引有不同的使用场合。
-- ……
-
-:::
-
-### 【基础】MongoDB vs.RDBM？
-
-:::details 要点
+### 【简单】MongoDB vs.RDBM？
 
 MongoDB vs.RDBM：
 
@@ -101,38 +90,179 @@ MongoDB vs.RDBM：
 | 索引类型  | B 树、全文索引、地理位置索引、多键索引、TTL 索引 | B 树     |
 | 数据容量  | 没有理论上限                                     | 千万、亿 |
 
+### 【简单】MongoDB 有哪些里程碑版本？
+
+::: info 扩展阅读
+
+- [MongoDB 简史](https://www.infoq.cn/article/3d4suwkc2fvikykemnvw)
+- [MongoDB 发展历史及各主要版本新特性概述](https://blog.csdn.net/JiekeXu/article/details/143670868)
+
 :::
 
-### 【基础】MongoDB 有哪些里程碑版本？
+::: tip 关键点
 
-:::details 要点
+- **1.0**：2009 年，MongoDB 发布第一版
+- **3.0**：2015 年，支持 **WiredTiger** 存储引擎
+- **4.0**：2019 年，支持 ACID 事务
+
+:::
 
 MongoDB 是由 **10gen** 开发的 NoSQL 数据库，该公司由 Dwight Merriman 和 Eliot Horowitz 于 2007 年创立。2013 年，**10gen 更名为 MongoDB Inc**.。以更好地反映其对 MongoDB 数据库开发的关注。2017 年，MongoDB 公司上市。
 
 里程碑版本：
 
-- **1.0** - 2009 年，MongoDB 发布第一版。
-- **1.6** - 2010 年，引入分片机制（Sharding），支持水平扩展。
-- **2.2** - 2012 年，引入了聚合管道（Pipeline）。
-- **2.4** - 2013 年，引入了全文搜索。
-- **3.0** - 2015 年，全面支持 **WiredTiger** 存储引擎，并支持可插拔存储引擎。
-- **4.0** - 2019 年，支持 ACID 事务。
-- **4.2** - 2020 年，支持分布式事务。
+- **1.0**：2009 年，MongoDB 发布第一版。
+- **1.6**：2010 年，引入分片机制（Sharding），支持水平扩展。
+- **2.2**：2012 年，引入了聚合管道（Pipeline）。
+- **2.4**：2013 年，引入了全文搜索。
+- **3.0**：2015 年，全面支持 **WiredTiger** 存储引擎，并支持可插拔存储引擎。
+- **4.0**：2019 年，支持 ACID 事务。
+- **4.2**：2020 年，支持分布式事务。
 
-> 扩展阅读：
->
-> - [MongoDB 简史](https://www.infoq.cn/article/3d4suwkc2fvikykemnvw)
-> - [MongoDB 发展历史及各主要版本新特性概述](https://blog.csdn.net/JiekeXu/article/details/143670868)
+### 【简单】BSON 是什么？与 JSON 有何区别？
+
+::: tip 关键点
+
+二进制 JSON
 
 :::
 
+BSON 的英文全称是 **Binary JSON**，即**二进制 JSON**。主要用于在 MongoDB 中存储文档和进行网络传输。
+
+- 最大 16MB
+- 必须有唯一 _id 作为主键
+
+## MongoDB CRUD
+
+### 【简单】如何进行分页查询？
+
+- `skip()` + `limit()`：在大数据集中性能较差（需扫描跳过所有前置文档）
+- 基于游标的分页（使用 `_id` 或时间戳）：记录上一页最后一条记录的 `_id`，下次查询直接定位
+
+### 【简单】什么是主键  `_id`？
+
+`_id` 是**每个文档的唯一标识符**，默认由系统自动生成，也可以自定义。
+
+自动生成规则
+
+- MongoDB 默认使用 ObjectId 作为 _id 的值
+- ObjectId 是一个 12 字节的 BSON 类型数据
+- _id 构成
+  - 时间戳：文档创建时的 Unix 时间戳（秒级）
+  - 机器标识：生成 ObjectId 的服务器唯一标识
+  - 进程ID：MongoDB 进程的标识
+  - 计数器：同一秒内的自增序列（确保同一进程内不重复）
+
+### 【简单】如何实现数据的增删改查操作？
+
+- 插入
+  - `db.collection.insertOne()`
+  - `db.collection.insertMany()`
+- 更新
+  - `db.collection.updateOne()`
+  - `db.collection.updateMany()`
+  - `db.collection.replaceOne()`
+- 删除
+  - `db.collection.deleteOne()`
+  - `db.collection.deleteMany()`
+- 查询
+  - `db.collection.find()`
+- 批量
+  - `db.collection.insertMany()`
+  - `db.collection.bulkWrite()`
+
+### 【简单】如何使用 find() 方法查询文档？
+
+语法：`db.collection.find(query, projection)`
+
+- query：查询条件（可选，默认为空对象 {}，查询所有文档）
+- projection：指定返回的字段（可选，默认为返回全部字段）
+
+### 【简单】如何使用 GridFS 存储大文件？
+
+GridFS 是一种用于存储和检索大文件（超过 16MB BSON 文档限制）的规范，它将文件分块存储为多个文档
+
+- 文件拆分：将大文件分割为多个 256KB 的块（默认），存储到 `fs.chunks` 集合
+- 元数据存储：文件信息（如文件名、大小、MD5）保存在 `fs.files` 集合
+- 自动管理：通过 MongoDB 驱动程序或命令行工具透明地操作文件
+
+### 【简单】如何实现全文检索？
+
+::: tip 关键点
+
+创建文本索引 + 使用 `$text` 操作符进行搜索
+
+:::
+
+**创建文本索引**
+
+```javascript
+db.articles.createIndex({
+  title: "text",
+  content: "text",
+  tags: "text"
+})
+```
+
+**全文搜索**
+
+使用 `$text` 操作符进行搜索，支持关键词匹配和排序
+
+```javascript
+db.articles.find({
+  $text: { 
+    $search: "mongodb tutorial" 
+  }
+})
+```
+
+### 【简单】MongoDB 支持哪些数据类型？
+
+::: tip 关键点
+
+- 基本类型：String、Integer、Boolean、Double、Decimal、Null
+- 时间类型：Date、Timestamp
+- 组合类型：Array、Embedded Document
+- 特殊类型：ObjectId、Binary、Regular、Script、GeoJSON
+
+:::
+
+#### 基本类型
+
+- String：UTF-8 字符串
+- Integer：整数（32 位或 64 位，取决于服务器架构）
+- Boolean：true 或 false
+- Double：双精度浮点数
+- Decimal：高精度浮点数（适用于金融数据，避免精度丢失）
+- Null：表示空值或缺失字段
+
+#### 时间类型
+
+- Date：存储日期和时间（Unix 时间戳格式，毫秒精度）
+- Timestamp：内部使用的时间戳（不同于 Date 类型）。示例：`Timestamp(1000, 1)`
+
+#### 组合类型
+
+- Array：有序的值列表，可包含不同类型。示例：`["apple", 42, true]`
+- Embedded Document：嵌套的 BSON 文档（子文档）。示例：`{ address: { city: "Beijing", zip: "100000" } }`
+
+#### 特殊类型
+
+- ObjectId：文档的唯一标识（默认 _id 字段类型）。示例：ObjectId("507f1f77bcf86cd799439011")
+- Binary Data：存储二进制数据（如图片、文件）
+- Regular Expression：正则表达式。示例：`{ pattern: /^test/i }`
+- JavaScript Code：存储 JavaScript 代码（不推荐在服务端执行）。示例：`{ code: function() { return x + y; } }`
+- GeoJSON：支持地理坐标查询（点、线、多边形等）。示例：`{ location: { type: "Point", coordinates: [116.4, 39.9] } }`
+
 ## MongoDB 聚合
 
-> 扩展阅读：[MongoDB 官方文档之聚合](https://www.mongodb.com/zh-cn/docs/manual/aggregation/)
+::: info 扩展阅读
 
-### 【基础】MongoDB 支持哪些聚合方式？
+[MongoDB 官方文档之聚合](https://www.mongodb.com/zh-cn/docs/manual/aggregation/)
 
-:::details 要点
+:::
+
+### 【简单】MongoDB 支持哪些聚合方式？
 
 聚合操作处理多个文档并返回计算结果。可以使用聚合操作来：
 
@@ -143,14 +273,27 @@ MongoDB 是由 **10gen** 开发的 NoSQL 数据库，该公司由 Dwight Merrima
 若要执行聚合操作，可以使用：
 
 - [聚合管道](https://www.mongodb.com/zh-cn/docs/manual/aggregation/#std-label-aggregation-pipeline-intro)，这是执行聚合的首选方法。
+  - `$match`：过滤文档
+  - `$group`：分组聚合
+  - `$project`：重塑文档结构
+  - `$sort`：排序
+  - `$limit/$skip`：限制/跳过结果
+  - `$unwind`：展开数组
+  - `$lookup`：关联查询(类似SQL的JOIN)
+  - `$facet`：多分支聚合
 - [单一目的聚合方法](https://www.mongodb.com/zh-cn/docs/manual/aggregation/#std-label-single-purpose-agg-methods)，这些方法很简单，但缺乏聚合管道的功能。
+  - `count()`：计数
+  - `distinct()`：去重
+  - `estimatedDocumentCount()`：快速计数(不精确)
 - [Map-Reduce](https://www.mongodb.com/zh-cn/docs/manual/core/Map-Reduce/)，从 MongoDB 5.0 开始，[Map-Reduce](https://www.mongodb.com/zh-cn/docs/manual/core/Map-Reduce/#std-label-Map-Reduce) 已被弃用。聚合管道提供的性能和可用性比 Map-Reduce 更优越。
+- **聚合表达式**
+  - 数学表达式：`$add`, `$subtract`, `$multiply`, `$divide`
+  - 日期表达式：`$year`, `$month`, `$dayOfMonth`
+  - 字符串表达式：`$concat`, `$substr`, `$toLower`
+  - 逻辑表达式：`$and`, `$or`, `$not`, `$cond`
+  - 数组表达式：`$arrayElemAt`, `$size`, `$slice`
 
-:::
-
-### 【中级】什么是聚合管道？
-
-:::details 要点
+### 【中等】什么是聚合管道？
 
 聚合管道由一个或多个处理文档的 [阶段](https://www.mongodb.com/zh-cn/docs/manual/reference/operator/aggregation-pipeline/#std-label-aggregation-pipeline-operator-reference) 组成：
 
@@ -219,11 +362,7 @@ db.orders.aggregate([
 - 按披萨 `name` 对剩余文档进行分组。
 - 使用 [`$sum`](https://www.mongodb.com/zh-cn/docs/manual/reference/operator/aggregation/sum/#mongodb-group-grp.-sum) 计算每种披萨 `name` 的总订单 `quantity`。总数存储在聚合管道返回的 `totalQuantity` 字段中。
 
-:::
-
-### 【基础】RDBM 聚合 vs. MongoDB 聚合？
-
-:::details 要点
+### 【简单】RDBM 聚合 vs. MongoDB 聚合？
 
 MongoDB pipeline 提供了许多等价于 SQL 中常见聚合语句的操作。 下表概述了常见的 SQL 聚合语句或函数和 MongoDB 聚合操作的映射表：
 
@@ -246,11 +385,7 @@ RDBM 聚合 vs. MongoDB 聚合：
 
 ![SQL 聚合 vs. MongoDB 聚合](https://raw.githubusercontent.com/dunwu/images/master/snap/20200921200556.png)
 
-:::
-
-### 【中级】MongoDB Map-Reduce 有什么用？
-
-:::details 要点
+### 【中等】MongoDB Map-Reduce 有什么用？
 
 > 从 MongoDB 5.0 开始，[Map-Reduce](https://www.mongodb.com/zh-cn/docs/manual/core/Map-Reduce/#std-label-Map-Reduce) 已被弃用。聚合管道提供的性能和可用性比 Map-Reduce 更优越。
 
@@ -262,42 +397,19 @@ Map-Reduce 是一种数据处理范式，用于将大量数据汇总为有用的
 
 MongoDB 中的所有 Map-Reduce 函数都是 JavaScript，并在 mongod 进程中运行。 Map-Reduce 操作将单个 collection 的 document 作为输入，并且可以在开始 map 阶段之前执行任意排序和限制。 mapReduce 可以将 Map-Reduce 操作的结果作为 document 返回，也可以将结果写入 collection。
 
-:::
-
 ## MongoDB 存储
 
-### 【基础】MongoDB 支持哪些数据类型？
+### 【简单】MongoDB 的逻辑存储是什么？
 
-:::details 要点
+::: tip 关键点
 
-Java 类似数据类型：
-
-| 类型       | 解析                                                                            |
-| :--------- | :------------------------------------------------------------------------------ |
-| `String`   | 字符串。存储数据常用的数据类型。在 `MongoDB` 中，`UTF-8` 编码的字符串才是合法的 |
-| `Integer`  | 整型数值。用于存储数值。根据你所采用的服务器，可分为 32 位或 64 位              |
-| `Double`   | 双精度浮点值。用于存储浮点值                                                    |
-| `Boolean`  | 布尔值。用于存储布尔值（真/假）                                                 |
-| `Arrays`   | 用于将数组或列表或多个值存储为一个键                                            |
-| `Datetime` | 记录文档修改或添加的具体时间                                                    |
-
-MongoDB 特有数据类型：
-
-| 类型                 | 解析                                                                        |
-| :------------------- | :-------------------------------------------------------------------------- |
-| `ObjectId`           | 用于存储文档 `id`,`ObjectId`是基于分布式主键的实现`MongoDB`分片也可继续使用 |
-| `Min/Max Keys`       | 将一个值与 BSON（二进制的 JSON）元素的最低值和最高值相对比                  |
-| `Code`               | 用于在文档中存储 `JavaScript`代码                                           |
-| `Regular Expression` | 用于在文档中存储正则表达式                                                  |
-| `Binary Data`        | 二进制数据。用于存储二进制数据                                              |
-| `Null`               | 用于创建空值                                                                |
-| `Object`             | 用于内嵌文档                                                                |
+```
+database -> collection -> document -> field
+index
+_id
+```
 
 :::
-
-### 【基础】MongoDB 的逻辑存储是什么？
-
-:::details 要点
 
 MongoDB 将数据记录存储为 [BSON 文档](https://www.mongodb.com/zh-cn/docs/manual/core/document/#std-label-bson-document-format)。BSON 是 [JSON](https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-JSON) 文档的二进制表示形式，尽管它包含的数据类型比 JSON 多。最大 BSON 文档大小为 16 MB。
 
@@ -434,11 +546,15 @@ local
 
 在 `system.indexes` 插入数据，可以创建索引。但除此之外该表信息是不可变的（特殊的 drop index 命令将自动更新相关信息）。`system.users` 是可修改的。`system.profile` 是可删除的。
 
+### 【中等】MongoDB 支持哪些存储引擎？
+
+::: tip 关键点
+
+- **MMAPV1**：MongoDB 早起版本的默认存储引擎为 MMAPV1，已废弃
+- **WiredTiger**：MongoDB 3.2 后，默认的存储引擎为 [WiredTiger 存储引擎](https://www.mongodb.com/docs/manual/core/wiredtiger/)，支持 ACID 事务
+- **In-Memory**
+
 :::
-
-### 【中级】MongoDB 支持哪些存储引擎？
-
-:::details 要点
 
 存储引擎（Storage Engine）是数据库的核心组件，负责管理数据在内存和磁盘中的存储方式。
 
@@ -455,11 +571,13 @@ local
 
 此外，MongoDB 3.0 提供了 **可插拔的存储引擎 API** ，允许第三方为 MongoDB 开发存储引擎，这点和 MySQL 也比较类似。
 
+### 【中等】MongoDB 支持哪些压缩算法？
+
+::: tip 关键点
+
+snappy、zlib、zstd
+
 :::
-
-### 【中级】MongoDB 支持哪些亚索算法？
-
-:::details 要点
 
 借助 WiredTiger 存储引擎（ MongoDB 3.2 后的默认存储引擎），MongoDB 支持对所有集合和索引进行压缩。压缩以额外的 CPU 为代价最大限度地减少存储使用。
 
@@ -472,11 +590,13 @@ local
 
 WiredTiger 日志也会被压缩，默认使用的也是 Snappy 压缩算法。如果日志记录小于或等于 128 字节，WiredTiger 不会压缩该记录。
 
+### 【中等】WiredTiger 基于 LSM Tree 还是 B+ Tree？
+
+::: tip 关键点
+
+WiredTiger 采用 B+ 树，因为其很适合以页为单位存储于磁盘空间。
+
 :::
-
-### 【中级】WiredTiger 基于 LSM Tree 还是 B+ Tree？
-
-:::details 要点
 
 目前绝大部分流行的数据库存储引擎都是基于 B/B+ Tree 或者 LSM(Log Structured Merge) Tree 来实现的。对于 NoSQL 数据库来说，绝大部分（比如 HBase、Cassandra、RocksDB）都是基于 LSM 树，MongoDB 不太一样。
 
@@ -502,18 +622,16 @@ WiredTiger maintains a table's data in memory using a data structure called a B-
 
 如果想要深入研究学习 WiredTiger 存储引擎，推荐阅读 MongoDB 中文社区的 [WiredTiger 存储引擎系列](https://mongoing.com/archives/category/wiredtiger 存储引擎系列)。
 
-:::
-
 ## MongoDB 索引
 
-> 扩展阅读：
->
-> - [MongoDB 官方文档之索引](https://www.mongodb.com/zh-cn/docs/manual/indexes/)
-> - [你真的会用索引么？[Mongo]](https://zhuanlan.zhihu.com/p/77971681)
+::: info 扩展阅读
 
-### 【基础】MongoDB 索引有什么用？
+- [MongoDB 官方文档之索引](https://www.mongodb.com/zh-cn/docs/manual/indexes/)
+- [你真的会用索引么？[Mongo]](https://zhuanlan.zhihu.com/p/77971681)
 
-:::details 要点
+:::
+
+### 【简单】MongoDB 索引有什么用？
 
 **MongoDB 在 collection 数据级别上定义索引**。
 
@@ -523,11 +641,13 @@ WiredTiger maintains a table's data in memory using a data structure called a B-
 
 ![MongoDB 索引](https://raw.githubusercontent.com/dunwu/images/master/snap/20200921210621.svg)
 
+### 【简单】MongoDB 支持哪些类型的索引？
+
+::: tip 关键点
+
+单字段索引、复合索引、多键索引、文本索引、地理空间索引
+
 :::
-
-### 【基础】MongoDB 支持哪些类型的索引？
-
-:::details 要点
 
 MongoDB 支持多种类型的索引，适用于不同的场景。
 
@@ -586,11 +706,13 @@ MongoDB 提供两种类型的地理空间索引：
 
 > 要了解详情，请参阅 [哈希索引](https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-hashed/#std-label-index-type-hashed)。
 
+### 【简单】复合索引中字段的顺序有影响吗？
+
+::: tip 关键点
+
+MongoDB 复合索引类似 MySQL，遵循最左匹配原则
+
 :::
-
-### 【基础】复合索引中字段的顺序有影响吗？
-
-:::details 要点
 
 **排序键的排列顺序必须与其在索引中出现的顺序相同**。例如，索引键模式 `{ a: 1, b: 1 }` 可以支持对 `{ a: 1, b: 1 }` 排序，但不支持对 `{ b: 1, a: 1 }` 排序。
 
@@ -624,11 +746,13 @@ db.s2.find().sort({"score": -1, "userid": 1}).explain()
 
 **MongoDB 的复合索引遵循左前缀原则**：拥有多个键的索引，可以同时得到所有这些键的前缀组成的索引，但不包括除左前缀之外的其他子集。比如说，有一个类似 `{a: 1, b: 1, c: 1, ..., z: 1}` 这样的索引，那么实际上也等于有了 `{a: 1}`、`{a: 1, b: 1}`、`{a: 1, b: 1, c: 1}` 等一系列索引，但是不会有 `{b: 1}` 这样的非左前缀的索引。
 
+### 【中等】什么是覆盖索引查询？
+
+::: tip 关键点
+
+索引覆盖查询所需的所有字段，可以避免回表
+
 :::
-
-### 【中级】什么是覆盖索引查询？
-
-:::details 要点
 
 根据官方文档介绍，覆盖查询是以下的查询：
 
@@ -665,41 +789,54 @@ db.users.find({gender:"M"},{user_name:1,_id:0})
 
 为了让指定的索引覆盖查询，必须显式地指定 `_id: 0` 来从结果中排除 `_id` 字段，因为索引不包括 `_id` 字段。
 
-:::
-
 ## MongoDB 事务
 
-> 扩展阅读：[MongoDB 官方文档之事务](https://www.mongodb.com/zh-cn/docs/manual/core/transactions/)
+::: info 扩展阅读
 
-> 扩展阅读：
->
-> - [MongoDB 官方文档之事务](https://www.mongodb.com/zh-cn/docs/manual/core/transactions/)
-> - [技术干货| MongoDB 事务原理](https://mongoing.com/archives/82187)
-> - [MongoDB 一致性模型设计与实现](https://developer.aliyun.com/article/782494)
-
-### 【基础】MongoDB 是否支持事务？
-
-:::details 要点
-
-在 MongoDB 中，**对单个文档的操作具有原子性**。由于可以使用嵌入式文档和数组来捕获单个文档结构中数据之间的关系，而无需跨多个文档和集合进行标准化，因此这种单文档原子性消除了许多实际使用案例使用分布式事务的必要性。
-
-对于需要对多文档（在单个或多个集合中）的读写操作具有原子性的情况，MongoDB 支持多文档事务。利用分布式事务，可以跨多个操作、集合、数据库、文档和分片使用事务。
-
-分布式事务具有原子性：
-
-- 事务要么应用所有数据更改，要么回滚更改。
-- 在事务提交时，事务中所做的所有数据更改都会保存，并且在事务之外可见。
-  - 在事务进行提交前，在事务中所做的数据更改在事务外不可见。
-  - 不过，当事务写入多个分片时，并非所有外部读取操作都需等待已提交事务的结果在各个分片上可见。例如，如果事务已提交并且写入 1 在分片 A 上可见，但写入 2 在分片 B 上尚不可见，则读关注 [`"local"`](https://www.mongodb.com/zh-cn/docs/manual/reference/read-concern-local/#mongodb-readconcern-readconcern.-local-) 处的外部读取可以在不看到写入 2 的情况下读取写入 1 的结果。
-- 事务中止后，在事务中所做的所有数据更改会被丢弃且不会变得可见。例如，如果事务中的任何操作失败，事务就会中止，事务中所做的所有数据更改将被丢弃且不会变得可见。
-
-> 要点：在大多数情况下，与单文档写入操作相比，分布式事务会产生更高的性能成本，并且分布式事务的可用性不应取代有效的模式设计。在许多情况下，[非规范化数据模型（嵌入式文档和数组）](https://www.mongodb.com/zh-cn/docs/manual/data-modeling/concepts/embedding-vs-references/#std-label-data-modeling-embedding) 仍然是数据和使用案例的最佳选择。换言之，对于许多场景，适当的数据建模将最大限度地减少对分布式事务的需求。
+- [MongoDB 官方文档之事务](https://www.mongodb.com/zh-cn/docs/manual/core/transactions/)
+- [技术干货| MongoDB 事务原理](https://mongoing.com/archives/82187)
+- [MongoDB 一致性模型设计与实现](https://developer.aliyun.com/article/782494)
 
 :::
 
-### 【中级】MongoDB 事务支持哪些操作？
+### 【简单】MongoDB 中如何使用事务?
 
-:::details 要点
+MongoDB 从 4.0 版本开始支持多文档事务。
+
+MongoDB 事务操作步骤：
+
+- 创建会话：`startSession`
+- 开始事务：`startTransaction`
+- 在事务中执行操作
+- 提交或回滚事务：`commitTransaction` / `abortTransaction`
+- 关闭会话：`session.close`
+
+```java
+ClientSession session = mongoClient.startSession();
+try {
+    // 1. 显式开始事务
+    session.startTransaction(txnOptions); // 可以传入事务选项
+
+    // 2. 执行数据库操作（必须传入 session）
+    accountsCollection.updateOne(session, filterAlice, updateAlice);
+    accountsCollection.updateOne(session, filterBob, updateBob);
+    auditCollection.insertOne(session, auditLog);
+
+    // 3. 如果所有操作成功，提交事务
+    session.commitTransaction();
+    System.out.println("事务已提交。");
+
+} catch (Exception e) {
+    System.err.println("事务执行失败，正在回滚: " + e.getMessage());
+    // 4. 如果发生任何异常，中止事务
+    session.abortTransaction();
+} finally {
+    // 5. 确保会话被关闭
+    session.close();
+}
+```
+
+### 【中等】MongoDB 事务支持哪些操作？
 
 可以跨多个操作、集合、数据库、文档和分片使用分布式事务。
 
@@ -786,15 +923,9 @@ MongoDB 驱动程序提供集合级 API `countDocuments(filter, options)` 作为
 - 其他非 CRUD 和非信息性操作（例如 [`createUser`](https://www.mongodb.com/zh-cn/docs/manual/reference/command/createUser/#mongodb-dbcommand-dbcmd.createUser)、[`getParameter`](https://www.mongodb.com/zh-cn/docs/manual/reference/command/getParameter/#mongodb-dbcommand-dbcmd.getParameter) 和 [`count`](https://www.mongodb.com/zh-cn/docs/manual/reference/command/count/#mongodb-dbcommand-dbcmd.count)）及其辅助程序。
 - 并行操作。要同时更新多个命名空间，请考虑改用 [`bulkWrite`](https://www.mongodb.com/zh-cn/docs/manual/reference/command/bulkWrite/#mongodb-dbcommand-dbcmd.bulkWrite) 命令。
 
-:::
+## MongoDB 集群
 
-## MongoDB 复制
-
-> 扩展阅读：[MongoDB 官方文档之事务](https://www.mongodb.com/zh-cn/docs/manual/core/transactions/)
-
-### 【中级】MongoDB 的副本机制是怎样的？
-
-:::details 要点
+### 【中等】MongoDB 的副本机制是怎样的？
 
 MongoDB 的复制集群又称为副本集群，是一组维护相同数据集合的 mongod 进程。
 
@@ -829,13 +960,7 @@ MongoDB 的复制集群又称为副本集群，是一组维护相同数据集合
 - **实现 failover**：提供自动故障恢复的功能，主节点发生故障时，自动从从节点中选举出一个新的主节点，确保集群的正常使用，这对于客户端来说是无感知的。
 - **实现读写分离**：我们可以设置从节点上可以读取数据，主节点负责写入数据，这样的话就实现了读写分离，减轻了主节点读写压力过大的问题。MongoDB 4.0 之前版本如果主库压力不大，不建议读写分离，因为写会阻塞读，除非业务对响应时间不是非常关注以及读取历史数据接受一定时间延迟。
 
-:::
-
-## MongoDB 分片
-
-### 【中级】什么是分片集群？
-
-:::details 要点
+### 【中等】什么是分片集群？
 
 分片集群是 MongoDB 的分布式版本，相较副本集，分片集群数据被均衡的分布在不同分片中， 不仅大幅提升了整个集群的数据容量上限，也将读写的压力分散到不同分片，以解决副本集性能瓶颈的难题。
 
@@ -849,11 +974,7 @@ MongoDB 的分片集群由如下三个部分组成（下图来源于 [官方文�
 
 **Shard**：每个分片是整体数据的一部分子集，从 MongoDB3.6 版本开始，每个 Shard 必须部署为副本集（replica set）架构
 
-:::
-
-### 【基础】为什么要用分片集群？
-
-:::details 要点
+### 【简单】为什么要用分片集群？
 
 随着系统数据量以及吞吐量的增长，常见的解决办法有两种：垂直扩展和水平扩展。
 
@@ -866,11 +987,7 @@ MongoDB 的分片集群由如下三个部分组成（下图来源于 [官方文�
 - 存储容量受单机限制，即磁盘资源遭遇瓶颈。
 - 读写能力受单机限制，可能是 CPU、内存或者网卡等资源遭遇瓶颈，导致读写能力无法扩展。
 
-:::
-
-### 【基础】如何选择分片键？
-
-:::details 要点
+### 【简单】如何选择分片键？
 
 选择合适的片键对 sharding 效率影响很大，主要基于如下四个因素（摘自 [分片集群使用注意事项 - - 腾讯云文档](https://cloud.tencent.com/document/product/240/44611)）：
 
@@ -881,11 +998,7 @@ MongoDB 的分片集群由如下三个部分组成（下图来源于 [官方文�
 
 综上，在选择片键时要考虑以上 4 个条件，尽可能满足更多的条件，才能降低 MoveChunks 对性能的影响，从而获得最优的性能体验。
 
-:::
-
-### 【中级】分片策略有哪些？
-
-:::details 要点
+### 【中等】分片策略有哪些？
 
 MongoDB 支持两种分片算法来满足不同的查询需求（摘自 [MongoDB 分片集群介绍 - 阿里云文档](https://help.aliyun.com/document_detail/64561.html?spm=a2c4g.11186623.0.0.3121565eQhUGGB#h2--shard-key-3)）：
 
@@ -911,15 +1024,11 @@ MongoDB 计算单个字段的哈希值作为索引值，并以哈希值的范围
 
 除了上述两种分片策略，您还可以配置 **复合片键** ，例如由一个低基数的键和一个单调递增的键组成。
 
-:::
-
-### 【中级】分片数据如何存储？
-
-:::details 要点
+### 【中等】分片数据如何存储？
 
 **Chunk（块）** 是 MongoDB 分片集群的一个核心概念，其本质上就是由一组 Document 组成的逻辑数据单元。每个 Chunk 包含一定范围片键的数据，互不相交且并集为全部数据，即离散数学中**划分**的概念。
 
-分片集群不会记录每条数据在哪个分片上，而是记录 Chunk 在哪个分片上一级这个 Chunk 包含哪些数据。
+分片集群不会记录每条数据在哪个分片上，而是记录 Chunk 在哪个分片上以及这个 Chunk 包含哪些数据。
 
 默认情况下，一个 Chunk 的最大值默认为 64MB（可调整，取值范围为 1~1024 MB。如无特殊需求，建议保持默认值），进行数据插入、更新、删除时，如果此时 Mongos 感知到了目标 Chunk 的大小或者其中的数据量超过上限，则会触发 **Chunk 分裂**。
 
@@ -936,5 +1045,3 @@ MongoDB 计算单个字段的哈希值作为索引值，并以哈希值的范围
 Chunk 只会分裂，不会合并，即使 chunkSize 的值变大。
 
 Rebalance 操作是比较耗费系统资源的，我们可以通过在业务低峰期执行、预分片或者设置 Rebalance 时间窗等方式来减少其对 MongoDB 正常使用所带来的影响。
-
-:::

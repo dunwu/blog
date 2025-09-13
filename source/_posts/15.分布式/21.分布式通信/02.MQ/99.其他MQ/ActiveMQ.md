@@ -12,7 +12,7 @@ tags:
   - 中间件
   - MQ
   - ActiveMQ
-permalink: /pages/d756a310/
+permalink: /pages/22e12f65/
 ---
 
 # ActiveMQ 快速入门

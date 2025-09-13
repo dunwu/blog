@@ -60,7 +60,9 @@ index: false
 
 #### [RPC](21.分布式通信/01.RPC)
 
-- [Dubbo 面试](21.分布式通信/01.RPC/Dubbo面试.md)
+- [Dubbo 面试之服务治理](21.分布式通信/01.RPC/Dubbo_面试_服务治理.md)
+- [Dubbo 面试之架构](21.分布式通信/01.RPC/Dubbo_面试_架构.md)
+- [Dubbo 面试之应用](21.分布式通信/01.RPC/Dubbo_面试_应用.md)
 - [RPC 面试](21.分布式通信/01.RPC/RPC面试.md)
 
 #### [MQ](21.分布式通信/02.MQ)

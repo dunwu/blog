@@ -9,7 +9,7 @@ tags:
   - 大数据
   - Flink
   - 运维
-permalink: /pages/ee696c77/
+permalink: /pages/98a5581a/
 ---
 
 # Flink 运维

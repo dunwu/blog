@@ -11,7 +11,7 @@ tags:
   - 数据库
   - 搜索引擎数据库
   - elasticsearch
-permalink: /pages/f457d8c3/
+permalink: /pages/7639aa15/
 hidden: true
 index: false
 ---

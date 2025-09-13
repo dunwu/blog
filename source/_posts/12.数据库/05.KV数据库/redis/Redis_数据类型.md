@@ -12,7 +12,7 @@ tags:
   - KV 数据库
   - redis
   - 数据类型
-permalink: /pages/cbe4e503/
+permalink: /pages/76331397/
 ---
 
 # Redis 基本数据类型

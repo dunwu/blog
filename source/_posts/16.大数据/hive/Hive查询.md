@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - hive
-permalink: /pages/20ca0683/
+permalink: /pages/5473f9d5/
 ---
 
 # Hive 数据查询详解

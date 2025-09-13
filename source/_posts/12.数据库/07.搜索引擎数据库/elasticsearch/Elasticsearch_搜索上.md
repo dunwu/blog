@@ -11,7 +11,7 @@ tags:
   - 搜索引擎数据库
   - elasticsearch
   - 搜索
-permalink: /pages/b630d7a6/
+permalink: /pages/731f829b/
 ---
 
 # Elasticsearch 搜索（上）

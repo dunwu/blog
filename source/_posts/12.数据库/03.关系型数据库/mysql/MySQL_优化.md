@@ -12,7 +12,7 @@ tags:
   - 关系型数据库
   - mysql
   - 优化
-permalink: /pages/b17b5f4a/
+permalink: /pages/8f953f1c/
 ---
 
 # MySQL 优化
@@ -310,7 +310,7 @@ SELECT * FROM post WHERE post.id IN (123,456,567,9098,8904);
 
 通过索引覆盖查询，可以优化排序、分组。
 
-详情见 [MySQL 索引](https://dunwu.github.io/waterdrop/pages/2ce0ae87/)
+详情见 [MySQL 索引](https://dunwu.github.io/waterdrop/pages/2f9875b2/)
 
 ## 数据结构优化
 

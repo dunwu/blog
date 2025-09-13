@@ -7,7 +7,7 @@ categories:
 tags:
   - 大数据
   - Sqoop
-permalink: /pages/42e9e354/
+permalink: /pages/9bd04ae6/
 ---
 
 # Sqoop

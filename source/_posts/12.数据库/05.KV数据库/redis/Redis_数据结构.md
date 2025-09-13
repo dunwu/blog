@@ -15,7 +15,7 @@ tags:
   - 链表
   - 字典
   - 跳表
-permalink: /pages/11d1c545/
+permalink: /pages/c13783ff/
 ---
 
 # Redis 数据结构

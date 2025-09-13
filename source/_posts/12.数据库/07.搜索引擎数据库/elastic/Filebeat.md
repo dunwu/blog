@@ -10,7 +10,7 @@ tags:
   - 搜索引擎数据库
   - elastic
   - filebeat
-permalink: /pages/e2aac1bb/
+permalink: /pages/7eb4d9b1/
 ---
 
 # Filebeat

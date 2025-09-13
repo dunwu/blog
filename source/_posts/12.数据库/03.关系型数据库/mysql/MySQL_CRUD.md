@@ -12,7 +12,7 @@ tags:
   - 关系型数据库
   - mysql
   - crud
-permalink: /pages/eb8c04f3/
+permalink: /pages/73d709d5/
 ---
 
 # MySQL CRUD
@@ -23,7 +23,7 @@ permalink: /pages/eb8c04f3/
 
 本文通过介绍基本的 MySQL CRUD 方法，向读者呈现如何访问 MySQL 数据。
 
-扩展阅读：[SQL 语法必知必会](https://dunwu.github.io/waterdrop/pages/cd3ae5de/)
+扩展阅读：[SQL 语法必知必会](https://dunwu.github.io/waterdrop/pages/2a3b4ae0/)
 
 :::
 

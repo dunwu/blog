@@ -11,7 +11,7 @@ tags:
   - 数据库
   - 搜索引擎数据库
   - elasticsearch
-permalink: /pages/adc985cd/
+permalink: /pages/86b2f921/
 ---
 
 # Elasticsearch 简介

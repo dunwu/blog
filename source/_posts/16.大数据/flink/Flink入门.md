@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - Flink
-permalink: /pages/e59a148d/
+permalink: /pages/ce65c23b/
 ---
 
 # Flink 入门

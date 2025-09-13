@@ -9,7 +9,7 @@ tags:
   - Java
   - JavaCore
   - JVM
-permalink: /pages/5f839231/
+permalink: /pages/be8c745f/
 hidden: true
 index: false
 dir:
@@ -23,14 +23,14 @@ dir:
 
 ## 📖 内容
 
-- [Java 虚拟机简介](Java虚拟机简介.md)
-- [Java 虚拟机之内存区域](Java虚拟机之内存区域.md) - 关键词：`程序计数器`、`虚拟机栈`、`本地方法栈`、`堆`、`方法区`、`运行时常量池`、`直接内存`、`OutOfMemoryError`、`StackOverflowError`
-- [Java 虚拟机之垃圾收集](Java虚拟机之垃圾收集.md) - 关键词：`GC Roots`、`Serial`、`Parallel`、`CMS`、`G1`、`Minor GC`、`Full GC`
-- [Java 虚拟机之字节码](Java虚拟机之字节码.md) - 关键词：`bytecode`、`asm`、`javassist`
-- [Java 虚拟机之类加载](Java虚拟机之类加载.md) - 关键词：`ClassLoader`、`双亲委派`
-- [Java 虚拟机之工具](Java虚拟机之工具.md) - 关键词：`jps`、`jstat`、`jmap` 、`jstack`、`jhat`、`jinfo`、`jconsole`、`jvisualvm`、`MAT`、`JProfile`、`Arthas`
-- [Java 虚拟机之故障处理](Java虚拟机之故障处理.md) - 关键词：`CPU`、`内存`、`磁盘`、`网络`、`GC`
-- [Java 虚拟机之调优](Java虚拟机之调优.md) - 关键词：`配置`、`调优`
+- [Java 虚拟机简介](Java_虚拟机_简介.md)
+- [Java 虚拟机之内存区域](Java_虚拟机_内存区域.md) - 关键词：`程序计数器`、`虚拟机栈`、`本地方法栈`、`堆`、`方法区`、`运行时常量池`、`直接内存`、`OutOfMemoryError`、`StackOverflowError`
+- [Java 虚拟机之垃圾收集](Java_虚拟机_垃圾收集.md) - 关键词：`GC Roots`、`Serial`、`Parallel`、`CMS`、`G1`、`Minor GC`、`Full GC`
+- [Java 虚拟机之字节码](Java_虚拟机_字节码.md) - 关键词：`bytecode`、`asm`、`javassist`
+- [Java 虚拟机之类加载](Java_虚拟机_类加载.md) - 关键词：`ClassLoader`、`双亲委派`
+- [Java 虚拟机之工具](Java_虚拟机_工具.md) - 关键词：`jps`、`jstat`、`jmap` 、`jstack`、`jhat`、`jinfo`、`jconsole`、`jvisualvm`、`MAT`、`JProfile`、`Arthas`
+- [Java 虚拟机之故障处理](Java_虚拟机_故障处理.md) - 关键词：`CPU`、`内存`、`磁盘`、`网络`、`GC`
+- [Java 虚拟机之调优](Java_虚拟机_调优.md) - 关键词：`配置`、`调优`
 
 ## 📚 资料
 

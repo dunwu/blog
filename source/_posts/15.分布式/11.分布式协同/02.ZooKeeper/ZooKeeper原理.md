@@ -9,7 +9,7 @@ tags:
   - 分布式
   - 协同
   - zookeeper
-permalink: /pages/885cc3a1/
+permalink: /pages/01378ae5/
 ---
 
 # ZooKeeper 原理

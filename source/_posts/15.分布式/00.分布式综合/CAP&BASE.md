@@ -10,7 +10,7 @@ tags:
   - ACID
   - CAP
   - BASE
-permalink: /pages/1c5cc28c/
+permalink: /pages/f718828e/
 ---
 
 # CAP 和 BASE

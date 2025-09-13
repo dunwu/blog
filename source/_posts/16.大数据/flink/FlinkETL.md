@@ -9,7 +9,7 @@ tags:
   - 大数据
   - Flink
   - ETL
-permalink: /pages/b1c7186e/
+permalink: /pages/e16415d4/
 ---
 
 # Flink ETL

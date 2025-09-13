@@ -11,7 +11,7 @@ tags:
   - 列式数据库
   - 大数据
   - hbase
-permalink: /pages/4eb16c7d/
+permalink: /pages/1180ebb0/
 ---
 
 # HBase 命令

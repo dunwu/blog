@@ -9,7 +9,7 @@ tags:
   - 大数据
   - hadoop
   - yarn
-permalink: /pages/d2171a8a/
+permalink: /pages/11a2c936/
 ---
 
 # YARN

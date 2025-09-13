@@ -12,7 +12,7 @@ tags:
   - 文档数据库
   - mongodb
   - 运维
-permalink: /pages/ca200834/
+permalink: /pages/79c04432/
 ---
 
 # MongoDB 运维

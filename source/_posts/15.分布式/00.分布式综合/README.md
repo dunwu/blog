@@ -6,7 +6,7 @@ categories:
   - 分布式综合
 tags:
   - 分布式
-permalink: /pages/2716904b/
+permalink: /pages/50dcb66a/
 hidden: true
 index: false
 ---

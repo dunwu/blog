@@ -12,7 +12,7 @@ tags:
   - 搜索引擎数据库
   - elasticsearch
   - API
-permalink: /pages/02faef83/
+permalink: /pages/3166fcb7/
 ---
 
 # ElasticSearch API 之 HighLevelRestClient

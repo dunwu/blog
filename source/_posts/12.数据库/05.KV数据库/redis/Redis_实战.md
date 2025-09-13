@@ -10,7 +10,7 @@ tags:
   - 数据库
   - KV数据库
   - redis
-permalink: /pages/b5256e7c/
+permalink: /pages/c2fe3db9/
 ---
 
 # Redis 实战
@@ -41,7 +41,7 @@ BitMap 和 BloomFilter 都可以用于解决缓存穿透问题。要点在于：
 - **避免永远不释放锁** - 使用 `expire` 加一个过期时间，避免一直不释放锁，导致阻塞。
 - **原子性** - setnx 和 expire 必须合并为一个原子指令，避免 setnx 后，机器崩溃，没来得及设置 expire，从而导致锁永不释放。
 
-> 更多分布式锁的实现方式及细节，请参考：[分布式锁基本原理](https://dunwu.github.io/waterdrop/pages/0eb5a899/)
+> 更多分布式锁的实现方式及细节，请参考：[分布式锁基本原理](https://dunwu.github.io/waterdrop/pages/b8f8aeae/)
 
 根据 Redis 的特性，在实际应用中，存在一些应用小技巧。
 

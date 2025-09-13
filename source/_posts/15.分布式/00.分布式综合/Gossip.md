@@ -8,7 +8,7 @@ tags:
   - 分布式
   - 算法
   - Gossip
-permalink: /pages/88db2f5d/
+permalink: /pages/766737c8/
 ---
 
 # 分布式算法 Gossip

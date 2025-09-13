@@ -9,7 +9,7 @@ tags:
   - 分布式
   - 协同
   - zookeeper
-permalink: /pages/d5540d63/
+permalink: /pages/85c8243e/
 ---
 
 # ZooKeeper ACL

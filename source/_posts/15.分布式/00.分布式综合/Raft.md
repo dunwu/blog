@@ -9,7 +9,7 @@ tags:
   - 算法
   - 共识
   - Raft
-permalink: /pages/9386474c/
+permalink: /pages/3a64eb94/
 ---
 
 # 深入剖析共识性算法 Raft

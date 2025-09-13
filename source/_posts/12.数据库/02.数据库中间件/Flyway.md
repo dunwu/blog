@@ -9,7 +9,7 @@ tags:
   - 中间件
   - 版本管理
   - flyway
-permalink: /pages/f8de06ee/
+permalink: /pages/2c77b228/
 ---
 
 # 版本管理中间件 Flyway

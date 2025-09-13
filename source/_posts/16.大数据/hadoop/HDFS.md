@@ -9,7 +9,7 @@ tags:
   - 大数据
   - hadoop
   - hdfs
-permalink: /pages/301a6069/
+permalink: /pages/493f6a7c/
 ---
 
 # HDFS 应用

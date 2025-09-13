@@ -12,7 +12,7 @@ tags:
   - 搜索引擎数据库
   - elasticsearch
   - 分词
-permalink: /pages/6bfb0fbf/
+permalink: /pages/36ab9b7b/
 ---
 
 # Elasticsearch 文本分析

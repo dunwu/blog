@@ -10,7 +10,7 @@ tags:
   - 算法
   - 共识
   - Paxos
-permalink: /pages/ea903d16/
+permalink: /pages/d287e6b0/
 ---
 
 # 深入剖析共识性算法 Paxos

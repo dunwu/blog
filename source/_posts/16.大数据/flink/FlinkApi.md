@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - Flink
-permalink: /pages/dc12c339/
+permalink: /pages/8512e688/
 ---
 
 # Flink API

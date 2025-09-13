@@ -10,7 +10,7 @@ tags:
   - 数据库
   - 关系型数据库
   - sql
-permalink: /pages/cd3ae5de/
+permalink: /pages/2a3b4ae0/
 ---
 
 # SQL

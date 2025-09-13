@@ -10,7 +10,7 @@ tags:
   - 搜索引擎数据库
   - elastic
   - kibana
-permalink: /pages/aaf079ab/
+permalink: /pages/1a5e0339/
 ---
 
 # Kibana

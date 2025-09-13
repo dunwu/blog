@@ -9,7 +9,7 @@ tags:
   - 算法
   - 共识
   - ZAB
-permalink: /pages/51168337/
+permalink: /pages/da131252/
 ---
 
 # ZAB 协议

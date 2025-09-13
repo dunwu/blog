@@ -10,7 +10,7 @@ tags:
   - 搜索引擎数据库
   - elastic
   - logstash
-permalink: /pages/c2b201b9/
+permalink: /pages/0d754bce/
 ---
 
 # Logstash

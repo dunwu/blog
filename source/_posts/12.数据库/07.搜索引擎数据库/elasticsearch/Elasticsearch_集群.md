@@ -12,7 +12,7 @@ tags:
   - elasticsearch
   - 集群
   - 分片
-permalink: /pages/e3fe52cc/
+permalink: /pages/06734afe/
 ---
 
 # Elasticsearch 集群

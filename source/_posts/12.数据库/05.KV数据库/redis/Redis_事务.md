@@ -12,7 +12,7 @@ tags:
   - redis
   - 事务
   - ACID
-permalink: /pages/d6a68f2a/
+permalink: /pages/c29038b4/
 ---
 
 # Redis 事务

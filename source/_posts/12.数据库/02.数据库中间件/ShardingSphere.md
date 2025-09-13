@@ -9,7 +9,7 @@ tags:
   - 中间件
   - 分库分表
   - shardingsphere
-permalink: /pages/b854a36a/
+permalink: /pages/517df6be/
 ---
 
 # ShardingSphere 简介

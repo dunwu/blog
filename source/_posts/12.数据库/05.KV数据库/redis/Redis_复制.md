@@ -12,7 +12,7 @@ tags:
   - KV数据库
   - redis
   - 复制
-permalink: /pages/c7ac6486/
+permalink: /pages/20a5fe12/
 ---
 
 # Redis 复制

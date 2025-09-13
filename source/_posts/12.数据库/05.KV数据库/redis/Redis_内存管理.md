@@ -13,7 +13,7 @@ tags:
   - redis
   - LRU
   - LFU
-permalink: /pages/e7f8e268/
+permalink: /pages/1625eb55/
 ---
 
 # Redis 内存管理

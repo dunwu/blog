@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - Flink
-permalink: /pages/3f657cd8/
+permalink: /pages/d1db76c3/
 ---
 
 # Flink 事件驱动

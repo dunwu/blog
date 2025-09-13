@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - Flink
-permalink: /pages/6a507723/
+permalink: /pages/87f12923/
 ---
 
 # Flink Table API & SQL

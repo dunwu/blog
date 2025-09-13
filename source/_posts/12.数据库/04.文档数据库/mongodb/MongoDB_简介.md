@@ -12,7 +12,7 @@ tags:
   - 文档数据库
   - mongodb
   - bson
-permalink: /pages/9eca06f6/
+permalink: /pages/2c6dee0a/
 ---
 
 # MongoDB 简介

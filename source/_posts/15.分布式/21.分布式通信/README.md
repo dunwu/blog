@@ -18,7 +18,9 @@ index: false
 
 ### RPC
 
-- [Dubbo 面试](01.RPC/Dubbo面试.md)
+- [Dubbo 面试之服务治理](01.RPC/Dubbo_面试_服务治理.md)
+- [Dubbo 面试之架构](01.RPC/Dubbo_面试_架构.md)
+- [Dubbo 面试之应用](01.RPC/Dubbo_面试_应用.md)
 - [RPC 面试](01.RPC/RPC面试.md)
 
 ### [MQ](02.MQ)

@@ -8,7 +8,7 @@ categories:
 tags:
   - 大数据
   - hadoop
-permalink: /pages/88aa0f3b/
+permalink: /pages/82f6eae9/
 hidden: true
 index: false
 ---

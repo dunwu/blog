@@ -5,12 +5,12 @@ date: 2021-04-29 08:17:17
 categories:
   - 分布式
   - 分布式通信
-  - mq
-  - kafka
+  - MQ
+  - Kafka
 tags:
   - mq
   - kafka
-permalink: /pages/4d7aaaa2/
+permalink: /pages/8349a83d/
 ---
 
 # Kafka 存储

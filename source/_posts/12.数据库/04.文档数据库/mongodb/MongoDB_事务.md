@@ -11,7 +11,7 @@ tags:
   - 文档数据库
   - mongodb
   - 事务
-permalink: /pages/69582aae/
+permalink: /pages/a9eba9b9/
 ---
 
 # MongoDB 事务

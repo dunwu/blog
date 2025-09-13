@@ -11,7 +11,7 @@ tags:
   - 列式数据库
   - 大数据
   - hbase
-permalink: /pages/f62adb4e/
+permalink: /pages/b292f5cf/
 ---
 
 # HBase Java API 基础特性

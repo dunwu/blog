@@ -12,7 +12,7 @@ tags:
   - 文档数据库
   - mongodb
   - 复制
-permalink: /pages/57308862/
+permalink: /pages/cd111ced/
 ---
 
 # MongoDB 复制

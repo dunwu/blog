@@ -5,12 +5,12 @@ date: 2020-07-24 06:52:07
 categories:
   - 分布式
   - 分布式通信
-  - mq
-  - kafka
+  - MQ
+  - Kafka
 tags:
   - mq
   - kafka
-permalink: /pages/640d44c6/
+permalink: /pages/557dd5c5/
 ---
 
 # Kafka 流式处理

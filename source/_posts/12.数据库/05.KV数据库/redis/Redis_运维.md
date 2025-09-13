@@ -11,7 +11,7 @@ tags:
   - KV数据库
   - redis
   - 运维
-permalink: /pages/246e9f5c/
+permalink: /pages/7cad568e/
 ---
 
 # Redis 运维

@@ -9,7 +9,7 @@ tags:
   - 数据库
   - KV数据库
   - memcached
-permalink: /pages/e52934a7/
+permalink: /pages/2af88d46/
 ---
 
 # Memcached 快速入门

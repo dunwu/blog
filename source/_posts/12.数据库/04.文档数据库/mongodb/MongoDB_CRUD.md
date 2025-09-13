@@ -11,7 +11,7 @@ tags:
   - 数据库
   - 文档数据库
   - mongodb
-permalink: /pages/773f1695/
+permalink: /pages/c43cd7f3/
 ---
 
 # MongoDB CRUD

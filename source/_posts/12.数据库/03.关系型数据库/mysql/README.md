@@ -11,7 +11,7 @@ tags:
   - 数据库
   - 关系型数据库
   - mysql
-permalink: /pages/90b1138e/
+permalink: /pages/b46141ca/
 hidden: true
 index: false
 ---

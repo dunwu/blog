@@ -12,7 +12,7 @@ tags:
   - 文档数据库
   - mongodb
   - 建模
-permalink: /pages/20ae84ea/
+permalink: /pages/b39ce786/
 ---
 
 # MongoDB 建模

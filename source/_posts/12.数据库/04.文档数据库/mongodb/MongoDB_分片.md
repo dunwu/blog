@@ -12,7 +12,7 @@ tags:
   - 文档数据库
   - mongodb
   - 分区
-permalink: /pages/2b3824ce/
+permalink: /pages/ea60b1cc/
 ---
 
 # MongoDB 分片

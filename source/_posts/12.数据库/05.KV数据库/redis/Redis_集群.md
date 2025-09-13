@@ -18,7 +18,7 @@ tags:
   - 分区
   - raft
   - gossip
-permalink: /pages/6b0256da/
+permalink: /pages/7fdb1c11/
 ---
 
 # Redis 集群

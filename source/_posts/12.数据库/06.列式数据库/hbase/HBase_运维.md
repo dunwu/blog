@@ -12,7 +12,7 @@ tags:
   - 大数据
   - hbase
   - 运维
-permalink: /pages/e1c3bf67/
+permalink: /pages/368271ca/
 ---
 
 # HBase 运维

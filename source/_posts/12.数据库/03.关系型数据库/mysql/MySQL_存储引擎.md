@@ -13,7 +13,7 @@ tags:
   - mysql
   - 存储引擎
   - InnoDB
-permalink: /pages/f123189c/
+permalink: /pages/eea26076/
 ---
 
 # MySQL 存储引擎

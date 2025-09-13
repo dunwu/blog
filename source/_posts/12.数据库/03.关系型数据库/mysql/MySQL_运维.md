@@ -12,7 +12,7 @@ tags:
   - 关系型数据库
   - mysql
   - 运维
-permalink: /pages/99c68708/
+permalink: /pages/02efbd5a/
 ---
 
 # MySQL 运维
