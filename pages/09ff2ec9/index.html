@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="分布式共识什么是分布式共识分布式系统最重要的抽象之一就是共识（consensus）：所有的节点就某一项提议达成一致。 共识问题通常形式化如下：一个或多个节点可以提议（propose） 某些值，而集群中的所有有效节点根据共识算法进行协商，最终决议（decides） 采纳某个节点的提议。 而共识算法必须满足以下性质：  达成一致（Uniform agreement） - 没有两个节点的决定不同。 完整">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式共识">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/09ff2ec9/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="分布式共识什么是分布式共识分布式系统最重要的抽象之一就是共识（consensus）：所有的节点就某一项提议达成一致。 共识问题通常形式化如下：一个或多个节点可以提议（propose） 某些值，而集群中的所有有效节点根据共识算法进行协商，最终决议（decides） 采纳某个节点的提议。 而共识算法必须满足以下性质：  达成一致（Uniform agreement） - 没有两个节点的决定不同。 完整">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-05-06T22:34:08.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.745Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="共识">
+<meta property="article:tag" content="协同">
+<meta property="article:tag" content="广播">
+<meta property="article:tag" content="epoch">
+<meta property="article:tag" content="quorum">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/09ff2ec9/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/09ff2ec9/","path":"/pages/09ff2ec9/","title":"分布式共识"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式共识 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">分布式共识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">什么是分布式共识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86"><span class="nav-number">1.2.</span> <span class="nav-text">为什么需要分布式共识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E4%BF%9D%E8%AF%81"><span class="nav-number">1.3.</span> <span class="nav-text">一致性保证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">线性化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E4%BF%9D%E8%AF%81"><span class="nav-number">1.5.</span> <span class="nav-text">顺序保证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86%E8%83%BD%E5%90%A6%E8%BE%BE%E6%88%90"><span class="nav-number">1.6.</span> <span class="nav-text">分布式共识能否达成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.7.</span> <span class="nav-text">分布式共识算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%BA%8F%E5%B9%BF%E6%92%AD"><span class="nav-number">1.7.1.</span> <span class="nav-text">全序广播</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E5%85%B1%E8%AF%86"><span class="nav-number">1.7.2.</span> <span class="nav-text">主从复制和共识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%AA%E5%85%83%E5%92%8C%E6%B3%95%E5%AE%9A%E4%BA%BA%E6%95%B0"><span class="nav-number">1.7.3.</span> <span class="nav-text">纪元和法定人数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E8%AF%86%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-number">1.7.4.</span> <span class="nav-text">共识的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B1%E8%AF%86%E5%AF%B9%E4%BA%8E%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E6%95%B0%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">1.7.4.1.</span> <span class="nav-text">共识对于集群节点数的限制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E4%BC%9A%E5%BD%B1%E5%93%8D%E6%80%A7%E8%83%BD"><span class="nav-number">1.7.4.2.</span> <span class="nav-text">选举会影响性能</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/09ff2ec9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式共识 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式共识<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/11.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/01.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-05-07 06:34:08" itemprop="dateCreated datePublished" datetime="2024-05-07T06:34:08+08:00">2024-05-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/" itemprop="url" rel="index"><span itemprop="name">分布式协同</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式协同综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分布式共识"><a href="#分布式共识" class="headerlink" title="分布式共识"></a>分布式共识</h1><h2 id="什么是分布式共识"><a href="#什么是分布式共识" class="headerlink" title="什么是分布式共识"></a>什么是分布式共识</h2><p>分布式系统最重要的抽象之一就是<strong>共识（consensus）：所有的节点就某一项提议达成一致</strong>。</p>
+<p>共识问题通常形式化如下：一个或多个节点可以<strong>提议（propose）</strong> 某些值，而集群中的所有有效节点根据共识算法进行协商，最终<strong>决议（decides）</strong> 采纳某个节点的提议。</p>
+<p>而共识算法必须满足以下性质：</p>
+<ol>
+<li>达成一致（Uniform agreement） - 没有两个节点的决定不同。</li>
+<li>完整性（Integrity） - 每个节点最多决议一次。</li>
+<li>有效性（Validity） - 如果一个节点决定了值 <code>v</code> ，则 <code>v</code> 由某个节点所提议。</li>
+<li>终止（Termination） - 由所有未崩溃的节点来最终决议。</li>
+</ol>
+<p><strong>达成一致</strong>和<strong>完整性</strong>定义了共识算法的核心思想：所有人同意了相同的结果，且一旦决定了，就不能改变主意。<strong>有效性</strong> 主要是为了排除无效的提案。如果不关心容错，那么满足前三个属性很容易：你可以将一个节点做为 “独裁者”，并让该节点做出所有的决定。但如果该节点失效，那么系统就无法再做出任何决定。事实上，2PC 就存在这种问题：如果协调者失效，那么存疑的参与者就无法决定提交还是中止。</p>
+<p><strong>终止</strong> 意味着：即使部分节点出现故障，其他节点也必须达成共识。当然，算法可以容忍的失效节点数是有限的：需要<strong>超过半数以上</strong>的服务器达成一致。假设有 N 台服务器， 大于等于 <code>N/2 + 1</code> 台服务器就算是半数以上了 。</p>
+<blockquote>
+<p>共识（Consensus）与一致性（Consistency）的区别：一致性是指数据不同副本之间的差异；而共识是指达成一致性的方法与过程。很多中文资料把 Consensus 翻译为一致性，但其实是不准确的。</p>
+</blockquote>
+<h2 id="为什么需要分布式共识"><a href="#为什么需要分布式共识" class="headerlink" title="为什么需要分布式共识"></a>为什么需要分布式共识</h2><p>对于一个主从复制的数据库，如果主节点发生失效，就需要切换到另一个节点。如果主节点故障了，集群就会天下大乱，就好比一个国家的皇帝驾崩了，国家大乱一样。比如，数据库集群中主节点故障后，可能导致每个节点上的数据会不一致。这，就应了那句话“国不可一日无君”，对应到分布式系统中就是“集群不可一刻无主”。集群中的有效节点可以<strong>采用共识算法来选举新的主节点</strong>。</p>
+<p>某一时刻必须只有一个主节点，所有的节点必须就此达成一致。如果有两个节点都自认为是主节点，就会发生<strong>脑裂</strong>，导致数据丢失。正确实现共识算怯则可以避免此类问题。</p>
+<h2 id="一致性保证"><a href="#一致性保证" class="headerlink" title="一致性保证"></a>一致性保证</h2><h2 id="线性化"><a href="#线性化" class="headerlink" title="线性化"></a>线性化</h2><p>线性化（一种流行的一致性模型） 其目标是使多副本对外看起来好像是单一副本，然后所有操作以原子方式运行，就像一个单线程程序操作变量一样。线性化的概念简单，容易理解，但它的主要问题在于性能，特别是在网络延迟较大的环境中。</p>
+<h2 id="顺序保证"><a href="#顺序保证" class="headerlink" title="顺序保证"></a>顺序保证</h2><p>线性化是将所有操作都放在唯一的、全局有序时间线上，而因果性则不同，它为我们提供了一个弱一致性模型： 允许存在某些井发事件，所以版本历史<br>是一个包含多个分支与合井的时间线。因果一致性避免了线性化昂贵的协调开销，且对网络延迟的敏感性要低很多。</p>
+<h2 id="分布式共识能否达成"><a href="#分布式共识能否达成" class="headerlink" title="分布式共识能否达成"></a>分布式共识能否达成</h2><p>Fischer、Lynch 和 Paterson （FLP）在 <a target="_blank" rel="noopener" href="https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf"><strong>Impossibility of Distributed Consensus with One Faulty Process</strong></a> 论文中论证了：在一个<strong>异步</strong>系统中，即使只有一个进程出现了故障，也没有算法能<strong>保证</strong>达成共识。</p>
+<p>简单来说，在一个异步系统中，由于进程可以随时发出响应，所以没有办法分辨一个进程是速度很慢还是已经崩溃，这不满足终止性（Termination）。</p>
+<blockquote>
+<p><strong>共识的不可能性</strong></p>
+<p>FLP 是一种限制性很强的模型，它假定共识性算法不能使用任何时钟或超时。如果允许算法使用 <strong>超时</strong> 或其他方法来识别可疑的崩溃节点（即使怀疑有时是错误的），则共识变为一个可解的问题。因此，虽然 FLP 是关于共识不可能性的重要理论结果，但现实中的分布式系统通常是可以达成共识的。</p>
+</blockquote>
+<h2 id="分布式共识算法"><a href="#分布式共识算法" class="headerlink" title="分布式共识算法"></a>分布式共识算法</h2><p>共识意味着就某一项提议，所有节点做出一致的决定，而且决定不可撤销。通过逐一分析，事实证明，多个广泛的问题最终都可以归结为共识，并且彼此等价（这就意味着，如果找到其中一个解决方案，就可以比较容易地将其转换为其他问题的解决方案）。这些等价的问题包括：</p>
+<ul>
+<li>可线性化的比较－设置寄存器 - 寄存器需要根据当前值是否等于输入的参数， 来自动决定接下来是否应该设置新值。</li>
+<li>原子事务提交 - 数据库需要决定是否提交或中止分布式事务。</li>
+<li>全序广播 - 消息系统要决定以何种顺序发送消息。</li>
+<li>锁与租约 - 当多个客户端争抢锁或租约时，要决定其中哪一个成功。</li>
+<li>成员／协调服务 - 对于失败检测器（例如超时机制），系统要决定节点的存活状态（例如基于会i舌超时）。</li>
+<li>唯一性约束 - 当多个事务在相同的主键上试图井发创建冲突资源时，约束条件要决定哪一个被允许，哪些违反约束因而必须失败。</li>
+</ul>
+<p>如果系统只存在一个节点，或者愿意把所有决策功能都委托给某一个节点，那么事情就变得很简单。这和主从复制数据库的情形是一样的，即由主节点负责所有的决策事宜，正因如此，这样的数据库可以提供线性化操作、唯一性约束、完全有序的复制日志等。</p>
+<p>然而，如果唯一的主节点发生故障，或者出现网络中断而导致主节点不可达，这样的系统就会陷入停顿状态。有以下三种基本思路来处理这种情况：</p>
+<ul>
+<li>系统服务停止，井等待主节点恢复。许多XA I JTA 事务协调者采用了该方式。本质上，这种方怯并没有完全解决共识问题，因为它不满足终止性条件，试想如果主节点没法恢复，则系统就会永远处于停顿状态。</li>
+<li>人为介入来选择新的主节点，并重新配置系统使之生效。许多关系数据库都采用这种方怯。本质上它引入了一种“上帝旨意” 的共识， 即在计算机系统之外由人<br>类来决定最终命运。故障切换的速度完全取决于人类的操作，通常比计算机慢。</li>
+<li>采用算i法来自动选择新的主节点。这需要一个共识算法，我们建议采用那些经过验证的共识系统来确保正确处理各种网络异常。</li>
+</ul>
+<p>共识算法选举主节点的过程如同投票选举领导者（Leader），参选者（Candidate）需要说服大多数投票者（Follower）投票给他。一旦选举出领导者，就由领导者发号施令，所有追随者必须服从命令。</p>
+<p>常见的分布式共识算法有：</p>
+<ul>
+<li><a href="https://dunwu.github.io/waterdrop/pages/d287e6b0/">Paxos 算法</a></li>
+<li><a href="https://dunwu.github.io/waterdrop/pages/3a64eb94/">Raft 算法</a> - 应用代表：Redis、etcd</li>
+<li><a href="https://dunwu.github.io/waterdrop/pages/da131252/">Zab 算法</a> - 应用代表：ZooKeeper</li>
+</ul>
+<p>这些算法之间有不少相似之处，但并不相同。下面，将大致介绍一下它们的共同思想。</p>
+<h3 id="全序广播"><a href="#全序广播" class="headerlink" title="全序广播"></a>全序广播</h3><p>全序广播要求将消息按照相同的顺序，恰好传递一次，准确传送到所有节点。这相当于进行了几轮共识：在每一轮中，节点提议下一条要发送的消息，然后决定在全序中下一条要发送的消息。</p>
+<p>所以，全序广播相当于重复进行多轮共识（每次共识决定与一次消息传递相对应）：</p>
+<ul>
+<li>由于 <strong>一致同意</strong> 属性，所有节点决定以相同的顺序传递相同的消息。</li>
+<li>由于 <strong>完整性</strong> 属性，消息不会重复。</li>
+<li>由于 <strong>有效性</strong> 属性，消息不会被损坏，也不能凭空编造。</li>
+<li>由于 <strong>终止</strong> 属性，消息不会丢失。</li>
+</ul>
+<p>Raft 和 Zab 直接实现了全序广播，因为这样做比重复<strong>一次一值（one value a time）</strong>的共识更高效。在 Paxos 的情况下，这种优化被称为 Multi-Paxos。</p>
+<h3 id="主从复制和共识"><a href="#主从复制和共识" class="headerlink" title="主从复制和共识"></a>主从复制和共识</h3><p>主从复制将所有的写入操作都交给领导者，并以相同的顺序将状态变化广播同步到追随者，从而保持一致性。这实际上不就是一个全序广播吗？为什么不需要担心共识问题呢？</p>
+<p>因为，这种场景下实际是一种独裁型的共识模型：只有一个节点被允许接收写入（即决定写入复制日志的顺序），如果该节点发生故障，则系统将无法写入，直到选出新的领导者。</p>
+<h3 id="纪元和法定人数"><a href="#纪元和法定人数" class="headerlink" title="纪元和法定人数"></a>纪元和法定人数</h3><p>为了保证领导者是独一无二的，共识算法通常会定义一个逻辑时钟，用于表示选举领导者的投票轮次（纪元），而共识算法要保证每界选举得出的领导者是惟一的。不同算法中，对代表逻辑时钟的值定义不同，但作用是共通的：在 Paxos 中称其为选票（ballot）；在 Raft 中称其为任期（term）；在 Zab 中称其为纪元（epoch）。</p>
+<p>每当现任领导者被认为宕机时，节点间就会发起一场投票，选举出新的领导者。这次选举被赋予一个全序且单调递增的纪元编号。如果出现两个不同时代的领导者，则以更高纪元编号的领导为主。</p>
+<p>在每轮选举中，参选者如果要赢得选举，当选领导者，必须获得法定人数<strong>（quorum）</strong> 的选票。通常，会约定法定人数为<strong>超过半数以上</strong>，举例来说：假设总共有 N 张投票， 大于等于 <code>N/2 + 1</code> 张投票就算是半数以上了 。</p>
+<h3 id="共识的局限性"><a href="#共识的局限性" class="headerlink" title="共识的局限性"></a>共识的局限性</h3><h4 id="共识对于集群节点数的限制"><a href="#共识对于集群节点数的限制" class="headerlink" title="共识对于集群节点数的限制"></a>共识对于集群节点数的限制</h4><p>多数派共识算法的核心是少数服从多数，获得投票多的节点胜出。这对于集群节点数有以下限制：</p>
+<ul>
+<li><strong>集群中最多可以容忍半数以下的节点出现故障</strong>。因为，一旦故障节点数达到半数，则无法在选举中获得半数以上投票。举例来说：如果集群有 3 个节点，最多允许 1 个节点出现故障；如果集群中有 5 个节点，最多允许 2 个节点出现故障。</li>
+<li><strong>集群的节点数一般要求是奇数</strong>。如果集群节点数为偶数，就很有可能在选主时出现某两个节点均获得半数以上投票的情况，这种情况下就必须重新投票选举。</li>
+</ul>
+<h4 id="选举会影响性能"><a href="#选举会影响性能" class="headerlink" title="选举会影响性能"></a>选举会影响性能</h4><p>共识系统通常依靠超时来检测失效的节点。在网络延迟高度变化的环境中，特别是在地理上散布的系统中，经常发生一个节点由于暂时的网络问题，错误地认为领导者已经失效。虽然这种错误不会损害安全属性，但频繁的领导者选举会导致糟糕的性能表现，因系统最后可能花在权力倾扎上的时间要比花在建设性工作的多得多。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/30329536/">《数据密集型应用系统设计》</a> - 这可能是目前最好的分布式存储书籍，强力推荐【进阶】</li>
+<li><a target="_blank" rel="noopener" href="https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf"><strong>Impossibility of Distributed Consensus with One Faulty Process</strong></a> - 论证了在一个异步系统中，即使只有一个进程出现了故障，也没有算法能保证达成共识。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/09ff2ec9/" title="分布式共识">https://dunwu.github.io/blog/pages/09ff2ec9/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E5%85%B1%E8%AF%86/" rel="tag"># 共识</a>
+              <a href="/blog/tags/%E5%8D%8F%E5%90%8C/" rel="tag"># 协同</a>
+              <a href="/blog/tags/%E5%B9%BF%E6%92%AD/" rel="tag"># 广播</a>
+              <a href="/blog/tags/epoch/" rel="tag"># epoch</a>
+              <a href="/blog/tags/quorum/" rel="tag"># quorum</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/7b7b3cb9/" rel="prev" title="《极客时间教程 - 深入浅出分布式技术原理》笔记">
+                  <i class="fa fa-angle-left"></i> 《极客时间教程 - 深入浅出分布式技术原理》笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/c30183a4/" rel="next" title="服务注册和发现">
+                  服务注册和发现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"882d0eb44f550919eec666f4365a9cea"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

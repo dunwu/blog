@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="深入剖析共识性算法 Raft Raft 简介Raft 是一种为了管理日志复制的分布式共识性算法。从本质上说，Raft 算法是通过一切以领导者为准的方式，实现一系列值的共识和各节点日志的一致。 Raft 出现之前，Paxos 一直是分布式共识性算法的标准。Paxos 难以理解，更难以实现。Raft 的设计目标是简化 Paxos，使得算法既容易理解，也容易实现。 Paxos 和 Raft 都是分布式共">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入剖析共识性算法 Raft">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/3a64eb94/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="深入剖析共识性算法 Raft Raft 简介Raft 是一种为了管理日志复制的分布式共识性算法。从本质上说，Raft 算法是通过一切以领导者为准的方式，实现一系列值的共识和各节点日志的一致。 Raft 出现之前，Paxos 一直是分布式共识性算法的标准。Paxos 难以理解，更难以实现。Raft 的设计目标是简化 Paxos，使得算法既容易理解，也容易实现。 Paxos 和 Raft 都是分布式共">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170818218.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131233906.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131215742.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131220742.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-01.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-02.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-03.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-04.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-multi-candidate-01.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-multi-candidate-02.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170814527.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170817072.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-01.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-02.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-03.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-04.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170815743.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170816381.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200201220628.png">
+<meta property="article:published_time" content="2020-02-01T14:07:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.744Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="共识">
+<meta property="article:tag" content="Raft">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170818218.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/3a64eb94/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/3a64eb94/","path":"/pages/3a64eb94/","title":"深入剖析共识性算法 Raft"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入剖析共识性算法 Raft | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5%E5%89%96%E6%9E%90%E5%85%B1%E8%AF%86%E6%80%A7%E7%AE%97%E6%B3%95-Raft"><span class="nav-number">1.</span> <span class="nav-text">深入剖析共识性算法 Raft</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Raft-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Raft 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%B1%E8%AF%86%E6%80%A7"><span class="nav-number">1.1.1.</span> <span class="nav-text">分布式共识性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">1.1.2.</span> <span class="nav-text">复制状态机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RAFT-%E5%BA%94%E7%94%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">RAFT 应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Raft-%E5%9F%BA%E7%A1%80"><span class="nav-number">1.2.</span> <span class="nav-text">Raft 基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2"><span class="nav-number">1.2.1.</span> <span class="nav-text">服务器角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E6%9C%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">任期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RPC"><span class="nav-number">1.2.3.</span> <span class="nav-text">RPC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE-Leader"><span class="nav-number">1.3.</span> <span class="nav-text">选举 Leader</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E8%A7%84%E5%88%99"><span class="nav-number">1.3.1.</span> <span class="nav-text">选举规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E6%88%90%E4%B8%BA-Leader"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">自己成为 Leader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%88%90%E4%B8%BA-Leader"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">其他的服务器成为 Leader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B2%A1%E6%9C%89%E4%BB%BB%E4%BD%95%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%88%90%E4%B8%BA-Leader"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">没有任何服务器成为 Leader</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95-Candidate-%E9%80%89%E4%B8%BE"><span class="nav-number">1.3.2.</span> <span class="nav-text">单 Candidate 选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A-Candidate-%E9%80%89%E4%B8%BE"><span class="nav-number">1.3.3.</span> <span class="nav-text">多 Candidate 选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.3.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6"><span class="nav-number">1.4.</span> <span class="nav-text">日志复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">日志格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.2.</span> <span class="nav-text">日志复制流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.4.3.</span> <span class="nav-text">日志一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Leader-%E5%92%8C-Follower-%E6%97%A5%E5%BF%97%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E5%8F%AF%E8%83%BD"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">Leader 和 Follower 日志不一致的可能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Leader-%E5%92%8C-Follower-%E6%97%A5%E5%BF%97%E4%B8%80%E8%87%B4%E7%9A%84%E4%BF%9D%E8%AF%81"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">Leader 和 Follower 日志一致的保证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">1.5.</span> <span class="nav-text">安全性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E9%99%90%E5%88%B6"><span class="nav-number">1.5.1.</span> <span class="nav-text">选举限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%97%A7%E4%BB%BB%E6%9C%9F%E7%9A%84%E6%97%A5%E5%BF%97%E6%9D%A1%E7%9B%AE"><span class="nav-number">1.5.2.</span> <span class="nav-text">提交旧任期的日志条目</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.6.</span> <span class="nav-text">日志压缩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/3a64eb94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入剖析共识性算法 Raft | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入剖析共识性算法 Raft<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/00.%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/Raft.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-01 22:07:00" itemprop="dateCreated datePublished" datetime="2020-02-01T22:07:00+08:00">2020-02-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="深入剖析共识性算法-Raft"><a href="#深入剖析共识性算法-Raft" class="headerlink" title="深入剖析共识性算法 Raft"></a>深入剖析共识性算法 Raft</h1><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170818218.png"></p>
+<h2 id="Raft-简介"><a href="#Raft-简介" class="headerlink" title="Raft 简介"></a>Raft 简介</h2><p><strong><a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">Raft</a> 是一种为了管理日志复制的分布式共识性算法</strong>。从本质上说，<strong>Raft 算法是通过一切以领导者为准的方式，实现一系列值的共识和各节点日志的一致</strong>。</p>
+<p><a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">Raft</a> 出现之前，Paxos 一直是分布式共识性算法的标准。Paxos <strong>难以理解，更难以实现</strong>。Raft 的设计目标是简化 Paxos，使得算法<strong>既容易理解，也容易实现</strong>。</p>
+<p>Paxos 和 Raft 都是分布式共识性算法，这个过程如同投票选举领袖（Leader），参选者（Candidate）需要说服大多数投票者（Follower）投票给他，一旦选举出领袖，就由领袖发号施令。Paxos 和 Raft 的区别在于选举的具体过程不同。</p>
+<p><strong>Raft 可以解决分布式 CAP 理论中的 CP</strong>，即 <em>一致性（C：Consistency）</em> 和 _分区容忍性（P：Partition Tolerance）_，并不能解决 <em>可用性（A：Availability）</em> 的问题。</p>
+<h3 id="分布式共识性"><a href="#分布式共识性" class="headerlink" title="分布式共识性"></a>分布式共识性</h3><p>分布式共识性 (distributed consensus) 是分布式系统中最基本的问题，用来保证一个分布式系统的可靠性以及容错能力。简单来说，**<em>分布式共识性是指多个服务器的保持状态一致</em>**。</p>
+<p>在分布式系统中，可能出现各种意外（断电、网络拥塞、CPU&#x2F;内存耗尽等等），使得服务器宕机或无法访问，最终导致无法和其他服务器保持状态一致。为了应对这种情况，就需要有一种一致性协议来进行容错，使得分布式系统中即使有部分服务器宕机或无法访问，整体依然可以对外提供服务。</p>
+<p>以容错方式达成一致，自然不能要求所有服务器都达成一致状态，只要<strong>超过半数以上</strong>的服务器达成一致就可以了。假设有 N 台服务器， 大于等于 <code>N/2 + 1</code> 台服务器就算是半数以上了 。</p>
+<h3 id="复制状态机"><a href="#复制状态机" class="headerlink" title="复制状态机"></a>复制状态机</h3><p><strong><code>复制状态机（Replicated State Machines）</code></strong> 是指一组服务器上的状态机产生相同状态的副本，并且在一些机器宕掉的情况下也可以继续运行。一致性算法管理着来自客户端指令的复制日志。状态机从日志中处理相同顺序的相同指令，所以产生的结果也是相同的。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131233906.png"></p>
+<p>复制状态机通常都是基于复制日志实现的，如上图。每一个服务器存储一个包含一系列指令的日志，并且按照日志的顺序进行执行。每一个日志都按照相同的顺序包含相同的指令，所以每一个服务器都执行相同的指令序列。因为每个状态机都是确定的，每一次执行操作都产生相同的状态和同样的序列。</p>
+<p>保证复制日志相同就是一致性算法的工作了。在一台服务器上，一致性模块接收客户端发送来的指令然后增加到自己的日志中去。它和其他服务器上的一致性模块进行通信来保证每一个服务器上的日志最终都以相同的顺序包含相同的请求，尽管有些服务器会宕机。一旦指令被正确的复制，每一个服务器的状态机按照日志顺序处理他们，然后输出结果被返回给客户端。因此，服务器集群看起来形成一个高可靠的状态机。</p>
+<p>实际系统中使用的一致性算法通常含有以下特性：</p>
+<ul>
+<li><strong>安全性保证</strong>（绝对不会返回一个错误的结果）：在非拜占庭错误情况下，包括网络延迟、分区、丢包、冗余和乱序等错误都可以保证正确。</li>
+<li><strong>可用性</strong>：集群中只要有大多数的机器可运行并且能够相互通信、和客户端通信，就可以保证可用。因此，一个典型的包含 5 个节点的集群可以容忍两个节点的失败。服务器被停止就认为是失败。他们当有稳定的存储的时候可以从状态中恢复回来并重新加入集群。</li>
+<li><strong>不依赖时序来保证一致性</strong>：物理时钟错误或者极端的消息延迟只有在最坏情况下才会导致可用性问题。</li>
+<li>通常情况下，一条指令可以尽可能快的在集群中大多数节点响应一轮远程过程调用时完成。小部分比较慢的节点不会影响系统整体的性能。</li>
+</ul>
+<h3 id="RAFT-应用"><a href="#RAFT-应用" class="headerlink" title="RAFT 应用"></a>RAFT 应用</h3><p>RAFT 可以做什么？</p>
+<p>通过 RAFT 提供的复制状态机，可以解决分布式系统的复制、修复、节点管理等问题。Raft 极大的简化当前分布式系统的设计与实现，让开发者只关注于业务逻辑，将其抽象实现成对应的状态机即可。基于这套框架，可以构建很多分布式应用：</p>
+<ul>
+<li>分布式存储系统：比如分布式消息队列、分布式块系统、分布式文件系统、分布式表格系统等。代表有：Redis、Etcd、Consul</li>
+<li>高可靠元信息管理：比如各类 Master 模块的 HA</li>
+</ul>
+<h2 id="Raft-基础"><a href="#Raft-基础" class="headerlink" title="Raft 基础"></a>Raft 基础</h2><p>Raft 将一致性问题分解成了三个子问题：</p>
+<ul>
+<li><strong>选举 Leader</strong></li>
+<li><strong>日志复制</strong></li>
+<li><strong>安全性</strong></li>
+</ul>
+<p>在后续章节，会详细讲解这个子问题。现在，先了解一下 Raft 的一些核心概念。</p>
+<h3 id="服务器角色"><a href="#服务器角色" class="headerlink" title="服务器角色"></a>服务器角色</h3><p>在 Raft 中，任何时刻，每个服务器都处于这三个角色之一 ：</p>
+<ul>
+<li><strong><code>Leader</code></strong> - 领导者，通常一个系统中是<strong>一主（Leader）多从（Follower）</strong>。Leader <strong>负责处理所有的客户端请求</strong>。</li>
+<li><strong><code>Follower</code></strong> - 跟随者，<strong>不会发送任何请求</strong>，只是简单的 <strong>响应来自 Leader 或者 Candidate 的请求</strong>。</li>
+<li><strong><code>Candidate</code></strong> - 参选者，选举新 Leader 时的临时角色。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131215742.png"></p>
+<blockquote>
+<p>:bulb: 图示说明：</p>
+<ul>
+<li>Follower 只响应来自其他服务器的请求。在一定时限内，如果 Follower 接收不到消息，就会转变成 Candidate，并发起选举。</li>
+<li>Candidate 向 Follower 发起投票请求，如果获得集群中半数以上的选票，就会转变为 Leader。</li>
+<li>在一个 Term 内，Leader 始终保持不变，直到下线了。Leader 需要周期性向所有 Follower 发送心跳消息，以阻止 Follower 转变为 Candidate。</li>
+</ul>
+</blockquote>
+<h3 id="任期"><a href="#任期" class="headerlink" title="任期"></a>任期</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131220742.png"></p>
+<p>Raft 把时间分割成任意长度的 <strong><em><code>任期（Term）</code></em><strong>，任期用连续的整数标记。每一段任期从一次</strong>选举</strong>开始。<strong>Raft 保证了在一个给定的任期内，最多只有一个领导者</strong>。</p>
+<ul>
+<li>如果选举成功，Leader 会管理整个集群直到任期结束。</li>
+<li>如果选举失败，那么这个任期就会因为没有 Leader 而结束。</li>
+</ul>
+<p><strong>不同服务器节点观察到的任期转换状态可能不一样</strong>：</p>
+<ul>
+<li>服务器节点可能观察到多次的任期转换。</li>
+<li>服务器节点也可能观察不到任何一次任期转换。</li>
+</ul>
+<p><strong>任期在 Raft 算法中充当逻辑时钟的作用，使得服务器节点可以查明一些过期的信息（比如过期的 Leader）。每个服务器节点都会存储一个当前任期号，这一编号在整个时期内单调的增长。当服务器之间通信的时候会交换当前任期号。</strong></p>
+<ul>
+<li>如果一个服务器的当前任期号比其他人小，那么他会更新自己的编号到较大的编号值。</li>
+<li>如果一个 Candidate 或者 Leader 发现自己的任期号过期了，那么他会立即恢复成跟随者状态。</li>
+<li>如果一个节点接收到一个包含过期的任期号的请求，那么他会直接拒绝这个请求。</li>
+</ul>
+<h3 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h3><p>Raft 算法中服务器节点之间的通信使用 **_<code>远程过程调用（RPC）</code>_**。</p>
+<p>基本的一致性算法只需要两种 RPC：</p>
+<ul>
+<li><strong><code>RequestVote RPC</code></strong> - 请求投票 RPC，由 Candidate 在选举期间发起。</li>
+<li><strong><code>AppendEntries RPC</code></strong> - 附加条目 RPC，由 Leader 发起，用来复制日志和提供一种心跳机制。</li>
+</ul>
+<h2 id="选举-Leader"><a href="#选举-Leader" class="headerlink" title="选举 Leader"></a>选举 Leader</h2><h3 id="选举规则"><a href="#选举规则" class="headerlink" title="选举规则"></a>选举规则</h3><p><strong>领导者心跳消息</strong>：Raft 使用一种心跳机制来触发 Leader 选举。<strong>Leader 需要周期性的向所有 Follower 发送心跳消息</strong>，以此维持 Leader 身份。</p>
+<p><strong>随机的竞选超时时间</strong>：每个 Follower 都设置了一个<strong>随机的竞选超时时间</strong>，一般为 <code>150ms ~ 300ms</code>，如果在竞选超时时间内没有收到 Leader 的心跳消息，就会认为当前 Term 没有可用的 Leader，并发起选举来选出新的 Leader。开始一次选举过程，Follower 先要增加自己的当前 Term 号，并<strong>转换为 Candidate</strong>。</p>
+<p>Candidate 会并行的<strong>向集群中的所有服务器节点发送投票请求（<code>RequestVote RPC</code>）</strong>，它会保持当前状态直到以下三件事情之一发生：</p>
+<ul>
+<li><strong>自己成为 Leader</strong></li>
+<li><strong>其他的服务器成为 Leader</strong></li>
+<li><strong>没有任何服务器成为 Leader</strong></li>
+</ul>
+<h4 id="自己成为-Leader"><a href="#自己成为-Leader" class="headerlink" title="自己成为 Leader"></a>自己成为 Leader</h4><ul>
+<li>当一个 Candidate 从整个集群<strong>半数以上</strong>的服务器节点获得了针对同一个 Term 的选票，那么它就赢得了这次选举并成为 Leader。每个服务器最多会对一个 Term 投出一张选票，按照<strong>先来先服务（FIFO）的原则</strong>。_要求半数以上选票的规则确保了最多只会有一个 Candidate 赢得此次选举_。</li>
+<li>一旦 Candidate 赢得选举，就立即成为 Leader。然后它会向其他的服务器发送心跳消息来建立自己的权威并且阻止新的领导人的产生。</li>
+</ul>
+<h4 id="其他的服务器成为-Leader"><a href="#其他的服务器成为-Leader" class="headerlink" title="其他的服务器成为 Leader"></a>其他的服务器成为 Leader</h4><p>等待投票期间，Candidate 可能会从其他的服务器接收到声明它是 Leader 的 <code>AppendEntries RPC</code>。</p>
+<ul>
+<li>如果这个 Leader 的 Term 号（包含在此次的 RPC 中）不小于 Candidate 当前的 Term，那么 Candidate 会承认 Leader 合法并回到 Follower 状态。</li>
+<li>如果此次 RPC 中的 Term 号比自己小，那么 Candidate 就会拒绝这个消息并继续保持 Candidate 状态。</li>
+</ul>
+<h4 id="没有任何服务器成为-Leader"><a href="#没有任何服务器成为-Leader" class="headerlink" title="没有任何服务器成为 Leader"></a>没有任何服务器成为 Leader</h4><p>如果有多个 Follower 同时成为 Candidate，那么选票可能会被瓜分以至于没有 Candidate 可以赢得半数以上的投票。当这种情况发生的时候，每一个 Candidate 都会竞选超时，然后通过增加当前 Term 号来开始一轮新的选举。然而，没有其他机制的话，选票可能会被无限的重复瓜分。</p>
+<p>Raft 算法使用随机选举超时时间的方法来确保很少会发生选票瓜分的情况，就算发生也能很快的解决。为了阻止选票起初就被瓜分，竞选超时时间是一个<strong>随机的时间</strong>，在一个固定的区间（例如 150-300 毫秒）随机选择，这样可以把选举都分散开。</p>
+<ul>
+<li>以至于在大多数情况下，只有一个服务器会超时，然后它赢得选举，成为 Leader，并在其他服务器超时之前发送心跳包。</li>
+<li>同样的机制也被用在选票瓜分的情况下：每一个 Candidate 在开始一次选举的时候会重置一个随机的选举超时时间，然后在超时时间内等待投票的结果；这样减少了在新的选举中另外的选票瓜分的可能性。</li>
+</ul>
+<hr>
+<p>理解了上面的选举规则后，我们通过动图来加深认识。</p>
+<h3 id="单-Candidate-选举"><a href="#单-Candidate-选举" class="headerlink" title="单 Candidate 选举"></a>单 Candidate 选举</h3><p>（1）下图表示一个分布式系统的最初阶段，此时只有 Follower，没有 Leader。Follower A 等待一个随机的选举超时时间之后，没收到 Leader 发来的心跳消息。因此，将 Term 由 0 增加为 1，转换为 Candidate，进入选举状态。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-01.gif"></p>
+<p>（2）此时，A 向所有其他节点发送投票请求。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-02.gif"></p>
+<p>（3）其它节点会对投票请求进行回复，如果超过半数以上的节点投票了，那么该 Candidate 就会立即变成 Term 为 1 的 Leader。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-03.gif"></p>
+<p>（4）Leader 会周期性地发送心跳消息给所有 Follower，Follower 接收到心跳包，会重新开始计时。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-candidate-04.gif"></p>
+<h3 id="多-Candidate-选举"><a href="#多-Candidate-选举" class="headerlink" title="多 Candidate 选举"></a>多 Candidate 选举</h3><p>（1）如果有多个 Follower 成为 Candidate，并且所获得票数相同，那么就需要重新开始投票。例如下图中 Candidate B 和 Candidate D 都发起 Term 为 4 的选举，且都获得两票，因此需要重新开始投票。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-multi-candidate-01.gif"></p>
+<p>（2）当重新开始投票时，由于每个节点设置的随机竞选超时时间不同，因此能下一次再次出现多个 Candidate 并获得同样票数的概率很低。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-multi-candidate-02.gif"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>Raft 算法通过：领导者心跳消息、随机选举超时时间、得到大多数选票才通过原则、任期最新者优先、先来先服务等投票原则，保证了一个任期只有一位领导，也极大地减少了选举失败的情况。</p>
+<h2 id="日志复制"><a href="#日志复制" class="headerlink" title="日志复制"></a>日志复制</h2><h3 id="日志格式"><a href="#日志格式" class="headerlink" title="日志格式"></a>日志格式</h3><p><strong>日志由含日志索引（log index）的日志条目（log entry）组成</strong>。每个日志条目包含它被创建时的 Term 号（下图中方框中的数字），和一个复制状态机需要执行的指令。如果一个日志条目被复制到半数以上的服务器上，就被认为可以提交（Commit）了。</p>
+<ul>
+<li>日志条目中的 Term 号被用来检查是否出现不一致的情况，它实际上是创建这条日志的领导者的任期编号。</li>
+<li>日志条目中的日志索引用来表明它在日志中的位置，它是一个单调递增的整数。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170814527.png"></p>
+<p>Raft 日志同步保证如下两点：</p>
+<ul>
+<li>如果不同日志中的两个日志条目有着相同的日志索引和 Term，则<strong>它们所存储的命令是相同的</strong>。<ul>
+<li>这个特性基于这条原则：Leader 最多在一个 Term 内、在指定的一个日志索引上创建一条日志条目，同时日志条目在日志中的位置也从来不会改变。</li>
+</ul>
+</li>
+<li>如果不同日志中的两个日志条目有着相同的日志索引和 Term，则<strong>它们之前的所有条目都是完全一样的</strong>。<ul>
+<li>这个特性由 <code>AppendEntries RPC</code> 的一个简单的一致性检查所保证。在发送 <code>AppendEntries RPC</code> 时，Leader 会把新日志条目之前的日志条目的日志索引和 Term 号一起发送。如果 Follower 在它的日志中找不到包含相同日志索引和 Term 号的日志条目，它就会拒绝接收新的日志条目。</li>
+</ul>
+</li>
+</ul>
+<h3 id="日志复制流程"><a href="#日志复制流程" class="headerlink" title="日志复制流程"></a>日志复制流程</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170817072.png"></p>
+<ol>
+<li>Leader 负责处理所有客户端的请求。</li>
+<li>Leader 把请求作为日志条目加入到它的日志中，然后并行的向其他服务器发送 <code>AppendEntries RPC</code> 请求，要求 Follower 复制日志条目。</li>
+<li>Follower 复制成功后，返回确认消息。</li>
+<li>当这个日志条目被半数以上的服务器复制后，Leader 提交这个日志条目到它的复制状态机，并向客户端返回执行结果。</li>
+</ol>
+<blockquote>
+<p>注意：如果 Follower 崩溃或者运行缓慢，再或者网络丢包，Leader 会不断的重复尝试发送 <code>AppendEntries RPC</code> 请求 （尽管已经回复了客户端），直到所有的跟随者都最终复制了所有的日志条目。</p>
+</blockquote>
+<p>下面，通过一组动图来加深认识：</p>
+<p>（1）来自客户端的修改都会被传入 Leader。注意该修改还未被提交，只是写入日志中。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-01.gif"></p>
+<p>（2）Leader 会把修改复制到所有 Follower。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-02.gif"></p>
+<p>（3）Leader 会等待大多数的 Follower 也进行了修改，然后才将修改提交。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-03.gif"></p>
+<p>（4）此时 Leader 会通知的所有 Follower 让它们也提交修改，此时所有节点的值达成一致。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/raft-sync-log-04.gif"></p>
+<h3 id="日志一致性"><a href="#日志一致性" class="headerlink" title="日志一致性"></a>日志一致性</h3><p>一般情况下，Leader 和 Followers 的日志保持一致，因此日志条目一致性检查通常不会失败。然而，Leader 崩溃可能会导致日志不一致：旧的 Leader 可能没有完全复制完日志中的所有条目。</p>
+<h4 id="Leader-和-Follower-日志不一致的可能"><a href="#Leader-和-Follower-日志不一致的可能" class="headerlink" title="Leader 和 Follower 日志不一致的可能"></a>Leader 和 Follower 日志不一致的可能</h4><p>Leader 和 Follower 可能存在多种日志不一致的可能。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170815743.png"></p>
+<blockquote>
+<p>:bulb: 图示说明：</p>
+<p>上图阐述了 Leader 和 Follower 可能存在多种日志不一致的可能，每一个方框表示一个日志条目，里面的数字表示任期号 。</p>
+<p>当一个 Leader 成功当选时，Follower 可能出现以下情况（a-f）：</p>
+<ul>
+<li><strong>存在未更新日志条目</strong>，如（a、b）。</li>
+<li><strong>存在未提交日志条目</strong>，如（c、d）。</li>
+<li>或<strong>两种情况都存在</strong>，如（e、f）。</li>
+</ul>
+<p>_例如，场景 f 可能会这样发生，某服务器在 Term2 的时候是 Leader，已附加了一些日志条目到自己的日志中，但在提交之前就崩溃了；很快这个机器就被重启了，在 Term3 重新被选为 Leader，并且又增加了一些日志条目到自己的日志中；在 Term 2 和 Term 3 的日志被提交之前，这个服务器又宕机了，并且在接下来的几个任期里一直处于宕机状态_。</p>
+</blockquote>
+<h4 id="Leader-和-Follower-日志一致的保证"><a href="#Leader-和-Follower-日志一致的保证" class="headerlink" title="Leader 和 Follower 日志一致的保证"></a>Leader 和 Follower 日志一致的保证</h4><p>Leader 通过强制 Followers 复制它的日志来处理日志的不一致，<strong>Followers 上的不一致的日志会被 Leader 的日志覆盖</strong>。</p>
+<ul>
+<li>Leader 为了使 Followers 的日志同自己的一致，Leader 需要找到 Followers 同它的日志一致的地方，然后覆盖 Followers 在该位置之后的条目。</li>
+<li>Leader 会从后往前试，每次日志条目失败后尝试前一个日志条目，直到成功找到每个 Follower 的日志一致位点，然后向后逐条覆盖 Followers 在该位置之后的条目。</li>
+</ul>
+<h2 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h2><p>前面描述了 Raft 算法是如何选举 Leader 和复制日志的。</p>
+<p>Raft 还增加了一些限制来完善 Raft 算法，以保证安全性：保证了任意 Leader 对于给定的 Term，都拥有了之前 Term 的所有被提交的日志条目。</p>
+<h3 id="选举限制"><a href="#选举限制" class="headerlink" title="选举限制"></a>选举限制</h3><p>拥有最新的已提交的日志条目的 Follower 才有资格成为 Leader。</p>
+<p>Raft 使用投票的方式来阻止一个 Candidate 赢得选举除非这个 Candidate 包含了所有已经提交的日志条目。 Candidate 为了赢得选举必须联系集群中的大部分节点，这意味着每一个已经提交的日志条目在这些服务器节点中肯定存在于至少一个节点上。如果 Candidate 的日志至少和大多数的服务器节点一样新（这个新的定义会在下面讨论），那么他一定持有了所有已经提交的日志条目。</p>
+<p><code>RequestVote RPC</code> 实现了这样的限制：<strong>RequestVote RPC 中包含了 Candidate 的日志信息， Follower 会拒绝掉那些日志没有自己新的投票请求</strong>。</p>
+<p>如何判断哪个日志条目比较新？</p>
+<p>Raft 通过比较两份日志中最后一条日志条目的日志索引和 Term 来判断哪个日志比较新。</p>
+<ul>
+<li>先判断 Term，哪个数值大即代表哪个日志比较新。</li>
+<li>如果 Term 相同，再比较 日志索引，哪个数值大即代表哪个日志比较新。</li>
+</ul>
+<h3 id="提交旧任期的日志条目"><a href="#提交旧任期的日志条目" class="headerlink" title="提交旧任期的日志条目"></a>提交旧任期的日志条目</h3><p>一个当前 Term 的日志条目被复制到了半数以上的服务器上，Leader 就认为它是可以被提交的。如果这个 Leader 在提交日志条目前就下线了，后续的 Leader 可能会覆盖掉这个日志条目。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170816381.png"></p>
+<blockquote>
+<p>💡 图示说明：</p>
+<p>上图解释了为什么 Leader 无法对旧 Term 的日志条目进行提交。</p>
+<ul>
+<li>阶段 (a) ，S1 是 Leader，且 S1 写入日志条目为 (Term 2，日志索引 2），只有 S2 复制了这个日志条目。</li>
+<li>阶段 (b)，S1 下线，S5 被选举为 Term3 的 Leader。S5 写入日志条目为 (Term 3，日志索引 2）。</li>
+<li>阶段 (c)，S5 下线，S1 重新上线，并被选举为 Term4 的 Leader。此时，Term 2 的那条日志条目已经被复制到了集群中的大多数节点上，但是还没有被提交。</li>
+<li>阶段 (d)，S1 再次下线，S5 重新上线，并被重新选举为 Term3 的 Leader。然后 S5 覆盖了日志索引 2 处的日志。</li>
+<li>阶段 (e)，如果阶段 (d) 还未发生，即 S1 再次下线之前，S1 把自己主导的日志条目复制到了大多数节点上，那么在后续 Term 里面这些新日志条目就会被提交。这样在同一时刻就同时保证了，之前的所有旧日志条目就会被提交。</li>
+</ul>
+</blockquote>
+<p><strong>Raft 永远不会通过计算副本数目的方式去提交一个之前 Term 内的日志条目</strong>。只有 Leader 当前 Term 里的日志条目通过计算副本数目可以被提交；一旦当前 Term 的日志条目以这种方式被提交，那么由于日志匹配特性，之前的日志条目也都会被间接的提交。</p>
+<p>当 Leader 复制之前任期里的日志时，Raft 会为所有日志保留原始的 Term，这在提交规则上产生了额外的复杂性。在其他的一致性算法中，如果一个新的领导人要重新复制之前的任期里的日志时，它必须使用当前新的任期号。Raft 使用的方法更加容易辨别出日志，因为它可以随着时间和日志的变化对日志维护着同一个任期编号。另外，和其他的算法相比，Raft 中的新领导人只需要发送更少日志条目（其他算法中必须在他们被提交之前发送更多的冗余日志条目来为他们重新编号）。</p>
+<h2 id="日志压缩"><a href="#日志压缩" class="headerlink" title="日志压缩"></a>日志压缩</h2><p>在实际的系统中，不能让日志无限膨胀，否则系统重启时需要花很长的时间进行恢复，从而影响可用性。Raft 采用对整个系统进行快照来解决，快照之前的日志都可以丢弃。</p>
+<p>每个副本独立的对自己的系统状态生成快照，并且只能对已经提交的日志条目生成快照。</p>
+<p>快照包含以下内容：</p>
+<ul>
+<li>日志元数据。最后一条已提交的日志条目的日志索引和 Term。这两个值在快照之后的第一条日志条目的 <code>AppendEntries RPC</code> 的完整性检查的时候会被用上。</li>
+<li>系统当前状态。</li>
+</ul>
+<p>当 Leader 要发送某个日志条目，落后太多的 Follower 的日志条目会被丢弃，Leader 会将快照发给 Follower。或者新上线一台机器时，也会发送快照给它。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200201220628.png"></p>
+<p><strong>生成快照的频率要适中</strong>，频率过高会消耗大量 I&#x2F;O 带宽；频率过低，一旦需要执行恢复操作，会丢失大量数据，影响可用性。推荐当日志达到某个固定的大小时生成快照。</p>
+<p>生成一次快照可能耗时过长，影响正常日志同步。可以通过使用 copy-on-write 技术避免快照过程影响正常日志同步。</p>
+<blockquote>
+<p>说明：本文仅阐述 Raft 算法的核心内容，不包括算法论证、评估等</p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">Raft 算法论文</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md">Raft 算法论文译文</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=YbZ3zDzDnrw&feature=youtu.be">Raft 作者讲解视频</a></li>
+<li><a target="_blank" rel="noopener" href="http://www2.cs.uh.edu/~paris/6360/PowerPoint/Raft.ppt">Raft 作者讲解视频对应的 PPT</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jdon.com/artichect/raft.html">分布式系统的 Raft 算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32052223">Raft 算法详解</a></li>
+<li><a target="_blank" rel="noopener" href="http://thesecretlivesofdata.com/raft">Raft: Understandable Distributed Consensus</a> - 一个动画教程</li>
+<li><a target="_blank" rel="noopener" href="https://raft.github.io/">The Raft Consensus Algorithm</a> - 一个交互式动画教程</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/sofastack/sofa-jraft">sofa-jraft</a> - 蚂蚁金服的 Raft 算法实现库（Java 版）</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/3a64eb94/" title="深入剖析共识性算法 Raft">https://dunwu.github.io/blog/pages/3a64eb94/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E5%85%B1%E8%AF%86/" rel="tag"># 共识</a>
+              <a href="/blog/tags/Raft/" rel="tag"># Raft</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/c29038b4/" rel="prev" title="Redis 事务">
+                  <i class="fa fa-angle-left"></i> Redis 事务
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/5d509ca6/" rel="next" title="Java 并发之容器">
+                  Java 并发之容器 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"743976ce7a0e2ceeda4494170269595b"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

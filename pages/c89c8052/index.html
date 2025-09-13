@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="微服务之服务调用RPC 简介通过注册中心，服务消费者和服务提供者就可以感知彼此。但是，要实现交互还必须解决通信问题。 在单体应用中，一次服务调用发生在同一台机器上的同一个进程内部，因此也被称为本地方法调用。在微服务应用中，由于服务提供者和服务消费者运行在不同物理机器上的不同进程内，因此也被称为远程方法调用，简称 RPC（Remote Procedure Call）。 RPC 是微服务架构的基石，它">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务之服务调用">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/c89c8052/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="微服务之服务调用RPC 简介通过注册中心，服务消费者和服务提供者就可以感知彼此。但是，要实现交互还必须解决通信问题。 在单体应用中，一次服务调用发生在同一台机器上的同一个进程内部，因此也被称为本地方法调用。在微服务应用中，由于服务提供者和服务消费者运行在不同物理机器上的不同进程内，因此也被称为远程方法调用，简称 RPC（Remote Procedure Call）。 RPC 是微服务架构的基石，它">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619101023.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220625094814.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619102052.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619102833.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619110947.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200630212345.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717154300">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717154716.jfif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200630212248.png">
+<meta property="article:published_time" content="2023-05-15T11:08:50.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.723Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="设计">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="RPC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619101023.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/c89c8052/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/c89c8052/","path":"/pages/c89c8052/","title":"微服务之服务调用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>微服务之服务调用 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">微服务之服务调用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">RPC 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC-%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">RPC 核心原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.</span> <span class="nav-text">通信协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">通信协议的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.2.</span> <span class="nav-text">常见网络协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BD%95%E9%9C%80%E8%A6%81%E8%AE%BE%E8%AE%A1-RPC-%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.3.</span> <span class="nav-text">为何需要设计 RPC 协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1-RPC-%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.4.</span> <span class="nav-text">如何设计 RPC 协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%89%A9%E5%B1%95%E7%9A%84%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.5.</span> <span class="nav-text">可扩展的协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%8A%80%E6%9C%AF"><span class="nav-number">1.4.1.</span> <span class="nav-text">序列化技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="nav-number">1.4.2.</span> <span class="nav-text">序列化技术选型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.3.</span> <span class="nav-text">序列化问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E8%A6%81%E7%82%B9"><span class="nav-number">1.4.4.</span> <span class="nav-text">序列化要点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93"><span class="nav-number">1.5.</span> <span class="nav-text">网络传输</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E9%98%BB%E5%A1%9E%E6%96%B9%E5%BC%8F%EF%BC%88BIO%EF%BC%89"><span class="nav-number">1.5.1.</span> <span class="nav-text">同步阻塞方式（BIO）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E9%9D%9E%E9%98%BB%E5%A1%9E%E6%96%B9%E5%BC%8F-NIO"><span class="nav-number">1.5.2.</span> <span class="nav-text">同步非阻塞方式 (NIO)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IO-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">IO 多路复用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%B6%E6%8B%B7%E8%B4%9D"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">零拷贝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NIO-vs-BIO"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">NIO vs BIO</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E9%9D%9E%E9%98%BB%E5%A1%9E%E6%96%B9%E5%BC%8F-AIO"><span class="nav-number">1.5.3.</span> <span class="nav-text">异步非阻塞方式 (AIO)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/c89c8052/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="微服务之服务调用 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微服务之服务调用<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/01.%E6%9E%B6%E6%9E%84/01.%E5%BE%AE%E6%9C%8D%E5%8A%A1/03.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-15 19:08:50" itemprop="dateCreated datePublished" datetime="2023-05-15T19:08:50+08:00">2023-05-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" itemprop="url" rel="index"><span itemprop="name">微服务</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="微服务之服务调用"><a href="#微服务之服务调用" class="headerlink" title="微服务之服务调用"></a>微服务之服务调用</h1><h2 id="RPC-简介"><a href="#RPC-简介" class="headerlink" title="RPC 简介"></a>RPC 简介</h2><p>通过注册中心，服务消费者和服务提供者就可以感知彼此。但是，要实现交互还必须解决通信问题。</p>
+<p>在单体应用中，一次服务调用发生在同一台机器上的同一个进程内部，因此也被称为本地方法调用。在微服务应用中，由于服务提供者和服务消费者运行在不同物理机器上的不同进程内，因此也被称为<strong>远程方法调用</strong>，简称 <strong>RPC（Remote Procedure Call）</strong>。</p>
+<p>RPC 是微服务架构的基石，它提供了一种应用间通信的方式。RPC 的主要作用是：</p>
+<ul>
+<li><strong>屏蔽远程调用跟本地调用的差异</strong>，让用户像调用本地一样去调用远程方法。</li>
+<li><strong>隐藏底层网络通信的复杂性</strong>，让用户更聚焦于业务逻辑。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619101023.png"></p>
+<h2 id="RPC-核心原理"><a href="#RPC-核心原理" class="headerlink" title="RPC 核心原理"></a>RPC 核心原理</h2><p>RPC 是如何像本地方法调用一样，完成一次请求处理的呢？我们不妨推导一二。首先，服务消费者和服务提供者通常位于网络上两个不同地址，要想交换信息，必须先建立网络连接；建立网络连接后，如果要想识别彼此的信息，必须遵循相同的通信协议；服务提供者和服务消费者，需要采用某种方式数据传输；为了减少传输数据量，还要对数据进行压缩，即序列化。</p>
+<p>它的通信流程中需要注意以下环节：</p>
+<ul>
+<li><strong>传输方式</strong>：RPC 是一个远程调用，因此必然需要通过网络传输数据，且 RPC 常用于业务系统之间的数据交互，需要保证其可靠性，所以 RPC 一般默认采用 TCP 来传输。</li>
+<li><strong>序列化</strong>：在网络中传输的数据只能是二进制数据，而 RPC 请求时，发送的都是对象。因此，请求方需要将请求参数转为二进制数据，即<strong>序列化</strong>。RPC 响应方接受到请求，要将二进制数据转换为请求参数，需要<strong>反序列化</strong>。</li>
+<li><strong>通信协议</strong>：请求方和响应方要互相识别彼此的信息，需要约定好彼此数据的格式，即协议。大多数的协议至少分成两部分，分别是数据头和消息体。数据头一般用于身份识别，包括协议标识、数据大小、请求类型、序列化类型等信息；消息体主要是请求的业务参数信息和扩展属性等。</li>
+<li><strong>动态代理</strong>：为了屏蔽底层通信细节，使用户聚焦自身业务，因此 RPC 框架一般引入了动态代理，通过依赖注入等技术，拦截方法调用，完成远程调用的通信逻辑。</li>
+</ul>
+<p>下图诠释了以上环节是如何串联起来的：</p>
+<img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220625094814.png" style="zoom:67%;" />
+
+<h2 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h2><h3 id="通信协议的作用"><a href="#通信协议的作用" class="headerlink" title="通信协议的作用"></a>通信协议的作用</h3><p>只有二进制才能在网络中传输，所以 RPC 请求在发送到网络中之前，需要把方法调用的请求参数转成二进制；转成二进制后，写入本地 Socket 中，然后被网卡发送到网络设备中。</p>
+<p>在传输过程中，RPC 并不会把请求参数的所有二进制数据整体一下子发送到对端机器上，中间可能会拆分成好几个数据包，也可能会合并其他请求的数据包（合并的前提是同一个 TCP 连接上的数据），至于怎么拆分合并，这其中的细节会涉及到系统参数配置和 TCP 窗口大小。对于服务提供方应用来说，他会从 TCP 通道里面收到很多的二进制数据，那这时候怎么识别出哪些二进制是第一个请求的呢？</p>
+<p>这就好比让你读一篇没有标点符号的文章，你要怎么识别出每一句话到哪里结束呢？很简单啊，我们加上标点，完成断句就好了。为了避免语义不一致的事情发生，我们就需要在发送请求的时候设定一个边界，然后在收到请求的时候按照这个设定的边界进行数据分割。这个边界语义的表达，就是我们所说的协议。</p>
+<p><strong>通信协议</strong>要解决的是：客户端和服务端如何建立连接、管理连接以及服务端如何处理请求的问题。</p>
+<h3 id="常见网络协议"><a href="#常见网络协议" class="headerlink" title="常见网络协议"></a>常见网络协议</h3><p>HTTP 通信是基于应用层 HTTP 协议的，而 HTTP 协议又是基于传输层 TCP 协议的。一次 HTTP 通信过程就是发起一次 HTTP 调用，而一次 HTTP 调用就会建立一个 TCP 连接，经历<strong>三次握手</strong>的过程来建立连接。完成请求后，再经历一次<strong>四次挥手</strong>的过程来断开连接。</p>
+<p>TCP 通信的过程分为四个步骤：<strong>服务器监听</strong>、<strong>客户端请求</strong>、<strong>连接确认</strong>、<strong>数据传输</strong>。当客户端和服务端建立网络连接后，就可以发起请求了。但网络不一定总是可靠的，经常会遇到网络闪断、连接超时、服务端宕机等各种异常，通常的处理手段有两种：<strong>链路存活检测</strong>和<strong>断连重试</strong>。</p>
+<p>通过两种通信方式的对比，不难看出：HTTP 通信由于每次都要建立 TCP 连接，而建立连接又较为耗时，所以 <strong>HTTP 通信性能是不如 TCP 通信的</strong>。</p>
+<h3 id="为何需要设计-RPC-协议"><a href="#为何需要设计-RPC-协议" class="headerlink" title="为何需要设计 RPC 协议"></a>为何需要设计 RPC 协议</h3><p>既然有了现成的 HTTP 协议，还有必要设计 RPC 协议吗？</p>
+<p>有必要。因为 HTTP 这些通信标准协议，数据包中的实际请求数据相对于数据包本身要小很多，有很多无用的内容；并且 HTTP 属于无状态协议，无法将请求和响应关联，每次请求要重新建立连接。这对于高性能的 RPC 来说，HTTP 协议难以满足需求，所以有必要设计一个<strong>紧凑的私有协议</strong>。</p>
+<h3 id="如何设计-RPC-协议"><a href="#如何设计-RPC-协议" class="headerlink" title="如何设计 RPC 协议"></a>如何设计 RPC 协议</h3><p>首先，必须先明确消息的边界，即确定消息的长度。因此，至少要分为：消息长度+消息内容两部分。</p>
+<p>接下来，我们会发现，在使用过程中，仅消息长度，不足以明确通信中的很多细节：如序列化方式是怎样的？是否消息压缩？压缩格式是怎样的？如果协议发生变化，需要明确协议版本等等。</p>
+<p>综上，一个 RPC 协议大概会由下图中的这些参数组成：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619102052.png"></p>
+<h3 id="可扩展的协议"><a href="#可扩展的协议" class="headerlink" title="可扩展的协议"></a>可扩展的协议</h3><p>前面所述的协议属于定长协议头，那也就是说往后就不能再往协议头里加新参数了，如果加参<br>数就会导致线上兼容问题。</p>
+<p>为了保证能平滑地升级改造前后的协议，我们有必要设计一种支持可扩展的协议。其关键在于让协议头支持可扩展，扩展后协议头的长度就不能定长了。那要实现读取不定长的协议头里面的内容，在这之前肯定需要一个固定的地方读取长度，所以我们需要一个固定的写入协议头的长度。整体协议就变成了三部分内容：固定部分、协议头内容、协议体内容。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619102833.png"></p>
+<h2 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h2><blockquote>
+<p>有兴趣深入了解 JDK 序列化方式，可以参考：<a href="https://dunwu.github.io/waterdrop/pages/737e5233/">Java 序列化</a></p>
+</blockquote>
+<p>由于，网络传输的数据必须是二进制数据，而调用方请求的出参、入参都是对象。因此，必须将对象转换可传输的二进制，并且要求转换算法是可逆的。</p>
+<ul>
+<li><strong>序列化（serialize）</strong>：序列化是将对象转换为二进制数据。</li>
+<li><strong>反序列化（deserialize）</strong>：反序列化是将二进制数据转换为对象。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220619110947.png"></p>
+<p>序列化就是将对象转换成二进制数据的过程，而反序列就是反过来将二进制转换为对象的过程。</p>
+<h3 id="序列化技术"><a href="#序列化技术" class="headerlink" title="序列化技术"></a>序列化技术</h3><p>Java 领域，常见的序列化技术如下</p>
+<ul>
+<li>JDK 序列化：JDK 内置的二进制序列化方式</li>
+<li>其他二进制序列化<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/thrift">Thrift</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf">Protobuf</a></li>
+<li><a target="_blank" rel="noopener" href="http://hessian.caucho.com/doc/hessian-overview.xtp">Hessian</a></li>
+</ul>
+</li>
+<li>JSON 序列化<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/FasterXML/jackson">Jackson</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/gson">Gson</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">Fastjson</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="序列化技术选型"><a href="#序列化技术选型" class="headerlink" title="序列化技术选型"></a>序列化技术选型</h3><p>市面上有如此多的序列化技术，那么我们在应用时如何选择呢?</p>
+<p>序列化技术选型，需要考量的维度，根据重要性从高到低，依次有：</p>
+<ul>
+<li><strong>安全性</strong>：是否存在漏洞。如果存在漏洞，就有被攻击的可能性。</li>
+<li><strong>兼容性</strong>：版本升级后的兼容性是否很好，是否支持更多的对象类型，是否是跨平台、跨语言的。服务调用的稳定性与可靠性，要比服务的性能更加重要。</li>
+<li><strong>性能</strong><ul>
+<li><strong>时间开销</strong>：序列化、反序列化的耗时性能自然越小越好。</li>
+<li><strong>空间开销</strong>：序列化后的数据越小越好，这样网络传输效率就高。</li>
+</ul>
+</li>
+<li><strong>易用性</strong>：类库是否轻量化，API 是否简单易懂。</li>
+</ul>
+<p>鉴于以上的考量，序列化技术的选型建议如下：</p>
+<ul>
+<li>JDK 序列化：性能较差，且有很多使用限制，不建议使用。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/thrift">Thrift</a>、<a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf">Protobuf</a>：适用于<strong>对性能敏感，对开发体验要求不高</strong>。</li>
+<li><a target="_blank" rel="noopener" href="http://hessian.caucho.com/doc/hessian-overview.xtp">Hessian</a>：适用于<strong>对开发体验敏感，性能有要求</strong>。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/FasterXML/jackson">Jackson</a>、<a target="_blank" rel="noopener" href="https://github.com/google/gson">Gson</a>、<a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">Fastjson</a>：适用于对序列化后的数据要求有<strong>良好的可读性</strong>（转为 json 、xml 形式）。</li>
+</ul>
+<h3 id="序列化问题"><a href="#序列化问题" class="headerlink" title="序列化问题"></a>序列化问题</h3><p>由于 RPC 每次通信，都要经过序列化、反序列化的过程，所以序列化方式，会直接影响 RPC 通信的性能。除了选择合适的序列化技术，如何合理使用序列化也非常重要。</p>
+<p>RPC 序列化常见的使用不当的情况如下：</p>
+<ul>
+<li><p><strong>对象过于复杂、庞大</strong> - 对象过于复杂、庞大，会降低序列化、反序列化的效率，并增加传输开销，从而导致响应时延增大。</p>
+<ul>
+<li>过于复杂：存在多层的嵌套，比如 A 对象关联 B 对象，B 对象又聚合 C 对象，C 对象又关联聚合很多其他对象</li>
+<li>过于庞大：比如一个大 List 或者大 Map</li>
+</ul>
+</li>
+<li><p><strong>对象有复杂的继承关系</strong> - 对象关系越复杂，就越浪费性能，同时又很容易出现序列化上的问题。大多数序列化框架在进行序列化时，如果发现类有继承关系，会不停地寻找父类，遍历属性。</p>
+</li>
+<li><p><strong>使用序列化框架不支持的类作为入参类</strong> - 比如 Hessian 框架，他天然是不支持 LinkHashMap、LinkedHashSet 等，而且大多数情况下最好不要使用第三方集合类，如 Guava 中的集合类，很多开源的序列化框架都是优先支持编程语言原生的对象。因此如果入参是集合类，应尽量选用原生的、最为常用的集合类，如 HashMap、ArrayList。</p>
+</li>
+</ul>
+<h3 id="序列化要点"><a href="#序列化要点" class="headerlink" title="序列化要点"></a>序列化要点</h3><p>前面已经列举了常见的序列化问题，既然明确了问题，就要针对性预防。RPC 序列化时要注意以下几点：</p>
+<ol>
+<li>对象要尽量简单，没有太多的依赖关系，属性不要太多，尽量高内聚；</li>
+<li>入参对象与返回值对象体积不要太大，更不要传太大的集合；</li>
+<li>尽量使用简单的、常用的、开发语言原生的对象，尤其是集合类；</li>
+<li>对象不要有复杂的继承关系，最好不要有父子类的情况。</li>
+</ol>
+<h2 id="网络传输"><a href="#网络传输" class="headerlink" title="网络传输"></a>网络传输</h2><p>一次 RPC 调用，本质就是服务消费者与服务提供者间的一次网络信息交换的过程。可见，通信时 RPC 实现的核心。</p>
+<p>常见的网络 IO 模型有：同步阻塞（BIO）、同步非阻塞（NIO）、异步非阻塞（AIO）。</p>
+<h3 id="同步阻塞方式（BIO）"><a href="#同步阻塞方式（BIO）" class="headerlink" title="同步阻塞方式（BIO）"></a>同步阻塞方式（BIO）</h3><p>同步阻塞方式的工作流程大致为：客户端每发一次请求，服务端就生成一个线程去处理。当客户端同时发起的请求很多时，服务端需要创建很多的线程去处理每一个请求，如果达到了系统最大的线程数瓶颈，新来的请求就没法处理了。</p>
+<p>BIO 适用于连接数比较小的业务场景，这样的话不至于系统中没有可用线程去处理请求。这种方式写的程序也比较简单直观，易于理解。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200630212345.png" alt="img"></p>
+<h3 id="同步非阻塞方式-NIO"><a href="#同步非阻塞方式-NIO" class="headerlink" title="同步非阻塞方式 (NIO)"></a>同步非阻塞方式 (NIO)</h3><p><strong>同步非阻塞方式 (NIO)</strong> 的工作流程大致为：客户端每发一次请求，服务端并不是每次都创建一个新线程来处理，而是通过 I&#x2F;O 多路复用技术进行处理。就是把多个 I&#x2F;O 的阻塞复用到同一个 select 的阻塞上，从而使系统在单线程的情况下可以同时处理多个客户端请求。这种方式的优势是开销小，不用为每个请求创建一个线程，可以节省系统开销。</p>
+<h4 id="IO-多路复用"><a href="#IO-多路复用" class="headerlink" title="IO 多路复用"></a>IO 多路复用</h4><p>IO 多路复用（Reactor 模式）在高并发场景下使用最为广泛，很多知名软件都应用了这一技术，如：Netty、Redis、Nginx 等。什么是 IO 多路复用？字面上的理解，多路就是指多个通道，也就是多个网络连接的 IO，而复用就是指多个通道复用在一个复用器上。IO 多路复用分为 select，poll 和 epoll。</p>
+<h4 id="零拷贝"><a href="#零拷贝" class="headerlink" title="零拷贝"></a>零拷贝</h4><p>系统内核处理 IO 操作分为两个阶段——等待数据和拷贝数据。等待数据，就是系统内核在等待网卡接收到数据后，把数据写到内核中；而拷贝数据，就是系统内核在获取到数据后，将数据拷贝到用户进程的空间中。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717154300" alt="img"></p>
+<p>应用进程的每一次写操作，都会把数据写到用户空间的缓冲区中，再由 CPU 将数据拷贝到系统内核的缓冲区中，之后再由 DMA 将这份数据拷贝到网卡中，最后由网卡发送出去。这里我们可以看到，一次写操作数据要拷贝两次才能通过网卡发送出去，而用户进程的读操作则是将整个流程反过来，数据同样会拷贝两次才能让应用程序读取到数据。</p>
+<p>应用进程的一次完整的读写操作，都需要在用户空间与内核空间中来回拷贝，并且每一次拷贝，都需要 CPU 进行一次上下文切换（由用户进程切换到系统内核，或由系统内核切换到用户进程），这样很浪费 CPU 和性能。</p>
+<p>所谓的零拷贝，就是取消用户空间与内核空间之间的数据拷贝操作，应用进程每一次的读写操作，可以通过一种方式，直接将数据写入内核或从内核中读取数据，再通过 DMA 将内核中的数据拷贝到网卡，或将网卡中的数据 copy 到内核。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717154716.jfif" alt="img"></p>
+<p>Netty 的零拷贝偏向于用户空间中对数据操作的优化，这对处理 TCP 传输中的拆包粘包问题有着重要的意义，对应用程序处理请求数据与返回数据也有重要的意义。</p>
+<p>Netty 框架中很多内部的 ChannelHandler 实现类，都是通过 CompositeByteBuf、slice、wrap 操作来处理 TCP 传输中的拆包与粘包问题的。</p>
+<p>Netty 的 ByteBuffer 可以采用 Direct Buffers，使用堆外直接内存进行 Socketd 的读写<br>操作，最终的效果与我刚才讲解的虚拟内存所实现的效果是一样的。</p>
+<p>Netty 还提供 FileRegion 中包装 NIO 的 FileChannel.transferTo() 方法实现了零拷<br>贝，这与 Linux 中的 sendfile 方式在原理上也是一样的。</p>
+<h4 id="NIO-vs-BIO"><a href="#NIO-vs-BIO" class="headerlink" title="NIO vs BIO"></a>NIO vs BIO</h4><p>NIO 适用于连接数比较多并且请求消耗比较轻的业务场景，比如聊天服务器。这种方式相比 BIO，相对来说编程比较复杂。</p>
+<p>BIO 与 NIO 最重要的区别是数据打包和传输的方式：<strong>BIO 以流的方式处理数据，而 NIO 以块的方式处理数据</strong>。</p>
+<ul>
+<li><strong>面向流的 BIO 一次处理一个字节数据</strong>：一个输入流产生一个字节数据，一个输出流消费一个字节数据。为流式数据创建过滤器非常容易，链接几个过滤器，以便每个过滤器只负责复杂处理机制的一部分。不利的一面是，面向流的 I&#x2F;O 通常相当慢。</li>
+<li><strong>面向块的 NIO 一次处理一个数据块</strong>，按块处理数据比按流处理数据要快得多。但是面向块的 NIO 缺少一些面向流的 BIO 所具有的优雅性和简单性。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200630212248.png" alt="img"></p>
+<h3 id="异步非阻塞方式-AIO"><a href="#异步非阻塞方式-AIO" class="headerlink" title="异步非阻塞方式 (AIO)"></a>异步非阻塞方式 (AIO)</h3><p><strong>异步非阻塞方式 (AIO)</strong> 的大致工作流程为：客户端只需要发起一个 I&#x2F;O 操作然后立即返回，等 I&#x2F;O 操作真正完成以后，客户端会得到 I&#x2F;O 操作完成的通知，此时客户端只需要对数据进行处理就好了，不需要进行实际的 I&#x2F;O 读写操作，因为真正的 I&#x2F;O 读取或者写入操作已经由内核完成了。这种方式的优势是客户端无需等待，不存在阻塞等待问题。</p>
+<p>AIO 适用于连接数比较多而且请求消耗比较重的业务场景，比如涉及 I&#x2F;O 操作的相册服务器。这种方式相比另外两种，编程难度最大，程序也不易于理解。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100014401">从 0 开始学微服务</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100046201">RPC 实战与核心原理</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/c89c8052/" title="微服务之服务调用">https://dunwu.github.io/blog/pages/c89c8052/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E8%AE%BE%E8%AE%A1/" rel="tag"># 设计</a>
+              <a href="/blog/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/blog/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag"># 微服务</a>
+              <a href="/blog/tags/RPC/" rel="tag"># RPC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/9ad65ff2/" rel="prev" title="HBase Java API 管理功能">
+                  <i class="fa fa-angle-left"></i> HBase Java API 管理功能
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/1233ca70/" rel="next" title="微服务之注册和发现">
+                  微服务之注册和发现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"b8ba63001d76bf53e289c4ad055ea07c"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="数据库连接池 数据库连接池负责分配、管理和释放数据库连接，它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个；释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏。这项技术能明显提高对数据库操作的性能。——摘自百度百科  什么是数据库连接池数据库连接是一种关键的有限的昂贵的资源，这一点在多用户的网页应用程序中体现得尤为突出。 一个数据库连接对象均">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库连接池">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/a48c4708/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="数据库连接池 数据库连接池负责分配、管理和释放数据库连接，它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个；释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏。这项技术能明显提高对数据库操作的性能。——摘自百度百科  什么是数据库连接池数据库连接是一种关键的有限的昂贵的资源，这一点在多用户的网页应用程序中体现得尤为突出。 一个数据库连接对象均">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220921231353.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220921231500.png">
+<meta property="article:published_time" content="2022-09-21T15:58:06.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.720Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="中间件">
+<meta property="article:tag" content="数据库连接池">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220921231353.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/a48c4708/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/a48c4708/","path":"/pages/a48c4708/","title":"数据库连接池"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>数据库连接池 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.</span> <span class="nav-text">数据库连接池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.1.</span> <span class="nav-text">什么是数据库连接池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.2.</span> <span class="nav-text">为什么需要数据库连接池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.2.1.</span> <span class="nav-text">不使用数据库连接池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.2.2.</span> <span class="nav-text">使用数据库连接池</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">数据库连接池如何工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">数据库连接池的核心参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.</span> <span class="nav-text">数据库连接池的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="nav-number">1.6.</span> <span class="nav-text">数据库连接池技术选型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HikariCP"><span class="nav-number">1.7.</span> <span class="nav-text">HikariCP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Druid"><span class="nav-number">1.8.</span> <span class="nav-text">Druid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/a48c4708/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="数据库连接池 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据库连接池<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/14.%E4%B8%AD%E9%97%B4%E4%BB%B6/99.%E5%85%B6%E4%BB%96/01.%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-21 23:58:06" itemprop="dateCreated datePublished" datetime="2022-09-21T23:58:06+08:00">2022-09-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E4%B8%AD%E9%97%B4%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E4%B8%AD%E9%97%B4%E4%BB%B6/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="数据库连接池"><a href="#数据库连接池" class="headerlink" title="数据库连接池"></a>数据库连接池</h1><blockquote>
+<p>数据库连接池负责分配、管理和释放数据库连接，它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个；释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏。这项技术能明显提高对数据库操作的性能。——摘自百度百科</p>
+</blockquote>
+<h2 id="什么是数据库连接池"><a href="#什么是数据库连接池" class="headerlink" title="什么是数据库连接池"></a>什么是数据库连接池</h2><p>数据库连接是一种关键的有限的昂贵的资源，这一点在多用户的网页应用程序中体现得尤为突出。 一个数据库连接对象均对应一个物理数据库连接，每次操作都打开一个物理连接，使用完都关闭连接，这样造成系统的 性能低下。 数据库连接池的解决方案是在应用程序启动时建立足够的数据库连接，并讲这些连接组成一个连接池(简单说：在一个“池”里放了好多半成品的数据库联接对象)，由应用程序动态地对池中的连接进行申请、使用和释放。对于多于连接池中连接数的并发请求，应该在请求队列中排队等待。并且应用程序可以根据池中连接的使用率，动态增加或减少池中的连接数。 连接池技术尽可能多地重用了消耗内存地资源，大大节省了内存，提高了服务器地服务效率，能够支持更多的客户服务。通过使用连接池，将大大提高程序运行效率，同时，我们可以通过其自身的管理机制来监视数据库连接的数量、使用情况等。</p>
+<h2 id="为什么需要数据库连接池"><a href="#为什么需要数据库连接池" class="headerlink" title="为什么需要数据库连接池"></a>为什么需要数据库连接池</h2><h3 id="不使用数据库连接池"><a href="#不使用数据库连接池" class="headerlink" title="不使用数据库连接池"></a>不使用数据库连接池</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220921231353.png"></p>
+<p>不使用数据库连接池的<strong>步骤</strong>：</p>
+<ol>
+<li>TCP 建立连接的三次握手</li>
+<li>MySQL 认证的三次握手</li>
+<li>真正的 SQL 执行</li>
+<li>MySQL 的关闭</li>
+<li>TCP 的四次握手关闭</li>
+</ol>
+<p>不使用数据库连接池的特性：</p>
+<ul>
+<li><strong>优点</strong>：实现简单</li>
+<li><strong>缺点</strong>：<ul>
+<li>网络 IO 较多</li>
+<li>数据库的负载较高</li>
+<li>响应时间较长及 QPS 较低</li>
+<li>应用频繁的创建连接和关闭连接，导致临时对象较多，GC 频繁</li>
+<li>在关闭连接后，会出现大量 TIME_WAIT 的 TCP 状态（在 2 个 MSL 之后关闭）</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用数据库连接池"><a href="#使用数据库连接池" class="headerlink" title="使用数据库连接池"></a>使用数据库连接池</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220921231500.png"></p>
+<p>使用数据库连接池的步骤：只有第一次访问的时候，需要建立连接。 但是之后的访问，均会<strong>复用</strong>之前创建的连接，直接执行 SQL 语句。</p>
+<p>使用数据库连接池的<strong>优点</strong>：</p>
+<ul>
+<li>减少了网络开销</li>
+<li>系统的性能会有一个实质的提升</li>
+<li>没有了 TIME_WAIT 状态</li>
+</ul>
+<h2 id="数据库连接池如何工作"><a href="#数据库连接池如何工作" class="headerlink" title="数据库连接池如何工作"></a>数据库连接池如何工作</h2><p>数据库连接池工作的核心在于以下几点：</p>
+<ol>
+<li><p><strong>创建连接池</strong>：与线程池等池化对象类似，数据库连接池会在进程启动之初，根据配置初始化，并在池中创建了几个连接对象，以便使用时能从连接池中获取。连接池中的连接不能随意创建和关闭，以避免创建、关闭所带来的系统开销。</p>
+</li>
+<li><p><strong>使用、管理连接池中</strong>：连接池管理策略是连接池机制的核心，连接池内连接的分配和释放对系统的性能有很大的影响。合理的策略可以保证数据库连接的有效复用，避免频繁的建立、释放连接所带来的系统资源开销。通常，数据库连接池的管理策略如下：</p>
+<ol>
+<li>当请求数据库连接时，首先查看连接池中是否有空闲连接。</li>
+<li>如果存在空闲连接，则将连接分配给客户使用。</li>
+<li>如果没有空闲连接，则查看当前所开的连接数是否已经达到最大连接数。若未达到，就重新创建一个连接，并分配给请求的客户；如果达到，就按设定的最大等待时间进行等待，若超出最大等待时间，则抛出异常给客户。</li>
+<li>当客户释放数据库连接时，先判断该连接的引用次数是否超过了规定值。如果超过，就从连接池中删除该连接；否则保留为其他客户服务。</li>
+</ol>
+</li>
+<li><p><strong>关闭连接池</strong>：当应用程序退出时，关闭连接池中所有的连接，释放连接池相关的资源，该过程正好与创建相反。</p>
+</li>
+</ol>
+<h2 id="数据库连接池的核心参数"><a href="#数据库连接池的核心参数" class="headerlink" title="数据库连接池的核心参数"></a>数据库连接池的核心参数</h2><p>使用数据库连接池，需要为其配置一些参数，以控制其工作。</p>
+<p>通常，数据库连接池都会包含以下核心参数：</p>
+<ul>
+<li><strong>最小连接数</strong>：是连接池一直保持的数据库连接,所以如果应用程序对数据库连接的使用量不大,将会有大量的数据库连接资源被浪费.</li>
+<li><strong>最大连接数</strong>：是连接池能申请的最大连接数,如果数据库连接请求超过次数,后面的数据库连接请求将被加入到等待队列中,这会影响以后的数据库操作</li>
+<li>最大空闲时间</li>
+<li>获取连接超时时间</li>
+<li>超时重试连接次数</li>
+</ul>
+<h2 id="数据库连接池的问题"><a href="#数据库连接池的问题" class="headerlink" title="数据库连接池的问题"></a>数据库连接池的问题</h2><p><strong>并发问题</strong>：为了保证连接管理服务具有最大的通用性，必须考虑多线程环境，即并发问题。</p>
+<p><strong>事务处理</strong>：我们知道，事务具有原子性，此时要求对数据库的操作符合“ALL-OR-NOTHING”原则,即对于一组 SQL 语句要么全做，要么全不做。我们知道当 2 个线程共用一个连接 Connection 对象，而且各自都有自己的事务要处理时候，对于连接池是一个很头疼的问题，因为即使 Connection 类提供了相应的事务支持，可是我们仍然不能确定那个数据库操作是对应那个事务的，这是由于我们有２个线程都在进行事务操作而引起的。为此我们可以使用每一个事务独占一个连接来实现，虽然这种方法有点浪费连接池资源但是可以大大降低事务管理的复杂性。</p>
+<p><strong>连接池的分配与释放</strong>：连接池的分配与释放，对系统的性能有很大的影响。合理的分配与释放，可以提高连接的复用度，从而降低建立新连接的开销，同时还可以加快用户的访问速度。 对于连接的管理可使用一个 List。即把已经创建的连接都放入 List 中去统一管理。每当用户请求一个连接时，系统检查这个 List 中有没有可以分配的连接。如果有就把那个最合适的连接分配给他；如果没有就抛出一个异常给用户。</p>
+<p><strong>连接池的配置与维护</strong>：连接池中到底应该放置多少连接，才能使系统的性能最佳？系统可采取设置最小连接数（minConnection）和最大连接数（maxConnection）等参数来控制连接池中的连接。比方说，最小连接数是系统启动时连接池所创建的连接数。如果创建过多，则系统启动就慢，但创建后系统的响应速度会很快；如果创建过少，则系统启动的很快，响应起来却慢。这样，可以在开发时，设置较小的最小连接数，开发起来会快，而在系统实际使用时设置较大的，因为这样对访问客户来说速度会快些。最大连接数是连接池中允许连接的最大数目，具体设置多少，要看系统的访问量，可通过软件需求上得到。 如何确保连接池中的最小连接数呢？有动态和静态两种策略。动态即每隔一定时间就对连接池进行检测，如果发现连接数量小于最小连接数，则补充相应数量的新连接,以保证连接池的正常运转。静态是发现空闲连接不够时再去检查。</p>
+<h2 id="数据库连接池技术选型"><a href="#数据库连接池技术选型" class="headerlink" title="数据库连接池技术选型"></a>数据库连接池技术选型</h2><p>常见的数据库连接池：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/brettwooldridge/HikariCP">HikariCP</a>：HiKariCP 号称是跑的最快的连接池，并且是 SpringBoot 框架的默认连接池。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/druid">Druid</a>：Druid 是阿里巴巴开源的数据库连接池。Druid 内置强大的监控功能，监控特性不影响性能。功能强大，能防 SQL 注入，内置 Loging 能诊断 Hack 应用行为。</li>
+<li><a target="_blank" rel="noopener" href="https://commons.apache.org/proper/commons-dbcp/">DBCP</a>： 由 Apache 开发的一个 Java 数据库连接池。<code>commons-dbcp2</code> 基于 <code>commons-pool2</code> 来实现底层的对象池机制。单线程，性能较差，适用于小型系统。官方自 2021 年后没有再更新。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/swaldman/c3p0">C3P0</a>：开源的 JDBC 连接池，实现了数据源和 JNDI 绑定，支持 JDBC3 规范和 JDBC2 的标准扩展。单线程，性能较差，适用于小型系统。官方自 2019 年后再没有更新。</li>
+<li>Tomcat-jdbc：Tomcat 在 7.0 以前使用 DBCP 做为连接池组件，从 7.0 后新增了 Tomcat jdbc pool 模块，基于 Tomcat JULI，使用 Tomcat 日志框架，完全兼容 dbcp，通过异步方式获取连接，支持高并发应用环境，超级简单核心文件只有 8 个，支持 JMX，支持 XA Connection。</li>
+</ul>
+<p>来自 Druid 的竞品对比（<a target="_blank" rel="noopener" href="https://github.com/alibaba/druid/wiki/Druid%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BB%8B%E7%BB%8D%EF%BC%89%EF%BC%9A">https://github.com/alibaba/druid/wiki/Druid%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BB%8B%E7%BB%8D）：</a></p>
+<table>
+<thead>
+<tr>
+<th>功能类别</th>
+<th>功能</th>
+<th>Druid</th>
+<th>HikariCP</th>
+<th>DBCP</th>
+<th>Tomcat-jdbc</th>
+<th>C3P0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>性能</td>
+<td>PSCache</td>
+<td>是</td>
+<td>否</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>LRU</td>
+<td>是</td>
+<td>否</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+<td></td>
+</tr>
+<tr>
+<td>SLB 负载均衡支持</td>
+<td>是</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td></td>
+</tr>
+<tr>
+<td>稳定性</td>
+<td>ExceptionSorter</td>
+<td>是</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>扩展</td>
+<td>扩展</td>
+<td>Filter</td>
+<td></td>
+<td></td>
+<td>JdbcIntercepter</td>
+<td></td>
+</tr>
+<tr>
+<td>监控</td>
+<td>监控方式</td>
+<td>jmx&#x2F;log&#x2F;http</td>
+<td>jmx&#x2F;metrics</td>
+<td>jmx</td>
+<td>jmx</td>
+<td>jmx</td>
+</tr>
+<tr>
+<td>支持 SQL 级监控</td>
+<td>是</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td></td>
+</tr>
+<tr>
+<td>Spring&#x2F;Web 关联监控</td>
+<td>是</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>诊断支持</td>
+<td>LogFilter</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>连接泄露诊断</td>
+<td>logAbandoned</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td></td>
+</tr>
+<tr>
+<td>安全</td>
+<td>SQL 防注入</td>
+<td>是</td>
+<td>无</td>
+<td>无</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>支持配置加密</td>
+<td>是</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>从数据库连接池最重要的性能角度来看：HikariCP 应该性能最好；Druid 也不错，并且有更多、更久的生产实践，更为可靠；而其他常见的数据库连接池性能远远不如。</p>
+<p>从功能角度来看：Druid 功能最全面，除基本的数据库连接池能力以外，还支持 sql 级监控、扩展、SQL 防注入以及监控等功能。</p>
+<p>综合来看：HikariCP 是 Spring Boot 首选数据库连接池，对于 Spring Boot 项目来说，无疑适配性最好。而非 Spring Boot 项目，可以优先考虑 Druid，在国内有大规模应用，中文社区支持良好。</p>
+<h2 id="HikariCP"><a href="#HikariCP" class="headerlink" title="HikariCP"></a>HikariCP</h2><p>HiKariCP 号称是跑的最快的连接池，并且是 SpringBoot 框架的默认连接池。</p>
+<p>HiKariCP 为了提升性能，做了很多细节上的优化，例如：</p>
+<ul>
+<li>使用 FastList 替代 ArrayList，通过初始化的默认值，减少了越界检查的操作</li>
+<li>优化并精简了字节码，通过使用 Javassist，减少了动态代理的性能损耗，比如使用 invokestatic 指令代替 invokevirtual 指令</li>
+<li>实现了无锁的 ConcurrentBag，减少了并发场景下的锁竞争</li>
+</ul>
+<p>HikariCP 关键配置：</p>
+<ul>
+<li><code>maximum-pool-size</code>：池中最大连接数（包括空闲和正在使用的连接）。默认值是 10，这个一般预估应用的最大连接数，后期根据监测得到一个最大值的一个平均值。要知道，最大连接并不是越多越好，一个 connection 会占用系统的带宽和存储。但是 当连接池没有空闲连接并且已经到达最大值，新来的连接池请求（HikariPool#getConnection）会被阻塞直到<code>connectionTimeout</code>（毫秒），超时后便抛出 SQLException。</li>
+<li><code>minimum-idle</code>：池中最小空闲连接数量。默认值 10，小于池中最大连接数，一般根据系统大部分情况下的数据库连接情况取一个平均值。Hikari 会尽可能、尽快地将空闲连接数维持在这个数量上。如果为了获得最佳性能和对峰值需求的响应能力，我们也不妨让他和最大连接数保持一致，使得 HikariCP 成为一个固定大小的数据库连接池。</li>
+<li><code>connection-timeout</code>：连接超时时间。默认值为 30s，可以接收的最小超时时间为 250ms。但是连接池请求也可以自定义超时时间（com.zaxxer.hikari.pool.HikariPool#getConnection(long)）。</li>
+<li><code>idle-timeout</code>：空闲连接存活最大时间，默认 600000（十分钟）</li>
+<li><code>max-lifetime</code>：连接池中连接的最大生命周期。当连接一致处于闲置状态时，超过 8 小时数据库会主动断开连接。为了防止大量的同一时间处于空闲连接因为数据库方的闲置超时策略断开连接（可以理解为连接雪崩），一般将这个值设置的比数据库的“闲置超时时间”小几秒，以便这些连接断开后，HikariCP 能迅速的创建新一轮的连接。</li>
+<li><code>pool-name</code>：连接池的名字。一般会出现在日志和 JMX 控制台中。默认值：auto-genenrated。建议取一个合适的名字，便于监控。</li>
+<li><code>auto-commit</code>：是否自动提交池中返回的连接。默认值为 true。一般是有必要自动提交上一个连接中的事物的。如果为 false，那么就需要应用层手动提交事物。</li>
+</ul>
+<p>参考配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 连接池名称</span></span><br><span class="line"><span class="attr">spring.datasource.hikari.pool-name</span> = <span class="string">SpringTutorialHikariPool</span></span><br><span class="line"><span class="comment"># 最大连接数，小于等于 0 会被重置为默认值 10；大于零小于 1 会被重置为 minimum-idle 的值</span></span><br><span class="line"><span class="attr">spring.datasource.hikari.maximum-pool-size</span> = <span class="string">10</span></span><br><span class="line"><span class="comment"># 最小空闲连接，默认值10，小于 0 或大于 maximum-pool-size，都会重置为 maximum-pool-size</span></span><br><span class="line"><span class="attr">spring.datasource.hikari.minimum-idle</span> = <span class="string">10</span></span><br><span class="line"><span class="comment"># 连接超时时间（单位：毫秒），小于 250 毫秒，会被重置为默认值 30 秒</span></span><br><span class="line"><span class="attr">spring.datasource.hikari.connection-timeout</span> = <span class="string">60000</span></span><br><span class="line"><span class="comment"># 空闲连接超时时间，默认值 600000（10分钟），大于等于 max-lifetime 且 max-lifetime&gt;0，会被重置为0；不等于 0 且小于 10 秒，会被重置为 10 秒</span></span><br><span class="line"><span class="comment"># 只有空闲连接数大于最大连接数且空闲时间超过该值，才会被释放</span></span><br><span class="line"><span class="attr">spring.datasource.hikari.idle-timeout</span> = <span class="string">600000</span></span><br><span class="line"><span class="comment"># 连接最大存活时间，不等于 0 且小于 30 秒，会被重置为默认值 30 分钟。该值应该比数据库所设置的超时时间短</span></span><br><span class="line"><span class="attr">spring.datasource.hikari.max-lifetime</span> = <span class="string">1800000</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Druid"><a href="#Druid" class="headerlink" title="Druid"></a>Druid</h2><p>Druid 是阿里巴巴开源的数据库连接池。Druid 连接池为监控而生，内置强大的监控功能，监控特性不影响性能。功能强大，能防 SQL 注入，内置 Loging 能诊断 Hack 应用行为。</p>
+<p>Druid 关键配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 数据库访问配置</span></span><br><span class="line"><span class="comment"># 主数据源，默认的</span></span><br><span class="line"><span class="attr">spring.datasource.type</span>=<span class="string">com.alibaba.druid.pool.DruidDataSource</span></span><br><span class="line"><span class="attr">spring.datasource.driver-class-name</span>=<span class="string">com.mysql.jdbc.Driver</span></span><br><span class="line"><span class="attr">spring.datasource.url</span>=<span class="string">jdbc:mysql://localhost:3306/druid</span></span><br><span class="line"><span class="attr">spring.datasource.username</span>=<span class="string">root</span></span><br><span class="line"><span class="attr">spring.datasource.password</span>=<span class="string">root</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 下面为连接池的补充设置，应用到上面所有数据源中</span></span><br><span class="line"><span class="comment"># 初始化大小，最小，最大</span></span><br><span class="line"><span class="attr">spring.datasource.initialSize</span>=<span class="string">5</span></span><br><span class="line"><span class="attr">spring.datasource.minIdle</span>=<span class="string">5</span></span><br><span class="line"><span class="attr">spring.datasource.maxActive</span>=<span class="string">20</span></span><br><span class="line"><span class="comment"># 配置获取连接等待超时的时间</span></span><br><span class="line"><span class="attr">spring.datasource.maxWait</span>=<span class="string">60000</span></span><br><span class="line"><span class="comment"># 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒</span></span><br><span class="line"><span class="attr">spring.datasource.timeBetweenEvictionRunsMillis</span>=<span class="string">60000</span></span><br><span class="line"><span class="comment"># 配置一个连接在池中最小生存的时间，单位是毫秒</span></span><br><span class="line"><span class="attr">spring.datasource.minEvictableIdleTimeMillis</span>=<span class="string">300000</span></span><br><span class="line"><span class="attr">spring.datasource.validationQuery</span>=<span class="string">SELECT 1 FROM DUAL</span></span><br><span class="line"><span class="attr">spring.datasource.testWhileIdle</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">spring.datasource.testOnBorrow</span>=<span class="string">false</span></span><br><span class="line"><span class="attr">spring.datasource.testOnReturn</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"># 打开PSCache，并且指定每个连接上PSCache的大小</span></span><br><span class="line"><span class="attr">spring.datasource.poolPreparedStatements</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">spring.datasource.maxPoolPreparedStatementPerConnectionSize</span>=<span class="string">20</span></span><br><span class="line"><span class="comment"># 配置监控统计拦截的filters，去掉后监控界面sql无法统计，&#x27;wall&#x27;用于防火墙</span></span><br><span class="line"><span class="attr">spring.datasource.filters</span>=<span class="string">stat,wall,log4j</span></span><br><span class="line"><span class="comment"># 通过connectProperties属性来打开mergeSql功能；慢SQL记录</span></span><br><span class="line"><span class="attr">spring.datasource.connectionProperties</span>=<span class="string">druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000</span></span><br><span class="line"><span class="comment"># 合并多个DruidDataSource的监控数据</span></span><br><span class="line"><span class="comment">#spring.datasource.useGlobalDataSourceStat=true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/crankz/article/details/82874158">数据库连接池学习笔记（一）：原理介绍+常用连接池介绍</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI3MzEzMDI1OQ==&mid=2651814835&idx=1&sn=cb775d3926ce39d12fa420a292c1f83d&scene=0#wechat_redirect">高性能数据库连接池的内幕</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/brettwooldridge/HikariCP">HikariCP</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/druid">druid</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/a48c4708/" title="数据库连接池">https://dunwu.github.io/blog/pages/a48c4708/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag"># 中间件</a>
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/" rel="tag"># 数据库连接池</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/3db6a5fd/" rel="prev" title="《MySQL 实战 45 讲》笔记">
+                  <i class="fa fa-angle-left"></i> 《MySQL 实战 45 讲》笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/79ba0350/" rel="next" title="Spring 之事务">
+                  Spring 之事务 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"e3ff421047a8b43d30d61c576057a512"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

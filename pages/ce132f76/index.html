@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="系统高可用架构高可用架构简介系统可用性的度量系统不可用也被称作系统故障，业界通常用多个 9 来衡量系统的可用性。如 QQ 的可用性为 4 个 9，即 99.99% 可用。 12网站不可用时间 &#x3D; 故障修复时间点 - 故障发现时间点网站年度可用性指标 &#x3D; (1 - 网站不可用时间&#x2F;年度总时间) * 100%  可用性计量表：    可用性级别 系统可用性% 宕机时间&#x2F;年 宕机时间&amp;#x2F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统高可用架构">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/ce132f76/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="系统高可用架构高可用架构简介系统可用性的度量系统不可用也被称作系统故障，业界通常用多个 9 来衡量系统的可用性。如 QQ 的可用性为 4 个 9，即 99.99% 可用。 12网站不可用时间 &#x3D; 故障修复时间点 - 故障发现时间点网站年度可用性指标 &#x3D; (1 - 网站不可用时间&#x2F;年度总时间) * 100%  可用性计量表：    可用性级别 系统可用性% 宕机时间&#x2F;年 宕机时间&amp;#x2F">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200614173351.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200614173527.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200614184921.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/check-fail.png">
+<meta property="article:published_time" content="2018-07-05T07:11:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.722Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="高可用">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200614173351.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/ce132f76/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/ce132f76/","path":"/pages/ce132f76/","title":"系统高可用架构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>系统高可用架构 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">系统高可用架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">高可用架构简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%8F%AF%E7%94%A8%E6%80%A7%E7%9A%84%E5%BA%A6%E9%87%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">系统可用性的度量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.1.2.</span> <span class="nav-text">故障原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.3.</span> <span class="nav-text">什么是高可用的系统架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E7%90%86%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">高可用架构理论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">架构模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%A4%87%E5%A4%8D%E5%88%B6"><span class="nav-number">1.3.1.</span> <span class="nav-text">主备复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">1.3.2.</span> <span class="nav-text">主从复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4-%E5%88%86%E5%8C%BA"><span class="nav-number">1.3.3.</span> <span class="nav-text">集群+分区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">高可用的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.4.1.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-Session"><span class="nav-number">1.4.2.</span> <span class="nav-text">分布式 Session</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.5.</span> <span class="nav-text">高可用的服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%BA%A7%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">分级管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95"><span class="nav-number">1.5.2.</span> <span class="nav-text">超时重试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8"><span class="nav-number">1.5.3.</span> <span class="nav-text">异步调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E8%BD%BD%E4%BF%9D%E6%8A%A4"><span class="nav-number">1.5.4.</span> <span class="nav-text">过载保护</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E6%B5%81"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">限流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%AF%B7%E6%B1%82%E9%99%90%E6%B5%81"><span class="nav-number">1.5.4.1.1.</span> <span class="nav-text">基于请求限流</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%B5%84%E6%BA%90%E9%99%90%E6%B5%81"><span class="nav-number">1.5.4.1.2.</span> <span class="nav-text">基于资源限流</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%8D%E7%BA%A7"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">降级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%86%94%E6%96%AD"><span class="nav-number">1.5.4.3.</span> <span class="nav-text">熔断</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%82%E7%AD%89%E6%80%A7%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.5.5.</span> <span class="nav-text">幂等性设计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E5%AD%98%E5%82%A8"><span class="nav-number">1.6.</span> <span class="nav-text">高可用的存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD"><span class="nav-number">1.6.1.</span> <span class="nav-text">数据备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%B1%E6%95%88%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.6.2.</span> <span class="nav-text">失效转移</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%B1%E6%95%88%E7%A1%AE%E8%AE%A4"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">失效确认</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">访问转移</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D"><span class="nav-number">1.6.2.3.</span> <span class="nav-text">数据恢复</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E6%89%8B%E6%AE%B5"><span class="nav-number">1.7.</span> <span class="nav-text">辅助手段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%9C%B0%E5%A4%9A%E6%B4%BB"><span class="nav-number">1.7.1.</span> <span class="nav-text">异地多活</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B"><span class="nav-number">1.7.2.</span> <span class="nav-text">发布流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7"><span class="nav-number">1.7.3.</span> <span class="nav-text">系统监控</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/ce132f76/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="系统高可用架构 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统高可用架构<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/01.%E6%9E%B6%E6%9E%84/00.%E7%BB%BC%E5%90%88/04.%E7%B3%BB%E7%BB%9F%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-05 15:11:00" itemprop="dateCreated datePublished" datetime="2018-07-05T15:11:00+08:00">2018-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="系统高可用架构"><a href="#系统高可用架构" class="headerlink" title="系统高可用架构"></a>系统高可用架构</h1><h2 id="高可用架构简介"><a href="#高可用架构简介" class="headerlink" title="高可用架构简介"></a>高可用架构简介</h2><h3 id="系统可用性的度量"><a href="#系统可用性的度量" class="headerlink" title="系统可用性的度量"></a>系统可用性的度量</h3><p>系统不可用也被称作系统故障，<strong>业界通常用多个 9 来衡量系统的可用性</strong>。如 QQ 的可用性为 4 个 9，即 99.99% 可用。</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">网站不可用时间 <span class="operator">=</span> 故障修复时间点 - 故障发现时间点</span><br><span class="line">网站年度可用性指标 <span class="operator">=</span> (<span class="number">1</span> - 网站不可用时间/年度总时间) * <span class="number">100</span>%</span><br></pre></td></tr></table></figure>
+
+<p>可用性计量表：</p>
+<table>
+<thead>
+<tr>
+<th align="center">可用性级别</th>
+<th align="center">系统可用性%</th>
+<th align="center">宕机时间&#x2F;年</th>
+<th align="center">宕机时间&#x2F;月</th>
+<th align="center">宕机时间&#x2F;周</th>
+<th align="center">宕机时间&#x2F;天</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">不可用</td>
+<td align="center">90%</td>
+<td align="center">36.5 天</td>
+<td align="center">73 小时</td>
+<td align="center">16.8 小时</td>
+<td align="center">144 分钟</td>
+</tr>
+<tr>
+<td align="center">基本可用</td>
+<td align="center">99%</td>
+<td align="center">87.6 小时</td>
+<td align="center">7.3 小时</td>
+<td align="center">1.68 小时</td>
+<td align="center">14.4 分钟</td>
+</tr>
+<tr>
+<td align="center">较高可用</td>
+<td align="center">99.9%</td>
+<td align="center">8.76 小时</td>
+<td align="center">43.8 分钟</td>
+<td align="center">10.1 分钟</td>
+<td align="center">1.44 分钟</td>
+</tr>
+<tr>
+<td align="center">高可用</td>
+<td align="center">99.99%</td>
+<td align="center">52.56 分钟</td>
+<td align="center">4.38 分钟</td>
+<td align="center">1.01 秒</td>
+<td align="center">8.64 秒</td>
+</tr>
+<tr>
+<td align="center">极高可用</td>
+<td align="center">99.999%</td>
+<td align="center">5.26 分钟</td>
+<td align="center">26.28 秒</td>
+<td align="center">6.06 秒</td>
+<td align="center">0.86 秒</td>
+</tr>
+</tbody></table>
+<h3 id="故障原因"><a href="#故障原因" class="headerlink" title="故障原因"></a>故障原因</h3><p>系统宕机原因主要有以下：</p>
+<p><strong>无计划的</strong></p>
+<ul>
+<li>系统级故障，包括主机、操作系统、中间件、数据库、网络、电源以及外围设备。</li>
+<li>数据和中介的故障，包括人员误操作、硬盘故障、数据乱了。</li>
+<li>还有自然灾害、人为破坏，以及供电问题等。</li>
+</ul>
+<p><strong>有计划的</strong></p>
+<ul>
+<li>日常任务：备份，容量规划，用户和安全管理，后台批处理应用。</li>
+<li>运维相关：数据库维护、应用维护、中间件维护、操作系统维护、网络维护。</li>
+<li>升级相关：数据库、应用、中间件、操作系统、网络，包括硬件升级。</li>
+</ul>
+<p>我们再给它们归个类。</p>
+<ol>
+<li><strong>网络问题</strong>。网络链接出现问题，网络带宽出现拥塞……</li>
+<li><strong>性能问题</strong>。数据库慢 SQL、Java Full GC、硬盘 IO 过大、CPU 飙高、内存不足……</li>
+<li><strong>安全问题</strong>。被网络攻击，如 DDoS 等。</li>
+<li><strong>运维问题</strong>。系统总是在被更新和修改，架构也在不断地被调整，监控问题……</li>
+<li><strong>管理问题</strong>。没有梳理出关键服务以及服务的依赖关系，运行信息没有和控制系统同步……</li>
+<li><strong>硬件问题</strong>。硬盘损坏、网卡出问题、交换机出问题、机房掉电、挖掘机问题……</li>
+</ol>
+<h3 id="什么是高可用的系统架构"><a href="#什么是高可用的系统架构" class="headerlink" title="什么是高可用的系统架构"></a>什么是高可用的系统架构</h3><p>通常，企业级应用系统为提高系统可用性，会采用较昂贵的软硬件设备，当然这样的设备也比较稳定。</p>
+<p>互联网公司或一些初创型公司基于成本考虑，更多采用 PC 级软硬件设备，节约成本所付出的代价就是设备较为不稳定。服务器一年中出现几次宕机，高强度读写磁盘导致磁盘损坏等事件实属正常。</p>
+<p>综上，硬件出现故障应视为必然的，而<strong>高可用的系统架构设计目标就是要保证当出现硬件故障时，服务依然可用，数据依然能够保存并被访问</strong>。<strong>实现高可用的系统架构的主要手段是数据和服务的冗余备份及失效转移</strong>，一旦某些服务器宕机，就将服务切换到其他可用的服务器上；如果磁盘损坏，则从备份的磁盘读取数据。</p>
+<p><strong>大型系统的分层架构及物理服务器的分布式部署使得位于不同层次的服务器具有不同的可用性特点。关闭服务或服务器宕机时产生的影响也不相同，高可用的解决方案也差异甚大</strong>。大致可以分为：</p>
+<ul>
+<li>高可用的应用 - 主要手段是：负载均衡</li>
+<li>高可用的服务 - 主要手段是：分级管理、超时重试、异步调用、限流、降解、断路、幂等性设计</li>
+<li>高可用的数据 - 主要手段是：数据备份和失效转移</li>
+</ul>
+<h2 id="高可用架构理论"><a href="#高可用架构理论" class="headerlink" title="高可用架构理论"></a>高可用架构理论</h2><p>学习高可用架构，首先需要了解分布式基础理论：CAP 和 BASE。</p>
+<p>然后，很多著名的分布式系统，都利用选举机制，来保证主节点宕机时的故障恢复。如果要深入理解选举机制，有必要了解：<a href="https://dunwu.github.io/waterdrop/pages/d287e6b0/">Paxos 算法</a> 和 <a href="https://dunwu.github.io/waterdrop/pages/9386474c/">Raft 算法</a>。Paxos 和 Raft 是为了实现分布式系统中高可用架构而提出的共识性算法，已经成为业界标准。</p>
+<p>CAP 定理又称为 CAP 原则，指的是：<strong>在一个分布式系统中， <code>一致性（C：Consistency）</code>、<code>可用性（A：Availability）</code> 和 <code>分区容忍性（P：Partition Tolerance）</code>，最多只能同时满足其中两项</strong>。</p>
+<p>BASE 是 <strong><code>基本可用（Basically Available）</code><strong>、</strong><code>软状态（Soft State）</code></strong> 和 <strong><code>最终一致性（Eventually Consistent）</code></strong> 三个短语的缩写。BASE 理论是对 CAP 中一致性和可用性权衡的结果，它的理论的核心思想是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。</p>
+<blockquote>
+<p>CAP 和 BASE 理论的详细说明请参考：<a href="https://dunwu.github.io/waterdrop/pages/f718828e/">分布式一致性</a></p>
+<p>Paxos 和 Raft 的详细说明请参考：<a href="https://dunwu.github.io/waterdrop/pages/d287e6b0/">Paxos 算法</a> 和 <a href="https://dunwu.github.io/waterdrop/pages/9386474c/">Raft 算法</a></p>
+</blockquote>
+<h2 id="架构模式"><a href="#架构模式" class="headerlink" title="架构模式"></a>架构模式</h2><h3 id="主备复制"><a href="#主备复制" class="headerlink" title="主备复制"></a>主备复制</h3><p>主备复制是最常见也是最简单的一种存储高可用方案，几乎所有的存储系统都提供了主备复制的功能，例如 MySQL、Redis、MongoDB 等。</p>
+<p>主备复制要点：</p>
+<ul>
+<li>存在<strong>一主多备</strong>。</li>
+<li>主机负责读&amp;写，并定期复制数据给备机。</li>
+<li>一旦主机宕机，可以通过人工手段，将其中一个备节点作为主节点。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200614173351.png" alt="img"></p>
+<p><strong>优点</strong></p>
+<ul>
+<li>主备复制架构中，客户端可以不感知备机的存在。即使灾难恢复后，原来的备机被人工修改为主机后，对于客户端来说，只是认为主机的地址换了而已，无须知道是原来的备机升级为主机。</li>
+<li>主备复制架构中，主机和备机之间，只需要进行数据复制即可，无须进行状态判断和主备切换这类复杂的操作。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>主备复制架构中，故障后需要人工干预，无法自动恢复。</li>
+</ul>
+<p><strong>适用场景</strong></p>
+<p>综合主备复制架构的优缺点，内部的后台管理系统使用主备复制架构的情况会比较多，例如学生管理系统、员工管理系统、假期管理系统等，因为这类系统的数据变更频率低，即使在某些场景下丢失数据，也可以通过人工的方式补全。</p>
+<h3 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h3><p>主从复制和主备复制只有一字之差，区别在于：<strong>主从复制模式中，从机要承担读操作</strong>。</p>
+<p>主从复制要点：</p>
+<ul>
+<li>存在<strong>一主多从</strong>。</li>
+<li>主机负责读&amp;写，并定期复制数据给从机。</li>
+<li>从机只负责读。</li>
+<li>一旦主机宕机，可以通过人工手段，将其中一个从节点作为主节点。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200614173527.png" alt="img"></p>
+<p><strong>优点</strong></p>
+<ul>
+<li>主从复制架构中，主机故障时，读操作相关的业务可以继续运行。</li>
+<li>主从复制架构中，从机提供读操作，发挥了硬件的性能。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>主从复制架构中，客户端需要感知主从关系，并将不同的操作发给不同的机器进行处理，复杂度比主备复制要高。</li>
+<li>主从复制架构中，从机提供读业务，如果主从复制延迟比较大，业务会因为数据不一致出现问题。</li>
+<li>主从复制架构中，故障时需要人工干预。</li>
+</ul>
+<p><strong>适用场景</strong></p>
+<p>综合主从复制的优缺点，一般情况下，写少读多的业务使用主从复制的存储架构比较多。例如，论坛、BBS、新闻网站这类业务，此类业务的读操作数量是写操作数量的 10 倍甚至 100 倍以上。</p>
+<h3 id="集群-分区"><a href="#集群-分区" class="headerlink" title="集群+分区"></a>集群+分区</h3><p>在主备复制和主从复制模式中，都由一个共性问题：</p>
+<p>每个机器上存储的都是全量数据。但是，单机的数据存储量总是有上限的，当数据量上升为 TB 级甚至 PB 级数据，单机终究有无法支撑的时候。这时，就需要对数据进行分片（sharding）。</p>
+<p>分片后的节点可以视为一个独立的子集，针对子集，任然需要保证高可用。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200614184921.png" alt="img"></p>
+<h2 id="高可用的应用"><a href="#高可用的应用" class="headerlink" title="高可用的应用"></a>高可用的应用</h2><p>应用层主要处理网站应用的业务逻辑，一个显著的特点是应用的 <strong>无状态</strong> 性。</p>
+<p>所谓的 <strong>无状态</strong> 的应用是指应用服务器不保存业务的上下文信息，而仅根据每次请求提交的数据进行相应的业务逻辑处理，多个服务实例之间完全对等，请求提交到任意服务器，处理结果都是完全一样的。</p>
+<p>由于无状态应用，各实例之间不用考虑数据一致性问题，所以其高可用方案相对简单。主要手段是：</p>
+<ul>
+<li>负载均衡</li>
+<li>分布式 Session</li>
+</ul>
+<h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>负载均衡，顾名思义，主要使用在业务量和数据量较高的情况下，当单台服务器不足以承担所有的负载压力时，通过负载均衡手段，将流量和数据分摊到一个集群组成的多台服务器上，以提高整体的负载处理能力。</p>
+<p><strong>无状态应用的失效转移可以利用负载均衡来实现</strong>。</p>
+<p>无状态的应用实现高可用架构十分简单，由于服务器不保存请求状态，那么所有服务器完全对等，在任意节点执行同样的请求，结果总是一致的。这种情况下，最简单的高可用方案就是使用负载均衡。</p>
+<blockquote>
+<p>负载均衡原理可以参考：<a href="https://dunwu.github.io/waterdrop/pages/6da58e4b/">负载均衡基本原理</a></p>
+</blockquote>
+<h3 id="分布式-Session"><a href="#分布式-Session" class="headerlink" title="分布式 Session"></a>分布式 Session</h3><p>应用服务器的高可用架构设计主要基于服务无状态这一特性。事实上，业务总是有状态的，如购物车记录用户的购买信息；用户的登录状态；最新发布的消息等等。</p>
+<p>在分布式场景下，一个用户的 Session 如果只存储在一个服务器上，那么当负载均衡器把用户的下一个请求转发到另一个服务器上，该服务器没有用户的 Session，就可能导致用户需要重新进行登录等操作。</p>
+<p>为了解决分布式 Session 问题，常见的解决方案有：</p>
+<ul>
+<li>粘性 session</li>
+<li>应用服务器间的 session 复制共享</li>
+<li>基于缓存的 session 共享 ✅</li>
+</ul>
+<blockquote>
+<p>分布式会话原理可以参考：<a href="https://dunwu.github.io/waterdrop/pages/16deae27/">分布式会话基本原理</a></p>
+</blockquote>
+<h2 id="高可用的服务"><a href="#高可用的服务" class="headerlink" title="高可用的服务"></a>高可用的服务</h2><p><strong>可复用的服务</strong>为业务产品提供基础公共服务，大型系统中这些服务通常都独立分布式部署，被具体应用远程调用。可复用的服务和应用一样，一般也是无状态的服务，因此，<strong>同样可以使用负载均衡的失效转移策略来实现高可用</strong>。</p>
+<p>除此以外，还有以下手段来保证服务的高可用：</p>
+<ul>
+<li>分级管理</li>
+<li>超时重试</li>
+<li>异步调用</li>
+<li>过载保护<ul>
+<li>限流</li>
+<li>降级</li>
+<li>断路</li>
+</ul>
+</li>
+<li>幂等性设计</li>
+</ul>
+<h3 id="分级管理"><a href="#分级管理" class="headerlink" title="分级管理"></a>分级管理</h3><p>将服务根据业务重要性进行分级管理，核心应用和服务优先使用更好的硬件，在运维响应速度上也格外迅速。</p>
+<p>在服务部署上进行必要的隔离，避免故障的连锁反应。低优先级的服务通过启动不同的线程或部署在不同的虚拟机上进行隔离，而高优先级的服务则需要部署在不同的物理机上，核心服务和数据甚至要部署在不同地域的数据中心。</p>
+<h3 id="超时重试"><a href="#超时重试" class="headerlink" title="超时重试"></a>超时重试</h3><p>由于服务器宕机、线程死锁等原因，可能导致应用程序对服务端的调用失去响应。所以有必要引入<strong>超时机制</strong>，一旦调用超时，服务化框架抛出异常，应用程序根据服务调度策略，选择重试或请求转移到其他机器上。</p>
+<h3 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h3><p>对于需要即时响应的业务，应用在调用服务时可以通过消息队列等异步方式完成，避免一个服务失败导致整个应用请求失败的情况。当然不是所有服务调用都可以异步调用，对于获取用户信息这类调用，采用异步方式会延长响应时间，得不偿失；此外，对于那些必须确认服务调用才能继续下一步操作的应用也不适宜食用异步调用。</p>
+<h3 id="过载保护"><a href="#过载保护" class="headerlink" title="过载保护"></a>过载保护</h3><p>过载保护的手段，一般有：限流、降级、熔断。</p>
+<h4 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h4><p>降级是从系统功能优先级的角度考虑如何应对故障，而限流则是从用户访问压力的角度来考虑如何应对故障。限流指只允许系统能够承受的访问量进来，超出系统访问能力的请求将被丢弃。</p>
+<p>常见的限流方式可以分为两类：基于请求限流和基于资源限流。</p>
+<h5 id="基于请求限流"><a href="#基于请求限流" class="headerlink" title="基于请求限流"></a>基于请求限流</h5><p>基于请求限流指从外部访问的请求角度考虑限流，常见的方式有：限制总量、限制时间量。</p>
+<p>限制总量的方式是限制<strong>某个指标的累积上限</strong>，常见的是限制当前系统服务的用户总量，例如某个直播间限制总用户数上限为 100 万，超过 100 万后新的用户无法进入；某个抢购活动商品数量只有 100 个，限制参与抢购的用户上限为 1 万个，1 万以后的用户直接拒绝。限制时间量指限制<strong>一段时间内某个指标的上限</strong>，例如，1 分钟内只允许 10000 个用户访问，每秒请求峰值最高为 10 万。</p>
+<p>无论是限制总量还是限制时间量，共同的特点都是实现简单，但在实践中面临的主要问题是比较难以找到合适的阈值。</p>
+<h5 id="基于资源限流"><a href="#基于资源限流" class="headerlink" title="基于资源限流"></a>基于资源限流</h5><p>基于请求限流是从系统外部考虑的，而基于资源限流是从系统内部考虑的，即：找到系统内部影响性能的关键资源，对其使用上限进行限制。常见的内部资源有：连接数、文件句柄、线程数、请求队列等。</p>
+<p>基于资源限流相比基于请求限流能够更加有效地反映当前系统的压力，但实践中设计也面临两个主要的难点：如何确定关键资源，如何确定关键资源的阈值。</p>
+<h4 id="降级"><a href="#降级" class="headerlink" title="降级"></a>降级</h4><p>降级指系统将某些业务或者接口的功能降低，可以是只提供部分功能，也可以是完全停掉所有功能。</p>
+<p>在服务访问的高峰期，服务可能因为大量并发调用而性能下降，严重时可能会导致宕机。为了保证核心功能的正常运行，需要对服务进行降级。降级有两种手段：</p>
+<p><strong>拒绝服务</strong> - 拒绝低优先级应用的调用，减少服务调用并发数，确保核心应用正常使用。或者随机拒绝部分调用，节约资源，避免要死大家一起死的惨剧。</p>
+<p><strong>关闭服务</strong> - 关闭部分不重要的服务，或者服务内部关闭部分不重要的功能，以节约资源。</p>
+<h4 id="熔断"><a href="#熔断" class="headerlink" title="熔断"></a>熔断</h4><p>熔断和降级是两个比较容易混淆的概念，因为单纯从名字上看好像都有禁止某个功能的意思，但其实内在含义是不同的，原因在于降级的目的是应对系统自身的故障，而熔断的目的是应对依赖的外部系统故障的情况。</p>
+<p>熔断机制实现的关键是需要有一个统一的 API 调用层，由 API 调用层来进行采样或者统计，如果接口调用散落在代码各处就没法进行统一处理了。</p>
+<h3 id="幂等性设计"><a href="#幂等性设计" class="headerlink" title="幂等性设计"></a>幂等性设计</h3><p>服务调用失败后，调用方会将请求转发到其他服务器上，但是这个失败可能是虚假的失败。比如服务已经处理成功，但因为网络故障导致调用方没有收到应答，或等待超时。这种情况下，重新发起请求，可能会导致重复操作，如：向数据库写入两条记录。如果这个操作是比较敏感的交易操作，就会产生严重后果。</p>
+<p>服务重复调用时无法避免的，但是只要能从业务实现上保证，重复调用和一次调用的处理结果一致，则业务就没有问题，这就是幂等性设计。</p>
+<p>有些服务的业务天然具有幂等性，比如将用户性别设为男性，不管执行多少次，结果是一致的。但有些复杂的业务，要想保证幂等性，就需要根据全局性的 ID 去进行有效性验证，验证通过才能继续执行。</p>
+<h2 id="高可用的存储"><a href="#高可用的存储" class="headerlink" title="高可用的存储"></a>高可用的存储</h2><p>对于绝大部分软件系统而言，数据都是最宝贵的虚拟资产，一旦丢失，可以说是毁灭性的打击。</p>
+<p>保证存储高可用的<strong>主要手段</strong>是：<strong>数据备份</strong>和<strong>失效转移</strong>。</p>
+<p>存储高可用架构的<strong>复杂性</strong>主要体现在：<strong>如何应对副本同步延迟和中断导致的数据一致性问题</strong>。</p>
+<blockquote>
+<p>提示：再开始学习这部分内容前，建议先学习 <strong>二、高可用架构理论</strong></p>
+</blockquote>
+<h3 id="数据备份"><a href="#数据备份" class="headerlink" title="数据备份"></a>数据备份</h3><p>数据备份是保证数据有多个副本，任意副本的丢失都不会导致数据的永久丢失。</p>
+<ul>
+<li><strong>冷备份</strong> - 定期将数据复制到某种存储介质。</li>
+<li><strong>热备份</strong><ul>
+<li><strong>异步热备方式</strong> - 异步热备方式是指多份数据副本的写入操作异步完成，应用程序收到数据服务系统的写操作成功响应时，只写成功了一份，存储系统将会异步地写其他副本。</li>
+<li><strong>同步热备方式</strong> - 同步热备方式是指多份数据副本的写入操作同步完成，即应用程序收到数据服务系统的写成功响应时，多份数据都已经写操作成功。但是当应用程序收到数据写操作失败的响应式，可能有部分副本或者全部副本都已经写入成功了（因为网络或者系统故障，无法返回操作成功的响应）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="失效转移"><a href="#失效转移" class="headerlink" title="失效转移"></a>失效转移</h3><p>失效转移是保证任意一个副本不可访问时，可以快速切换访问其他副本，保证系统整体可用。</p>
+<h4 id="失效确认"><a href="#失效确认" class="headerlink" title="失效确认"></a>失效确认</h4><div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/check-fail.png" width="500" />
+</div>
+
+<p>判断服务器宕机的手段有两种：<strong>心跳检测</strong>和<strong>访问失败报告</strong>。</p>
+<p>对于应用程序的访问失败报告，控制中心还需要再一次发送心跳检测进行确认，以免错误判断服务器宕机。因为一旦进行数据访问的失效转移，意味着数据存储多份副本不一致，需要进行后续一系列的复杂动作。</p>
+<h4 id="访问转移"><a href="#访问转移" class="headerlink" title="访问转移"></a>访问转移</h4><p>确认某台数据服务器宕机后，就需要将数据读写访问重新路由到其他服务器上。对于完全对等存储的服务器，当其中一台宕机后，应用程序根据配置直接切换到对等服务器上。如果存储不对等，就需要重新计算路由，选择存储服务器。</p>
+<h4 id="数据恢复"><a href="#数据恢复" class="headerlink" title="数据恢复"></a>数据恢复</h4><p>因为某台服务器宕机，所以数据存储的副本数目会减少，必须将副本的数目恢复到系统设定的值，否则，再有服务器宕机时，就可能出现无法访问转移，数据永久丢失的情况。因此系统需要从健康的服务器复制数据，将数据副本数目恢复到设定值。</p>
+<h2 id="辅助手段"><a href="#辅助手段" class="headerlink" title="辅助手段"></a>辅助手段</h2><h3 id="异地多活"><a href="#异地多活" class="headerlink" title="异地多活"></a>异地多活</h3><p>异地多活架构的关键点就是异地、多活，其中异地就是指地理位置上不同的地方，类似于“不要把鸡蛋都放在同一篮子里”；多活就是指不同地理位置上的系统都能够提供业务服务，这里的“活”是活动、活跃的意思。</p>
+<p>异地多活架构可以分为同城异区、跨城异地、跨国异地。</p>
+<p>异地多活架构的代价：</p>
+<ul>
+<li>系统复杂度会发生质的变化，需要设计复杂的异地多活架构。</li>
+<li>成本会上升，毕竟要多在一个或者多个机房搭建独立的一套业务系统。</li>
+</ul>
+<p>异地多活的设计原则：</p>
+<ul>
+<li>保证核心业务的异地多活</li>
+<li>保证核心数据最终一致性</li>
+<li>采用多种手段同步数据</li>
+<li>只保证绝大部分用户的异地多活</li>
+</ul>
+<p>异地多活设计步骤：</p>
+<ul>
+<li>业务分级 - 常见的分级标准有：<ul>
+<li>流量大的业务</li>
+<li>核心业务</li>
+<li>盈利业务</li>
+</ul>
+</li>
+<li>数据分类 - 常见的数据分析维度有：<ul>
+<li>数据量</li>
+<li>唯一性</li>
+<li>实时性</li>
+<li>可丢实性</li>
+<li>可恢复性</li>
+</ul>
+</li>
+<li>数据同步 - 常见的数据同步方案<ul>
+<li>存储系统同步</li>
+<li>消息队列同步</li>
+<li>重复生成</li>
+</ul>
+</li>
+<li>异常处理 - 常见异常处理措施：<ul>
+<li>多通道同步</li>
+<li>同步和访问结合</li>
+<li>日志记录</li>
+<li>用户补偿</li>
+</ul>
+</li>
+</ul>
+<h3 id="发布流程"><a href="#发布流程" class="headerlink" title="发布流程"></a>发布流程</h3><p>高可用的软件质量保证的手段：</p>
+<ul>
+<li>自动化测试</li>
+<li>预发布验证</li>
+<li>代码控制</li>
+<li>自动化发布</li>
+<li>灰度发布</li>
+</ul>
+<h3 id="系统监控"><a href="#系统监控" class="headerlink" title="系统监控"></a>系统监控</h3><blockquote>
+<p>不允许没有监控的系统上线。</p>
+</blockquote>
+<ul>
+<li><strong>监控数据采集</strong><ul>
+<li><strong>用户行为日志收集</strong><ul>
+<li>服务端日志收集 - Apache、Nginx 等几乎所有 Web 服务器都具备日志记录功能，只要开启日志记录即可。如果是服务器比较多，需要集中采集日志，通常会使用 Elastic 来进行收集。</li>
+<li>客户端日志收集 - 利用页面嵌入专门的 JavaScript 脚本可以收集用户真实的操作行为。</li>
+<li>日志分析 - 可以利用 ElasticSearch 做语义分析及搜索；利用实时计算框架 Storm、Flink 等开发日志统计与分析工具。</li>
+</ul>
+</li>
+<li><strong>服务器性能监控</strong> - 收集服务器性能指标，如系统负载、内存占用、CPU 占用、磁盘 IO、网络 IO 等。常用的监控工具有：<a target="_blank" rel="noopener" href="https://github.com/apache/skywalking">Apache SkyWalking</a> 、<a target="_blank" rel="noopener" href="https://github.com/naver/pinpoint">Pinpoint</a> 等。</li>
+<li><strong>运行数据报告</strong> - 应该监控一些与具体业务场景相关的技术和业务指标，如：缓存命中率、平均响应时延、TPS、QPS 等。</li>
+</ul>
+</li>
+<li><strong>监控管理</strong><ul>
+<li><strong>系统报警</strong> - 设置阈值。当达到阈值，及时触发告警（短信、邮件、通信工具均可），通过及时判断状况，防患于未然。</li>
+<li><strong>失效转移</strong> - 监控系统可以在发现故障的情况下主动通知应用进行失效转移。</li>
+<li><strong>自动优雅降级</strong><ul>
+<li>优雅降级是为了应付突然爆发的访问高峰，主动关闭部分功能，释放部分资源，以保证核心功能的优先访问。</li>
+<li>系统在监控管理基础之上实现自动优雅降级，是柔性架构的理想状态。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11322972.html">《大型网站技术架构：核心原理与案例分析》</a></li>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/12153914.html">《亿级流量网站架构核心技术：跟开涛学搭建高可用高并发系统》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/48">左耳听风</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/ce132f76/" title="系统高可用架构">https://dunwu.github.io/blog/pages/ce132f76/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/blog/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" rel="tag"># 高可用</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/43727b77/" rel="prev" title="系统伸缩性架构">
+                  <i class="fa fa-angle-left"></i> 系统伸缩性架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/bf101e07/" rel="next" title="系统高性能架构">
+                  系统高性能架构 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"b869f38595028e4b098269716dfc2553"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="服务注册和发现服务注册和发现的基本原理服务定义是服务提供者和服务消费者之间的约定，但是在微服务架构中，如何达成这个约定呢？这就依赖于服务注册和发现机制。 注册和发现的角色在微服务架构下，服务注册和发现机制中主要有三种角色：  服务提供者（RPC Server &#x2F; Provider） 服务消费者（RPC Client &#x2F; Consumer） 服务注册中心（Registry）  服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务注册和发现">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/c30183a4/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="服务注册和发现服务注册和发现的基本原理服务定义是服务提供者和服务消费者之间的约定，但是在微服务架构中，如何达成这个约定呢？这就依赖于服务注册和发现机制。 注册和发现的角色在微服务架构下，服务注册和发现机制中主要有三种角色：  服务提供者（RPC Server &#x2F; Provider） 服务消费者（RPC Client &#x2F; Consumer） 服务注册中心（Registry）  服">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220415171843.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220418204148.jfif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220418204352.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper_3.png">
+<meta property="article:published_time" content="2024-05-26T22:57:09.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.747Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="服务治理">
+<meta property="article:tag" content="调度">
+<meta property="article:tag" content="服务注册">
+<meta property="article:tag" content="服务发现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220415171843.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/c30183a4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/c30183a4/","path":"/pages/c30183a4/","title":"服务注册和发现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>服务注册和发现 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">服务注册和发现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">服务注册和发现的基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0%E7%9A%84%E8%A7%92%E8%89%B2"><span class="nav-number">1.1.1.</span> <span class="nav-text">注册和发现的角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%86%85%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">应用内注册与发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%A4%96%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.3.</span> <span class="nav-text">应用外注册与发现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD"><span class="nav-number">1.2.</span> <span class="nav-text">注册中心的基本功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">元数据定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#XML-%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">XML 文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IDL-%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">IDL 文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#REST-API"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">REST API</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">元数据存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83-API"><span class="nav-number">1.2.3.</span> <span class="nav-text">注册中心 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%81%A5%E5%BA%B7%E6%A3%80%E6%B5%8B"><span class="nav-number">1.2.4.</span> <span class="nav-text">服务健康检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%8A%B6%E6%80%81%E5%8F%98%E6%9B%B4%E9%80%9A%E7%9F%A5"><span class="nav-number">1.2.5.</span> <span class="nav-text">服务状态变更通知</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-number">1.2.6.</span> <span class="nav-text">集群部署</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9A%84%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD"><span class="nav-number">1.3.</span> <span class="nav-text">注册中心的扩展功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="nav-number">1.3.1.</span> <span class="nav-text">多注册中心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.3.2.</span> <span class="nav-text">并行订阅服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E6%B3%A8%E9%94%80%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.3.3.</span> <span class="nav-text">批量注销服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%98%E6%9B%B4%E4%BF%A1%E6%81%AF%E5%A2%9E%E9%87%8F%E6%9B%B4%E6%96%B0"><span class="nav-number">1.3.4.</span> <span class="nav-text">服务变更信息增量更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E5%BC%80%E5%85%B3%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="nav-number">1.3.5.</span> <span class="nav-text">心跳开关保护机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%8A%82%E7%82%B9%E6%91%98%E9%99%A4%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="nav-number">1.3.6.</span> <span class="nav-text">服务节点摘除保护机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BD%E5%90%8D%E5%8D%95%E6%9C%BA%E5%88%B6"><span class="nav-number">1.3.7.</span> <span class="nav-text">白名单机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="nav-number">1.3.8.</span> <span class="nav-text">静态注册中心</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/c30183a4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="服务注册和发现 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          服务注册和发现<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/12.%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-05-27 06:57:09" itemprop="dateCreated datePublished" datetime="2024-05-27T06:57:09+08:00">2024-05-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/" itemprop="url" rel="index"><span itemprop="name">分布式调度</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="服务注册和发现"><a href="#服务注册和发现" class="headerlink" title="服务注册和发现"></a>服务注册和发现</h1><h2 id="服务注册和发现的基本原理"><a href="#服务注册和发现的基本原理" class="headerlink" title="服务注册和发现的基本原理"></a>服务注册和发现的基本原理</h2><p>服务定义是服务提供者和服务消费者之间的约定，但是在微服务架构中，如何达成这个约定呢？这就依赖于服务注册和发现机制。</p>
+<h3 id="注册和发现的角色"><a href="#注册和发现的角色" class="headerlink" title="注册和发现的角色"></a>注册和发现的角色</h3><p>在微服务架构下，服务注册和发现机制中主要有三种角色：</p>
+<ul>
+<li><strong>服务提供者</strong>（RPC Server &#x2F; Provider）</li>
+<li><strong>服务消费者</strong>（RPC Client &#x2F; Consumer）</li>
+<li><strong>服务注册中心</strong>（Registry）</li>
+</ul>
+<p>服务发现通常依赖于<strong>注册中心</strong>来协调服务发现的过程，其步骤如下：</p>
+<ol>
+<li>服务提供者将接口信息注册到注册中心。</li>
+<li>服务消费者从注册中心读取和订阅服务提供者的地址信息。</li>
+<li>如果有可用的服务，注册中心会主动通知服务消费者。</li>
+<li>服务消费者根据可用服务的地址列表，调用服务提供者的接口。</li>
+</ol>
+<p>这个过程很像是生活中的房屋租赁，房东将租房信息挂到中介公司，房客从中介公司查找租房信息。房客如果想要租房东的房子，通过中介公司牵线搭桥，联系上房东，双方谈妥签订协议，就可以正式建立起租赁关系。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220415171843.png" alt="img"></p>
+<p>主流的服务注册与发现的解决方案，主要有两种：</p>
+<ul>
+<li><strong>应用内注册与发现</strong>：注册中心提供服务端和客户端的 SDK，业务应用通过引入注册中心提供的 SDK，通过 SDK 与注册中心交互，来实现服务的注册和发现。</li>
+<li><strong>应用外注册与发现</strong>：业务应用本身不需要通过 SDK 与注册中心打交道，而是通过其他方式与注册中心交互，间接完成服务注册与发现。</li>
+</ul>
+<h3 id="应用内注册与发现"><a href="#应用内注册与发现" class="headerlink" title="应用内注册与发现"></a>应用内注册与发现</h3><p><strong>应用内注册与发现</strong>方案是：注册中心提供服务端和客户端的 SDK，业务应用通过引入注册中心提供的 SDK，通过 SDK 与注册中心交互，来实现服务的注册和发现。最典型的案例要属 Netflix 开源的 Eureka，官方架构图如下：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220418204148.jfif" alt="img"></p>
+<p>Eureka 的架构主要由三个重要的组件组成：</p>
+<ul>
+<li><strong>Eureka Server</strong>：注册中心的服务端，实现了服务信息注册、存储以及查询等功能。</li>
+<li><strong>服务端的 Eureka Client</strong>：集成在服务端的注册中心 SDK，服务提供者通过调用 SDK，实现服务注册、反注册等功能。</li>
+<li><strong>客户端的 Eureka Client</strong>：集成在客户端的注册中心 SDK，服务消费者通过调用 SDK，实现服务订阅、服务更新等功能。</li>
+</ul>
+<h3 id="应用外注册与发现"><a href="#应用外注册与发现" class="headerlink" title="应用外注册与发现"></a>应用外注册与发现</h3><p><strong>应用外注册与发现</strong>方案是：业务应用本身不需要通过 SDK 与注册中心打交道，而是通过其他方式与注册中心交互，间接完成服务注册与发现。最典型的案例是开源注册中心 Consul。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220418204352.png" alt="img"></p>
+<p>Consul 实现应用外服务注册和发现主要依靠三个重要的组件：</p>
+<ul>
+<li>Consul：注册中心的服务端，实现服务注册信息的存储，并提供注册和发现服务。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/gliderlabs/registrator">Registrator</a>：一个开源的第三方服务管理器项目，它通过监听服务部署的 Docker 实例是否存活，来负责服务提供者的注册和销毁。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hashicorp/consul-template">Consul Template</a>：定时从注册中心服务端获取最新的服务提供者节点列表并刷新 LB 配置（比如 Nginx 的 upstream），这样服务消费者就通过访问 Nginx 就可以获取最新的服务提供者信息。</li>
+</ul>
+<h2 id="注册中心的基本功能"><a href="#注册中心的基本功能" class="headerlink" title="注册中心的基本功能"></a>注册中心的基本功能</h2><p>从服务注册和发现的流程，可以看出，<strong>注册中心是服务发现的核心组件</strong>。常见的注册中心组件有：Nacos、Consul、Zookeeper 等。</p>
+<p>注册中心的实现主要涉及几个问题：注册中心需要提供哪些接口，该如何部署；如何存储服务信息；如何监控服务提供者节点的存活；如果服务提供者节点有变化如何通知服务消费者，以及如何控制注册中心的访问权限。</p>
+<h3 id="元数据定义"><a href="#元数据定义" class="headerlink" title="元数据定义"></a>元数据定义</h3><p>构建微服务的首要问题是：服务提供者和服务消费者通信时，如何达成共识。具体来说，就是这个服务的接口名是什么？调用这个服务需要传递哪些参数？接口的返回值是什么类型？以及一些其他接口描述信息。</p>
+<p>常见的定义服务元数据的方式有：</p>
+<ul>
+<li><strong>XML 文件</strong> - 如果只是企业内部之间的服务调用，并且都是 Java 语言的话，选择 XML 配置方式是最简单的。</li>
+<li><strong>IDL 文件</strong> - 如果企业内部存在多个跨语言服务，建议使用 IDL 文件方式进行描述服务。</li>
+<li><strong>REST API</strong> - 如果存在对外开放服务调用的情形的话，使用 REST API 方式则更加通用。</li>
+</ul>
+<h4 id="XML-文件"><a href="#XML-文件" class="headerlink" title="XML 文件"></a>XML 文件</h4><p><strong>XML 配置方式通过在服务提供者和服务消费者之间维持一份对等的 XML 配置文件，来保证服务消费者按照服务提供者的约定来进行服务调用</strong>。在这种方式下，如果服务提供者变更了接口定义，不仅需要更新服务提供者加载的接口描述文件 server.xml，还需要同时更新服务消费者加载的接口描述文件 client.xml。但这种方式对业务代码侵入性比较高，XML 配置有变更的时候，服务消费者和服务提供者都要更新，所以适合公司内部联系比较紧密的业务之间采用。支持 XML 文件的主流 RPC 有：阿里的 <a target="_blank" rel="noopener" href="https://github.com/apache/dubbo">Dubbo</a>（XML 配置示例：<a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/mannual/java-sdk/quick-start/spring-xml/">基于 Spring XML 开发微服务应用</a>）、微博的 Motan。</p>
+<p>XML 文件这种方式的服务发布和引用主要分三个步骤：</p>
+<p>（1）服务提供者定义接口，并实现接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The demo service definition.</span></span><br><span class="line">service DemoService &#123;</span><br><span class="line">  rpc <span class="title function_">sayHello</span> <span class="params">(HelloRequest)</span> returns (HelloReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The request message containing the user&#x27;s name.</span></span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  <span class="type">string</span> <span class="variable">name</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The response message containing the greetings</span></span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  <span class="type">string</span> <span class="variable">message</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）服务提供者进程启动时，通过加载 xml 配置文件将接口暴露出去。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:dubbo</span>=<span class="string">&quot;http://dubbo.apache.org/schema/dubbo&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dubbo:application</span> <span class="attr">name</span>=<span class="string">&quot;demo-provider&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dubbo:registry</span> <span class="attr">address</span>=<span class="string">&quot;zookeeper://127.0.0.1:2181&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">port</span>=<span class="string">&quot;20890&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;demoService&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.dubbo.samples.basic.impl.DemoServiceImpl&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;org.apache.dubbo.samples.basic.api.DemoService&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;demoService&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（3）服务消费者进程启动时，通过加载 xml 配置文件来引入要调用的接口。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:dubbo</span>=<span class="string">&quot;http://dubbo.apache.org/schema/dubbo&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dubbo:application</span> <span class="attr">name</span>=<span class="string">&quot;demo-consumer&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dubbo:registry</span> <span class="attr">group</span>=<span class="string">&quot;aaa&quot;</span> <span class="attr">address</span>=<span class="string">&quot;zookeeper://127.0.0.1:2181&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">id</span>=<span class="string">&quot;demoService&quot;</span> <span class="attr">check</span>=<span class="string">&quot;false&quot;</span> <span class="attr">interface</span>=<span class="string">&quot;org.apache.dubbo.samples.basic.api.DemoService&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="IDL-文件"><a href="#IDL-文件" class="headerlink" title="IDL 文件"></a>IDL 文件</h4><p>IDL 就是接口描述语言（interface description language）的缩写，通过一种中立、通用的方式来描述接口，使得在不同的平台上运行的对象和不同语言编写的程序可以相互通信交流。也就是说，<strong>IDL 主要用于跨语言的服务之间的调用</strong>。支持 IDL 文件的主流 RPC 有：阿里的 <a target="_blank" rel="noopener" href="https://github.com/apache/dubbo">Dubbo</a>（XML 配置示例：<a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/mannual/java-sdk/quick-start/idl/">IDL 定义跨语言服务</a>），Facebook 的 <a target="_blank" rel="noopener" href="https://github.com/apache/thrift">Thrift</a>，Google 的 <a target="_blank" rel="noopener" href="https://github.com/grpc/grpc">gRPC</a> 。</p>
+<p>以 gRPC 协议为例，gRPC 协议使用 Protobuf 简称 proto 文件来定义接口名、调用参数以及返回值类型。比如文件 helloword.proto 定义了一个接口 SayHello 方法，它的请求参数是 HelloRequest，它的返回值是 HelloReply。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The greeter service definition.</span></span><br><span class="line">service Greeter &#123;</span><br><span class="line">  <span class="comment">// Sends a greeting</span></span><br><span class="line">  rpc <span class="title function_">SayHello</span> <span class="params">(HelloRequest)</span> returns (HelloReply) &#123;&#125;</span><br><span class="line">  rpc <span class="title function_">SayHelloAgain</span> <span class="params">(HelloRequest)</span> returns (HelloReply) &#123;&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The request message containing the user&#x27;s name.</span></span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  <span class="type">string</span> <span class="variable">name</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The response message containing the greetings</span></span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  <span class="type">string</span> <span class="variable">message</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假如服务提供者使用的是 Java 语言，那么利用 protoc 插件即可自动生成 Server 端的 Java 代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">GreeterImpl</span> <span class="keyword">extends</span> <span class="title class_">GreeterGrpc</span>.GreeterImplBase &#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(HelloRequest req, StreamObserver&lt;HelloReply&gt; responseObserver)</span> &#123;</span><br><span class="line">    <span class="type">HelloReply</span> <span class="variable">reply</span> <span class="operator">=</span> HelloReply.newBuilder().setMessage(<span class="string">&quot;Hello &quot;</span> + req.getName()).build();</span><br><span class="line">    responseObserver.onNext(reply);</span><br><span class="line">    responseObserver.onCompleted();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sayHelloAgain</span><span class="params">(HelloRequest req, StreamObserver&lt;HelloReply&gt; responseObserver)</span> &#123;</span><br><span class="line">    <span class="type">HelloReply</span> <span class="variable">reply</span> <span class="operator">=</span> HelloReply.newBuilder().setMessage(<span class="string">&quot;Hello again &quot;</span> + req.getName()).build();</span><br><span class="line">    responseObserver.onNext(reply);</span><br><span class="line">    responseObserver.onCompleted();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假如服务消费者使用的也是 Java 语言，那么利用 protoc 插件即可自动生成 Client 端的 Java 代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">greet</span><span class="params">(String name)</span> &#123;</span><br><span class="line">  logger.info(<span class="string">&quot;Will try to greet &quot;</span> + name + <span class="string">&quot; ...&quot;</span>);</span><br><span class="line">  <span class="type">HelloRequest</span> <span class="variable">request</span> <span class="operator">=</span> HelloRequest.newBuilder().setName(name).build();</span><br><span class="line">  HelloReply response;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    response = blockingStub.sayHello(request);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (StatusRuntimeException e) &#123;</span><br><span class="line">    logger.log(Level.WARNING, <span class="string">&quot;RPC failed: &#123;0&#125;&quot;</span>, e.getStatus());</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  logger.info(<span class="string">&quot;Greeting: &quot;</span> + response.getMessage());</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    response = blockingStub.sayHelloAgain(request);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (StatusRuntimeException e) &#123;</span><br><span class="line">    logger.log(Level.WARNING, <span class="string">&quot;RPC failed: &#123;0&#125;&quot;</span>, e.getStatus());</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  logger.info(<span class="string">&quot;Greeting: &quot;</span> + response.getMessage());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假如服务消费者使用的是其他语言，也可以利用相应的插件生成代码。</p>
+<p>由此可见，gRPC 协议的服务描述是通过 proto 文件来定义接口的，然后再使用 protoc 来生成不同语言平台的客户端和服务端代码，从而具备跨语言服务调用能力。</p>
+<p>有一点特别需要注意的是，在描述接口定义时，IDL 文件需要对接口返回值进行详细定义。如果接口返回值的字段比较多，并且经常变化时，采用 IDL 文件方式的接口定义就不太合适了。一方面可能会造成 IDL 文件过大难以维护，另一方面只要 IDL 文件中定义的接口返回值有变更，都需要同步所有的服务消费者都更新，管理成本就太高了。</p>
+<h4 id="REST-API"><a href="#REST-API" class="headerlink" title="REST API"></a>REST API</h4><p>REST API 方式主要被用作 HTTP 或者 HTTPS 协议的接口定义，即使在非微服务架构体系下，也被广泛采用。由于 HTTP 本身就是公开标准网络协议，所以几乎没有什么额外学习成本。支持 REST API 的主流 RPC 有：Eureka，下面以 Eureka 为例。</p>
+<p>服务提供者定义接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProviderController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DiscoveryClient discoveryClient;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ProviderController</span><span class="params">(DiscoveryClient discoveryClient)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.discoveryClient = discoveryClient;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/send&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">send</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">services</span> <span class="operator">=</span> <span class="string">&quot;Services: &quot;</span> + discoveryClient.getServices();</span><br><span class="line">        System.out.println(services);</span><br><span class="line">        <span class="keyword">return</span> services;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>服务消费者消费接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConsumerController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> LoadBalancerClient loadBalancerClient;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ConsumerController</span><span class="params">(LoadBalancerClient loadBalancerClient,</span></span><br><span class="line"><span class="params">        RestTemplate restTemplate)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.loadBalancerClient = loadBalancerClient;</span><br><span class="line">        <span class="built_in">this</span>.restTemplate = restTemplate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/recv&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">recv</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ServiceInstance</span> <span class="variable">serviceInstance</span> <span class="operator">=</span> loadBalancerClient.choose(<span class="string">&quot;eureka-provider&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;http://&quot;</span> + serviceInstance.getHost() + <span class="string">&quot;:&quot;</span> + serviceInstance.getPort() + <span class="string">&quot;/send&quot;</span>;</span><br><span class="line">        System.out.println(url);</span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(url, String.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="元数据存储"><a href="#元数据存储" class="headerlink" title="元数据存储"></a>元数据存储</h3><p>注册中心本质上是一个用于保存元数据的分布式存储。你如果明白了这一点，就会了解实现一个注册中心的所有要点都是围绕这个目标去构建的。</p>
+<p>想要构建微服务，首先要解决的问题是，服务提供者如何发布一个服务，服务消费者如何引用这个服务。具体来说，就是这个服务的接口名是什么？调用这个服务需要传递哪些参数？接口的返回值是什么类型？以及一些其他接口描述信息。</p>
+<p>服务的<strong>元数据信息</strong>通常有以下信息：</p>
+<ul>
+<li>服务节点信息，如 IP、端口等。</li>
+<li>接口定义，如接口名、请求参数、响应参数等。</li>
+<li>请求失败的重试次数</li>
+<li>序列化方式</li>
+<li>压缩方式</li>
+<li>通信协议</li>
+<li>等等</li>
+</ul>
+<p>在具体存储时，注册中心一般会按照“服务 - 分组 - 节点信息”的<strong>层次化的结构</strong>来存储。以 ZooKeeper 为例：</p>
+<ul>
+<li>在 ZooKeeper 中，数据按目录层级存储，每个目录叫作 znode，并且其有一个唯一的路径标识。</li>
+<li>znode 可以包含数据和子 znode。</li>
+<li>znode 中的数据可以有多个版本，比如某一个 znode 下存有多个数据版本，那么查询这个路径下的数据需带上版本信息。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper_1.png" alt="img"></p>
+<h3 id="注册中心-API"><a href="#注册中心-API" class="headerlink" title="注册中心 API"></a>注册中心 API</h3><p>既然是分布式存储，势必要提供支持读写数据的接口，也就是 API，一般来说，需要支持以下功能：</p>
+<ul>
+<li><strong>服务注册接口</strong>：服务提供者通过调用服务注册接口来完成服务注册。</li>
+<li><strong>服务反注册接口</strong>：服务提供者通过调用服务反注册接口来完成服务注销。</li>
+<li><strong>心跳汇报接口</strong>：服务提供者通过调用心跳汇报接口完成节点存活状态上报。</li>
+<li><strong>服务订阅接口</strong>：服务消费者通过调用服务订阅接口完成服务订阅，获取可用的服务提供者节点列表。</li>
+<li><strong>服务变更查询接口</strong>：服务消费者通过调用服务变更查询接口，获取最新的可用服务节点列表。</li>
+</ul>
+<p>除此之外，为了便于管理，注册中心还必须提供一些后台管理的 API，例如：</p>
+<ul>
+<li><strong>服务查询接口</strong>：查询注册中心当前注册了哪些服务信息。</li>
+<li><strong>服务修改接口</strong>：修改注册中心中某一服务的信息。</li>
+</ul>
+<h3 id="服务健康检测"><a href="#服务健康检测" class="headerlink" title="服务健康检测"></a>服务健康检测</h3><p>注册中心除了要支持最基本的服务注册和服务订阅功能以外，还必须具备对服务提供者节点的健康状态检测功能，这样才能保证注册中心里保存的服务节点都是可用的。<strong>注册中心通常使用长连接或心跳探测方式检查服务健康状态</strong>。</p>
+<p>还是以 ZooKeeper 为例，它是基于 ZooKeeper 客户端和服务端的长连接和会话超时控制机制，来实现服务健康状态检测的。在 ZooKeeper 中，客户端和服务端建立连接后，会话也随之建立，并生成一个全局唯一的 Session ID。服务端和客户端维持的是一个长连接，在 SESSION_TIMEOUT 周期内，服务端会检测与客户端的链路是否正常，具体方式是通过客户端定时向服务端发送心跳消息（ping 消息），服务器重置下次 SESSION_TIMEOUT 时间。如果超过 SESSION_TIMEOUT 后服务端都没有收到客户端的心跳消息，则服务端认为这个 Session 就已经结束了，ZooKeeper 就会认为这个服务节点已经不可用，将会从注册中心中删除其信息。</p>
+<h3 id="服务状态变更通知"><a href="#服务状态变更通知" class="headerlink" title="服务状态变更通知"></a>服务状态变更通知</h3><p>一旦注册中心探测到有服务提供者节点新加入或者被剔除，就必须立刻通知所有订阅该服务的服务消费者，刷新本地缓存的服务节点信息，确保服务调用不会请求不可用的服务提供者节点。注册中心通常基于服务状态订阅来实现服务状态变更通知。</p>
+<p>继续以 ZooKeeper 为例，基于 ZooKeeper 的 Watcher 机制，来实现服务状态变更通知给服务消费者的。服务消费者在调用 ZooKeeper 的 getData 方法订阅服务时，还可以通过监听器 Watcher 的 process 方法获取服务的变更，然后调用 getData 方法来获取变更后的数据，刷新本地缓存的服务节点信息。</p>
+<h3 id="集群部署"><a href="#集群部署" class="headerlink" title="集群部署"></a>集群部署</h3><p>注册中心作为服务提供者和服务消费者之间沟通的桥梁，它的重要性不言而喻。所以注册中心一般都是采用集群部署来保证高可用性，并通过分布式一致性协议来确保集群中不同节点之间的数据保持一致。根据 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/CAP_theorem">CAP 理论</a>，三种特性无法同时达成，必须在可用性和一致性之间做取舍。于是，根据不同侧重点，注册中心可以分为 CP 和 AP 两个阵营：</p>
+<ul>
+<li><strong>CP 型注册中心</strong> - <strong>牺牲可用性来换取数据强一致性</strong>，最典型的例子就是 ZooKeeper，etcd，Consul 了。ZooKeeper 集群内只有一个 Leader，而且在 Leader 无法使用的时候通过算法选举出一个新的 Leader。这个 Leader 的目的就是保证写信息的时候只向这个 Leader 写入，Leader 会同步信息到 Followers，这个过程就可以保证数据的强一致性。但如果多个 ZooKeeper 之间网络出现问题，造成出现多个 Leader，发生脑裂的话，注册中心就不可用了。而 etcd 和 Consul 集群内都是通过 Raft 协议来保证强一致性，如果出现脑裂的话， 注册中心也不可用。</li>
+<li><strong>AP 型注册中心</strong> - <strong>牺牲一致性（只保证最终一致性）来换取可用性</strong>，最典型的例子就是 Eureka 了。对比下 Zookeeper，Eureka 不用选举一个 Leader，每个 Eureka 服务器单独保存服务注册地址，因此有可能出现数据信息不一致的情况。但是当网络出现问题的时候，每台服务器都可以完成独立的服务。</li>
+</ul>
+<p>以开源注册中心 ZooKeeper 为例，ZooKeeper 集群中包含多个节点，服务提供者和服务消费者可以同任意一个节点通信，因为它们的数据一定是相同的，这是为什么呢？这就要从 ZooKeeper 的工作原理说起：</p>
+<ul>
+<li>每个 Server 在内存中存储了一份数据，Client 的读请求可以请求任意一个 Server。</li>
+<li>ZooKeeper 启动时，将从实例中选举一个 leader（Paxos 协议）。</li>
+<li>Leader 负责处理数据更新等操作（ZAB 协议）。</li>
+<li>一个更新操作成功，当且仅当大多数 Server 在内存中成功修改 。</li>
+</ul>
+<p>通过上面这种方式，ZooKeeper 保证了高可用性以及数据一致性。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper_3.png" alt="img"></p>
+<h2 id="注册中心的扩展功能"><a href="#注册中心的扩展功能" class="headerlink" title="注册中心的扩展功能"></a>注册中心的扩展功能</h2><h3 id="多注册中心"><a href="#多注册中心" class="headerlink" title="多注册中心"></a>多注册中心</h3><p>对于服务消费者来说，要能够同时从多个注册中心订阅服务；</p>
+<p>对于服务提供者来说，要能够同时向多个注册中心注册服务。</p>
+<h3 id="并行订阅服务"><a href="#并行订阅服务" class="headerlink" title="并行订阅服务"></a>并行订阅服务</h3><p>如果只支持串行订阅，如果服务消费者订阅的服务较多，并且某些服务节点的初始化连接过程中出现连接超时的情况，则后续所有的服务节点的初始化连接都需要等待它完成，这就会导致消费者启动非常慢。</p>
+<p>可以每订阅一个服务就单独用一个线程来处理，这样的话即使遇到个别服务节点连接超时，其他服务节点的初始化连接也不受影响，最慢也就是这个服务节点的初始化连接耗费的时间，最终所有服务节点的初始化连接耗时控制在了 30 秒以内。</p>
+<h3 id="批量注销服务"><a href="#批量注销服务" class="headerlink" title="批量注销服务"></a>批量注销服务</h3><p>在与注册中心的多次交互中，可能由于网络抖动、注册中心集群异常等原因，导致个别调用失败。对于注册中心来说，偶发的注册调用失败对服务调用基本没有影响，其结果顶多就是某一个服务少了一个可用的节点。但偶发的反注册调用失败会导致不可用的节点残留在注册中心中，变成“僵尸节点”。</p>
+<p>需要定时去清理注册中心中的“僵尸节点”，如果支持批量注销服务，就可以一次调用就把该节点上提供的所有服务同时注销掉。</p>
+<h3 id="服务变更信息增量更新"><a href="#服务变更信息增量更新" class="headerlink" title="服务变更信息增量更新"></a>服务变更信息增量更新</h3><p>为了减少服务消费者从注册中心中拉取的服务可用节点信息的数据量，这个时候可以通过增量更新的方式，注册中心只返回变化的那部分节点信息。尤其在只有少数节点信息变更时，此举可以大大减少服务消费者从注册中心拉取的数据量，从而最大程度<strong>避免产生网络风暴</strong>。</p>
+<h3 id="心跳开关保护机制"><a href="#心跳开关保护机制" class="headerlink" title="心跳开关保护机制"></a>心跳开关保护机制</h3><p>在网络频繁抖动的情况下，注册中心中可用的节点会不断变化，这时候服务消费者会频繁收到服务提供者节点变更的信息，于是就不断地请求注册中心来拉取最新的可用服务节点信息。当有成百上千个服务消费者，同时请求注册中心获取最新的服务提供者的节点信息时，可能会把注册中心的带宽给占满，尤其是注册中心是百兆网卡的情况下。</p>
+<p>所以针对这种情况，<strong>需要一种保护机制，即使在网络频繁抖动的时候，服务消费者也不至于同时去请求注册中心获取最新的服务节点信息</strong>。</p>
+<p>我曾经就遇到过这种情况，一个可行的解决方案就是给注册中心设置一个开关，当开关打开时，即使网络频繁抖动，注册中心也不会通知所有的服务消费者有服务节点信息变更，比如只给 10% 的服务消费者返回变更，这样的话就能将注册中心的请求量减少到原来的 1&#x2F;10。</p>
+<p>当然打开这个开关也是有一定代价的，它会导致服务消费者感知最新的服务节点信息延迟，原先可能在 10s 内就能感知到服务提供者节点信息的变更，现在可能会延迟到几分钟，所以在网络正常的情况下，开关并不适合打开；可以作为一个紧急措施，在网络频繁抖动的时候，才打开这个开关。</p>
+<h3 id="服务节点摘除保护机制"><a href="#服务节点摘除保护机制" class="headerlink" title="服务节点摘除保护机制"></a>服务节点摘除保护机制</h3><p>服务提供者在进程启动时，会注册服务到注册中心，并每隔一段时间，汇报心跳给注册中心，以标识自己的存活状态。如果隔了一段固定时间后，服务提供者仍然没有汇报心跳给注册中心，注册中心就会认为该节点已经处于“dead”状态，于是从服务的可用节点信息中移除出去。</p>
+<p>如果遇到网络问题，大批服务提供者节点汇报给注册中心的心跳信息都可能会传达失败，注册中心就会把它们都从可用节点列表中移除出去，造成剩下的可用节点难以承受所有的调用，引起“雪崩”。但是这种情况下，可能大部分服务提供者节点是可用的，仅仅因为网络原因无法汇报心跳给注册中心就被“无情”的摘除了。</p>
+<p><strong>这个时候就需要根据实际业务的情况，设定一个阈值比例，即使遇到刚才说的这种情况，注册中心也不能摘除超过这个阈值比例的节点</strong>。</p>
+<p>这个阈值比例可以根据实际业务的冗余度来确定，我通常会把这个比例设定在 20%，就是说注册中心不能摘除超过 20% 的节点。因为大部分情况下，节点的变化不会这么频繁，只有在网络抖动或者业务明确要下线大批量节点的情况下才有可能发生。而业务明确要下线大批量节点的情况是可以预知的，这种情况下可以关闭阈值保护；而正常情况下，应该打开阈值保护，以防止网络抖动时，大批量可用的服务节点被摘除。</p>
+<h3 id="白名单机制"><a href="#白名单机制" class="headerlink" title="白名单机制"></a>白名单机制</h3><p>在实际的微服务测试和部署时，通常包含多套环境，比如生产环境一套、测试环境一套。开发在进行业务自测、测试在进行回归测试时，一般都是用测试环境，部署的 RPC Server 节点注册到测试的注册中心集群。但经常会出现开发或者测试在部署时，错误的把测试环境下的服务节点注册到了线上注册中心集群，这样的话线上流量就会调用到测试环境下的 RPC Server 节点，可能会造成意想不到的后果。</p>
+<p>为了防止这种情况发生，注册中心需要提供一个保护机制，你可以把注册中心想象成一个带有门禁的房间，只有拥有门禁卡的 RPC Server 才能进入。在实际应用中，注册中心可以提供一个白名单机制，只有添加到注册中心白名单内的 RPC Server，才能够调用注册中心的注册接口，这样的话可以避免测试环境中的节点意外跑到线上环境中去。</p>
+<h3 id="静态注册中心"><a href="#静态注册中心" class="headerlink" title="静态注册中心"></a>静态注册中心</h3><p>因为服务提供者是向服务消费者提供服务的，服务是否可用，服务消费者应该比注册中心更清楚。因此，可以直接在服务消费者端，根据调用服务提供者是否成功来判定服务提供者是否可用。如果服务消费者调用某一个服务提供者节点连续失败超过一定次数，可以在本地内存中将这个节点标记为不可用。并且每隔一段固定时间，服务消费者都要向标记为不可用的节点发起保活探测，如果探测成功了，就将标记为不可用的节点再恢复为可用状态，重新发起调用。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100014401">从 0 开始学微服务</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100046201">RPC 实战与核心原理</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/c30183a4/" title="服务注册和发现">https://dunwu.github.io/blog/pages/c30183a4/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" rel="tag"># 服务治理</a>
+              <a href="/blog/tags/%E8%B0%83%E5%BA%A6/" rel="tag"># 调度</a>
+              <a href="/blog/tags/%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" rel="tag"># 服务注册</a>
+              <a href="/blog/tags/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/" rel="tag"># 服务发现</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/09ff2ec9/" rel="prev" title="分布式共识">
+                  <i class="fa fa-angle-left"></i> 分布式共识
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/331a65c9/" rel="next" title="《深入理解 Sentinel》笔记">
+                  《深入理解 Sentinel》笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"a8ea7c330bc612919acb848bd107d8fd"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="HBase 面试HBase 简介【基础】什么是 HBase？:::details 要点 HBase 是一个构建在 HDFS（Hadoop 文件系统）之上的列式数据库。 HBase 是一种类似于 Google’s Big Table 的数据模型，它是 Hadoop 生态系统的一部分，它将数据存储在 HDFS 上，客户端可以通过 HBase 实现对 HDFS 上数据的随机访问。  HBase 的核心特">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HBase 面试">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/2bd46df0/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="HBase 面试HBase 简介【基础】什么是 HBase？:::details 要点 HBase 是一个构建在 HDFS（Hadoop 文件系统）之上的列式数据库。 HBase 是一种类似于 Google’s Big Table 的数据模型，它是 Hadoop 生态系统的一部分，它将数据存储在 HDFS 上，客户端可以通过 HBase 实现对 HDFS 上数据的随机访问。  HBase 的核心特">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601170449.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/bigdata/hbase/1551164224778.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601172926.png">
+<meta property="og:image" content="https://camo.githubusercontent.com/cd502001e098c6598fbec073a87e28b14e52268c48cc3b24395f252e0c801058/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967322e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/7a8d87d3896764c25784ea1ceaa3917dc111942e8e869801cf37c4449e7a1a4f/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f68626173652d726567696f6e2d73706c6974652e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/f0d7ef92cc299882591d6c09b465620d0ada3ab6038759d41e8243ff5bed6aa8/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f68626173652d726567696f6e2d6469732e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/ce668209331d53ed52fb2c4d9de0a0653d26510d86653b708499e2b067e01c76/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967372e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/ef4e5f0d7ca22f562a6976a728efafb5e80380a66e3d82863385b304922df563/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967312e706e67">
+<meta property="og:image" content="https://camo.githubusercontent.com/b2884e8d973aeee121a6f8a1c8bb0336d3ac40e46b558b961f7aa1a98afe16aa/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967352e706e67">
+<meta property="article:published_time" content="2025-03-04T02:05:51.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.738Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="大数据">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="列式数据库">
+<meta property="article:tag" content="hbase">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601170449.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/2bd46df0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/2bd46df0/","path":"/pages/2bd46df0/","title":"HBase 面试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>HBase 面试 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HBase-%E9%9D%A2%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">HBase 面试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">HBase 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-HBase%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【基础】什么是 HBase？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-HBase%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【基础】为什么需要 HBase？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91HBase-%E6%9C%89%E5%93%AA%E4%BA%9B%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【基础】HBase 有哪些应用场景？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91HBase-vs-RDBMS%EF%BC%9F"><span class="nav-number">1.1.4.</span> <span class="nav-text">【基础】HBase vs. RDBMS？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91HBase-vs-HDFS%EF%BC%9F"><span class="nav-number">1.1.5.</span> <span class="nav-text">【基础】HBase vs. HDFS？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E8%A1%8C%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93-vs-%E5%88%97%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9F"><span class="nav-number">1.1.6.</span> <span class="nav-text">【基础】行式数据库 vs. 列式数据库？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase-%E5%AD%98%E5%82%A8"><span class="nav-number">1.2.</span> <span class="nav-text">HBase 存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91HBase-%E8%A1%A8%E6%9C%89%E4%BB%80%E4%B9%88%E7%89%B9%E6%80%A7%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【基础】HBase 表有什么特性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91HBase-%E7%9A%84%E9%80%BB%E8%BE%91%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【基础】HBase 的逻辑存储模型是怎样的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91HBase-%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.2.3.</span> <span class="nav-text">【基础】HBase 的物理存储模型是怎样的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase-%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">HBase 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91HBase-%E8%AF%BB%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">【中级】HBase 读数据流程是怎样的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91HBase-%E5%86%99%E6%95%B0%E6%8D%AE%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">【中级】HBase 写数据流程是怎样的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91HBase-%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">【中级】HBase 有哪些核心组件？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HBase-%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">HBase 高可用</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/2bd46df0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="HBase 面试 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HBase 面试<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/06.%E5%88%97%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/hbase/HBase_%E9%9D%A2%E8%AF%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-03-04 10:05:51" itemprop="dateCreated datePublished" datetime="2025-03-04T10:05:51+08:00">2025-03-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%88%97%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">列式数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%88%97%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/hbase/" itemprop="url" rel="index"><span itemprop="name">hbase</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="HBase-面试"><a href="#HBase-面试" class="headerlink" title="HBase 面试"></a>HBase 面试</h1><h2 id="HBase-简介"><a href="#HBase-简介" class="headerlink" title="HBase 简介"></a>HBase 简介</h2><h3 id="【基础】什么是-HBase？"><a href="#【基础】什么是-HBase？" class="headerlink" title="【基础】什么是 HBase？"></a>【基础】什么是 HBase？</h3><p>:::details 要点</p>
+<p><strong>HBase 是一个构建在 HDFS（Hadoop 文件系统）之上的列式数据库</strong>。</p>
+<p>HBase 是一种类似于 <code>Google’s Big Table</code> 的数据模型，它是 Hadoop 生态系统的一部分，它将数据存储在 HDFS 上，客户端可以通过 HBase 实现对 HDFS 上数据的随机访问。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601170449.png" alt="img"></p>
+<p>HBase 的<strong>核心特性</strong>如下：</p>
+<ul>
+<li><strong>分布式</strong><ul>
+<li><strong>伸缩性</strong>：支持通过增减机器进行水平扩展，以提升整体容量和性能</li>
+<li><strong>高可用</strong>：支持 RegionServers 之间的自动故障转移</li>
+<li><strong>自动分区</strong>：Region 分散在集群中，当行数增长的时候，Region 也会自动的分区再均衡</li>
+</ul>
+</li>
+<li><strong>超大数据集</strong>：HBase 被设计用来读写超大规模的数据集（数十亿行至数百亿行的表）</li>
+<li><strong>支持结构化、半结构化和非结构化的数据</strong>：由于 HBase 基于 HDFS 构建，所以和 HDFS 一样，支持结构化、半结构化和非结构化的数据</li>
+<li><strong>非关系型数据库</strong><ul>
+<li><strong>不支持标准 SQL 语法</strong></li>
+<li><strong>没有真正的索引</strong></li>
+<li><strong>不支持复杂的事务</strong>：只支持行级事务，即单行数据的读写都是原子性的</li>
+</ul>
+</li>
+</ul>
+<p>HBase 的其他特性</p>
+<ul>
+<li>读写操作遵循强一致性</li>
+<li>过滤器支持谓词下推</li>
+<li>易于使用的 Java 客户端 API</li>
+<li>它支持线性和模块化可扩展性。</li>
+<li>HBase 表支持 Hadoop MapReduce 作业的便捷基类</li>
+<li>很容易使用 Java API 进行客户端访问</li>
+<li>为实时查询提供块缓存 BlockCache 和布隆过滤器</li>
+<li>它通过服务器端过滤器提供查询谓词下推</li>
+</ul>
+<p>:::</p>
+<h3 id="【基础】为什么需要-HBase？"><a href="#【基础】为什么需要-HBase？" class="headerlink" title="【基础】为什么需要 HBase？"></a>【基础】为什么需要 HBase？</h3><p>:::details 要点</p>
+<p>在 HBase 诞生之前，Hadoop 可以通过 HDFS 来存储结构化、半结构甚至非结构化的数据，它是传统数据库的补充，是海量数据存储的最佳方法，它针对大文件的存储，批量访问和流式访问都做了优化，同时也通过多副本解决了容灾问题。</p>
+<p>Hadoop 的缺陷在于：它只能执行批处理，并且只能以顺序方式访问数据。这意味着即使是最简单的工作，也必须搜索整个数据集，即：<strong>Hadoop 无法实现对数据的随机访问</strong>。实现数据的随机访问是传统的关系型数据库所擅长的，但它们却不能用于海量数据的存储。在这种情况下，必须有一种新的方案来<strong>同时解决海量数据存储和随机访问的问题</strong>，HBase 就是其中之一 (HBase，Cassandra，CouchDB，Dynamo 和 MongoDB 都能存储海量数据并支持随机访问）。</p>
+<blockquote>
+<p>注：数据结构分类：</p>
+<ul>
+<li>结构化数据：即以关系型数据库表形式管理的数据；</li>
+<li>半结构化数据：非关系模型的，有基本固定结构模式的数据，例如日志文件、XML 文档、JSON 文档、Email 等；</li>
+<li>非结构化数据：没有固定模式的数据，如 WORD、PDF、PPT、EXL，各种格式的图片、视频等。</li>
+</ul>
+</blockquote>
+<p>:::</p>
+<h3 id="【基础】HBase-有哪些应用场景？"><a href="#【基础】HBase-有哪些应用场景？" class="headerlink" title="【基础】HBase 有哪些应用场景？"></a>【基础】HBase 有哪些应用场景？</h3><p>:::details 要点</p>
+<p>根据上一节对于 HBase 特性的介绍，我们可以梳理出 HBase 适用、不适用的场景：</p>
+<p>HBase <strong>不适用场景</strong>：</p>
+<ul>
+<li>需要索引</li>
+<li>需要复杂的事务</li>
+<li>数据量较小（比如：数据量不足几百万行）</li>
+</ul>
+<p>HBase <strong>适用场景</strong>：</p>
+<ul>
+<li>能存储海量数据并支持随机访问（比如：数据量级达到十亿级至百亿级）</li>
+<li>存储结构化、半结构化数据</li>
+<li>硬件资源充足</li>
+</ul>
+<blockquote>
+<p>一言以蔽之——HBase 适用的场景是：<strong>实时地随机访问超大数据集</strong>。</p>
+</blockquote>
+<p>HBase 的典型应用场景</p>
+<ul>
+<li>存储监控数据</li>
+<li>存储用户&#x2F;车辆 GPS 信息</li>
+<li>存储用户行为数据</li>
+<li>存储各种日志数据，如：访问日志、操作日志、推送日志等。</li>
+<li>存储短信、邮件等消息类数据</li>
+<li>存储网页数据</li>
+</ul>
+<p>:::</p>
+<h3 id="【基础】HBase-vs-RDBMS？"><a href="#【基础】HBase-vs-RDBMS？" class="headerlink" title="【基础】HBase vs. RDBMS？"></a>【基础】HBase vs. RDBMS？</h3><p>:::details 要点</p>
+<p>HBase 和 RDBMS 的不同之处如下：</p>
+<table>
+<thead>
+<tr>
+<th>RDBMS</th>
+<th>HBase</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RDBMS 有它的模式，描述表的整体结构的约束</td>
+<td>HBase 无模式，它不具有固定列模式的概念；仅定义列族</td>
+</tr>
+<tr>
+<td>支持的文件系统有 FAT、NTFS 和 EXT</td>
+<td>支持的文件系统只有 HDFS</td>
+</tr>
+<tr>
+<td>使用提交日志来存储日志</td>
+<td>使用预写日志 (WAL) 来存储日志</td>
+</tr>
+<tr>
+<td>使用特定的协调系统来协调集群</td>
+<td>使用 ZooKeeper 来协调集群</td>
+</tr>
+<tr>
+<td>存储的都是中小规模的数据表</td>
+<td>存储的是超大规模的数据表，并且适合存储宽表</td>
+</tr>
+<tr>
+<td>通常支持复杂的事务</td>
+<td>仅支持行级事务</td>
+</tr>
+<tr>
+<td>适用于结构化数据</td>
+<td>适用于半结构化、结构化数据</td>
+</tr>
+<tr>
+<td>使用主键</td>
+<td>使用 row key</td>
+</tr>
+</tbody></table>
+<p>:::</p>
+<h3 id="【基础】HBase-vs-HDFS？"><a href="#【基础】HBase-vs-HDFS？" class="headerlink" title="【基础】HBase vs. HDFS？"></a>【基础】HBase vs. HDFS？</h3><p>:::details 要点</p>
+<p>HBase 和 HDFS 的不同之处如下：</p>
+<table>
+<thead>
+<tr>
+<th>HDFS</th>
+<th>HBase</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HDFS 提供了一个用于分布式存储的文件系统。</td>
+<td>HBase 提供面向表格列的数据存储。</td>
+</tr>
+<tr>
+<td>HDFS 为大文件提供优化存储。</td>
+<td>HBase 为表格数据提供了优化。</td>
+</tr>
+<tr>
+<td>HDFS 使用块文件。</td>
+<td>HBase 使用键值对数据。</td>
+</tr>
+<tr>
+<td>HDFS 数据模型不灵活。</td>
+<td>HBase 提供了一个灵活的数据模型。</td>
+</tr>
+<tr>
+<td>HDFS 使用文件系统和处理框架。</td>
+<td>HBase 使用带有内置 Hadoop MapReduce 支持的表格存储。</td>
+</tr>
+<tr>
+<td>HDFS 主要针对一次写入多次读取进行了优化。</td>
+<td>HBase 针对读&#x2F;写许多进行了优化。</td>
+</tr>
+</tbody></table>
+<p>:::</p>
+<h3 id="【基础】行式数据库-vs-列式数据库？"><a href="#【基础】行式数据库-vs-列式数据库？" class="headerlink" title="【基础】行式数据库 vs. 列式数据库？"></a>【基础】行式数据库 vs. 列式数据库？</h3><p>:::details 要点</p>
+<p>行式数据库和列式数据库的不同之处如下：</p>
+<table>
+<thead>
+<tr>
+<th>行式数据库</th>
+<th>列式数据库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对于添加&#x2F;修改操作更高效</td>
+<td>对于读取操作更高效</td>
+</tr>
+<tr>
+<td>读取整行数据</td>
+<td>仅读取必要的列数据</td>
+</tr>
+<tr>
+<td>最适合在线事务处理系统（OLTP）</td>
+<td>不适合在线事务处理系统（OLTP）</td>
+</tr>
+<tr>
+<td>将行数据存储在连续的页内存中</td>
+<td>将列数据存储在非连续的页内存中</td>
+</tr>
+</tbody></table>
+<p>列式数据库的优点：</p>
+<ul>
+<li>支持数据压缩</li>
+<li>支持快速数据检索</li>
+<li>简化了管理和配置</li>
+<li>有利于聚合查询（例如 COUNT、SUM、AVG、MIN 和 MAX）的高性能</li>
+<li>分区效率很高，因为它提供了自动分片机制的功能，可以将较大的区域分配给较小的区域</li>
+</ul>
+<p>列式数据库的缺点：</p>
+<ul>
+<li>JOIN 查询和来自多个表的数据未优化</li>
+<li>必须为频繁的删除和更新创建拆分，因此降低了存储效率</li>
+<li>由于非关系数据库的特性，分区和索引的设计非常困难</li>
+</ul>
+<p>:::</p>
+<h2 id="HBase-存储"><a href="#HBase-存储" class="headerlink" title="HBase 存储"></a>HBase 存储</h2><h3 id="【基础】HBase-表有什么特性？"><a href="#【基础】HBase-表有什么特性？" class="headerlink" title="【基础】HBase 表有什么特性？"></a>【基础】HBase 表有什么特性？</h3><p>:::details 要点</p>
+<p>Hbase 的表具有以下特点：</p>
+<ul>
+<li><strong>容量大</strong>：一个表可以有数十亿行，上百万列；</li>
+<li><strong>面向列</strong>：数据是按照列存储，每一列都单独存放，数据即索引，在查询时可以只访问指定列的数据，有效地降低了系统的 I&#x2F;O 负担；</li>
+<li><strong>稀疏性</strong>：空 (null) 列并不占用存储空间，表可以设计的非常稀疏 ；</li>
+<li><strong>数据多版本</strong>：每个单元中的数据可以有多个版本，按照时间戳排序，新的数据在最上面；</li>
+<li><strong>存储类型</strong>：所有数据的底层存储格式都是字节数组 (byte[])。</li>
+</ul>
+<p>:::</p>
+<h3 id="【基础】HBase-的逻辑存储模型是怎样的？"><a href="#【基础】HBase-的逻辑存储模型是怎样的？" class="headerlink" title="【基础】HBase 的逻辑存储模型是怎样的？"></a>【基础】HBase 的逻辑存储模型是怎样的？</h3><p>:::details 要点</p>
+<p>HBase 是一个面向 <code>列</code> 的数据库管理系统，这里更为确切的而说，HBase 是一个面向 <code>列族</code> 的数据库管理系统。表 schema 仅定义列族，表具有多个列族，每个列族可以包含任意数量的列，列由多个单元格（cell）组成，单元格可以存储多个版本的数据，多个版本数据以时间戳进行区分。</p>
+<p>HBase 数据模型和关系型数据库有所不同。其数据模型的关键术语如下：</p>
+<ul>
+<li>**<code>Table</code>**：Table 由 Row 和 Column 组成。</li>
+<li>**<code>Row</code>**：Row 是列族（Column Family）的集合。</li>
+<li><strong><code>Row Key</code><strong>：</strong><code>Row Key</code> 是用来检索记录的主键</strong>。<ul>
+<li><code>Row Key</code> 是未解释的字节数组，所以理论上，任何数据都可以通过序列化表示成字符串或二进制，从而存为 HBase 的键值。</li>
+<li>表中的行，是按照 <code>Row Key</code> 的字典序进行排序。这里需要注意以下两点：<ul>
+<li>因为字典序对 Int 排序的结果是 1,10,100,11,12,13,14,15,16,17,18,19,2,20,21,…,9,91,92,93,94,95,96,97,98,99。如果你使用整型的字符串作为行键，那么为了保持整型的自然序，行键必须用 0 作左填充。</li>
+<li>行的一次读写操作是原子性的 （不论一次读写多少列）。</li>
+</ul>
+</li>
+<li>所有对表的访问都要通过 Row Key，有以下三种方式：<ul>
+<li>通过指定的 <code>Row Key</code> 进行访问；</li>
+<li>通过 <code>Row Key</code> 的 range 进行访问，即访问指定范围内的行；</li>
+<li>进行全表扫描。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>**<code>Column Family</code>**：即列族。HBase 表中的每个列，都归属于某个列族。列族是表的 Schema 的一部分，所以列族需要在创建表时进行定义。<ul>
+<li>一个表的列族必须作为表模式定义的一部分预先给出，但是新的列族成员可以随后按需加入。</li>
+<li>同一个列族的所有成员具有相同的前缀，例如 <code>info:format</code>，<code>info:geo</code> 都属于 <code>info</code> 这个列族。</li>
+</ul>
+</li>
+<li>**<code>Column Qualifier</code>**：列限定符。可以理解为是具体的列名，例如 <code>info:format</code>，<code>info:geo</code> 都属于 <code>info</code> 这个列族，它们的列限定符分别是 <code>format</code> 和 <code>geo</code>。列族和列限定符之间始终以冒号分隔。需要注意的是列限定符不是表 Schema 的一部分，你可以在插入数据的过程中动态创建列。</li>
+<li>**<code>Column</code>**：HBase 中的列由列族和列限定符组成，由 <code>:</code>（冒号） 进行分隔，即一个完整的列名应该表述为 <code>列族名 ：列限定符</code>。</li>
+<li>**<code>Cell</code>**：<code>Cell</code> 是行，列族和列限定符的组合，并包含值和时间戳。HBase 中通过 <code>row key</code> 和 <code>column</code> 确定的为一个存储单元称为 <code>Cell</code>，你可以等价理解为关系型数据库中由指定行和指定列确定的一个单元格，但不同的是 HBase 中的一个单元格是由多个版本的数据组成的，每个版本的数据用时间戳进行区分。<ul>
+<li><code>Cell</code> 由行和列的坐标交叉决定，是有版本的。默认情况下，版本号是自动分配的，为 HBase 插入 <code>Cell</code> 时的时间戳。<code>Cell</code> 的内容是未解释的字节数组。</li>
+</ul>
+</li>
+<li>**<code>Timestamp</code>**：<code>Cell</code> 的版本通过时间戳来索引，时间戳的类型是 64 位整型，时间戳可以由 HBase 在数据写入时自动赋值，也可以由客户显式指定。每个 <code>Cell</code> 中，不同版本的数据按照时间戳倒序排列，即最新的数据排在最前面。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/bigdata/hbase/1551164224778.png" alt="img"></p>
+<p>下图为 HBase 中一张表的：</p>
+<ul>
+<li>RowKey 为行的唯一标识，所有行按照 RowKey 的字典序进行排序；</li>
+<li>该表具有两个列族，分别是 personal 和 office;</li>
+<li>其中列族 personal 拥有 name、city、phone 三个列，列族 office 拥有 tel、addres 两个列。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601172926.png" alt="img"></p>
+<blockquote>
+<p><em>图片引用自 : HBase 是列式存储数据库吗</em> <em><a target="_blank" rel="noopener" href="https://www.iteblog.com/archives/2498.html">https://www.iteblog.com/archives/2498.html</a></em></p>
+</blockquote>
+<p>:::</p>
+<h3 id="【基础】HBase-的物理存储模型是怎样的？"><a href="#【基础】HBase-的物理存储模型是怎样的？" class="headerlink" title="【基础】HBase 的物理存储模型是怎样的？"></a>【基础】HBase 的物理存储模型是怎样的？</h3><p>:::details 要点</p>
+<p>HBase Table 中的所有行按照 <code>Row Key</code> 的字典序排列。HBase Tables 通过行键的范围 (row key range) 被水平切分成多个 <code>Region</code>, 一个 <code>Region</code> 包含了在 start key 和 end key 之间的所有行。</p>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/cd502001e098c6598fbec073a87e28b14e52268c48cc3b24395f252e0c801058/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967322e706e67"><img src="https://camo.githubusercontent.com/cd502001e098c6598fbec073a87e28b14e52268c48cc3b24395f252e0c801058/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967322e706e67" alt="img"></a></p>
+<p>每个表一开始只有一个 <code>Region</code>，随着数据不断增加，<code>Region</code> 会不断增大，当增大到一个阀值的时候，<code>Region</code> 就会等分为两个新的 <code>Region</code>。当 Table 中的行不断增多，就会有越来越多的 <code>Region</code>。</p>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/7a8d87d3896764c25784ea1ceaa3917dc111942e8e869801cf37c4449e7a1a4f/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f68626173652d726567696f6e2d73706c6974652e706e67"><img src="https://camo.githubusercontent.com/7a8d87d3896764c25784ea1ceaa3917dc111942e8e869801cf37c4449e7a1a4f/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f68626173652d726567696f6e2d73706c6974652e706e67" alt="img"></a></p>
+<p><code>Region</code> 是 HBase 中<strong>分布式存储和负载均衡的最小单元</strong>。这意味着不同的 <code>Region</code> 可以分布在不同的 <code>Region Server</code> 上。但一个 <code>Region</code> 是不会拆分到多个 Server 上的。</p>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/f0d7ef92cc299882591d6c09b465620d0ada3ab6038759d41e8243ff5bed6aa8/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f68626173652d726567696f6e2d6469732e706e67"><img src="https://camo.githubusercontent.com/f0d7ef92cc299882591d6c09b465620d0ada3ab6038759d41e8243ff5bed6aa8/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f68626173652d726567696f6e2d6469732e706e67" alt="img"></a></p>
+<p>:::</p>
+<h2 id="HBase-架构"><a href="#HBase-架构" class="headerlink" title="HBase 架构"></a>HBase 架构</h2><h3 id="【中级】HBase-读数据流程是怎样的？"><a href="#【中级】HBase-读数据流程是怎样的？" class="headerlink" title="【中级】HBase 读数据流程是怎样的？"></a>【中级】HBase 读数据流程是怎样的？</h3><p>:::details 要点</p>
+<p>以下是客户端首次读写 HBase 上数据的流程：</p>
+<ol>
+<li>客户端从 Zookeeper 获取 <code>META</code> 表所在的 Region Server；</li>
+<li>客户端访问 <code>META</code> 表所在的 Region Server，从 <code>META</code> 表中查询到访问行键所在的 Region Server，之后客户端将缓存这些信息以及 <code>META</code> 表的位置；</li>
+<li>客户端从行键所在的 Region Server 上获取数据。</li>
+</ol>
+<p>如果再次读取，客户端将从缓存中获取行键所在的 Region Server。这样客户端就不需要再次查询 <code>META</code> 表，除非 Region 移动导致缓存失效，这样的话，则将会重新查询并更新缓存。</p>
+<p>注：<code>META</code> 表是 HBase 中一张特殊的表，它保存了所有 Region 的位置信息，META 表自己的位置信息则存储在 ZooKeeper 上。</p>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/ce668209331d53ed52fb2c4d9de0a0653d26510d86653b708499e2b067e01c76/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967372e706e67"><img src="https://camo.githubusercontent.com/ce668209331d53ed52fb2c4d9de0a0653d26510d86653b708499e2b067e01c76/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967372e706e67" alt="img"></a></p>
+<blockquote>
+<p>更为详细读取数据流程参考：</p>
+<p><a target="_blank" rel="noopener" href="http://hbasefly.com/2016/12/21/hbase-getorscan/">HBase 原理－数据读取流程解析</a></p>
+<p><a target="_blank" rel="noopener" href="http://hbasefly.com/2017/06/11/hbase-scan-2/">HBase 原理－迟到的‘数据读取流程部分细节</a></p>
+</blockquote>
+<p>:::</p>
+<h3 id="【中级】HBase-写数据流程是怎样的？"><a href="#【中级】HBase-写数据流程是怎样的？" class="headerlink" title="【中级】HBase 写数据流程是怎样的？"></a>【中级】HBase 写数据流程是怎样的？</h3><p>:::details 要点</p>
+<ol>
+<li>Client 向 Region Server 提交写请求；</li>
+<li>Region Server 找到目标 Region；</li>
+<li>Region 检查数据是否与 Schema 一致；</li>
+<li>如果客户端没有指定版本，则获取当前系统时间作为数据版本；</li>
+<li>将更新写入 WAL Log；</li>
+<li>将更新写入 Memstore；</li>
+<li>判断 Memstore 存储是否已满，如果存储已满则需要 flush 为 Store Hfile 文件。</li>
+</ol>
+<blockquote>
+<p>更为详细写入流程可以参考：<a target="_blank" rel="noopener" href="http://hbasefly.com/2016/03/23/hbase_writer/">HBase － 数据写入流程解析</a></p>
+</blockquote>
+<p>:::</p>
+<h3 id="【中级】HBase-有哪些核心组件？"><a href="#【中级】HBase-有哪些核心组件？" class="headerlink" title="【中级】HBase 有哪些核心组件？"></a>【中级】HBase 有哪些核心组件？</h3><p>:::details 要点</p>
+<p>HBase 系统遵循 Master&#x2F;Salve 架构，由三种不同类型的组件组成：</p>
+<ul>
+<li><strong>Zookeeper</strong><ul>
+<li>保证任何时候，集群中只有一个 Master；</li>
+<li>存储所有 Region 的寻址入口；</li>
+<li>实时监控 Region Server 的状态，将 Region Server 的上线和下线信息实时通知给 Master；</li>
+<li>存储 HBase 的 Schema，包括有哪些 Table，每个 Table 有哪些 Column Family 等信息。</li>
+</ul>
+</li>
+<li><strong>Master</strong><ul>
+<li>为 Region Server 分配 Region ；</li>
+<li>负责 Region Server 的负载均衡 ；</li>
+<li>发现失效的 Region Server 并重新分配其上的 Region；</li>
+<li>GFS 上的垃圾文件回收；</li>
+<li>处理 Schema 的更新请求。</li>
+</ul>
+</li>
+<li><strong>Region Server</strong><ul>
+<li>Region Server 负责维护 Master 分配给它的 Region ，并处理发送到 Region 上的 IO 请求；</li>
+<li>Region Server 负责切分在运行过程中变得过大的 Region。</li>
+</ul>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/ef4e5f0d7ca22f562a6976a728efafb5e80380a66e3d82863385b304922df563/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967312e706e67"><img src="https://camo.githubusercontent.com/ef4e5f0d7ca22f562a6976a728efafb5e80380a66e3d82863385b304922df563/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967312e706e67" alt="img"></a></p>
+<p>HBase 使用 ZooKeeper 作为分布式协调服务来维护集群中的服务器状态。 Zookeeper 负责维护可用服务列表，并提供服务故障通知等服务：</p>
+<ul>
+<li>每个 Region Server 都会在 ZooKeeper 上创建一个临时节点，Master 通过 Zookeeper 的 Watcher 机制对节点进行监控，从而可以发现新加入的 Region Server 或故障退出的 Region Server；</li>
+<li>所有 Masters 会竞争性地在 Zookeeper 上创建同一个临时节点，由于 Zookeeper 只能有一个同名节点，所以必然只有一个 Master 能够创建成功，此时该 Master 就是主 Master，主 Master 会定期向 Zookeeper 发送心跳。备用 Masters 则通过 Watcher 机制对主 HMaster 所在节点进行监听；</li>
+<li>如果主 Master 未能定时发送心跳，则其持有的 Zookeeper 会话会过期，相应的临时节点也会被删除，这会触发定义在该节点上的 Watcher 事件，使得备用的 Master Servers 得到通知。所有备用的 Master Servers 在接到通知后，会再次去竞争性地创建临时节点，完成主 Master 的选举。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://camo.githubusercontent.com/b2884e8d973aeee121a6f8a1c8bb0336d3ac40e46b558b961f7aa1a98afe16aa/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967352e706e67"><img src="https://camo.githubusercontent.com/b2884e8d973aeee121a6f8a1c8bb0336d3ac40e46b558b961f7aa1a98afe16aa/68747470733a2f2f67697465652e636f6d2f68656962616979696e672f426967446174612d4e6f7465732f7261772f6d61737465722f70696374757265732f48426173654172636869746563747572652d426c6f672d466967352e706e67" alt="img"></a></p>
+<p>:::</p>
+<h2 id="HBase-高可用"><a href="#HBase-高可用" class="headerlink" title="HBase 高可用"></a>HBase 高可用</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/2bd46df0/" title="HBase 面试">https://dunwu.github.io/blog/pages/2bd46df0/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/%E5%88%97%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 列式数据库</a>
+              <a href="/blog/tags/hbase/" rel="tag"># hbase</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/88e8d921/" rel="prev" title="Hive 面试">
+                  <i class="fa fa-angle-left"></i> Hive 面试
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/edc11157/" rel="next" title="MongoDB 面试">
+                  MongoDB 面试 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"4fe064a36521b82f1393cafd133b4ca4"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

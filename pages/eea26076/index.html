@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="MySQL 存储引擎::: info 概述 大体来说，MySQL 可以分为 Server 层和存储引擎层两部分。 Server 层包括连接器、查询缓存、解析器、优化器、执行器等，涵盖 MySQL 的大多数核心服务功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程、触发器、视图等。 存储引擎层负责数据的存储和提取。MySQL 的存储引擎采用了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 存储引擎">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/eea26076/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="MySQL 存储引擎::: info 概述 大体来说，MySQL 可以分为 Server 层和存储引擎层两部分。 Server 层包括连接器、查询缓存、解析器、优化器、执行器等，涵盖 MySQL 的大多数核心服务功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程、触发器、视图等。 存储引擎层负责数据的存储和提取。MySQL 的存储引擎采用了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503210712752.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070640589.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070708733.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070641009.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070641668.png">
+<meta property="article:published_time" content="2020-07-13T02:08:37.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.732Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="关系型数据库">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="存储引擎">
+<meta property="article:tag" content="InnoDB">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503210712752.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/eea26076/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/eea26076/","path":"/pages/eea26076/","title":"MySQL 存储引擎"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL 存储引擎 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-number">1.</span> <span class="nav-text">MySQL 存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">存储引擎简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-%E5%86%85%E7%BD%AE%E7%9A%84%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-number">1.1.1.</span> <span class="nav-text">MySQL 内置的存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-number">1.1.2.</span> <span class="nav-text">如何选择合适的存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">存储引擎相关操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.1.</span> <span class="nav-text">查看存储引擎命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.2.</span> <span class="nav-text">设置存储引擎命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB"><span class="nav-number">1.3.</span> <span class="nav-text">InnoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">InnoDB 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB-%E5%AD%98%E5%82%A8%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.2.</span> <span class="nav-text">InnoDB 存储架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB-%E8%A1%A8%E7%A9%BA%E9%97%B4"><span class="nav-number">1.3.3.</span> <span class="nav-text">InnoDB 表空间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%EF%BC%88row%EF%BC%89"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">行（row）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%EF%BC%88page%EF%BC%89"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">页（page）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%BA%EF%BC%88extent%EF%BC%89"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">区（extent）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%B5%EF%BC%88segment%EF%BC%89"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">段（segment）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB-%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.4.</span> <span class="nav-text">InnoDB 内存结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Buffer-Pool"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">Buffer Pool</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Change-Buffer"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">Change Buffer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Adaptive-Hash-Index"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">Adaptive Hash Index</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Log-Buffer"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">Log Buffer</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MyISAM"><span class="nav-number">1.4.</span> <span class="nav-text">MyISAM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB-vs-MyISAM"><span class="nav-number">1.5.</span> <span class="nav-text">InnoDB vs. MyISAM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/eea26076/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL 存储引擎 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL 存储引擎<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/03.%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/MySQL_%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-13 10:08:37" itemprop="dateCreated datePublished" datetime="2020-07-13T10:08:37+08:00">2020-07-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">关系型数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="MySQL-存储引擎"><a href="#MySQL-存储引擎" class="headerlink" title="MySQL 存储引擎"></a>MySQL 存储引擎</h1><p>::: info 概述</p>
+<p>大体来说，MySQL 可以分为 Server 层和存储引擎层两部分。</p>
+<p><strong>Server 层包括连接器、查询缓存、解析器、优化器、执行器等</strong>，涵盖 MySQL 的大多数核心服务功能，以及所有的内置函数（如日期、时间、数学和加密函数等），所有跨存储引擎的功能都在这一层实现，比如存储过程、触发器、视图等。</p>
+<p><strong>存储引擎层负责数据的存储和提取</strong>。MySQL 的存储引擎采用了插拔式架构，可以根据需要替换。MySQL 内置了 InnoDB、MyISAM、Memory 等多个存储引擎，现在最常用的存储引擎是 InnoDB，它从 MySQL 5.5.5 版本开始成为了默认存储引擎。</p>
+<p>:::</p>
+<h2 id="存储引擎简介"><a href="#存储引擎简介" class="headerlink" title="存储引擎简介"></a>存储引擎简介</h2><p>在文件系统中，MySQL 将每个数据库（也可以成为 schema）保存为数据目录下的一个子目录。创建表示，MySQL 会在数据库子目录下创建一个和表同名的 <code>.frm</code> 文件保存表的定义。因为 MySQL 使用文件系统的目录和文件来保存数据库和表的定义，大小写敏感性和具体平台密切相关。Windows 中大小写不敏感；类 Unix 中大小写敏感。<strong>不同的存储引擎保存数据和索引的方式是不同的，但表的定义则是在 MySQL 服务层统一处理的。</strong></p>
+<p>MySQL 的存储引擎采用了插件的形式，每个存储引擎都面向一种特定的数据库应用环境。同时开源的 MySQL 还允许开发人员设置自己的存储引擎。</p>
+<h3 id="MySQL-内置的存储引擎"><a href="#MySQL-内置的存储引擎" class="headerlink" title="MySQL 内置的存储引擎"></a>MySQL 内置的存储引擎</h3><p>MySQL 内置了以下存储引擎：</p>
+<ul>
+<li><strong>InnoDB</strong> - InnoDB 是 MySQL 5.5 版本以后的默认存储引擎。<ul>
+<li>优点：支持<strong>事务</strong>，支持<strong>行级锁</strong>，支持<strong>外键约束</strong>等，<strong>并发性能不错</strong>且支持<strong>自动故障恢复</strong>。</li>
+</ul>
+</li>
+<li><strong>MyISAM</strong> - MyISAM 是 MySQL 5.5 版本以前的默认存储引擎。<ul>
+<li>优点：速度快，占用资源少。</li>
+<li>缺点：不支持事务，不支持行级锁，不支持外键约束，也不支持自动故障恢复功能。</li>
+</ul>
+</li>
+<li><strong>Memory</strong> - 使用系统内存作为存储介质，以便得到更快的响应速度。不过，如果 mysqld 进程崩溃，则会导致所有的数据丢失。因此，Memory 引擎常用于临时表。</li>
+<li><strong>NDB</strong> - 也被称为 NDB Cluster 存储引擎，主要用于 MySQL Cluster 分布式集群环境，类似于 Oracle 的 RAC 集群。</li>
+<li><strong>Archive</strong> - Archive 存储引擎有很好的压缩机制，非常适合用于归档数据。<ul>
+<li>Archive 存储引擎只支持 <code>INSERT</code> 和 <code>SELECT</code> 操作。</li>
+<li>Archive 存储引擎采用 zlib 算法压缩数据，压缩比可达到 1: 10。</li>
+</ul>
+</li>
+<li><strong>CSV</strong> - 可以将 CSV 文件作为 MySQL 的表来处理，但这种表不支持索引。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503210712752.png"></p>
+<h3 id="如何选择合适的存储引擎"><a href="#如何选择合适的存储引擎" class="headerlink" title="如何选择合适的存储引擎"></a>如何选择合适的存储引擎</h3><p>大多数情况下，InnoDB 都是正确的选择，除非需要用到 InnoDB 不具备的特性。</p>
+<p>如果应用需要选择 InnoDB 以外的存储引擎，可以考虑以下因素：</p>
+<ul>
+<li>事务：如果业务场景是 OLTP，则 InnoDB 是首选存储引擎。如果不需要支持事务，且主要是 SELECT 和 INSERT 操作，MyISAM 是不错的选择。所以，如果 MySQL 部署方式为主备模式，并进行读写分离。那么可以这么做：主节点只支持写操作，默认引擎为 InnoDB；备节点只支持读操作，默认引擎为 MyISAM。</li>
+<li>并发：MyISAM 只支持表级锁，而 InnoDB 还支持行级锁。所以，InnoDB 并发性能更高。</li>
+<li>外键：InnoDB 支持外键。</li>
+<li>备份：InnoDB 支持在线热备份。</li>
+<li>崩溃恢复：MyISAM 崩溃后发生损坏的概率比 InnoDB 高很多，而且恢复的速度也更慢。</li>
+<li>其它特性：MyISAM 支持压缩表和空间数据索引。</li>
+</ul>
+<h2 id="存储引擎相关操作"><a href="#存储引擎相关操作" class="headerlink" title="存储引擎相关操作"></a>存储引擎相关操作</h2><h3 id="查看存储引擎命令"><a href="#查看存储引擎命令" class="headerlink" title="查看存储引擎命令"></a>查看存储引擎命令</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查看支持的存储引擎</span></span><br><span class="line"><span class="keyword">SHOW</span> ENGINES;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看默认的存储引擎</span></span><br><span class="line"><span class="keyword">SHOW</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;storage_engine&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看某表所使用的存储引擎</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE TABLE</span> `table_name`;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看某数据库中的某表所使用的存储引擎</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">TABLE</span> STATUS <span class="keyword">LIKE</span> <span class="string">&#x27;table_name&#x27;</span>;</span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">TABLE</span> STATUS <span class="keyword">FROM</span> `database_name` <span class="keyword">WHERE</span> `name` <span class="operator">=</span> &quot;table_name&quot;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置存储引擎命令"><a href="#设置存储引擎命令" class="headerlink" title="设置存储引擎命令"></a>设置存储引擎命令</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 建表时指定存储引擎，如果不显示指定，默认是 INNODB</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> t1 (i <span class="type">INT</span>) ENGINE <span class="operator">=</span> INNODB;</span><br><span class="line"><span class="keyword">CREATE TABLE</span> t2 (i <span class="type">INT</span>) ENGINE <span class="operator">=</span> CSV;</span><br><span class="line"><span class="keyword">CREATE TABLE</span> t3 (i <span class="type">INT</span>) ENGINE <span class="operator">=</span> MEMORY;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改存储引擎</span></span><br><span class="line"><span class="keyword">ALTER TABLE</span> t ENGINE <span class="operator">=</span> InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改默认存储引擎，也可以在配置文件 my.cnf 中修改默认引擎</span></span><br><span class="line"><span class="keyword">SET</span> default_storage_engine<span class="operator">=</span>NDBCLUSTER;</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，每当 <code>CREATE TABLE</code> 或 <code>ALTER TABLE</code> 不能使用默认存储引擎时，都会生成一个警告。为了防止在所需的引擎不可用时出现令人困惑的意外行为，可以启用 <code>NO_ENGINE_SUBSTITUTION SQL</code> 模式。如果所需的引擎不可用，则此设置将产生错误而不是警告，并且不会创建或更改表</p>
+<h2 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a>InnoDB</h2><h3 id="InnoDB-简介"><a href="#InnoDB-简介" class="headerlink" title="InnoDB 简介"></a>InnoDB 简介</h3><p>InnoDB 是 MySQL 5.5 版本以后的默认存储引擎。只有在需要 InnoDB 不支持的特性时，才考虑使用其它存储引擎。</p>
+<p>InnoDB 也使用 B+Tree 作为索引结构，但具体实现方式却与 MyISAM 截然不同。MyISAM 索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而<strong>在 InnoDB 中，表数据文件本身就是按 B+Tree 组织的一个索引结构</strong>，这棵树的叶节点 data 域保存了完整的数据记录。这个<strong>索引的 key 是数据表的主键</strong>，因此<strong>InnoDB 表数据文件本身就是主索引</strong>。</p>
+<p>InnoDB 采用 MVCC 来支持高并发，并且实现了四个标准的隔离级别。其默认级别是可重复读（REPEATABLE READ），并且通过间隙锁（next-key locking）防止幻读。</p>
+<p>InnoDB 是基于聚簇索引建立的，与其他存储引擎有很大不同。在索引中保存了数据，从而避免直接读取磁盘，因此对查询性能有很大的提升。</p>
+<p>内部做了很多优化，包括从磁盘读取数据时采用的可预测性读、能够加快读操作并且自动创建的自适应哈希索引、能够加速插入操作的插入缓冲区等。</p>
+<p>支持真正的在线热备份。其它存储引擎不支持在线热备份，要获取一致性视图需要停止对所有表的写入，而在读写混合场景中，停止写入可能也意味着停止读取。</p>
+<p>InnoDB 物理文件结构为：</p>
+<ul>
+<li><code>.frm</code> 文件：与表相关的元数据信息都存放在 frm 文件，包括表结构的定义信息等。</li>
+<li><code>.ibd</code> 文件或 <code>.ibdata</code> 文件： 这两种文件都是存放 InnoDB 数据的文件，之所以有两种文件形式存放 InnoDB 的数据，是因为 InnoDB 的数据存储方式能够通过配置来决定是使用<strong>共享表空间</strong>存放存储数据，还是用<strong>独享表空间</strong>存放存储数据。<ul>
+<li>独享表空间存储方式使用<code>.ibd</code>文件，并且每个表一个<code>.ibd</code>文件</li>
+<li>共享表空间存储方式使用<code>.ibdata</code>文件，所有表共同使用一个<code>.ibdata</code>文件（或多个，可自己配置）</li>
+</ul>
+</li>
+</ul>
+<h3 id="InnoDB-存储架构"><a href="#InnoDB-存储架构" class="headerlink" title="InnoDB 存储架构"></a>InnoDB 存储架构</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070640589.png"></p>
+<p>InnoDB 存储架构分为内存结构和磁盘结构。</p>
+<p>InnoDB 内存结构的核心组件有：</p>
+<ul>
+<li>Buffer Pool</li>
+<li>Change Buffer</li>
+<li>Adaptive Hash Index</li>
+<li>Log Buffer</li>
+</ul>
+<p>InnoDB 磁盘结构的核心组件有：</p>
+<ul>
+<li>Tablespace</li>
+<li>Doublewrite Buffer</li>
+<li>redo log</li>
+<li>undo log</li>
+</ul>
+<h3 id="InnoDB-表空间"><a href="#InnoDB-表空间" class="headerlink" title="InnoDB 表空间"></a>InnoDB 表空间</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070708733.png"></p>
+<h4 id="行（row）"><a href="#行（row）" class="headerlink" title="行（row）"></a>行（row）</h4><p>数据库表中的记录都是按行（row）进行存放的，每行记录根据不同的行格式，有不同的存储结构。</p>
+<p>后面我们详细介绍 InnoDB 存储引擎的行格式，也是本文重点介绍的内容。</p>
+<h4 id="页（page）"><a href="#页（page）" class="headerlink" title="页（page）"></a>页（page）</h4><p>记录是按照行来存储的，但是数据库的读取并不以「行」为单位，否则一次读取（也就是一次 I&#x2F;O 操作）只能处理一行数据，效率会非常低。</p>
+<p>因此，<strong>InnoDB 的数据是按「页」为单位来读写的</strong>，也就是说，当需要读一条记录的时候，并不是将这个行记录从磁盘读出来，而是以页为单位，将其整体读入内存。</p>
+<p><strong>默认每个页的大小为 16KB</strong>，也就是最多能保证 16KB 的连续存储空间。</p>
+<p>页是 InnoDB 存储引擎磁盘管理的最小单元，意味着数据库每次读写都是以 16KB 为单位的，一次最少从磁盘中读取 16K 的内容到内存中，一次最少把内存中的 16K 内容刷新到磁盘中。</p>
+<p>页的类型有很多，常见的有数据页、undo 日志页、溢出页等等。数据表中的行记录是用「数据页」来管理的，数据页的结构这里我就不讲细说了，之前文章有说过，感兴趣的可以去看这篇文章：<a target="_blank" rel="noopener" href="https://xiaolincoding.com/mysql/index/page.html">换一个角度看 B+ 树(opens new window)</a></p>
+<p>总之知道表中的记录存储在「数据页」里面就行。</p>
+<h4 id="区（extent）"><a href="#区（extent）" class="headerlink" title="区（extent）"></a>区（extent）</h4><p>我们知道 InnoDB 存储引擎是用 B+ 树来组织数据的。</p>
+<p>B+ 树中每一层都是通过双向链表连接起来的，如果是以页为单位来分配存储空间，那么链表中相邻的两个页之间的物理位置并不是连续的，可能离得非常远，那么磁盘查询时就会有大量的随机 I&#x2F;O，随机 I&#x2F;O 是非常慢的。</p>
+<p>解决这个问题也很简单，就是让链表中相邻的页的物理位置也相邻，这样就可以使用顺序 I&#x2F;O 了，那么在范围查询（扫描叶子节点）的时候性能就会很高。</p>
+<p>那具体怎么解决呢？</p>
+<p><strong>在表中数据量大的时候，为某个索引分配空间的时候就不再按照页为单位分配了，而是按照区（extent）为单位分配。每个区的大小为 1MB，对于 16KB 的页来说，连续的 64 个页会被划为一个区，这样就使得链表中相邻的页的物理位置也相邻，就能使用顺序 I&#x2F;O 了</strong>。</p>
+<h4 id="段（segment）"><a href="#段（segment）" class="headerlink" title="段（segment）"></a>段（segment）</h4><p>表空间是由各个段（segment）组成的，段是由多个区（extent）组成的。段一般分为数据段、索引段和回滚段等。</p>
+<ul>
+<li>索引段：存放 B + 树的非叶子节点的区的集合；</li>
+<li>数据段：存放 B + 树的叶子节点的区的集合；</li>
+<li>回滚段：存放的是回滚数据的区的集合。</li>
+</ul>
+<p>好了，终于说完表空间的结构了。接下来，就具体讲一下 InnoDB 的行格式了。</p>
+<p>之所以要绕一大圈才讲行记录的格式，主要是想让大家知道行记录是存储在哪个文件，以及行记录在这个表空间文件中的哪个区域，有一个从上往下切入的视角，这样理解起来不会觉得很抽象。</p>
+<h3 id="InnoDB-内存结构"><a href="#InnoDB-内存结构" class="headerlink" title="InnoDB 内存结构"></a>InnoDB 内存结构</h3><h4 id="Buffer-Pool"><a href="#Buffer-Pool" class="headerlink" title="Buffer Pool"></a>Buffer Pool</h4><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070641009.png"></p>
+<p>Buffer Pool 用于加速数据的访问和修改，通过将热点数据缓存在内存的方法，最大限度地减少磁盘 IO，加速热点数据的读和写。</p>
+<p>Buffer Pool 中数据<strong>以页为存储单位</strong>，其实现数据结构是<strong>以页为单位的单链表</strong>。</p>
+<p>由于内存的空间限制，Buffer Pool 仅能容纳最热点的数据。Buffer Pool 使用最近最少使用算法（Least Recent Used，LRU）算法淘汰非热点数据页。</p>
+<p>依据时间局部性原理与空间局部性原理，Buffer Pool 在存储当前活动数据页的时候，会以预读 Read-ahead 的方式缓存目标数据页临近的数据页。</p>
+<p>预读机制带来预读失败的问题，InnoDB <strong>采用分代机制解决预读失败问题</strong>：将 Buffer Pool 分为 New SubList 和 Old SubList 两部分，将最新读取的数据页置于 Old SubList 头部，Old SubList 中的数据再次被访问到才会置于 New SubList 头部；预读失败的冷数据将更快地从 Old SubList 中淘汰，而不会影响到 New SubList 中原有的热数据。</p>
+<p>预读失败问题可以引申到缓冲池污染问题，InnoDB <strong>采用时间窗口（Time Window）机制解决缓冲池污染问题</strong>：对于 Old SubList 中的数据页，必须在 Old SubList 中停留到达指定时间之后再次被访问到，才能转移到 New SubList 中，默认窗口大小是 1s。</p>
+<p>对于 Buffer Pool 中数据的查询，InnoDB 直接读取返回；对于 Buffer Pool 中数据的修改，InnoDB 直接在 Buffer Pool 中修改，并将修改写入 redo Log 中，当数据页被 LRU 算法淘汰时写入磁盘，若持久化前系统崩溃，则在重启后使用 redo Log 进行恢复。</p>
+<h4 id="Change-Buffer"><a href="#Change-Buffer" class="headerlink" title="Change Buffer"></a>Change Buffer</h4><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202311070641668.png"></p>
+<p>Change Buffer 用于加速非热点数据中二级索引的写入操作。由于二级索引数据的不连续性，导致修改二级索引时需要进行频繁的磁盘 IO 消耗大量性能，Change Buffer 缓冲对二级索引的修改操作，同时将写操作录入 redo log 中，在缓冲到一定量或系统较空闲时进行 <code>ibuf merge</code> 操作将修改写入磁盘中。Change Buffer 在系统表空间中有相应的持久化区域。</p>
+<p>Change Buffer 大小默认占 Buffer Pool 的 25%，在引擎启动时便初始化完成。其物理结构为一棵名为 <code>ibuf</code> 的 B Tree。Change Buffer 的使用条件为：</p>
+<ul>
+<li>InnoDB 开启 <code>innodb_change_buffering</code>，且该表当前没有 <code>flush</code> 操作。</li>
+<li>仅对二级索引树的叶子节点进行修改，且该索引页不在 Buffer Pool 中。</li>
+<li>对于 Unique 二级索引，仅删除操作可以缓冲。</li>
+</ul>
+<p>其 <code>ibuf merge</code> 时机为：</p>
+<ul>
+<li>用户使用该二级索引进行查询时。</li>
+<li>缓存插入操作时，预估到 page 空间不足可能导致索引页分裂时。</li>
+<li>本次缓存操作将导致 ibuf btree 页分裂，且分类后 Change Buffer 大小将超出限制时。</li>
+<li>master 线程发起 <code>merge</code> 命令时。</li>
+<li>用户对该表进行 <code>flush</code> 操作时。</li>
+</ul>
+<h4 id="Adaptive-Hash-Index"><a href="#Adaptive-Hash-Index" class="headerlink" title="Adaptive Hash Index"></a>Adaptive Hash Index</h4><p>自适应哈希索引（Adaptive Hash Index）用于实现对于热数据页的一次查询。使用聚簇索引进行数据页定位的时候需要根据索引树的高度从根节点走到叶子节点，通常需要 3 到 4 次查询才能定位数据。InnoDB 根据对索引使用情况的分析和索引字段的分析，通过自调优 Self-tuning 的方式为索引页建立或者删除哈希索引。</p>
+<p>AHI 所作用的目标是频繁查询的数据页和索引页，而由于数据页是聚簇索引的一部分，因此 AHI 是建立在索引之上的索引，<strong>对于二级索引，若命中 AHI，则将直接从 AHI 获取二级索引页的记录指针，再根据主键沿着聚簇索引查找数据；若聚簇索引查询同样命中 AHI，则直接返回目标数据页的记录指针，此时就可以根据记录指针直接定位数据页</strong>。</p>
+<p>AHI 的大小为 Buffer Pool 的 1&#x2F;64，再 MySql 5.7 之后支持分区，以减少对于全局 AHI 锁的竞争，默认分区数为 8。</p>
+<h4 id="Log-Buffer"><a href="#Log-Buffer" class="headerlink" title="Log Buffer"></a>Log Buffer</h4><p>Log Buffer 是用于缓冲待写入磁盘日志文件的数据。InnoDB 的所有修改操作都会被写入 redo log、undo log 等日志文件，如果每次都直接写入磁盘，会引发大量 IO。Log Buffer 正是针对此进行了优化：先将修改操作缓冲于此内存区域，然后定期批量 刷新到磁盘。</p>
+<p>日志缓冲区大小可以由配置 <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_log_buffer_size"><code>innodb_log_buffer_size</code></a> 控制，默认大小为 16MB。</p>
+<h2 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a>MyISAM</h2><p>MyISAM 是 MySQL 5.5 版本以前的默认存储引擎。</p>
+<p>MyISAM 设计简单，数据以紧密格式存储。对于只读数据，或者表比较小、可以容忍修复操作，则依然可以使用 MyISAM。</p>
+<p>MyISAM 引擎使用 B+Tree 作为索引结构，<strong>叶节点的 data 域存放的是数据记录的地址</strong>。</p>
+<p>MyISAM 提供了大量的特性，包括：全文索引、压缩表、空间函数等。但是，MyISAM 不支持事务和行级锁。并且 MyISAM 不支持崩溃后的安全恢复。</p>
+<p>MyISAM 物理文件结构为：</p>
+<ul>
+<li><code>.frm</code>文件：与表相关的元数据信息都存放在 frm 文件，包括表结构的定义信息等。</li>
+<li><code>.MYD</code> (<code>MYData</code>) 文件：MyISAM 存储引擎专用，用于存储 MyISAM 表的数据。</li>
+<li><code>.MYI</code> (<code>MYIndex</code>)文件：MyISAM 存储引擎专用，用于存储 MyISAM 表的索引相关信息。</li>
+</ul>
+<h2 id="InnoDB-vs-MyISAM"><a href="#InnoDB-vs-MyISAM" class="headerlink" title="InnoDB vs. MyISAM"></a>InnoDB vs. MyISAM</h2><p>InnoDB 和 MyISAM 的对比：</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>MyISAM</th>
+<th>InnoDB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>外键</td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>事务</td>
+<td>不支持</td>
+<td>支持四种事务隔离级别</td>
+</tr>
+<tr>
+<td>锁粒度</td>
+<td>支持表级锁</td>
+<td>支持表级锁、行级锁</td>
+</tr>
+<tr>
+<td>索引</td>
+<td>采用 B+ 树索引（非聚簇索引）</td>
+<td>采用 B+ 树索引（聚簇索引）</td>
+</tr>
+<tr>
+<td>表空间</td>
+<td>小</td>
+<td>大</td>
+</tr>
+<tr>
+<td>关注点</td>
+<td>性能</td>
+<td>事务</td>
+</tr>
+<tr>
+<td>计数器</td>
+<td>维护了计数器，<code>SELECT COUNT(*)</code> 效率为 <code>O(1)</code></td>
+<td>没有维护计数器，需要全表扫描</td>
+</tr>
+<tr>
+<td>自动故障恢复</td>
+<td>不支持</td>
+<td>支持（依赖于 redo log）</td>
+</tr>
+</tbody></table>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.4/en/innodb-storage-engine.html">MySQL 官方文档之 InnoDB 存储引擎</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.4/en/storage-engines.html">MySQL 官方文档之可选的存储引擎</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/23008813/">《高性能 MySQL》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/139">极客时间教程 - MySQL 实战 45 讲</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/eea26076/" title="MySQL 存储引擎">https://dunwu.github.io/blog/pages/eea26076/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 关系型数据库</a>
+              <a href="/blog/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/blog/tags/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" rel="tag"># 存储引擎</a>
+              <a href="/blog/tags/InnoDB/" rel="tag"># InnoDB</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/eba7ad38/" rel="prev" title="Java I&#x2F;O 之工具类">
+                  <i class="fa fa-angle-left"></i> Java I/O 之工具类
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/bc315f0e/" rel="next" title="Redis 面试之数据类型篇">
+                  Redis 面试之数据类型篇 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"1aefd8ff0ad81120eca2da3f05a17d41"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

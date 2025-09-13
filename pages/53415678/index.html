@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="大型系统核心技术 大型系统的设计目标就是为了快速、高效、稳定的处理海量的数据以及高并发的请求。 单机服务受限于硬件，客观存在着资源瓶颈，难以应对不断增长的数据量和请求量，为了打破瓶颈，大型系统基本上都被设计为分布式系统。 分布式系统由于其面临的共性问题，在很多场景下的解决方案往往也存在着共性。因此，我们会发现，很多优秀的大型系统在设计方案上存在着很多的共同点。 本文主要讨论应对分布式系统共性问题的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大型系统核心技术">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/53415678/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="大型系统核心技术 大型系统的设计目标就是为了快速、高效、稳定的处理海量的数据以及高并发的请求。 单机服务受限于硬件，客观存在着资源瓶颈，难以应对不断增长的数据量和请求量，为了打破瓶颈，大型系统基本上都被设计为分布式系统。 分布式系统由于其面临的共性问题，在很多场景下的解决方案往往也存在着共性。因此，我们会发现，很多优秀的大型系统在设计方案上存在着很多的共同点。 本文主要讨论应对分布式系统共性问题的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-StickySessions.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SessionReplication.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SpringSession.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8B%E8%BD%AE%E8%AF%A2-01.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8B%E8%BD%AE%E8%AF%A2-02.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8B%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8B%E6%9C%80%E5%B0%91%E8%BF%9E%E6%8E%A5-01.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8B%E6%9C%80%E5%B0%91%E8%BF%9E%E6%8E%A5-02.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8B%E5%8A%A0%E6%9D%83%E6%9C%80%E5%B0%91%E8%BF%9E%E6%8E%A5.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8B%E9%9A%8F%E6%9C%BA.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E4%B9%8BIpHash.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/Http%E9%87%8D%E5%AE%9A%E5%90%91.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/Dns%E9%87%8D%E5%AE%9A%E5%90%91.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E4%BF%AE%E6%94%B9Mac%E5%9C%B0%E5%9D%80.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E4%BF%AE%E6%94%B9IP%E5%9C%B0%E5%9D%80.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/%E4%BB%A3%E7%90%86%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE.jpg">
+<meta property="article:published_time" content="2018-07-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.722Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-StickySessions.jpg">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/53415678/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/53415678/","path":"/pages/53415678/","title":"大型系统核心技术"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>大型系统核心技术 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7%E5%9E%8B%E7%B3%BB%E7%BB%9F%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF"><span class="nav-number">1.</span> <span class="nav-text">大型系统核心技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.1.</span> <span class="nav-text">分布式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.2.</span> <span class="nav-text">分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.2.1.</span> <span class="nav-text">基于数据库实现分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%A1%A8"><span class="nav-number">1.2.1.1.1.</span> <span class="nav-text">创建表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%94%81"><span class="nav-number">1.2.1.1.2.</span> <span class="nav-text">获取锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%87%8A%E6%94%BE%E9%94%81"><span class="nav-number">1.2.1.1.3.</span> <span class="nav-text">释放锁</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">解决办法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-Redis-%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.2.2.</span> <span class="nav-text">基于 Redis 实现分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Redis 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98-1"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93-1"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-ZooKeeper-%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.2.3.</span> <span class="nav-text">基于 ZooKeeper 实现分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-2"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93-2"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-Session"><span class="nav-number">1.3.</span> <span class="nav-text">分布式 Session</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sticky-Sessions"><span class="nav-number">1.3.1.</span> <span class="nav-text">Sticky Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-Replication"><span class="nav-number">1.3.2.</span> <span class="nav-text">Session Replication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-Server"><span class="nav-number">1.3.3.</span> <span class="nav-text">Session Server</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8"><span class="nav-number">1.4.</span> <span class="nav-text">分布式存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98"><span class="nav-number">1.5.</span> <span class="nav-text">分布式缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97"><span class="nav-number">1.6.</span> <span class="nav-text">分布式计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.7.</span> <span class="nav-text">负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">1.7.1.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%EF%BC%88Round-Robin%EF%BC%89"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">轮询（Round Robin）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%EF%BC%88Weighted-Round-Robbin%EF%BC%89"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">加权轮询（Weighted Round Robbin）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%B0%91%E8%BF%9E%E6%8E%A5%EF%BC%88least-Connections%EF%BC%89"><span class="nav-number">1.7.1.3.</span> <span class="nav-text">最少连接（least Connections）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E6%9C%80%E5%B0%91%E8%BF%9E%E6%8E%A5%EF%BC%88Weighted-Least-Connection%EF%BC%89"><span class="nav-number">1.7.1.4.</span> <span class="nav-text">加权最少连接（Weighted Least Connection）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95%EF%BC%88Random%EF%BC%89"><span class="nav-number">1.7.1.5.</span> <span class="nav-text">随机算法（Random）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BA%90%E5%9C%B0%E5%9D%80%E5%93%88%E5%B8%8C%E6%B3%95-IP-Hash"><span class="nav-number">1.7.1.6.</span> <span class="nav-text">源地址哈希法 (IP Hash)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-3"><span class="nav-number">1.7.2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP-%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">HTTP 重定向</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">DNS 重定向</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-MAC-%E5%9C%B0%E5%9D%80"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">修改 MAC 地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-IP-%E5%9C%B0%E5%9D%80"><span class="nav-number">1.7.2.4.</span> <span class="nav-text">修改 IP 地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.7.2.5.</span> <span class="nav-text">代理自动配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/53415678/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="大型系统核心技术 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大型系统核心技术<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/01.%E6%9E%B6%E6%9E%84/00.%E7%BB%BC%E5%90%88/08.%E5%A4%A7%E5%9E%8B%E7%B3%BB%E7%BB%9F%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-09 00:00:00" itemprop="dateCreated datePublished" datetime="2018-07-09T00:00:00+08:00">2018-07-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="大型系统核心技术"><a href="#大型系统核心技术" class="headerlink" title="大型系统核心技术"></a>大型系统核心技术</h1><blockquote>
+<p>大型系统的设计目标就是为了快速、高效、稳定的处理海量的数据以及高并发的请求。</p>
+<p>单机服务受限于硬件，客观存在着资源瓶颈，难以应对不断增长的数据量和请求量，为了打破瓶颈，大型系统基本上都被设计为分布式系统。</p>
+<p>分布式系统由于其面临的共性问题，在很多场景下的解决方案往往也存在着共性。因此，我们会发现，很多优秀的大型系统在设计方案上存在着很多的共同点。</p>
+<p>本文主要讨论应对分布式系统共性问题的解决方案，这既可以加深对分布式系统运作原理的理解，也可以作为设计大型分布式系统时的借鉴。</p>
+</blockquote>
+<h2 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h2><h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><p>Java 原生 API 虽然有并发锁，但并没有提供分布式锁的能力，所以针对分布式场景中的锁需要解决的方案。</p>
+<p>分布式锁的解决方案大致有以下几种：</p>
+<ul>
+<li>基于数据库实现</li>
+<li>基于缓存（redis，memcached 等）实现</li>
+<li>基于 Zookeeper 实现</li>
+</ul>
+<h3 id="基于数据库实现分布式锁"><a href="#基于数据库实现分布式锁" class="headerlink" title="基于数据库实现分布式锁"></a>基于数据库实现分布式锁</h3><h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><h5 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> `methodLock` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT NULL</span> AUTO_INCREMENT COMMENT <span class="string">&#x27;主键&#x27;</span>,</span><br><span class="line">  `method_name` <span class="type">varchar</span>(<span class="number">64</span>) <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;锁定的方法名&#x27;</span>,</span><br><span class="line">  `<span class="keyword">desc</span>` <span class="type">varchar</span>(<span class="number">1024</span>) <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;备注信息&#x27;</span>,</span><br><span class="line">  `update_time` <span class="type">timestamp</span> <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="built_in">CURRENT_TIMESTAMP</span> COMMENT <span class="string">&#x27;保存数据时间，自动生成&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY KEY</span> (`id`),</span><br><span class="line">  <span class="keyword">UNIQUE</span> KEY `uidx_method_name` (`method_name `) <span class="keyword">USING</span> BTREE</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8 COMMENT<span class="operator">=</span><span class="string">&#x27;锁定中的方法&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取锁"><a href="#获取锁" class="headerlink" title="获取锁"></a>获取锁</h5><p>想要锁住某个方法时，执行以下 SQL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert into</span> methodLock(method_name,<span class="keyword">desc</span>) <span class="keyword">values</span> (‘method_name’,‘<span class="keyword">desc</span>’)</span><br></pre></td></tr></table></figure>
+
+<p>因为我们对 <code>method_name</code> 做了唯一性约束，这里如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。</p>
+<p>成功插入则获取锁。</p>
+<h5 id="释放锁"><a href="#释放锁" class="headerlink" title="释放锁"></a>释放锁</h5><p>当方法执行完毕之后，想要释放锁的话，需要执行以下 Sql:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> methodLock <span class="keyword">where</span> method_name <span class="operator">=</span><span class="string">&#x27;method_name&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><ol>
+<li>这把锁强依赖数据库的可用性。如果数据库是一个单点，一旦数据库挂掉，会导致业务系统不可用。</li>
+<li>这把锁没有失效时间，一旦解锁操作失败，就会导致锁记录一直在数据库中，其他线程无法再获得到锁。</li>
+<li>这把锁只能是非阻塞的，因为数据的 insert 操作，一旦插入失败就会直接报错。没有获得锁的线程并不会进入排队队列，要想再次获得锁就要再次触发获得锁操作。</li>
+<li>这把锁是非重入的，同一个线程在没有释放锁之前无法再次获得该锁。因为数据中数据已经存在了。</li>
+</ol>
+<h4 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h4><ol>
+<li>单点问题可以用多数据库实例，同时塞 N 个表，N&#x2F;2+1 个成功就任务锁定成功</li>
+<li>写一个定时任务，隔一段时间清除一次过期的数据。</li>
+<li>写一个 while 循环，不断的重试插入，直到成功。</li>
+<li>在数据库表中加个字段，记录当前获得锁的机器的主机信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了。</li>
+</ol>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><ul>
+<li>优点: 直接借助数据库，容易理解。</li>
+<li>缺点: 会有各种各样的问题，在解决问题的过程中会使整个方案变得越来越复杂。操作数据库需要一定的开销，性能问题需要考虑。</li>
+</ul>
+<h3 id="基于-Redis-实现分布式锁"><a href="#基于-Redis-实现分布式锁" class="headerlink" title="基于 Redis 实现分布式锁"></a>基于 Redis 实现分布式锁</h3><p>相比于用数据库来实现分布式锁，基于缓存实现的分布式锁的性能会更好一些。目前有很多成熟的分布式产品，包括 Redis、memcache、Tair 等。这里以 Redis 举例。</p>
+<h4 id="Redis-命令"><a href="#Redis-命令" class="headerlink" title="Redis 命令"></a>Redis 命令</h4><ul>
+<li>setnx - setnx key val：当且仅当 key 不存在时，set 一个 key 为 val 的字符串，返回 1；若 key 存在，则什么都不做，返回 0。</li>
+<li>expire - expire key timeout：为 key 设置一个超时时间，单位为 second，超过这个时间锁会自动释放，避免死锁。</li>
+<li>delete - delete key：删除 key</li>
+</ul>
+<h4 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h4><p>单点实现步骤：</p>
+<ol>
+<li>获取锁的使用，使用 setnx 加锁，锁的 value 值为一个随机生成的 UUID，再使用 expire 设置一个过期值。</li>
+<li>获取锁的时候还设置一个获取的超时时间，若超过这个时间则放弃获取锁。</li>
+<li>释放锁的时候，通过 UUID 判断是不是该锁，若是该锁，则执行 delete 进行锁释放。</li>
+</ol>
+<h4 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a>问题</h4><ul>
+<li>单点问题。如果单机 redis 挂掉了，那么程序会跟着出错。</li>
+<li>如果转移使用 slave 节点，复制不是同步复制，会出现多个程序获取锁的情况</li>
+</ul>
+<h4 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h4><p>可以考虑使用 <a target="_blank" rel="noopener" href="https://github.com/redisson/redisson/wiki/8.-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%92%8C%E5%90%8C%E6%AD%A5%E5%99%A8">redisson 的解决方案</a>。</p>
+<h3 id="基于-ZooKeeper-实现分布式锁"><a href="#基于-ZooKeeper-实现分布式锁" class="headerlink" title="基于 ZooKeeper 实现分布式锁"></a>基于 ZooKeeper 实现分布式锁</h3><h4 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h4><p>这也是 ZooKeeper 客户端 curator 的分布式锁实现。</p>
+<ol>
+<li>创建一个目录 mylock；</li>
+<li>线程 A 想获取锁就在 mylock 目录下创建临时顺序节点；</li>
+<li>获取 mylock 目录下所有的子节点，然后获取比自己小的兄弟节点，如果不存在，则说明当前线程顺序号最小，获得锁；</li>
+<li>线程 B 获取所有节点，判断自己不是最小节点，设置监听比自己次小的节点；</li>
+<li>线程 A 处理完，删除自己的节点，线程 B 监听到变更事件，判断自己是不是最小的节点，如果是则获得锁。</li>
+</ol>
+<h4 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h4><p>ZooKeeper 版本的分布式锁问题相对比较来说少。</p>
+<ul>
+<li>锁的占用时间限制：redis 就有占用时间限制，而 ZooKeeper 则没有，最主要的原因是 redis 目前没有办法知道已经获取锁的客户端的状态，是已经挂了呢还是正在执行耗时较长的业务逻辑。而 ZooKeeper 通过临时节点就能清晰知道，如果临时节点存在说明还在执行业务逻辑，如果临时节点不存在说明已经执行完毕释放锁或者是挂了。由此看来 redis 如果能像 ZooKeeper 一样添加一些与客户端绑定的临时键，也是一大好事。</li>
+<li>是否单点故障：redis 本身有很多中玩法，如客户端一致性 hash，服务器端 sentinel 方案或者 cluster 方案，很难做到一种分布式锁方式能应对所有这些方案。而 ZooKeeper 只有一种玩法，多台机器的节点数据是一致的，没有 redis 的那么多的麻烦因素要考虑。</li>
+</ul>
+<p>总体上来说 ZooKeeper 实现分布式锁更加的简单，可靠性更高。但 ZooKeeper 因为需要频繁的创建和删除节点，性能上不如 Redis 方式。</p>
+<h2 id="分布式-Session"><a href="#分布式-Session" class="headerlink" title="分布式 Session"></a>分布式 Session</h2><p>在分布式场景下，一个用户的 Session 如果只存储在一个服务器上，那么当负载均衡器把用户的下一个请求转发到另一个服务器上，该服务器没有用户的 Session，就可能导致用户需要重新进行登录等操作。</p>
+<p>分布式 Session 的几种实现策略：</p>
+<ol>
+<li>粘性 session</li>
+<li>应用服务器间的 session 复制共享</li>
+<li>基于 cache DB 缓存的 session 共享</li>
+</ol>
+<h3 id="Sticky-Sessions"><a href="#Sticky-Sessions" class="headerlink" title="Sticky Sessions"></a>Sticky Sessions</h3><p>需要配置负载均衡器，使得一个用户的所有请求都路由到一个服务器节点上，这样就可以把用户的 Session 存放在该服务器节点中。</p>
+<p>缺点：当服务器节点宕机时，将丢失该服务器节点上的所有 Session。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-StickySessions.jpg" />
+</div>
+
+<h3 id="Session-Replication"><a href="#Session-Replication" class="headerlink" title="Session Replication"></a>Session Replication</h3><p>在服务器节点之间进行 Session 同步操作，这样的话用户可以访问任何一个服务器节点。</p>
+<p>缺点：占用过多内存；同步过程占用网络带宽以及服务器处理器时间。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SessionReplication.jpg" />
+</div>
+
+<h3 id="Session-Server"><a href="#Session-Server" class="headerlink" title="Session Server"></a>Session Server</h3><p>使用一个单独的服务器存储 Session 数据，可以存在 MySQL 数据库上，也可以存在 Redis 或者 Memcached 这种内存型数据库。</p>
+<p>缺点：需要去实现存取 Session 的代码。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SpringSession.jpg" />
+</div>
+
+<h2 id="分布式存储"><a href="#分布式存储" class="headerlink" title="分布式存储"></a>分布式存储</h2><p>通常有两种解决方案：</p>
+<ol>
+<li>数据分布：就是把数据分块存在不同的服务器上（分库分表）。</li>
+<li>数据复制：让所有的服务器都有相同的数据，提供相当的服务。</li>
+</ol>
+<h2 id="分布式缓存"><a href="#分布式缓存" class="headerlink" title="分布式缓存"></a>分布式缓存</h2><p>使用缓存的好处：</p>
+<ul>
+<li>提升数据读取速度</li>
+<li>提升系统扩展能力，通过扩展缓存，提升系统承载能力</li>
+<li>降低存储成本，Cache+DB 的方式可以承担原有需要多台 DB 才能承担的请求量，节省机器成本</li>
+</ul>
+<p>根据业务场景，通常缓存有以下几种使用方式</p>
+<ul>
+<li>懒汉式(读时触发)：写入 DB 后, 然后把相关的数据也写入 Cache</li>
+<li>饥饿式(写时触发)：先查询 DB 里的数据, 然后把相关的数据写入 Cache</li>
+<li>定期刷新：适合周期性的跑数据的任务，或者列表型的数据，而且不要求绝对实时性</li>
+</ul>
+<p>缓存分类：</p>
+<ul>
+<li>应用内缓存：如：EHCache</li>
+<li>分布式缓存：如：Memached、Redis</li>
+</ul>
+<h2 id="分布式计算"><a href="#分布式计算" class="headerlink" title="分布式计算"></a>分布式计算</h2><h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><h4 id="轮询（Round-Robin）"><a href="#轮询（Round-Robin）" class="headerlink" title="轮询（Round Robin）"></a>轮询（Round Robin）</h4><p>轮询算法把每个请求轮流发送到每个服务器上。下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。最后，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之轮询-01.jpg" width="640"/>
+</div>
+
+<p>该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之轮询-02.jpg" width="640"/>
+</div>
+
+<h4 id="加权轮询（Weighted-Round-Robbin）"><a href="#加权轮询（Weighted-Round-Robbin）" class="headerlink" title="加权轮询（Weighted Round Robbin）"></a>加权轮询（Weighted Round Robbin）</h4><p>加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值。例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之加权轮询.jpg" width="640"/>
+</div>
+
+<h4 id="最少连接（least-Connections）"><a href="#最少连接（least-Connections）" class="headerlink" title="最少连接（least Connections）"></a>最少连接（least Connections）</h4><p>由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开。该系统继续运行时，服务器 2 会承担过大的负载。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之最少连接-01.jpg" width="640"/>
+</div>
+
+<p>最少连接算法就是将请求发送给当前最少连接数的服务器上。例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之最少连接-02.jpg" width="640"/>
+</div>
+
+<h4 id="加权最少连接（Weighted-Least-Connection）"><a href="#加权最少连接（Weighted-Least-Connection）" class="headerlink" title="加权最少连接（Weighted Least Connection）"></a>加权最少连接（Weighted Least Connection）</h4><p>在最少连接的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之加权最少连接.jpg" width="640"/>
+</div>
+
+<h4 id="随机算法（Random）"><a href="#随机算法（Random）" class="headerlink" title="随机算法（Random）"></a>随机算法（Random）</h4><p>把请求随机发送到服务器上。和轮询算法类似，该算法比较适合服务器性能差不多的场景。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之随机.jpg" width="640"/>
+</div>
+
+<h4 id="源地址哈希法-IP-Hash"><a href="#源地址哈希法-IP-Hash" class="headerlink" title="源地址哈希法 (IP Hash)"></a>源地址哈希法 (IP Hash)</h4><p>源地址哈希通过对客户端 IP 哈希计算得到的一个数值，用该数值对服务器数量进行取模运算，取模结果便是目标服务器的序号。</p>
+<ul>
+<li>优点：保证同一 IP 的客户端都会被 hash 到同一台服务器上。</li>
+<li>缺点：不利于集群扩展，后台服务器数量变更都会影响 hash 结果。可以采用一致性 Hash 改进。</li>
+</ul>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/负载均衡算法之IpHash.jpg" width="640"/>
+</div>
+
+<h3 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a>实现</h3><h4 id="HTTP-重定向"><a href="#HTTP-重定向" class="headerlink" title="HTTP 重定向"></a>HTTP 重定向</h4><p>HTTP 重定向负载均衡服务器收到 HTTP 请求之后会返回服务器的地址，并将该地址写入 HTTP 重定向响应中返回给浏览器，浏览器收到后需要再次发送请求。</p>
+<p>缺点：</p>
+<ul>
+<li>用户访问的延迟会增加；</li>
+<li>如果负载均衡器宕机，就无法访问该站点。</li>
+</ul>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/Http重定向.png" width="640"/>
+</div>
+
+<h4 id="DNS-重定向"><a href="#DNS-重定向" class="headerlink" title="DNS 重定向"></a>DNS 重定向</h4><p>使用 DNS 作为负载均衡器，根据负载情况返回不同服务器的 IP 地址。大型网站基本使用了这种方式做为第一级负载均衡手段，然后在内部使用其它方式做第二级负载均衡。</p>
+<p>缺点：</p>
+<ul>
+<li>DNS 查找表可能会被客户端缓存起来，那么之后的所有请求都会被重定向到同一个服务器。</li>
+</ul>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/Dns重定向.png" width="640"/>
+</div>
+
+<h4 id="修改-MAC-地址"><a href="#修改-MAC-地址" class="headerlink" title="修改 MAC 地址"></a>修改 MAC 地址</h4><p>使用 LVS（Linux Virtual Server）这种链路层负载均衡器，根据负载情况修改请求的 MAC 地址。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/修改Mac地址.png" width="640"/>
+</div>
+
+<h4 id="修改-IP-地址"><a href="#修改-IP-地址" class="headerlink" title="修改 IP 地址"></a>修改 IP 地址</h4><p>在网络层修改请求的目的 IP 地址。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/修改IP地址.png" width="640"/>
+</div>
+
+<h4 id="代理自动配置"><a href="#代理自动配置" class="headerlink" title="代理自动配置"></a>代理自动配置</h4><p>正向代理与反向代理的区别：</p>
+<ul>
+<li>正向代理：发生在客户端，是由用户主动发起的。比如翻墙，客户端通过主动访问代理服务器，让代理服务器获得需要的外网数据，然后转发回客户端。</li>
+<li>反向代理：发生在服务器端，用户不知道代理的存在。</li>
+</ul>
+<p>PAC 服务器是用来判断一个请求是否要经过代理。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/代理自动配置.jpg" width="640"/>
+</div>
+
+<h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/savorboard/p/distributed-system-transaction-consistency.html">https://www.cnblogs.com/savorboard/p/distributed-system-transaction-consistency.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/Interview-Notebook/blob/master/notes/%E5%88%86%E5%B8%83%E5%BC%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90.md">https://github.com/CyC2018/Interview-Notebook/blob/master/notes/%E5%88%86%E5%B8%83%E5%BC%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/453c6e7ff81c">https://www.jianshu.com/p/453c6e7ff81c</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5a20cd8bf265da43163cdd9a">https://juejin.im/post/5a20cd8bf265da43163cdd9a</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/redisson/redisson/wiki/8.-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%92%8C%E5%90%8C%E6%AD%A5%E5%99%A8">https://github.com/redisson/redisson/wiki/8.-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%92%8C%E5%90%8C%E6%AD%A5%E5%99%A8</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/L316476844/distributed-session">https://github.com/L316476844/distributed-session</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/entry/57e39e320e3dd90058021bff">分布式缓存架构基础</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.toutiao.com/i6533812974807679495/?tt_from=weixin&utm_campaign=client_share&from=singlemessage&timestamp=1521281305&app=news_article&utm_source=weixin&iid=28128279343&utm_medium=toutiao_android&weixin_list=1&wxshare_count=2&pbid=6517746516513195523">阿里 P8 技术专家细究分布式缓存问题</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/53415678/" title="大型系统核心技术">https://dunwu.github.io/blog/pages/53415678/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/6da58e4b/" rel="prev" title="负载均衡">
+                  <i class="fa fa-angle-left"></i> 负载均衡
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/ec29aea4/" rel="next" title="Spring 面试">
+                  Spring 面试 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"d517b1390a236626d043d92f86311e15"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

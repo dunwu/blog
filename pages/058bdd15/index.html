@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="分布式 ID分布式 ID 简介什么是分布式 ID？ID 是 Identity 的缩写，用于唯一的标识一条数据。分布式 ID，顾名思义，是用于在分布式系统中唯一标识数据的 ID。 为什么需要分布式 ID？传统数据库基本都支持针对单表生成唯一性的自增主键。随着数据的膨胀，单机成为了性能和容量的瓶颈。为了解决这个问题，有了分库分表技术。分库分表所要面临的第一个问题是：数据分布在不同机器上，数据库无法保证">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式 ID">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/058bdd15/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="分布式 ID分布式 ID 简介什么是分布式 ID？ID 是 Identity 的缩写，用于唯一的标识一条数据。分布式 ID，顾名思义，是用于在分布式系统中唯一标识数据的 ID。 为什么需要分布式 ID？传统数据库基本都支持针对单表生成唯一性的自增主键。随着数据的膨胀，单机成为了性能和容量的瓶颈。为了解决这个问题，有了分库分表技术。分库分表所要面临的第一个问题是：数据分布在不同机器上，数据库无法保证">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://bleid.netlify.app/img/version/version_1_uuid.png">
+<meta property="og:image" content="https://bleid.netlify.app/img/version/version_3_uuid.png">
+<meta property="og:image" content="https://bleid.netlify.app/img/version/version_5_uuid.png">
+<meta property="og:image" content="https://bleid.netlify.app/img/version/version_4_uuid.png">
+<meta property="og:image" content="https://awps-assets.meituan.net/mit-x/blog-images-bundle-2017/5e4ff128.png">
+<meta property="og:image" content="https://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/ZooKeeper%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%AE%9E%E6%88%98-%E5%AE%8C/assets/CgqCHl8RTBGAB7QNAAAvwu3rspw007.png">
+<meta property="og:image" content="https://shardingsphere.apache.org/document/current/img/sharding/snowflake_cn_v2.png">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/9/29/16624909d2007c22?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="article:published_time" content="2019-07-24T03:55:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.745Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="协同">
+<meta property="article:tag" content="分布式 ID">
+<meta property="article:tag" content="UUID">
+<meta property="article:tag" content="Snowflake">
+<meta property="article:tag" content="Leaf">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://bleid.netlify.app/img/version/version_1_uuid.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/058bdd15/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/058bdd15/","path":"/pages/058bdd15/","title":"分布式 ID"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式 ID | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-ID"><span class="nav-number">1.</span> <span class="nav-text">分布式 ID</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-ID-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">分布式 ID 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F-ID%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是分布式 ID？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%88%86%E5%B8%83%E5%BC%8F-ID%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">为什么需要分布式 ID？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-ID-%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87"><span class="nav-number">1.1.3.</span> <span class="nav-text">分布式 ID 的设计目标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UUID"><span class="nav-number">1.2.</span> <span class="nav-text">UUID</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">版本 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC-2"><span class="nav-number">1.2.2.</span> <span class="nav-text">版本 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC-3"><span class="nav-number">1.2.3.</span> <span class="nav-text">版本 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC-5"><span class="nav-number">1.2.4.</span> <span class="nav-text">版本 5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC-4"><span class="nav-number">1.2.5.</span> <span class="nav-text">版本 4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UUID-%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.2.6.</span> <span class="nav-text">UUID 的优缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%87%AA%E5%A2%9E%E5%BA%8F%E5%88%97"><span class="nav-number">1.3.</span> <span class="nav-text">数据库自增序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%9F%E6%88%90%E5%8F%B7%E6%AE%B5"><span class="nav-number">1.4.</span> <span class="nav-text">数据库生成号段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.5.</span> <span class="nav-text">原子计数器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E7%94%9F%E6%88%90%E8%87%AA%E5%A2%9E%E9%94%AE"><span class="nav-number">1.5.1.</span> <span class="nav-text">Redis 生成自增键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZooKeeper-%E7%94%9F%E6%88%90%E8%87%AA%E5%A2%9E%E9%94%AE"><span class="nav-number">1.5.2.</span> <span class="nav-text">ZooKeeper 生成自增键</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95%EF%BC%88Snowflake%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">雪花算法（Snowflake）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%AE%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.6.1.</span> <span class="nav-text">键的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%92%9F%E5%9B%9E%E6%8B%A8"><span class="nav-number">1.6.2.</span> <span class="nav-text">时钟回拨</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%81%B5%E6%B4%BB%E5%AE%9A%E5%88%B6"><span class="nav-number">1.6.3.</span> <span class="nav-text">灵活定制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95%E5%B0%8F%E7%BB%93"><span class="nav-number">1.6.4.</span> <span class="nav-text">雪花算法小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/058bdd15/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式 ID | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式 ID<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/11.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/01.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/%E5%88%86%E5%B8%83%E5%BC%8FID.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-24 11:55:00" itemprop="dateCreated datePublished" datetime="2019-07-24T11:55:00+08:00">2019-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/" itemprop="url" rel="index"><span itemprop="name">分布式协同</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式协同综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分布式-ID"><a href="#分布式-ID" class="headerlink" title="分布式 ID"></a>分布式 ID</h1><h2 id="分布式-ID-简介"><a href="#分布式-ID-简介" class="headerlink" title="分布式 ID 简介"></a>分布式 ID 简介</h2><h3 id="什么是分布式-ID？"><a href="#什么是分布式-ID？" class="headerlink" title="什么是分布式 ID？"></a>什么是分布式 ID？</h3><p>ID 是 Identity 的缩写，用于唯一的标识一条数据。<strong>分布式 ID</strong>，顾名思义，是<strong>用于在分布式系统中唯一标识数据的 ID</strong>。</p>
+<h3 id="为什么需要分布式-ID？"><a href="#为什么需要分布式-ID？" class="headerlink" title="为什么需要分布式 ID？"></a>为什么需要分布式 ID？</h3><p>传统数据库基本都支持针对单表生成唯一性的自增主键。随着数据的膨胀，单机成为了性能和容量的瓶颈。为了解决这个问题，有了分库分表技术。分库分表所要面临的第一个问题是：数据分布在不同机器上，数据库无法保证多个节点上产生的主键唯一。 这就需要用到分布式 ID 了，它起到了分布式系统中<strong>全局 ID</strong> 的作用。</p>
+<h3 id="分布式-ID-的设计目标"><a href="#分布式-ID-的设计目标" class="headerlink" title="分布式 ID 的设计目标"></a>分布式 ID 的设计目标</h3><p>首先，分布式 ID 应该具备哪些特性呢？</p>
+<ol>
+<li><strong>全局唯一性</strong> - 不能出现重复的 ID 号，既然是唯一标识，这是最基本的要求。</li>
+<li><strong>单调递增</strong> - 保证下一个 ID 一定大于上一个 ID，例如事务版本号、IM 增量消息、排序等特殊需求。</li>
+<li><strong>高性能</strong> - 分布式 ID 的生成速度要快，对本地资源消耗要小。</li>
+<li><strong>高可用</strong> - 生成分布式 ID 的服务要保证可用性无限接近于 100%。</li>
+<li><strong>安全性</strong> - ID 中不应包括敏感信息。</li>
+</ol>
+<h2 id="UUID"><a href="#UUID" class="headerlink" title="UUID"></a>UUID</h2><p>UUID 是通用唯一识别码（Universally Unique Identifier）的缩写，是一种 128 位的标识符，由32个16进制字符表示。<strong>UUID 会根据运行应用的计算机网卡 MAC 地址、时间戳、命名空间等元素，通过一定的随机算法产生</strong>。</p>
+<p>UUID 不保证全局唯一性，我们需要小心 ID 冲突（尽管这种可能性很小）。</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%94%AF%E4%B8%80%E8%AF%86%E5%88%AB%E7%A0%81">维基百科 - UUID</a> 中介绍了 5 种 UUID 算法。</p>
+<h3 id="版本-1"><a href="#版本-1" class="headerlink" title="版本 1"></a>版本 1</h3><p>UUID 版本 1 <strong>根据时间和 MAC 地址生成 UUID</strong>。</p>
+<p><img src="https://bleid.netlify.app/img/version/version_1_uuid.png" alt="img"></p>
+<p>组成参数说明：</p>
+<ul>
+<li><strong>time_low</strong> - 与日期时间信息的低值有关</li>
+<li><strong>time_mid</strong> - 与日期时间信息的 mid 值有关</li>
+<li><strong>time_high_and_version</strong> - 与日期时间信息的高值有关</li>
+<li><strong>clock_seq_hi_and_reserved</strong> - 与计算机系统的内部时钟序列有关</li>
+<li><strong>MAC 地址</strong> - 设备的 MAC 地址</li>
+</ul>
+<h3 id="版本-2"><a href="#版本-2" class="headerlink" title="版本 2"></a>版本 2</h3><p>UUID 版本 2 <strong>根据时间和 MAC 地址、DCE Security 生成 UUID</strong>。</p>
+<p>它将版本 1 中的日期时间信息替换为本地域名。它没有被广泛使用，因为它降低了唯一性。</p>
+<h3 id="版本-3"><a href="#版本-3" class="headerlink" title="版本 3"></a>版本 3</h3><p>UUID 版本 3 <strong>使用命名空间和名称生成 UUID</strong>。<strong>命名空间</strong>本身是一个 UUID，URL 名称用作标识。二者组合后，通过 <strong>MD5</strong> 哈希算法计算生成 UUID。</p>
+<p><img src="https://bleid.netlify.app/img/version/version_3_uuid.png" alt="img"></p>
+<h3 id="版本-5"><a href="#版本-5" class="headerlink" title="版本 5"></a>版本 5</h3><p>UUID 版本 5 和 版本 4 近似，都<strong>使用命名空间和名称生成 UUID</strong>。差异在于：<strong>版本 3 采用 MD5 作为哈希算法</strong>；<strong>版本 5 采用 SHA1 作为哈希算法</strong>。</p>
+<p><img src="https://bleid.netlify.app/img/version/version_5_uuid.png" alt="img"></p>
+<p><strong>版本 3 、版本 5</strong> - 基于哈希命名空间标识符和名称生成 UUID，差异在于：版本 3 采用 MD5 作为哈希算法；版本 5 采用 SHA1 作为哈希算法。</p>
+<h3 id="版本-4"><a href="#版本-4" class="headerlink" title="版本 4"></a>版本 4</h3><p>版本 4 随机生成 UUID，不包含其他 UUID 中使用的任何信息 （命名空间、MAC 地址、时间）。识别它的唯一方法是版本 4 UUID，字符只是 <strong>4</strong> 位于 UUID 第三部分的第一个位置。其他字符是随机生成的。</p>
+<p><img src="https://bleid.netlify.app/img/version/version_4_uuid.png" alt="img"></p>
+<p>版本 4 是最常见的 UUID 实现，JDK 中也提供了实现，示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">uuid</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br></pre></td></tr></table></figure>
+
+<h3 id="UUID-的优缺点"><a href="#UUID-的优缺点" class="headerlink" title="UUID 的优缺点"></a>UUID 的优缺点</h3><ul>
+<li><strong>优点</strong><ul>
+<li>简单、生成速度较快（本地生成，不依赖其他服务）</li>
+</ul>
+</li>
+<li><strong>缺点</strong><ul>
+<li><strong>无序</strong> - 不能生成递增有序的数字，这不利于一些特定场景。如：MySQL InnoDB 存储引擎使用 B+ 树存储索引数据，索引数据在 B+ 树中是有序排列的。而 UUID 的无序性可能会引起数据位置频繁变动，严重影响性能。</li>
+<li><strong>长度过长</strong> - UUID 需要占用 32 个字节</li>
+<li><strong>信息不安全</strong> - 基于 MAC 地址生成 UUID 的算法，可能会造成 MAC 地址泄露，这个漏洞曾被用于寻找梅丽莎病毒的制作者位置。</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据库自增序列"><a href="#数据库自增序列" class="headerlink" title="数据库自增序列"></a>数据库自增序列</h2><p>大多数数据库都支持自增主键。基于此特性，可以利用事务管理控制生成唯一 ID。</p>
+<p>以 MySQL 举例，我们通过下面的方式即可。</p>
+<p>（1）创建一个专用于生成 ID 的表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> `sequence_id` (</span><br><span class="line">  `id` <span class="type">bigint</span>(<span class="number">20</span>) unsigned <span class="keyword">NOT NULL</span> AUTO_INCREMENT,</span><br><span class="line">  `stub` <span class="type">char</span>(<span class="number">10</span>) <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY KEY</span> (`id`),</span><br><span class="line">  <span class="keyword">UNIQUE</span> KEY `stub` (`stub`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br></pre></td></tr></table></figure>
+
+<p><code>stub</code> 字段无意义，只是为了占位，便于我们插入或者修改数据。并且，给 <code>stub</code> 字段创建了唯一索引，保证其唯一性。</p>
+<p>（2）通过 <code>replace into</code> 来插入数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line">REPLACE <span class="keyword">INTO</span> sequence_id (stub) <span class="keyword">VALUES</span> (<span class="string">&#x27;stub&#x27;</span>);</span><br><span class="line"><span class="keyword">SELECT</span> LAST_INSERT_ID();</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<p>插入数据这里，我们没有使用 <code>insert into</code> 而是使用 <code>replace into</code> 来插入数据，具体步骤是这样的：</p>
+<ul>
+<li>第一步：尝试把数据插入到表中。</li>
+<li>第二步：如果主键或唯一索引字段出现重复数据错误而插入失败时，先从表中删除含有重复关键字值的冲突行，然后再次尝试把数据插入到表中。</li>
+</ul>
+<p>这种方式的优缺点也比较明显：</p>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li>方案简单</li>
+<li>有序</li>
+<li>ID 长度小</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li>性能差</li>
+<li>每次获取 ID 都要访问一次数据库，增加了对数据库的压力</li>
+<li>不安全，根据发号数量信息可能推测出业务规模</li>
+<li>单点问题，如果数据库宕机会造成服务不可用，可以使用高可用方案来解决，但会增加复杂度</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据库生成号段"><a href="#数据库生成号段" class="headerlink" title="数据库生成号段"></a>数据库生成号段</h2><p>数据库自增序列这种模式，每次获取 ID 都要请求一次数据库。当请求并发量高时，会给数据库带来很大的压力，并且生成 ID 的性能也比较差。</p>
+<p>可以采用<strong>批处理</strong>的思路来优化数据库自增序列方案。申请 ID 改为批量获取，不再一次只申请一个 ID，而是一次批量生成一个 segment（号段），号段的大小由 step（步长）控制。用完之后再去数据库获取新的号段，可以大大的减轻数据库的压力。各个业务不同的发号需求用 biz_tag 字段来区分，每个 biz_tag 的 ID 获取相互隔离，互不影响。如果以后有性能需求需要对数据库扩容，不需要上述描述的复杂的扩容操作，只需要对 biz_tag 分库分表就行。</p>
+<p>以 MySQL 举例，我们通过下面的方式即可。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> `leaf_alloc` (</span><br><span class="line">  `biz_tag` <span class="type">varchar</span>(<span class="number">128</span>)  <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">  `max_id` <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;1&#x27;</span>,</span><br><span class="line">  `step` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT NULL</span>,</span><br><span class="line">  `description` <span class="type">varchar</span>(<span class="number">256</span>)  <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `update_time` <span class="type">timestamp</span> <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="built_in">CURRENT_TIMESTAMP</span>,</span><br><span class="line">  <span class="keyword">PRIMARY KEY</span> (`biz_tag`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert into</span> leaf_alloc(biz_tag, max_id, step, description) <span class="keyword">values</span>(<span class="string">&#x27;leaf-segment-test&#x27;</span>, <span class="number">1</span>, <span class="number">2000</span>, <span class="string">&#x27;Test leaf Segment Mode Get Id&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>重要字段说明：</p>
+<ul>
+<li><code>biz_tag</code> 用来区分业务</li>
+<li><code>max_id</code> 表示该 <code>biz_tag</code> 目前所被分配的 ID 号段的最大值</li>
+<li><code>step</code> 表示每次分配的号段长度。原来获取 ID 每次都需要写数据库，现在只需要把 <code>step</code> 设置得足够大，比如 1000。那么只有当 1000 个号被消耗完了之后才会去重新读写一次数据库。读写数据库的频率从 1 减小到了 1&#x2F;step。</li>
+</ul>
+<p>大致架构如下图所示：</p>
+<p><img src="https://awps-assets.meituan.net/mit-x/blog-images-bundle-2017/5e4ff128.png" alt="image"></p>
+<p>test_tag 在第一台 Leaf 机器上是 <code>1~1000</code> 的号段，当这个号段用完时，会去加载另一个长度为 step&#x3D;1000 的号段，假设另外两台号段都没有更新，这个时候第一台机器新加载的号段就应该是 <code>3001~4000</code>。同时数据库对应的 biz_tag 这条数据的 max_id 会从 3000 被更新成 4000，更新号段的 SQL 语句如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Begin</span></span><br><span class="line"><span class="keyword">UPDATE</span> <span class="keyword">table</span> <span class="keyword">SET</span> max_id<span class="operator">=</span>max_id<span class="operator">+</span>step <span class="keyword">WHERE</span> biz_tag<span class="operator">=</span>xxx</span><br><span class="line"><span class="keyword">SELECT</span> tag, max_id, step <span class="keyword">FROM</span> <span class="keyword">table</span> <span class="keyword">WHERE</span> biz_tag<span class="operator">=</span>xxx</span><br><span class="line"><span class="keyword">Commit</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>数据库号段模式的优缺点：</strong></p>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li>有序</li>
+<li>ID 长度小</li>
+<li>效率比数据库自增序列方式高很多</li>
+</ul>
+</li>
+<li><strong>缺点</strong><ul>
+<li>号段使用完，还是需要向数据库发起事务更新，以获取新号段</li>
+<li>不安全，根据发号数量信息可能推测出业务规模</li>
+<li>单点问题，如果数据库宕机会造成服务不可用，可以使用高可用方案来解决，但会增加复杂度</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>扩展：滴滴的 <a target="_blank" rel="noopener" href="https://github.com/didi/tinyid">tinyid</a> 和美团的 <a target="_blank" rel="noopener" href="https://github.com/Meituan-Dianping/Leaf">Leaf</a> 都是基于数据库生成号段方案实现的，不过都各自做了一些优化。</p>
+<p>美团技术团队还对分布式 ID 生成做了一篇技术分享：<a target="_blank" rel="noopener" href="https://tech.meituan.com/2017/04/21/mt-leaf.html">Leaf——美团点评分布式 ID 生成系统</a>，其对于数据库号段模式的优化要点如下：</p>
+<ul>
+<li>Leaf 采用双 Buffer 优化，避免号段耗尽时，阻塞以获取新号段。其本质上是：通过双缓存，提前预热号段缓存。</li>
+<li>此外，基于 Atlas（以改名 DBProxy）保障数据库的高可用。也就是保护了号段数据存储的高可用。</li>
+</ul>
+</blockquote>
+<h2 id="原子计数器"><a href="#原子计数器" class="headerlink" title="原子计数器"></a>原子计数器</h2><p>一些 NoSQL 数据库提供了原子性的计数器，可以基于这点，来实现分布式 ID。</p>
+<h3 id="Redis-生成自增键"><a href="#Redis-生成自增键" class="headerlink" title="Redis 生成自增键"></a>Redis 生成自增键</h3><p>Redis 的 String 类型提供 <code>INCR</code> 和 <code>INCRBY</code> 命令将 key 中储存的数字<strong>原子递增</strong>。</p>
+<p>为避免单点问题，可以采用 Redis Cluster。</p>
+<p><strong>Redis 方案的优缺点：</strong></p>
+<ul>
+<li><strong>优点</strong>：高性能、有序</li>
+<li><strong>缺点</strong>：和数据库自增序列方案的缺点类似</li>
+</ul>
+<h3 id="ZooKeeper-生成自增键"><a href="#ZooKeeper-生成自增键" class="headerlink" title="ZooKeeper 生成自增键"></a>ZooKeeper 生成自增键</h3><p>利用 ZooKeeper 中的顺序节点特性，很容易使我们创建的 ID 编码具有有序的特性。并且我们也可以通过客户端传递节点的名称，根据不同的业务编码区分不同的业务系统，从而使编码的扩展能力更强。</p>
+<p><strong>每个需要 ID 编码的业务服务器可以看作是 ZooKeeper 的客户端</strong>。ID 编码生成器可以作为 ZooKeeper 的服务端。客户端通过发送请求到 ZooKeeper 服务器，来获取编码信息，服务端接收到请求后，发送 ID 编码给客户端。</p>
+<p><img src="https://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/ZooKeeper%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%8E%E5%AE%9E%E6%88%98-%E5%AE%8C/assets/CgqCHl8RTBGAB7QNAAAvwu3rspw007.png" alt="Drawing 2.png"></p>
+<p>可以利用 ZooKeeper 数据模型中的顺序节点作为 ID 编码。客户端通过调用 create 函数创建顺序节点。服务器成功创建节点后，会响应客户端请求，把创建好的节点信息发送给客户端。客户端用数据节点名称作为 ID 编码，进行之后的本地业务操作。</p>
+<p>:::details 要点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ZookeeperDistributedId</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取客户端</span></span><br><span class="line">        <span class="type">RetryPolicy</span> <span class="variable">retryPolicy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ExponentialBackoffRetry</span>(<span class="number">1000</span>, <span class="number">3</span>);</span><br><span class="line">        <span class="type">CuratorFramework</span> <span class="variable">client</span> <span class="operator">=</span> CuratorFrameworkFactory.newClient(<span class="string">&quot;127.0.0.1:2181&quot;</span>, retryPolicy);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 开启会话</span></span><br><span class="line">        client.start();</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">id1</span> <span class="operator">=</span> client.create()</span><br><span class="line">                           .creatingParentsIfNeeded()</span><br><span class="line">                           .withMode(CreateMode.PERSISTENT_SEQUENTIAL)</span><br><span class="line">                           .forPath(<span class="string">&quot;/zkid/id_&quot;</span>);</span><br><span class="line">        log.info(<span class="string">&quot;id: &#123;&#125;&quot;</span>, id1);</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">id2</span> <span class="operator">=</span> client.create()</span><br><span class="line">                           .creatingParentsIfNeeded()</span><br><span class="line">                           .withMode(CreateMode.PERSISTENT_SEQUENTIAL)</span><br><span class="line">                           .forPath(<span class="string">&quot;/zkid/id_&quot;</span>);</span><br><span class="line">        log.info(<span class="string">&quot;id: &#123;&#125;&quot;</span>, id2);</span><br><span class="line"></span><br><span class="line">        List&lt;String&gt; children = client.getChildren().forPath(<span class="string">&quot;/zkid&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (CollectionUtil.isNotEmpty(children)) &#123;</span><br><span class="line">            <span class="keyword">for</span> (String child : children) &#123;</span><br><span class="line">                client.delete().forPath(<span class="string">&quot;/zkid/&quot;</span> + child);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        client.delete().forPath(<span class="string">&quot;/zkid&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 关闭客户端</span></span><br><span class="line">        client.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>:::</p>
+<p><strong>ZooKeeper 方案的优缺点：</strong></p>
+<ul>
+<li><strong>优点</strong>：简单、可靠性高</li>
+<li><strong>缺点</strong>：性能不高</li>
+</ul>
+<h2 id="雪花算法（Snowflake）"><a href="#雪花算法（Snowflake）" class="headerlink" title="雪花算法（Snowflake）"></a>雪花算法（Snowflake）</h2><p>雪花算法（Snowflake）是由 Twitter 公布的分布式主键生成算法，<strong>它会生成一个 <code>64 bit</code> 的整数</strong>，可以保证不同进程主键的不重复性，以及相同进程主键的有序性。在同一个进程中，它首先是通过时间位保证不重复，如果时间相同则是通过序列位保证。 同时由于时间位是单调递增的，且各个服务器如果大体做了时间同步，那么生成的主键在分布式环境可以认为是总体有序的，这就保证了对索引字段的插入的高效性。</p>
+<h3 id="键的组成"><a href="#键的组成" class="headerlink" title="键的组成"></a>键的组成</h3><p>使用<strong>雪花算法生成的主键，二进制表示形式包含 4 部分</strong>，从高位到低位分表为：1bit 符号位、41bit 时间戳位、10bit 工作进程位以及 12bit 序列号位。</p>
+<ul>
+<li><strong>符号位 (1bit)</strong></li>
+</ul>
+<p>预留的符号位，恒为零。</p>
+<ul>
+<li><strong>时间戳位 (41bit)</strong></li>
+</ul>
+<p>41 位的时间戳可以容纳的毫秒数是 2 的 41 次幂，一年所使用的毫秒数是：<code>365 * 24 * 60 * 60 * 1000</code>。通过计算可知：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(<span class="number">2</span>, <span class="number">41</span>) / (<span class="number">365</span> * <span class="number">24</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">1000L</span>);</span><br></pre></td></tr></table></figure>
+
+<p>结果约等于 69.73 年。ShardingSphere 的雪花算法的时间纪元从 2016 年 11 月 1 日零点开始，可以使用到 2086 年，相信能满足绝大部分系统的要求。</p>
+<ul>
+<li><strong>工作进程位 (10bit)</strong></li>
+</ul>
+<p>该标志在 Java 进程内是唯一的，如果是分布式应用部署应保证每个工作进程的 id 是不同的。该值默认为 0，可通过属性设置。</p>
+<ul>
+<li><strong>序列号位 (12bit)</strong></li>
+</ul>
+<p>该序列是用来在同一个毫秒内生成不同的 ID。如果在这个毫秒内生成的数量超过 4096(2 的 12 次幂），那么生成器会等待到下个毫秒继续生成。</p>
+<p>雪花算法主键的详细结构见下图：</p>
+<p><img src="https://shardingsphere.apache.org/document/current/img/sharding/snowflake_cn_v2.png" alt="雪花算法"></p>
+<h3 id="时钟回拨"><a href="#时钟回拨" class="headerlink" title="时钟回拨"></a>时钟回拨</h3><p>服务器时钟回拨会导致产生重复序列，因此默认分布式主键生成器提供了一个最大容忍的时钟回拨毫秒数。 如果时钟回拨的时间超过最大容忍的毫秒数阈值，则程序报错；如果在可容忍的范围内，默认分布式主键生成器会等待时钟同步到最后一次主键生成的时间后再继续工作。 最大容忍的时钟回拨毫秒数的默认值为 0，可通过属性设置。</p>
+<p>雪花算法是强依赖于时间的，而如果机器时间发生回拨，有可能会生成重复的 ID。</p>
+<p>我们可以针对算法做一些优化，来防止时钟回拨生成重复 ID。</p>
+<p>用当前时间和上一次的时间进行判断，如果当前时间小于上一次的时间那么肯定是发生了回拨。普通的算法会直接抛出异常，这里我们可以对其进行优化，一般分为两个情况：</p>
+<ul>
+<li>如果时间回拨时间较短，比如配置 <code>5ms</code> 以内，那么可以直接等待一定的时间，让机器的时间追上来。</li>
+<li>如果时间的回拨时间较长，我们不能接受这么长的阻塞等待，那么又有两个策略：<ul>
+<li>直接拒绝，抛出异常。打日志，通知 RD 时钟回滚。</li>
+<li>利用扩展位。上面我们讨论过，不同业务场景位数可能用不到那么多比特位，那么我们可以把扩展位数利用起来。比如：当这个时间回拨比较长的时候，我们可以不需要等待，直接在扩展位加 1。两位的扩展位允许我们有三次大的时钟回拨，一般来说就够了，如果其超过三次我们还是选择抛出异常，打日志。</li>
+</ul>
+</li>
+</ul>
+<h3 id="灵活定制"><a href="#灵活定制" class="headerlink" title="灵活定制"></a>灵活定制</h3><p>上面只是一个将 <code>64bit</code> 划分的标准，当然也不一定这么做，可以根据不同业务的具体场景来划分，比如下面给出一个业务场景：</p>
+<ul>
+<li>服务目前 QPS10 万，预计几年之内会发展到百万。</li>
+<li>当前机器三地部署，上海，北京，深圳都有。</li>
+<li>当前机器 10 台左右，预计未来会增加至百台。</li>
+</ul>
+<p>这个时候我们根据上面的场景可以再次合理的划分 62bit，QPS 几年之内会发展到百万，那么每毫秒就是千级的请求，目前 10 台机器那么每台机器承担百级的请求，为了保证扩展，后面的循环位可以限制到 1024，也就是 2^10，那么循环位 10 位就足够了。</p>
+<p>机器三地部署我们可以用 3bit 总共 8 来表示机房位置，当前的机器 10 台，为了保证扩展到百台那么可以用 7bit 128 来表示，时间位依然是 41bit，那么还剩下 64-10-3-7-41-1 &#x3D; 2bit，还剩下 2bit 可以用来进行扩展。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/9/29/16624909d2007c22?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="img"></p>
+<h3 id="雪花算法小结"><a href="#雪花算法小结" class="headerlink" title="雪花算法小结"></a>雪花算法小结</h3><p>雪花算法的<strong>利弊</strong>：</p>
+<ul>
+<li><strong>优点</strong><ul>
+<li>生成的 ID 都是趋势递增的。</li>
+<li>不依赖数据库等第三方系统，以服务的方式部署，稳定性更高，生成 ID 的性能也是非常高的。</li>
+<li>可以根据自身业务特性分配 bit 位，非常灵活。</li>
+</ul>
+</li>
+<li><strong>缺点</strong><ul>
+<li>强依赖机器时钟，如果机器上时钟回拨，会导致发号重复或者服务会处于不可用状态。</li>
+</ul>
+</li>
+</ul>
+<p>雪花算法的<strong>适用场景</strong>：</p>
+<p>当我们需要无序不能被猜测的 ID，并且需要一定高性能，且需要 long 型，那么就可以使用我们雪花算法。比如常见的订单 ID，用雪花算法别人就无法猜测你每天的订单量是多少。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5bb0217ef265da0ac2567b42">如果再有人问你分布式 ID，这篇文章丢给他</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000011282426">理解分布式 id 生成算法 SnowFlake</a></li>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2017/04/21/mt-leaf.html">Leaf——美团点评分布式 ID 生成系统</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ietf.org/rfc/rfc4122.txt">UUID 规范</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/baidu/uid-generator/blob/master/README.zh_cn.md">百度分布式 ID</a></li>
+<li><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/current/cn/features/sharding/other-features/key-generator/">ShardingSphere 分布式主键</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/bytebytego-system-design-alliance/7-famous-approaches-to-generate-distributed-id-with-comparison-table-af89afe4601f">7 Famous Approaches to Generate Distributed ID with Comparison Table</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/throwable/p/14343086.html">冷饭新炒：理解 JDK 中 UUID 的底层实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://bleid.netlify.app/">What is UUID?</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/058bdd15/" title="分布式 ID">https://dunwu.github.io/blog/pages/058bdd15/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E5%8D%8F%E5%90%8C/" rel="tag"># 协同</a>
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F-ID/" rel="tag"># 分布式 ID</a>
+              <a href="/blog/tags/UUID/" rel="tag"># UUID</a>
+              <a href="/blog/tags/Snowflake/" rel="tag"># Snowflake</a>
+              <a href="/blog/tags/Leaf/" rel="tag"># Leaf</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/3e7042f9/" rel="prev" title="zsh">
+                  <i class="fa fa-angle-left"></i> zsh
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/e6171578/" rel="next" title="Cassandra">
+                  Cassandra <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"49b3495b2bf307f528ba6e6ff2cff2d4"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

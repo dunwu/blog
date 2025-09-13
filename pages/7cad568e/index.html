@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Redis 运维 Redis 是一个高性能的 key-value 数据库。 SET 操作每秒钟 110000 次；GET 操作每秒钟 81000 次。  Redis 安装Window 下安装下载地址：https:&#x2F;&#x2F;github.com&#x2F;MSOpenTech&#x2F;redis&#x2F;releases。 Redis 支持 32 位和 64 位。这个需要根据你系统平台的实际情况选择，这里我们下载 Redis-x6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 运维">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/7cad568e/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Redis 运维 Redis 是一个高性能的 key-value 数据库。 SET 操作每秒钟 110000 次；GET 操作每秒钟 81000 次。  Redis 安装Window 下安装下载地址：https:&#x2F;&#x2F;github.com&#x2F;MSOpenTech&#x2F;redis&#x2F;releases。 Redis 支持 32 位和 64 位。这个需要根据你系统平台的实际情况选择，这里我们下载 Redis-x6">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200712125827.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200712130234.png">
+<meta property="article:published_time" content="2020-06-24T02:45:38.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.736Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="KV数据库">
+<meta property="article:tag" content="运维">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200712125827.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/7cad568e/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/7cad568e/","path":"/pages/7cad568e/","title":"Redis 运维"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 运维 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E8%BF%90%E7%BB%B4"><span class="nav-number">1.</span> <span class="nav-text">Redis 运维</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">Redis 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Window-%E4%B8%8B%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.1.</span> <span class="nav-text">Window 下安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-%E4%B8%8B%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.2.</span> <span class="nav-text">Linux 下安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ubuntu-%E4%B8%8B%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.3.</span> <span class="nav-text">Ubuntu 下安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8"><span class="nav-number">1.1.4.</span> <span class="nav-text">开机启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E6%94%BE%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.1.5.</span> <span class="nav-text">开放防火墙端口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC"><span class="nav-number">1.1.6.</span> <span class="nav-text">Redis 安装脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E5%8D%95%E6%9C%BA%E4%BD%BF%E7%94%A8%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">Redis 单机使用和配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-Redis"><span class="nav-number">1.2.1.</span> <span class="nav-text">启动 Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E5%B8%B8%E8%A7%81%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">Redis 常见配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E4%B8%BA%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">设为守护进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">远程访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">设置密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%A1%A8"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">配置参数表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">压力测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E9%9B%86%E7%BE%A4%E4%BD%BF%E7%94%A8%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">Redis 集群使用和配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E8%A7%84%E5%88%92"><span class="nav-number">1.3.1.</span> <span class="nav-text">集群规划</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E9%9B%86%E7%BE%A4"><span class="nav-number">1.3.2.</span> <span class="nav-text">部署集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%93%A8%E5%85%B5"><span class="nav-number">1.3.3.</span> <span class="nav-text">部署哨兵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9"><span class="nav-number">1.3.4.</span> <span class="nav-text">扩容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.</span> <span class="nav-text">Redis 命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">通用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.2.</span> <span class="nav-text">集群命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E5%88%86%E7%89%87"><span class="nav-number">1.4.3.</span> <span class="nav-text">重新分片</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.5.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/7cad568e/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 运维 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 运维<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/05.KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/Redis_%E8%BF%90%E7%BB%B4.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-24 10:45:38" itemprop="dateCreated datePublished" datetime="2020-06-24T10:45:38+08:00">2020-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">KV数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>18k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Redis-运维"><a href="#Redis-运维" class="headerlink" title="Redis 运维"></a>Redis 运维</h1><blockquote>
+<p><strong>Redis</strong> 是一个高性能的 key-value 数据库。</p>
+<p>SET 操作每秒钟 110000 次；GET 操作每秒钟 81000 次。</p>
+</blockquote>
+<h2 id="Redis-安装"><a href="#Redis-安装" class="headerlink" title="Redis 安装"></a>Redis 安装</h2><h3 id="Window-下安装"><a href="#Window-下安装" class="headerlink" title="Window 下安装"></a>Window 下安装</h3><p><strong>下载地址：</strong><a target="_blank" rel="noopener" href="https://github.com/MSOpenTech/redis/releases">https://github.com/MSOpenTech/redis/releases</a>。</p>
+<p>Redis 支持 32 位和 64 位。这个需要根据你系统平台的实际情况选择，这里我们下载 <strong>Redis-x64-xxx.zip</strong>压缩包到 C 盘，解压后，将文件夹重新命名为 <strong>redis</strong>。</p>
+<p>打开一个 <strong>cmd</strong> 窗口 使用 cd 命令切换目录到 <strong>C:\redis</strong> 运行 <strong>redis-server.exe redis.windows.conf</strong> 。</p>
+<p>如果想方便的话，可以把 redis 的路径加到系统的环境变量里，这样就省得再输路径了，后面的那个 redis.windows.conf 可以省略，如果省略，会启用默认的。</p>
+<p>这时候另启一个 cmd 窗口，原来的不要关闭，不然就无法访问服务端了。</p>
+<p>切换到 redis 目录下运行 <strong>redis-cli.exe -h 127.0.0.1 -p 6379</strong> 。</p>
+<h3 id="Linux-下安装"><a href="#Linux-下安装" class="headerlink" title="Linux 下安装"></a>Linux 下安装</h3><p><strong>下载地址：</strong> <a target="_blank" rel="noopener" href="http://redis.io/download%EF%BC%8C%E4%B8%8B%E8%BD%BD%E6%9C%80%E6%96%B0%E6%96%87%E6%A1%A3%E7%89%88%E6%9C%AC%E3%80%82">http://redis.io/download，下载最新文档版本。</a></p>
+<p>下载、解压、编译 Redis</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-5.0.4.tar.gz</span><br><span class="line">tar xzf redis-5.0.4.tar.gz</span><br><span class="line">cd redis-5.0.4</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p>为了编译 Redis 源码，你需要 gcc-c++和 tcl。如果你的系统是 CentOS，可以直接执行命令：<code>yum install -y gcc-c++ tcl</code> 来安装。</p>
+<p>进入到解压后的 <code>src</code> 目录，通过如下命令启动 Redis:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src/redis-server</span><br></pre></td></tr></table></figure>
+
+<p>您可以使用内置的客户端与 Redis 进行交互:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">src/redis-cli</span></span><br><span class="line"><span class="meta prompt_">redis&gt; </span><span class="language-bash"><span class="built_in">set</span> foo bar</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_">redis&gt; </span><span class="language-bash">get foo</span></span><br><span class="line">&quot;bar&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Ubuntu-下安装"><a href="#Ubuntu-下安装" class="headerlink" title="Ubuntu 下安装"></a>Ubuntu 下安装</h3><p>在 Ubuntu 系统安装 Redis 可以使用以下命令:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install redis-server</span><br></pre></td></tr></table></figure>
+
+<h3 id="开机启动"><a href="#开机启动" class="headerlink" title="开机启动"></a>开机启动</h3><ul>
+<li>开机启动配置：<code>echo &quot;/usr/local/bin/redis-server /etc/redis.conf&quot; &gt;&gt; /etc/rc.local</code></li>
+</ul>
+<h3 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h3><ul>
+<li>添加规则：<code>iptables -I INPUT -p tcp -m tcp --dport 6379 -j ACCEPT</code></li>
+<li>保存规则：<code>service iptables save</code></li>
+<li>重启 iptables：<code>service iptables restart</code></li>
+</ul>
+<h3 id="Redis-安装脚本"><a href="#Redis-安装脚本" class="headerlink" title="Redis 安装脚本"></a>Redis 安装脚本</h3><blockquote>
+<p>CentOS7 环境安装脚本：<a target="_blank" rel="noopener" href="https://github.com/dunwu/linux-tutorial/tree/master/codes/linux/soft">软件运维配置脚本集合</a></p>
+</blockquote>
+<p><strong>安装说明</strong></p>
+<ul>
+<li>采用编译方式安装 Redis, 并将其注册为 systemd 服务</li>
+<li>安装路径为：<code>/usr/local/redis</code></li>
+<li>默认下载安装 <code>5.0.4</code> 版本，端口号为：<code>6379</code>，密码为空</li>
+</ul>
+<p><strong>使用方法</strong></p>
+<ul>
+<li>默认安装 - 执行以下任意命令即可：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://gitee.com/turnon/linux-tutorial/raw/master/codes/linux/soft/redis-install.sh | bash</span><br><span class="line">wget -qO- https://gitee.com/turnon/linux-tutorial/raw/master/codes/linux/soft/redis-install.sh | bash</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自定义安装 - 下载脚本到本地，并按照以下格式执行：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh redis-install.sh [version] [port] [password]</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<ul>
+<li><code>version</code> - redis 版本号</li>
+<li><code>port</code> - redis 服务端口号</li>
+<li><code>password</code> - 访问密码</li>
+</ul>
+<h2 id="Redis-单机使用和配置"><a href="#Redis-单机使用和配置" class="headerlink" title="Redis 单机使用和配置"></a>Redis 单机使用和配置</h2><h3 id="启动-Redis"><a href="#启动-Redis" class="headerlink" title="启动 Redis"></a>启动 Redis</h3><p><strong>启动 redis 服务</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/redis/src</span><br><span class="line">./redis-server</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动 redis 客户端</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/redis/src</span><br><span class="line">./redis-cli</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看 redis 是否启动</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli</span><br></pre></td></tr></table></figure>
+
+<p>以上命令将打开以下终端：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+
+<p>127.0.0.1 是本机 IP ，6379 是 redis 服务端口。现在我们输入 PING 命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br></pre></td></tr></table></figure>
+
+<p>以上说明我们已经成功启动了 redis。</p>
+<h3 id="Redis-常见配置"><a href="#Redis-常见配置" class="headerlink" title="Redis 常见配置"></a>Redis 常见配置</h3><blockquote>
+<p>Redis 默认的配置文件是根目录下的 <code>redis.conf</code> 文件。</p>
+<p>如果需要指定特定文件作为配置文件，需要使用命令： <code>./redis-server -c xxx.conf</code></p>
+<p>每次修改配置后，需要重启才能生效。</p>
+<p>Redis 官方默认配置：</p>
+<ul>
+<li>自描述文档 <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/antirez/redis/2.8/redis.conf">redis.conf for Redis 2.8</a></li>
+<li>自描述文档 <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/antirez/redis/2.6/redis.conf">redis.conf for Redis 2.6</a>.</li>
+<li>自描述文档 <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/antirez/redis/2.4/redis.conf">redis.conf for Redis 2.4</a>.</li>
+</ul>
+<p>自 Redis2.6 起就可以直接通过命令行传递 Redis 配置参数。这种方法可以用于测试。自 Redis2.6 起就可以直接通过命令行传递 Redis 配置参数。这种方法可以用于测试。</p>
+</blockquote>
+<h3 id="设为守护进程"><a href="#设为守护进程" class="headerlink" title="设为守护进程"></a>设为守护进程</h3><p>Redis 默认以非守护进程方式启动，而通常我们会将 Redis 设为守护进程启动方式，配置：<code>daemonize yes</code></p>
+<h4 id="远程访问"><a href="#远程访问" class="headerlink" title="远程访问"></a>远程访问</h4><p>Redis 默认绑定 127.0.0.1，这样就只能本机才能访问，若要 Redis 允许远程访问，需要配置：<code>bind 0.0.0.0</code></p>
+<h4 id="设置密码"><a href="#设置密码" class="headerlink" title="设置密码"></a>设置密码</h4><p>Redis 默认访问不需要密码，如果需要设置密码，需要如下配置：</p>
+<ul>
+<li><code>protected-mode yes</code></li>
+<li><code>requirepass &lt;密码&gt;</code></li>
+</ul>
+<h4 id="配置参数表"><a href="#配置参数表" class="headerlink" title="配置参数表"></a>配置参数表</h4><table>
+<thead>
+<tr>
+<th align="left">配置项</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>daemonize no</code></td>
+<td align="left">Redis 默认不是以守护进程的方式运行，可以通过该配置项修改，使用 yes 启用守护进程（Windows 不支持守护线程的配置为 no ）</td>
+</tr>
+<tr>
+<td align="left"><code>pidfile /var/run/redis.pid</code></td>
+<td align="left">当 Redis 以守护进程方式运行时，Redis 默认会把 pid 写入 &#x2F;var&#x2F;run&#x2F;redis.pid 文件，可以通过 pidfile 指定</td>
+</tr>
+<tr>
+<td align="left"><code>port 6379</code></td>
+<td align="left">指定 Redis 监听端口，默认端口为 6379，作者在自己的一篇博文中解释了为什么选用 6379 作为默认端口，因为 6379 在手机按键上 MERZ 对应的号码，而 MERZ 取自意大利歌女 Alessia Merz 的名字</td>
+</tr>
+<tr>
+<td align="left"><code>bind 127.0.0.1</code></td>
+<td align="left">绑定的主机地址</td>
+</tr>
+<tr>
+<td align="left"><code>timeout 300</code></td>
+<td align="left">当客户端闲置多长时间后关闭连接，如果指定为 0，表示关闭该功能</td>
+</tr>
+<tr>
+<td align="left"><code>loglevel notice</code></td>
+<td align="left">指定日志记录级别，Redis 总共支持四个级别：debug、verbose、notice、warning，默认为 notice</td>
+</tr>
+<tr>
+<td align="left"><code>logfile stdout</code></td>
+<td align="left">日志记录方式，默认为标准输出，如果配置 Redis 为守护进程方式运行，而这里又配置为日志记录方式为标准输出，则日志将会发送给 &#x2F;dev&#x2F;null</td>
+</tr>
+<tr>
+<td align="left"><code>databases 16</code></td>
+<td align="left">设置数据库的数量，默认数据库为 0，可以使用 SELECT 命令在连接上指定数据库 id</td>
+</tr>
+<tr>
+<td align="left"><code>save &lt;seconds&gt; &lt;changes&gt;</code> Redis 默认配置文件中提供了三个条件：<strong>save 900 1</strong>、<strong>save 300 10</strong>、<strong>save 60 10000</strong> 分别表示 900 秒（15 分钟）内有 1 个更改，300 秒（5 分钟）内有 10 个更改以及 60 秒内有 10000 个更改。</td>
+<td align="left">指定在多长时间内，有多少次更新操作，就将数据同步到数据文件，可以多个条件配合</td>
+</tr>
+<tr>
+<td align="left"><code>rdbcompression yes</code></td>
+<td align="left">指定存储至本地数据库时是否压缩数据，默认为 yes，Redis 采用 LZF 压缩，如果为了节省 CPU 时间，可以关闭该选项，但会导致数据库文件变的巨大</td>
+</tr>
+<tr>
+<td align="left"><code>dbfilename dump.rdb</code></td>
+<td align="left">指定本地数据库文件名，默认值为 dump.rdb</td>
+</tr>
+<tr>
+<td align="left"><code>dir ./</code></td>
+<td align="left">指定本地数据库存放目录</td>
+</tr>
+<tr>
+<td align="left"><code>slaveof &lt;masterip&gt; &lt;masterport&gt;</code></td>
+<td align="left">设置当本机为 slav 服务时，设置 master 服务的 IP 地址及端口，在 Redis 启动时，它会自动从 master 进行数据同步</td>
+</tr>
+<tr>
+<td align="left"><code>masterauth &lt;master-password&gt;</code></td>
+<td align="left">当 master 服务设置了密码保护时，slav 服务连接 master 的密码</td>
+</tr>
+<tr>
+<td align="left"><code>requirepass foobared</code></td>
+<td align="left">设置 Redis 连接密码，如果配置了连接密码，客户端在连接 Redis 时需要通过 <code>AUTH &lt;password&gt;</code> 命令提供密码，默认关闭</td>
+</tr>
+<tr>
+<td align="left"><code>maxclients 128</code></td>
+<td align="left">设置同一时间最大客户端连接数，默认无限制，Redis 可以同时打开的客户端连接数为 Redis 进程可以打开的最大文件描述符数，如果设置 maxclients 0，表示不作限制。当客户端连接数到达限制时，Redis 会关闭新的连接并向客户端返回 max number of clients reached 错误信息</td>
+</tr>
+<tr>
+<td align="left"><code>maxmemory &lt;bytes&gt;</code></td>
+<td align="left">指定 Redis 最大内存限制，Redis 在启动时会把数据加载到内存中，达到最大内存后，Redis 会先尝试清除已到期或即将到期的 Key，当此方法处理 后，仍然到达最大内存设置，将无法再进行写入操作，但仍然可以进行读取操作。Redis 新的 vm 机制，会把 Key 存放内存，Value 会存放在 swap 区</td>
+</tr>
+<tr>
+<td align="left"><code>appendonly no</code></td>
+<td align="left">指定是否在每次更新操作后进行日志记录，Redis 在默认情况下是异步的把数据写入磁盘，如果不开启，可能会在断电时导致一段时间内的数据丢失。因为 redis 本身同步数据文件是按上面 save 条件来同步的，所以有的数据会在一段时间内只存在于内存中。默认为 no</td>
+</tr>
+<tr>
+<td align="left"><code>appendfilename appendonly.aof</code></td>
+<td align="left">指定更新日志文件名，默认为 appendonly.aof</td>
+</tr>
+<tr>
+<td align="left"><code>appendfsync everysec</code></td>
+<td align="left">指定更新日志条件，共有 3 个可选值：<strong>no</strong>：表示等操作系统进行数据缓存同步到磁盘（快）<strong>always</strong>：表示每次更新操作后手动调用 fsync() 将数据写到磁盘（慢，安全）<strong>everysec</strong>：表示每秒同步一次（折中，默认值）</td>
+</tr>
+<tr>
+<td align="left"><code>vm-enabled no</code></td>
+<td align="left">指定是否启用虚拟内存机制，默认值为 no，简单的介绍一下，VM 机制将数据分页存放，由 Redis 将访问量较少的页即冷数据 swap 到磁盘上，访问多的页面由磁盘自动换出到内存中（在后面的文章我会仔细分析 Redis 的 VM 机制）</td>
+</tr>
+<tr>
+<td align="left"><code>vm-swap-file /tmp/redis.swap</code></td>
+<td align="left">虚拟内存文件路径，默认值为 &#x2F;tmp&#x2F;redis.swap，不可多个 Redis 实例共享</td>
+</tr>
+<tr>
+<td align="left"><code>vm-max-memory 0</code></td>
+<td align="left">将所有大于 vm-max-memory 的数据存入虚拟内存，无论 vm-max-memory 设置多小，所有索引数据都是内存存储的(Redis 的索引数据 就是 keys)，也就是说，当 vm-max-memory 设置为 0 的时候，其实是所有 value 都存在于磁盘。默认值为 0</td>
+</tr>
+<tr>
+<td align="left"><code>vm-page-size 32</code></td>
+<td align="left">Redis swap 文件分成了很多的 page，一个对象可以保存在多个 page 上面，但一个 page 上不能被多个对象共享，vm-page-size 是要根据存储的 数据大小来设定的，作者建议如果存储很多小对象，page 大小最好设置为 32 或者 64bytes；如果存储很大大对象，则可以使用更大的 page，如果不确定，就使用默认值</td>
+</tr>
+<tr>
+<td align="left"><code>vm-pages 134217728</code></td>
+<td align="left">设置 swap 文件中的 page 数量，由于页表（一种表示页面空闲或使用的 bitmap）是在放在内存中的，，在磁盘上每 8 个 pages 将消耗 1byte 的内存。</td>
+</tr>
+<tr>
+<td align="left"><code>vm-max-threads 4</code></td>
+<td align="left">设置访问 swap 文件的线程数,最好不要超过机器的核数,如果设置为 0,那么所有对 swap 文件的操作都是串行的，可能会造成比较长时间的延迟。默认值为 4</td>
+</tr>
+<tr>
+<td align="left"><code>glueoutputbuf yes</code></td>
+<td align="left">设置在向客户端应答时，是否把较小的包合并为一个包发送，默认为开启</td>
+</tr>
+<tr>
+<td align="left"><code>hash-max-zipmap-entries 64 hash-max-zipmap-value 512</code></td>
+<td align="left">指定在超过一定的数量或者最大的元素超过某一临界值时，采用一种特殊的哈希算法</td>
+</tr>
+<tr>
+<td align="left"><code>activerehashing yes</code></td>
+<td align="left">指定是否激活重置哈希，默认为开启（后面在介绍 Redis 的哈希算法时具体介绍）</td>
+</tr>
+<tr>
+<td align="left"><code>include /path/to/local.conf</code></td>
+<td align="left">指定包含其它的配置文件，可以在同一主机上多个 Redis 实例之间使用同一份配置文件，而同时各个实例又拥有自己的特定配置文件</td>
+</tr>
+</tbody></table>
+<h3 id="压力测试"><a href="#压力测试" class="headerlink" title="压力测试"></a>压力测试</h3><blockquote>
+<p>参考官方文档：<a target="_blank" rel="noopener" href="https://redis.io/topics/benchmarks">How fast is Redis?</a></p>
+</blockquote>
+<p>Redis 自带了一个性能测试工具：<code>redis-benchmark</code></p>
+<p><strong>（1）基本测试</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-benchmark -q -n 100000</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-q</code> 表示静默（quiet）执行</li>
+<li><code>-n 100000</code> 请求 10 万次</li>
+</ul>
+<p><strong>（2）测试指定读写指令</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">redis-benchmark -t <span class="built_in">set</span>,lpush -n 100000 -q</span></span><br><span class="line">SET: 74239.05 requests per second</span><br><span class="line">LPUSH: 79239.30 requests per second</span><br></pre></td></tr></table></figure>
+
+<p><strong>（3）测试 pipeline 模式下指定读写指令</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis-benchmark -n 1000000 -t set,get -P 16 -q</span><br><span class="line">SET: 403063.28 requests per second</span><br><span class="line">GET: 508388.41 requests per second</span><br></pre></td></tr></table></figure>
+
+<h2 id="Redis-集群使用和配置"><a href="#Redis-集群使用和配置" class="headerlink" title="Redis 集群使用和配置"></a>Redis 集群使用和配置</h2><p>Redis 3.0 后支持集群模式。</p>
+<h3 id="集群规划"><a href="#集群规划" class="headerlink" title="集群规划"></a>集群规划</h3><p><code>Redis</code> 集群一般由 <strong>多个节点</strong> 组成，节点数量至少为 <code>6</code> 个，才能保证组成 <strong>完整高可用</strong> 的集群。</p>
+<p>理想情况当然是所有节点各自在不同的机器上，首先于资源，本人在部署 Redis 集群时，只得到 3 台服务器。所以，我计划每台服务器部署 2 个 Redis 节点。</p>
+<p>【示例】最简高可用 Redis 集群规划</p>
+<p>机器配置：16G 内存 + 8 核 CPU + 1T 磁盘</p>
+<p>Redis 进程分配 10 G 内存。一般线上生产环境，Redis 的内存尽量不要超过 10g，超过 10g 可能会有问题。</p>
+<p>集群拓扑：三主三从；三哨兵，每个哨兵监听所有主节点。</p>
+<p>估算性能：</p>
+<ul>
+<li>容量：三主，占用 30 G 内存，所以最大存储容量为 30 G。假设每条数据记录平均 大小为 10 K，则最大能存储 300 万条数据。</li>
+<li>吞吐量：单机一般 TPS&#x2F;QPS 为 五万到八万左右。假设为五万，那么三主三从架构理论上能达到 TPS 15 万，QPS 30 万。</li>
+</ul>
+<h3 id="部署集群"><a href="#部署集群" class="headerlink" title="部署集群"></a>部署集群</h3><blockquote>
+<p>Redis 集群节点的安装与单节点服务相同，差异仅在于部署方式。</p>
+<p>注意：为了演示方便，本示例将所有 Redis 集群节点都部署在一台机器上，实际生产环境中，基本都会将节点部署在不同机器上。要求更高的，可能还要考虑多机房部署。</p>
+</blockquote>
+<p>（1）创建节点目录</p>
+<p>我个人偏好将软件放在 <code>/opt</code> 目录下，在我的机器中，Redis 都安装在 <code>/usr/local/redis</code> 目录下。所以，下面的命令和配置都假设 Redis 安装目录为 <code>/usr/local/redis</code> 。</p>
+<p>确保机器上已经安装了 Redis 后，执行以下命令，创建 Redis 集群节点实例目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /usr/local/redis/conf/7001</span><br><span class="line">sudo mkdir -p /usr/local/redis/conf/7002</span><br><span class="line">sudo mkdir -p /usr/local/redis/conf/7003</span><br><span class="line">sudo mkdir -p /usr/local/redis/conf/7004</span><br><span class="line">sudo mkdir -p /usr/local/redis/conf/7005</span><br><span class="line">sudo mkdir -p /usr/local/redis/conf/7006</span><br></pre></td></tr></table></figure>
+
+<p>（2）配置集群节点</p>
+<p>每个实例目录下，新建 <code>redis.conf</code> 配置文件。</p>
+<p>实例配置模板以 7001 节点为例（其他节点，完全替换配置中的端口号 7001 即可），如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">端口号</span></span><br><span class="line">port 7001</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">绑定的主机端口（0.0.0.0 表示允许远程访问）</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以守护进程方式启动</span></span><br><span class="line">daemonize yes</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">开启集群模式</span></span><br><span class="line">cluster-enabled yes</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">集群的配置，配置文件首次启动自动生成</span></span><br><span class="line">cluster-config-file /usr/local/redis/conf/7001/7001.conf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">请求超时时间，设置 10 秒</span></span><br><span class="line">cluster-node-timeout 10000</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">开启 AOF 持久化</span></span><br><span class="line">appendonly yes</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">数据存放目录</span></span><br><span class="line">dir /usr/local/redis/conf/7001</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">进程文件</span></span><br><span class="line">pidfile /usr/local/redis/conf/7001/7001.pid</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">日志文件</span></span><br><span class="line">logfile /usr/local/redis/conf/7001/7001.log</span><br></pre></td></tr></table></figure>
+
+<p>（3）批量启动 Redis 节点</p>
+<p>Redis 的 utils&#x2F;create-cluster 目录下自带了一个名为 create-cluster 的脚本工具，可以利用它来新建、启动、停止、重启 Redis 节点。</p>
+<p>脚本中有几个关键参数：</p>
+<ul>
+<li><code>PORT</code>&#x3D;30000 - 初始端口号</li>
+<li><code>TIMEOUT</code>&#x3D;2000 - 超时时间</li>
+<li><code>NODES</code>&#x3D;6 - 节点数</li>
+<li><code>REPLICAS</code>&#x3D;1 - 备份数</li>
+</ul>
+<p>脚本中的每个命令项会根据初始端口号，以及设置的节点数，遍历的去执行操作。</p>
+<p>由于前面的规划中，节点端口是从 7001 ~ 7006，所以需要将 PORT 变量设为 7000。</p>
+<p>脚本中启动每个 Redis 节点是通过指定命令行参数来配置属性。所以，我们需要改一下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">PORT=7000</span><br><span class="line">TIMEOUT=2000</span><br><span class="line">NODES=6</span><br><span class="line">ENDPORT=$((PORT+NODES))</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">...</span></span><br><span class="line"></span><br><span class="line">if [ &quot;$1&quot; == &quot;start&quot; ]</span><br><span class="line">then</span><br><span class="line">    while [ $((PORT &lt; ENDPORT)) != &quot;0&quot; ]; do</span><br><span class="line">        PORT=$((PORT+1))</span><br><span class="line">        echo &quot;Starting $PORT&quot;</span><br><span class="line">        /usr/local/redis/src/redis-server /usr/local/redis/conf/$&#123;PORT&#125;/redis.conf</span><br><span class="line">    done</span><br><span class="line">    exit 0</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>好了，在每台服务器上，都执行 <code>./create-cluster start</code> 来启动节点。</p>
+<p>然后，通过 ps 命令来确认 Redis 进程是否已经工作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">root @ dbClusterDev01 <span class="keyword">in</span> /usr/local/redis/conf [11:07:55]</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">ps -ef | grep redis</span></span><br><span class="line">root      4604     1  0 11:07 ?        00:00:00 /opt/redis/src/redis-server 0.0.0.0:7001 [cluster]</span><br><span class="line">root      4609     1  0 11:07 ?        00:00:00 /opt/redis/src/redis-server 0.0.0.0:7002 [cluster]</span><br><span class="line">root      4614     1  0 11:07 ?        00:00:00 /opt/redis/src/redis-server 0.0.0.0:7003 [cluster]</span><br><span class="line">root      4619     1  0 11:07 ?        00:00:00 /opt/redis/src/redis-server 0.0.0.0:7004 [cluster]</span><br><span class="line">root      4624     1  0 11:07 ?        00:00:00 /opt/redis/src/redis-server 0.0.0.0:7005 [cluster]</span><br><span class="line">root      4629     1  0 11:07 ?        00:00:00 /opt/redis/src/redis-server 0.0.0.0:7006 [cluster]</span><br></pre></td></tr></table></figure>
+
+<p>（4）启动集群</p>
+<p>通过 <code>redis-cli --cluster create</code> 命令可以自动配置集群，如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 127.0.0.2:7003 127.0.0.2:7004 127.0.0.3:7005 127.0.0.3:7006 --cluster-replicas 1</span><br></pre></td></tr></table></figure>
+
+<p>redis-cluster 会根据设置的节点数和副本数自动分片（分配 Hash 虚拟槽 slot），如果满意，输入 yes ，直接开始分片。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Performing <span class="built_in">hash</span> slots allocation on 6 nodes...</span></span><br><span class="line">Master[0] -&gt; Slots 0 - 5460</span><br><span class="line">Master[1] -&gt; Slots 5461 - 10922</span><br><span class="line">Master[2] -&gt; Slots 10923 - 16383</span><br><span class="line">Adding replica 127.0.0.2:7004 to 127.0.0.1:7001</span><br><span class="line">Adding replica 127.0.0.3:7006 to 127.0.0.2:7003</span><br><span class="line">Adding replica 127.0.0.1:7002 to 127.0.0.3:7005</span><br><span class="line">M: b721235997deb6b9a7a2be690b5b9663db8057c6 127.0.0.1:7001</span><br><span class="line">   slots:[0-5460] (5461 slots) master</span><br><span class="line">S: bda9b7036df0bbefe601bda4ce45d3787a2e9bd9 127.0.0.1:7002</span><br><span class="line">   replicates 3623fff69b5243ed18c02a2fbb6f53069b0f1505</span><br><span class="line">M: 91523c0391a044da6cc9f53bb965aabe89502187 127.0.0.2:7003</span><br><span class="line">   slots:[5461-10922] (5462 slots) master</span><br><span class="line">S: 9d899cbe49dead7b8c4f769920cdb75714a441ae 127.0.0.2:7004</span><br><span class="line">   replicates b721235997deb6b9a7a2be690b5b9663db8057c6</span><br><span class="line">M: 3623fff69b5243ed18c02a2fbb6f53069b0f1505 127.0.0.3:7005</span><br><span class="line">   slots:[10923-16383] (5461 slots) master</span><br><span class="line">S: a2869dc153ea4977ca790b76483574a5d56cb40e 127.0.0.3:7006</span><br><span class="line">   replicates 91523c0391a044da6cc9f53bb965aabe89502187</span><br><span class="line">Can I set the above configuration? (type &#x27;yes&#x27; to accept): yes</span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Nodes configuration updated</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Assign a different config epoch to each node</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Sending CLUSTER MEET messages to <span class="built_in">join</span> the cluster</span></span><br><span class="line">Waiting for the cluster to join</span><br><span class="line">....</span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Performing Cluster Check (using node 127.0.0.1:7001)</span></span><br><span class="line">M: b721235997deb6b9a7a2be690b5b9663db8057c6 127.0.0.1:7001</span><br><span class="line">   slots:[0-5460] (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: a2869dc153ea4977ca790b76483574a5d56cb40e 127.0.0.1:7006</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 91523c0391a044da6cc9f53bb965aabe89502187</span><br><span class="line">M: 91523c0391a044da6cc9f53bb965aabe89502187 127.0.0.1:7003</span><br><span class="line">   slots:[5461-10922] (5462 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">M: 3623fff69b5243ed18c02a2fbb6f53069b0f1505 127.0.0.1:7005</span><br><span class="line">   slots:[10923-16383] (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: 9d899cbe49dead7b8c4f769920cdb75714a441ae 127.0.0.1:7004</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates b721235997deb6b9a7a2be690b5b9663db8057c6</span><br><span class="line">S: bda9b7036df0bbefe601bda4ce45d3787a2e9bd9 127.0.0.1:7002</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 3623fff69b5243ed18c02a2fbb6f53069b0f1505</span><br><span class="line">[OK] All nodes agree about slots configuration.</span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Check <span class="keyword">for</span> open slots...</span></span><br><span class="line"><span class="meta prompt_">&gt;</span><span class="language-bash">&gt;&gt; Check slots coverage...</span></span><br><span class="line">[OK] All 16384 slots covered.</span><br></pre></td></tr></table></figure>
+
+<p>（5）日常维护操作</p>
+<ul>
+<li>关闭集群 - <code>./create-cluster stop</code></li>
+<li>检查集群是否健康（指定任意节点即可）：<code>./redis-cli --cluster check &lt;ip:port&gt;</code></li>
+<li>尝试修复集群节点：<code>./redis-cli --cluster fix &lt;ip:port&gt;</code></li>
+</ul>
+<h3 id="部署哨兵"><a href="#部署哨兵" class="headerlink" title="部署哨兵"></a>部署哨兵</h3><p>redis-cluster 实现了 Redis 的分片、复制。</p>
+<p>但 redis-cluster 没有解决故障转移问题，一旦任意分片的 Master 节点宕机、网络不通，就会导致 redis-cluster 的集群不能工作。为了解决高可用的问题，Redis 提供了 Redis 哨兵来监控 Redis 节点状态，并且会在 Master 宕机时，发起选举，将这个 Master 的一个 Slave 节点选举为 Master。</p>
+<p>（1）创建节点目录</p>
+<p>我个人偏好将软件放在 <code>/opt</code> 目录下，在我的机器中，Redis 都安装在 <code>/usr/local/redis</code> 目录下。所以，下面的命令和配置都假设 Redis 安装目录为 <code>/usr/local/redis</code> 。</p>
+<p>确保机器上已经安装了 Redis 后，执行以下命令，创建 Redis 集群节点实例目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /usr/local/redis/conf/27001</span><br><span class="line">sudo mkdir -p /usr/local/redis/conf/27002</span><br><span class="line">sudo mkdir -p /usr/local/redis/conf/27003</span><br></pre></td></tr></table></figure>
+
+<p>（2）配置集群节点</p>
+<p>每个实例目录下，新建 <code>redis.conf</code> 配置文件。</p>
+<p>实例配置模板以 7001 节点为例（其他节点，完全替换配置中的端口号 7001 即可），如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">port 27001</span><br><span class="line">daemonize yes</span><br><span class="line">sentinel monitor redis-master 172.22.6.3 7001 2</span><br><span class="line">sentinel down-after-milliseconds redis-master 5000</span><br><span class="line">sentinel failover-timeout redis-master 900000</span><br><span class="line">sentinel parallel-syncs redis-master 1</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">sentinel auth-pass redis-master 123456</span></span><br><span class="line">logfile /usr/local/redis/conf/27001/27001.log</span><br></pre></td></tr></table></figure>
+
+<p>（3）批量启动哨兵节点</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">/opt/</span>redis<span class="regexp">/src/</span>redis-sentinel <span class="regexp">/usr/</span>local<span class="regexp">/redis/</span>conf<span class="regexp">/27001/</span>sentinel.conf</span><br><span class="line"><span class="regexp">/opt/</span>redis<span class="regexp">/src/</span>redis-sentinel <span class="regexp">/usr/</span>local<span class="regexp">/redis/</span>conf<span class="regexp">/27002/</span>sentinel.conf</span><br><span class="line"><span class="regexp">/opt/</span>redis<span class="regexp">/src/</span>redis-sentinel <span class="regexp">/usr/</span>local<span class="regexp">/redis/</span>conf<span class="regexp">/27003/</span>sentinel.conf</span><br></pre></td></tr></table></figure>
+
+<h3 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h3><p>（1）查看信息</p>
+<p>进入任意节点</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-<span class="keyword">cli</span> -h <span class="number">172.22</span><span class="number">.6</span><span class="number">.3</span> -p <span class="number">7001</span></span><br></pre></td></tr></table></figure>
+
+<p>cluster info 查看集群节点状态</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">172</span>.<span class="number">22</span>.<span class="number">6</span>.<span class="number">3</span>:<span class="number">7001</span>&gt; cluster nodes</span><br><span class="line"><span class="attribute">f158bf70bb2767cac271ce4efcfc14ba0b7ca98b</span> <span class="number">172.22.6.3:7006</span>@<span class="number">17006</span> slave e7aa182e756b76ec85b471797db9b66e4b2da725 <span class="number">0</span> <span class="number">1594528179000</span> <span class="number">6</span> connected</span><br><span class="line"><span class="attribute">f348e67648460c7a800120d69b4977bf2e4524cb</span> <span class="number">172.22.6.3:7001</span>@<span class="number">17001</span> myself,master - <span class="number">0</span> <span class="number">1594528179000</span> <span class="number">1</span> connected <span class="number">0</span>-<span class="number">5460</span></span><br><span class="line"><span class="attribute">52601e2d4af0e64b83f4cc6d20e8316d0ac38b99</span> <span class="number">172.22.6.3:7004</span>@<span class="number">17004</span> slave <span class="number">4802</span>fafe897160c46392c6e569d6f5e466cca696 <span class="number">0</span> <span class="number">1594528178000</span> <span class="number">4</span> connected</span><br><span class="line"><span class="attribute">c6c6a68674ae8aac3c6ec792c8af4dc1228c6c31</span> <span class="number">172.22.6.3:7005</span>@<span class="number">17005</span> slave f348e67648460c7a800120d69b4977bf2e4524cb <span class="number">0</span> <span class="number">1594528179852</span> <span class="number">5</span> connected</span><br><span class="line"><span class="attribute">e7aa182e756b76ec85b471797db9b66e4b2da725</span> <span class="number">172.22.6.3:7002</span>@<span class="number">17002</span> master - <span class="number">0</span> <span class="number">1594528178000</span> <span class="number">2</span> connected <span class="number">5461</span>-<span class="number">10922</span></span><br><span class="line"><span class="attribute">4802fafe897160c46392c6e569d6f5e466cca696</span> <span class="number">172.22.6.3:7003</span>@<span class="number">17003</span> master - <span class="number">0</span> <span class="number">1594528178000</span> <span class="number">3</span> connected <span class="number">10923</span>-<span class="number">16383</span></span><br></pre></td></tr></table></figure>
+
+<p>cluster info 查看集群信息</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">172</span>.<span class="number">22</span>.<span class="number">6</span>.<span class="number">3</span>:<span class="number">7001</span>&gt; cluster info</span><br><span class="line"><span class="attribute">cluster_state</span>:ok</span><br><span class="line"><span class="attribute">cluster_slots_assigned</span>:<span class="number">16384</span></span><br><span class="line"><span class="attribute">cluster_slots_ok</span>:<span class="number">16384</span></span><br><span class="line"><span class="attribute">cluster_slots_pfail</span>:<span class="number">0</span></span><br><span class="line"><span class="attribute">cluster_slots_fail</span>:<span class="number">0</span></span><br><span class="line"><span class="attribute">cluster_known_nodes</span>:<span class="number">6</span></span><br><span class="line"><span class="attribute">cluster_size</span>:<span class="number">3</span></span><br><span class="line"><span class="attribute">cluster_current_epoch</span>:<span class="number">6</span></span><br><span class="line"><span class="attribute">cluster_my_epoch</span>:<span class="number">1</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_ping_sent</span>:<span class="number">3406</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_pong_sent</span>:<span class="number">3569</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_publish_sent</span>:<span class="number">5035</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_sent</span>:<span class="number">12010</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_ping_received</span>:<span class="number">3564</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_pong_received</span>:<span class="number">3406</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_meet_received</span>:<span class="number">5</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_publish_received</span>:<span class="number">5033</span></span><br><span class="line"><span class="attribute">cluster_stats_messages_received</span>:<span class="number">12008</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）添加节点到集群</p>
+<p>将已启动的节点实例添加到集群中</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli --cluster<span class="built_in"> add-node </span>127.0.0.1:7007 127.0.0.1:7008</span><br></pre></td></tr></table></figure>
+
+<p><strong>添加主节点</strong></p>
+<p>添加一组主节点</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.</span>/redis-cli --cluster<span class="built_in"> add-node </span>172.22.6.3:7007 172.22.6.3:7001</span><br><span class="line"><span class="keyword">.</span>/redis-cli --cluster<span class="built_in"> add-node </span>172.22.6.3:7008 172.22.6.3:7001</span><br><span class="line"><span class="keyword">.</span>/redis-cli --cluster<span class="built_in"> add-node </span>172.22.6.3:7009 172.22.6.3:7001</span><br></pre></td></tr></table></figure>
+
+<p>查看节点状态</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">172</span>.<span class="number">22</span>.<span class="number">6</span>.<span class="number">3</span>:<span class="number">7001</span>&gt; cluster nodes</span><br><span class="line"><span class="attribute">f158bf70bb2767cac271ce4efcfc14ba0b7ca98b</span> <span class="number">172.22.6.3:7006</span>@<span class="number">17006</span> slave e7aa182e756b76ec85b471797db9b66e4b2da725 <span class="number">0</span> <span class="number">1594529342575</span> <span class="number">6</span> connected</span><br><span class="line"><span class="attribute">f348e67648460c7a800120d69b4977bf2e4524cb</span> <span class="number">172.22.6.3:7001</span>@<span class="number">17001</span> myself,master - <span class="number">0</span> <span class="number">1594529340000</span> <span class="number">1</span> connected <span class="number">0</span>-<span class="number">5460</span></span><br><span class="line"><span class="attribute">55cacf121662833a4a19dbeb4a5df712cfedf77f</span> <span class="number">172.22.6.3:7009</span>@<span class="number">17009</span> master - <span class="number">0</span> <span class="number">1594529342000</span> <span class="number">0</span> connected</span><br><span class="line"><span class="attribute">c6c6a68674ae8aac3c6ec792c8af4dc1228c6c31</span> <span class="number">172.22.6.3:7005</span>@<span class="number">17005</span> slave f348e67648460c7a800120d69b4977bf2e4524cb <span class="number">0</span> <span class="number">1594529341573</span> <span class="number">5</span> connected</span><br><span class="line"><span class="attribute">4802fafe897160c46392c6e569d6f5e466cca696</span> <span class="number">172.22.6.3:7003</span>@<span class="number">17003</span> master - <span class="number">0</span> <span class="number">1594529343577</span> <span class="number">3</span> connected <span class="number">10923</span>-<span class="number">16383</span></span><br><span class="line"><span class="attribute">e7aa182e756b76ec85b471797db9b66e4b2da725</span> <span class="number">172.22.6.3:7002</span>@<span class="number">17002</span> master - <span class="number">0</span> <span class="number">1594529342000</span> <span class="number">2</span> connected <span class="number">5461</span>-<span class="number">10922</span></span><br><span class="line"><span class="attribute">e5ba78fe629115977a74fbbe1478caf8868d6d55</span> <span class="number">172.22.6.3:7007</span>@<span class="number">17007</span> master - <span class="number">0</span> <span class="number">1594529341000</span> <span class="number">0</span> connected</span><br><span class="line"><span class="attribute">52601e2d4af0e64b83f4cc6d20e8316d0ac38b99</span> <span class="number">172.22.6.3:7004</span>@<span class="number">17004</span> slave <span class="number">4802</span>fafe897160c46392c6e569d6f5e466cca696 <span class="number">0</span> <span class="number">1594529340000</span> <span class="number">4</span> connected</span><br><span class="line"><span class="attribute">79d4fffc2cec210556c3b4c44e63ab506e87eda3</span> <span class="number">172.22.6.3:7008</span>@<span class="number">17008</span> master - <span class="number">0</span> <span class="number">1594529340000</span> <span class="number">7</span> connected</span><br></pre></td></tr></table></figure>
+
+<p>可以发现，新加入的三个主节点，还没有分配哈希槽，所以，暂时还无法访问。</p>
+<p><strong>添加从节点</strong></p>
+<p>–slave：设置该参数，则新节点以 slave 的角色加入集群<br>–master-id：这个参数需要设置了–slave 才能生效，–master-id 用来指定新节点的 master 节点。如果不设置该参数，则会随机为节点选择 master 节点。</p>
+<p>语法</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis-cli --cluster<span class="built_in"> add-node </span> 新节点IP地址：端口    存在节点IP：端口 --cluster-slave （从节点） --cluster-master-id （master节点的ID）</span><br><span class="line">redis-cli --cluster<span class="built_in"> add-node </span>  10.42.141.119:6379  10.42.166.105:6379  --cluster-slave   --cluster-master-id  dfa238fff8a7a49230cff7eb74f573f5645c8ec5</span><br></pre></td></tr></table></figure>
+
+<p>示例</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">.</span>/redis-cli --cluster<span class="built_in"> add-node </span>172.22.6.3:7010 172.22.6.3:7007 --cluster-slave</span><br><span class="line"><span class="keyword">.</span>/redis-cli --cluster<span class="built_in"> add-node </span>172.22.6.3:7011 172.22.6.3:7008 --cluster-slave</span><br><span class="line"><span class="keyword">.</span>/redis-cli --cluster<span class="built_in"> add-node </span>172.22.6.3:7012 172.22.6.3:7009 --cluster-slave</span><br></pre></td></tr></table></figure>
+
+<p>查看状态</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">172</span>.<span class="number">22</span>.<span class="number">6</span>.<span class="number">3</span>:<span class="number">7001</span>&gt; cluster nodes</span><br><span class="line"><span class="attribute">ef5c1b9ce4cc795dc12b2c1e8736a572647b4c3e</span> <span class="number">172.22.6.3:7011</span>@<span class="number">17011</span> slave <span class="number">79</span>d4fffc2cec210556c3b4c44e63ab506e87eda3 <span class="number">0</span> <span class="number">1594529492043</span> <span class="number">7</span> connected</span><br><span class="line"><span class="attribute">f158bf70bb2767cac271ce4efcfc14ba0b7ca98b</span> <span class="number">172.22.6.3:7006</span>@<span class="number">17006</span> slave e7aa182e756b76ec85b471797db9b66e4b2da725 <span class="number">0</span> <span class="number">1594529491943</span> <span class="number">6</span> connected</span><br><span class="line"><span class="attribute">f348e67648460c7a800120d69b4977bf2e4524cb</span> <span class="number">172.22.6.3:7001</span>@<span class="number">17001</span> myself,master - <span class="number">0</span> <span class="number">1594529488000</span> <span class="number">1</span> connected <span class="number">0</span>-<span class="number">5460</span></span><br><span class="line"><span class="attribute">5140d1129ed850df59c51cf818c4eb74545d9959</span> <span class="number">172.22.6.3:7010</span>@<span class="number">17010</span> slave e5ba78fe629115977a74fbbe1478caf8868d6d55 <span class="number">0</span> <span class="number">1594529488000</span> <span class="number">0</span> connected</span><br><span class="line"><span class="attribute">55cacf121662833a4a19dbeb4a5df712cfedf77f</span> <span class="number">172.22.6.3:7009</span>@<span class="number">17009</span> master - <span class="number">0</span> <span class="number">1594529488000</span> <span class="number">8</span> connected</span><br><span class="line"><span class="attribute">c6c6a68674ae8aac3c6ec792c8af4dc1228c6c31</span> <span class="number">172.22.6.3:7005</span>@<span class="number">17005</span> slave f348e67648460c7a800120d69b4977bf2e4524cb <span class="number">0</span> <span class="number">1594529490000</span> <span class="number">5</span> connected</span><br><span class="line"><span class="attribute">4802fafe897160c46392c6e569d6f5e466cca696</span> <span class="number">172.22.6.3:7003</span>@<span class="number">17003</span> master - <span class="number">0</span> <span class="number">1594529489939</span> <span class="number">3</span> connected <span class="number">10923</span>-<span class="number">16383</span></span><br><span class="line"><span class="attribute">e7aa182e756b76ec85b471797db9b66e4b2da725</span> <span class="number">172.22.6.3:7002</span>@<span class="number">17002</span> master - <span class="number">0</span> <span class="number">1594529491000</span> <span class="number">2</span> connected <span class="number">5461</span>-<span class="number">10922</span></span><br><span class="line"><span class="attribute">e5ba78fe629115977a74fbbe1478caf8868d6d55</span> <span class="number">172.22.6.3:7007</span>@<span class="number">17007</span> master - <span class="number">0</span> <span class="number">1594529490942</span> <span class="number">0</span> connected</span><br><span class="line"><span class="attribute">52601e2d4af0e64b83f4cc6d20e8316d0ac38b99</span> <span class="number">172.22.6.3:7004</span>@<span class="number">17004</span> slave <span class="number">4802</span>fafe897160c46392c6e569d6f5e466cca696 <span class="number">0</span> <span class="number">1594529491000</span> <span class="number">4</span> connected</span><br><span class="line"><span class="attribute">02e9f57b5b45c350dc57acf1c8efa8db136db7b7</span> <span class="number">172.22.6.3:7012</span>@<span class="number">17012</span> master - <span class="number">0</span> <span class="number">1594529489000</span> <span class="number">0</span> connected</span><br><span class="line"><span class="attribute">79d4fffc2cec210556c3b4c44e63ab506e87eda3</span> <span class="number">172.22.6.3:7008</span>@<span class="number">17008</span> master - <span class="number">0</span> <span class="number">1594529489000</span> <span class="number">7</span> connected</span><br></pre></td></tr></table></figure>
+
+<p>分配哈希槽</p>
+<p>执行 <code>./redis-cli --cluster rebalance 172.22.6.3:7001 --cluster-threshold 1 --cluster-use-empty-masters</code></p>
+<p>参数说明：</p>
+<p>rebalance：表明让 Redis 自动根据节点数进行均衡哈希槽分配。</p>
+<p>–cluster-use-empty-masters：表明</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200712125827.png" alt="img"></p>
+<p>执行结束后，查看状态：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200712130234.png" alt="img"></p>
+<h2 id="Redis-命令"><a href="#Redis-命令" class="headerlink" title="Redis 命令"></a>Redis 命令</h2><h3 id="通用命令"><a href="#通用命令" class="headerlink" title="通用命令"></a>通用命令</h3><blockquote>
+<p>命令详细用法，请参考 <a target="_blank" rel="noopener" href="https://redis.io/commands"><strong>Redis 命令官方文档</strong></a></p>
+<p>搬迁两张 cheat sheet 图，原址：<a target="_blank" rel="noopener" href="https://www.cheatography.com/tasjaevan/cheat-sheets/redis/">https://www.cheatography.com/tasjaevan/cheat-sheets/redis/</a></p>
+</blockquote>
+<h3 id="集群命令"><a href="#集群命令" class="headerlink" title="集群命令"></a>集群命令</h3><ul>
+<li><strong>集群</strong><ul>
+<li><code>cluster info</code> - 打印集群的信息</li>
+<li><code>cluster nodes</code> - 列出集群当前已知的所有节点（ node），以及这些节点的相关信息。</li>
+</ul>
+</li>
+<li><strong>节点</strong><ul>
+<li><code>cluster meet &lt;ip&gt; &lt;port&gt;</code> - 将 ip 和 port 所指定的节点添加到集群当中，让它成为集群的一份子。</li>
+<li><code>cluster forget &lt;node_id&gt;</code> - 从集群中移除 node_id 指定的节点。</li>
+<li><code>cluster replicate &lt;node_id&gt;</code> - 将当前节点设置为 node_id 指定的节点的从节点。</li>
+<li><code>cluster saveconfig</code> - 将节点的配置文件保存到硬盘里面。</li>
+</ul>
+</li>
+<li><strong>槽(slot)</strong><ul>
+<li><code>cluster addslots &lt;slot&gt; [slot ...]</code> - 将一个或多个槽（ slot）指派（ assign）给当前节点。</li>
+<li><code>cluster delslots &lt;slot&gt; [slot ...]</code> - 移除一个或多个槽对当前节点的指派。</li>
+<li><code>cluster flushslots</code> - 移除指派给当前节点的所有槽，让当前节点变成一个没有指派任何槽的节点。</li>
+<li><code>cluster setslot &lt;slot&gt; node &lt;node_id&gt;</code> - 将槽 slot 指派给 node_id 指定的节点，如果槽已经指派给另一个节点，那么先让另一个节点删除该槽&gt;，然后再进行指派。</li>
+<li><code>cluster setslot &lt;slot&gt; migrating &lt;node_id&gt;</code> - 将本节点的槽 slot 迁移到 node_id 指定的节点中。</li>
+<li><code>cluster setslot &lt;slot&gt; importing &lt;node_id&gt;</code> - 从 node_id 指定的节点中导入槽 slot 到本节点。</li>
+<li><code>cluster setslot &lt;slot&gt; stable</code> - 取消对槽 slot 的导入（ import）或者迁移（ migrate）。</li>
+</ul>
+</li>
+<li><strong>键</strong><ul>
+<li><code>cluster keyslot &lt;key&gt;</code> - 计算键 key 应该被放置在哪个槽上。</li>
+<li><code>cluster countkeysinslot &lt;slot&gt;</code> - 返回槽 slot 目前包含的键值对数量。</li>
+<li><code>cluster getkeysinslot &lt;slot&gt; &lt;count&gt;</code> - 返回 count 个 slot 槽中的键。</li>
+</ul>
+</li>
+</ul>
+<h3 id="重新分片"><a href="#重新分片" class="headerlink" title="重新分片"></a>重新分片</h3><p>添加节点：.&#x2F;redis-cli –cluster add-node 192.168.1.136:7007 192.168.1.136:7001 –cluster-slave</p>
+<p>redis-cli –cluster reshard 172.22.6.3 7001</p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>推荐使用 <a target="_blank" rel="noopener" href="https://github.com/uglide/RedisDesktopManager"><strong>RedisDesktopManager</strong></a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><strong>官网</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://redis.io/">Redis 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/antirez/redis">Redis Github</a></li>
+<li><a target="_blank" rel="noopener" href="http://redis.cn/">Redis 官方文档中文版</a></li>
+</ul>
+</li>
+<li><strong>书籍</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11791607.html">《Redis 实战》</a></li>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11486101.html">《Redis 设计与实现》</a></li>
+</ul>
+</li>
+<li><strong>教程</strong><ul>
+<li><a target="_blank" rel="noopener" href="http://redisdoc.com/">Redis 命令参考</a></li>
+</ul>
+</li>
+<li><strong>文章</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5b8fc5536fb9a05d2d01fb11">深入剖析 Redis 系列(三) - Redis 集群模式搭建与原理详解</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/7cad568e/" title="Redis 运维">https://dunwu.github.io/blog/pages/7cad568e/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># KV数据库</a>
+              <a href="/blog/tags/%E8%BF%90%E7%BB%B4/" rel="tag"># 运维</a>
+              <a href="/blog/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/ce65c23b/" rel="prev" title="Flink 入门">
+                  <i class="fa fa-angle-left"></i> Flink 入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/7fdb1c11/" rel="next" title="Redis 集群">
+                  Redis 集群 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"0e66d7510bf56d923764145cfc9922d6"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="《深入理解 Sentinel》笔记开篇词：一次服务雪崩问题排查经历 什么是服务雪崩  服务雪崩是指：在微服务项目中指由于突发流量导致某个服务不可用，从而导致上游服务不可用，并产生级联效应，最终导致整个系统不可用。 当一切正常时，整体系统如下所示：  在分布式系统架构下，这些强依赖的子服务稳定与否对系统的影响非常大。但是，依赖的子服务可能有很多不可控问题：如网络连接、资源繁忙、服务宕机等。例如：下图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《深入理解 Sentinel》笔记">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/331a65c9/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="《深入理解 Sentinel》笔记开篇词：一次服务雪崩问题排查经历 什么是服务雪崩  服务雪崩是指：在微服务项目中指由于突发流量导致某个服务不可用，从而导致上游服务不可用，并产生级联效应，最终导致整个系统不可用。 当一切正常时，整体系统如下所示：  在分布式系统架构下，这些强依赖的子服务稳定与否对系统的影响非常大。但是，依赖的子服务可能有很多不可控问题：如网络连接、资源繁忙、服务宕机等。例如：下图">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931974.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931939.png">
+<meta property="og:image" content="https://github.com/Netflix/Hystrix/wiki/images/soa-3-640.png">
+<meta property="article:published_time" content="2024-05-26T22:58:23.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.696Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="调度">
+<meta property="article:tag" content="限流">
+<meta property="article:tag" content="熔断">
+<meta property="article:tag" content="降级">
+<meta property="article:tag" content="Sentinel">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931974.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/331a65c9/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/331a65c9/","path":"/pages/331a65c9/","title":"《深入理解 Sentinel》笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《深入理解 Sentinel》笔记 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-Sentinel%E3%80%8B%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">《深入理解 Sentinel》笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E7%AF%87%E8%AF%8D%EF%BC%9A%E4%B8%80%E6%AC%A1%E6%9C%8D%E5%8A%A1%E9%9B%AA%E5%B4%A9%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E7%BB%8F%E5%8E%86"><span class="nav-number">1.1.</span> <span class="nav-text">开篇词：一次服务雪崩问题排查经历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%9C%8D%E5%8A%A1%E9%99%8D%E7%BA%A7%E4%BB%A5%E5%8F%8A%E5%B8%B8%E8%A7%81%E7%9A%84%E5%87%A0%E7%A7%8D%E9%99%8D%E7%BA%A7%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">为什么需要服务降级以及常见的几种降级方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Sentinel%EF%BC%8CSentinel-%E4%B8%8E-Hystrix-%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-number">1.3.</span> <span class="nav-text">为什么选择 Sentinel，Sentinel 与 Hystrix 的对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E5%AE%9E%E6%97%B6%E6%8C%87%E6%A0%87%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1"><span class="nav-number">1.4.</span> <span class="nav-text">Sentinel 基于滑动窗口的实时指标数据统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%B1%BB%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.5.</span> <span class="nav-text">Sentinel 的一些概念与核心类介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-%E4%B8%AD%E7%9A%84%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E4%B8%8E-Sentinel-%E7%9A%84%E6%95%B4%E4%BD%93%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.6.</span> <span class="nav-text">Sentinel 中的责任链模式与 Sentinel 的整体工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-SPI-%E5%8F%8A-SPI-%E5%9C%A8-Sentinel-%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.7.</span> <span class="nav-text">Java SPI 及 SPI 在 Sentinel 中的应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#08-%E8%B5%84%E6%BA%90%E6%8C%87%E6%A0%87%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%85%A8%E8%A7%A3%E6%9E%90%EF%BC%88%E4%B8%8A%EF%BC%89"><span class="nav-number">1.8.</span> <span class="nav-text">08 资源指标数据统计的实现全解析（上）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#09-%E8%B5%84%E6%BA%90%E6%8C%87%E6%A0%87%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%85%A8%E8%A7%A3%E6%9E%90%EF%BC%88%E4%B8%8B%EF%BC%89"><span class="nav-number">1.9.</span> <span class="nav-text">09 资源指标数据统计的实现全解析（下）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E9%99%90%E6%B5%81%E9%99%8D%E7%BA%A7%E4%B8%8E%E6%B5%81%E9%87%8F%E6%95%88%E6%9E%9C%E6%8E%A7%E5%88%B6%E5%99%A8%EF%BC%88%E4%B8%8A%EF%BC%89"><span class="nav-number">1.10.</span> <span class="nav-text">10 限流降级与流量效果控制器（上）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E9%99%90%E6%B5%81%E9%99%8D%E7%BA%A7%E4%B8%8E%E6%B5%81%E9%87%8F%E6%95%88%E6%9E%9C%E6%8E%A7%E5%88%B6%E5%99%A8%EF%BC%88%E4%B8%AD%EF%BC%89"><span class="nav-number">1.11.</span> <span class="nav-text">11 限流降级与流量效果控制器（中）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E9%99%90%E6%B5%81%E9%99%8D%E7%BA%A7%E4%B8%8E%E6%B5%81%E9%87%8F%E6%95%88%E6%9E%9C%E6%8E%A7%E5%88%B6%E5%99%A8%EF%BC%88%E4%B8%8B%EF%BC%89"><span class="nav-number">1.12.</span> <span class="nav-text">12 限流降级与流量效果控制器（下）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E7%86%94%E6%96%AD%E9%99%8D%E7%BA%A7%E4%B8%8E%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81"><span class="nav-number">1.13.</span> <span class="nav-text">13 熔断降级与系统自适应限流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95%E9%99%90%E6%B5%81%E4%B8%8E%E7%83%AD%E7%82%B9%E5%8F%82%E6%95%B0%E9%99%90%E6%B5%81"><span class="nav-number">1.14.</span> <span class="nav-text">14 黑白名单限流与热点参数限流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-%E8%87%AA%E5%AE%9A%E4%B9%89-ProcessorSlot-%E5%AE%9E%E7%8E%B0%E5%BC%80%E5%85%B3%E9%99%8D%E7%BA%A7"><span class="nav-number">1.15.</span> <span class="nav-text">15 自定义 ProcessorSlot 实现开关降级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-Sentinel-%E5%8A%A8%E6%80%81%E6%95%B0%E6%8D%AE%E6%BA%90%EF%BC%9A%E8%A7%84%E5%88%99%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE"><span class="nav-number">1.16.</span> <span class="nav-text">16 Sentinel 动态数据源：规则动态配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-Sentinel-%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E9%80%82%E9%85%8D"><span class="nav-number">1.17.</span> <span class="nav-text">17 Sentinel 主流框架适配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-Sentinel-%E9%9B%86%E7%BE%A4%E9%99%90%E6%B5%81%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%88%E4%B8%8A%EF%BC%89"><span class="nav-number">1.18.</span> <span class="nav-text">18 Sentinel 集群限流的实现（上）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-Sentinel-%E9%9B%86%E7%BE%A4%E9%99%90%E6%B5%81%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%88%E4%B8%8B%EF%BC%89"><span class="nav-number">1.19.</span> <span class="nav-text">19 Sentinel 集群限流的实现（下）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-%E7%BB%93%E6%9D%9F%E8%AF%AD%EF%BC%9ASentinel-%E5%AF%B9%E5%BA%94%E7%94%A8%E7%9A%84%E6%80%A7%E8%83%BD%E5%BD%B1%E5%93%8D%E5%A6%82%E4%BD%95%EF%BC%9F"><span class="nav-number">1.20.</span> <span class="nav-text">20 结束语：Sentinel 对应用的性能影响如何？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E7%95%AA%E5%A4%96%E7%AF%87%EF%BC%9ASentinel-1-8-0-%E7%86%94%E6%96%AD%E9%99%8D%E7%BA%A7%E6%96%B0%E7%89%B9%E6%80%A7%E8%A7%A3%E8%AF%BB"><span class="nav-number">1.21.</span> <span class="nav-text">21 番外篇：Sentinel 1.8.0 熔断降级新特性解读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%96%99"><span class="nav-number">1.22.</span> <span class="nav-text">资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/331a65c9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="《深入理解 Sentinel》笔记 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《深入理解 Sentinel》笔记<a href="https://github.com/dunwu/blog/blob/master/source/_posts/00.%E7%AC%94%E8%AE%B0/15.%E5%88%86%E5%B8%83%E5%BC%8F/12.%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Sentinel%E7%AC%94%E8%AE%B0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-05-27 06:58:23" itemprop="dateCreated datePublished" datetime="2024-05-27T06:58:23+08:00">2024-05-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/" itemprop="url" rel="index"><span itemprop="name">分布式调度</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="《深入理解-Sentinel》笔记"><a href="#《深入理解-Sentinel》笔记" class="headerlink" title="《深入理解 Sentinel》笔记"></a>《深入理解 Sentinel》笔记</h1><h2 id="开篇词：一次服务雪崩问题排查经历"><a href="#开篇词：一次服务雪崩问题排查经历" class="headerlink" title="开篇词：一次服务雪崩问题排查经历"></a>开篇词：一次服务雪崩问题排查经历</h2><blockquote>
+<p><strong>什么是服务雪崩</strong></p>
+</blockquote>
+<p><strong>服务雪崩</strong>是指：在微服务项目中指由于突发流量导致某个服务不可用，从而导致上游服务不可用，并产生级联效应，最终导致整个系统不可用。</p>
+<p>当一切正常时，整体系统如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931974.png"></p>
+<p>在分布式系统架构下，这些强依赖的子服务稳定与否对系统的影响非常大。但是，依赖的子服务可能有很多不可控问题：如网络连接、资源繁忙、服务宕机等。例如：下图中有一个 QPS 为 50 的依赖服务 I 出现不可用，但是其他依赖服务是可用的。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931939.png"></p>
+<p>当流量很大的情况下，某个依赖的阻塞，会导致上游服务请求被阻塞。当这种级联故障愈演愈烈，就可能造成整个线上服务不可用的雪崩效应，如下图。这种情况若持续恶化，如果上游服务本身还被其他服务所依赖，就可能出现多米洛骨牌效应，导致多个服务都无法正常工作。</p>
+<p><img src="https://github.com/Netflix/Hystrix/wiki/images/soa-3-640.png" alt="img"></p>
+<h2 id="为什么需要服务降级以及常见的几种降级方式"><a href="#为什么需要服务降级以及常见的几种降级方式" class="headerlink" title="为什么需要服务降级以及常见的几种降级方式"></a>为什么需要服务降级以及常见的几种降级方式</h2><p>服务降级是为了保障服务能够稳定运行的一种保护方式，应对流量突增用降级牺牲一些流量换取系统的稳定。常见的服务降级实现方式有：开关降级、限流降级、熔断降级。</p>
+<p>限流降级与熔断降级都可以实现在消费端限流或者服务端限流，限流可以根据流量控制策略处理超过阈值的流量。</p>
+<ul>
+<li>限流即便没有达到系统的瓶颈，只要流量达到设定的阈值，就会触发限流；</li>
+<li>熔断尽最大的可能去完成所有的请求，容忍一些失败，熔断也能自动恢复。熔断的常见降级策略：<ul>
+<li>在每秒请求异常数超过多少时触发熔断降级</li>
+<li>在每秒请求异常错误率超过多少时触发熔断降级</li>
+<li>在每秒请求平均耗时超过多少时触发熔断降级</li>
+</ul>
+</li>
+</ul>
+<p>开关降级适用于促销活动这种可以明确预估到并发会突增的场景。</p>
+<h2 id="为什么选择-Sentinel，Sentinel-与-Hystrix-的对比"><a href="#为什么选择-Sentinel，Sentinel-与-Hystrix-的对比" class="headerlink" title="为什么选择 Sentinel，Sentinel 与 Hystrix 的对比"></a>为什么选择 Sentinel，Sentinel 与 Hystrix 的对比</h2><table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">Sentinel</th>
+<th align="left">Hystrix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">社区活跃度</td>
+<td align="left">Github 13K star</td>
+<td align="left">官方停止维护</td>
+</tr>
+<tr>
+<td align="left">隔离策略</td>
+<td align="left">信号量隔离</td>
+<td align="left">线程池隔离&#x2F;信号量隔离</td>
+</tr>
+<tr>
+<td align="left">熔断降级策略</td>
+<td align="left">基于响应时间或失败比率</td>
+<td align="left">基于失败比率</td>
+</tr>
+<tr>
+<td align="left">实时指标实现</td>
+<td align="left">滑动窗口</td>
+<td align="left">滑动窗口（基于 RxJava）</td>
+</tr>
+<tr>
+<td align="left">规则配置</td>
+<td align="left">支持多种数据源</td>
+<td align="left">支持多种数据源</td>
+</tr>
+<tr>
+<td align="left">扩展性</td>
+<td align="left">多个 SPI 扩展点</td>
+<td align="left">插件的形式</td>
+</tr>
+<tr>
+<td align="left">基于注解的支持</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left">限流</td>
+<td align="left">基于 QPS，支持基于调用关系的限流</td>
+<td align="left">有限的支持</td>
+</tr>
+<tr>
+<td align="left">流量整形</td>
+<td align="left">支持慢启动、匀速器模式</td>
+<td align="left">不支持</td>
+</tr>
+<tr>
+<td align="left">系统负载保护</td>
+<td align="left">支持</td>
+<td align="left">不支持</td>
+</tr>
+<tr>
+<td align="left">控制台</td>
+<td align="left">开箱即用，可配置规则、查看秒级监控、机器发现等</td>
+<td align="left">不完善</td>
+</tr>
+<tr>
+<td align="left">常见框架的适配</td>
+<td align="left">Servlet、Spring Cloud、Dubbo、gRPC 等</td>
+<td align="left">Servlet、Spring Cloud Netflix</td>
+</tr>
+</tbody></table>
+<h2 id="Sentinel-基于滑动窗口的实时指标数据统计"><a href="#Sentinel-基于滑动窗口的实时指标数据统计" class="headerlink" title="Sentinel 基于滑动窗口的实时指标数据统计"></a>Sentinel 基于滑动窗口的实时指标数据统计</h2><ul>
+<li>WindowWrap 用于包装 Bucket，随着 Bucket 一起创建。</li>
+<li>WindowWrap 数组实现滑动窗口，Bucket 只负责统计各项指标数据，WindowWrap 用于记录 Bucket 的时间窗口信息。</li>
+<li>定位 Bucket 实际上是定位 WindowWrap，拿到 WindowWrap 就能拿到 Bucket。</li>
+</ul>
+<h2 id="Sentinel-的一些概念与核心类介绍"><a href="#Sentinel-的一些概念与核心类介绍" class="headerlink" title="Sentinel 的一些概念与核心类介绍"></a>Sentinel 的一些概念与核心类介绍</h2><ul>
+<li>资源：资源是 Sentinel 的关键概念。资源，可以是一个方法、一段代码、由应用提供的接口，或者由应用调用其它应用的接口。</li>
+<li>规则：围绕资源的实时状态设定的规则，包括流量控制规则、熔断降级规则以及系统保护规则、自定义规则。</li>
+<li>降级：在流量剧增的情况下，为保证系统能够正常运行，根据资源的实时状态、访问流量以及系统负载有策略的拒绝掉一部分流量。</li>
+</ul>
+<p>核心类：</p>
+<p><code>ResourceWrapper</code> 类用于表示资源。</p>
+<p><code>Node</code> 用于持有实时统计的指标数据。它有几个实现类：<code>DefaultNode</code>、<code>ClusterNode</code>、<code>EntranceNode</code>、<code>StatisticNode</code>。</p>
+<ul>
+<li>StatisticNode 是实现实时指标数据统计 Node。</li>
+<li>DefaultNode 是实现以资源为维度的指标数据统计的 Node。</li>
+<li>ClusterNode 统计每个资源全局的指标数据，以及统计该资源按调用来源区分的指标数据。</li>
+<li>EntranceNode 继承 DefaultNode，用于维护一颗树，从根节点到每个叶子节点都是不同请求的调用链路，所经过的每个节点都对应着调用链路上被 Sentinel 保护的资源，一个请求调用链路上的节点顺序正是资源被访问的顺序。</li>
+<li>Context 代表调用链路上下文，贯穿一次调用链路中的所有 Entry。Context 维持着入口节点（entranceNode）、本次调用链路的 curNode、调用来源（origin）等信息。Context 名称即为调用链路入口名称。Context 通过 ThreadLocal 传递，只在调用链路的入口处创建。</li>
+<li>Entry 维护了当前资源的 DefaultNode，以及调用来源的 StatisticNode。</li>
+<li>ProcessorSlot 直译就是处理器插槽，是 Sentinel 实现限流降级、熔断降级、系统自适应降级等功能的切入点。Sentinel 提供的 ProcessorSlot 可以分为两类，一类是辅助完成资源指标数据统计的切入点，一类是实现降级功能的切入点。实现降级功能的 ProcessorSlot：<ul>
+<li>AuthoritySlot：实现黑白名单降级</li>
+<li>SystemSlot：实现系统自适应降级</li>
+<li>FlowSlot：实现限流降级</li>
+<li>DegradeSlot：实现熔断降级</li>
+</ul>
+</li>
+</ul>
+<h2 id="Sentinel-中的责任链模式与-Sentinel-的整体工作流程"><a href="#Sentinel-中的责任链模式与-Sentinel-的整体工作流程" class="headerlink" title="Sentinel 中的责任链模式与 Sentinel 的整体工作流程"></a>Sentinel 中的责任链模式与 Sentinel 的整体工作流程</h2><p>Sentinel 的工作流就是使用责任链模式将所有的 ProcessorSlot 按照一定的顺序串成一个单向链表。</p>
+<p>实现将 ProcessorSlot 串成一个单向链表的是 ProcessorSlotChain，这个 ProcessorSlotChain 是由 SlotChainBuilder 构造的。</p>
+<h2 id="Java-SPI-及-SPI-在-Sentinel-中的应用"><a href="#Java-SPI-及-SPI-在-Sentinel-中的应用" class="headerlink" title="Java SPI 及 SPI 在 Sentinel 中的应用"></a>Java SPI 及 SPI 在 Sentinel 中的应用</h2><p>SPI 全称是 Service Provider Interface，直译就是服务提供者接口，是一种服务发现机制，是 Java 的一个内置标准，允许不同的开发者去实现某个特定的服务。SPI 的本质是将接口实现类的全限定名配置在文件中，由服务加载器读取配置文件，加载实现类，实现在运行时动态替换接口的实现类。</p>
+<p>在 sentinel-core 模块的 resources 资源目录下，有一个 META-INF&#x2F;services 目录，该目录下有两个以接口全名命名的文件，其中 com.alibaba.csp.sentinel.slotchain.SlotChainBuilder 文件用于配置 SlotChainBuilder 接口的实现类。</p>
+<h2 id="08-资源指标数据统计的实现全解析（上）"><a href="#08-资源指标数据统计的实现全解析（上）" class="headerlink" title="08 资源指标数据统计的实现全解析（上）"></a>08 资源指标数据统计的实现全解析（上）</h2><p>NodeSelectorSlot 负责为资源的首次访问创建 DefaultNode，以及维护 Context.curNode 和调用树。NodeSelectorSlot 被放在 ProcessorSlotChain 链表的第一个位置，这是因为后续的 ProcessorSlot 都需要依赖这个 ProcessorSlot。</p>
+<h2 id="09-资源指标数据统计的实现全解析（下）"><a href="#09-资源指标数据统计的实现全解析（下）" class="headerlink" title="09 资源指标数据统计的实现全解析（下）"></a>09 资源指标数据统计的实现全解析（下）</h2><ul>
+<li>一个调用链路上只会创建一个 Context，在调用链路的入口创建（一个调用链路上第一个被 Sentinel 保护的资源）。</li>
+<li>一个 Context 名称只创建一个 EntranceNode，也是在调用链路的入口创建，调用 Context#enter 方法时创建。</li>
+<li>与方法调用的入栈出栈一样，一个线程上调用多少次 SphU#entry 方法就会创建多少个 CtEntry，前一个 CtEntry 作为当前 CtEntry 的父节点，当前 CtEntry 作为前一个 CtEntry 的子节点，构成一个双向链表。Context.curEntry 保存的是当前的 CtEntry，在调用当前的 CtEntry#exit 方法时，由当前 CtEntry 将 Context.curEntry 还原为当前 CtEntry 的父节点 CtEntry。</li>
+<li>一个调用链路上，如果多次调用 SphU#entry 方法传入的资源名称都相同，那么只会创建一个 DefaultNode，如果资源名称不同，会为每个资源名称创建一个 DefaultNode，当前 DefaultNode 会作为调用链路上的前一个 DefaultNode 的子节点。</li>
+<li>一个资源有且只有一个 ProcessorSlotChain，一个资源有且只有一个 ClusterNode。</li>
+<li>一个 ClusterNode 负责统计一个资源的全局指标数据。</li>
+<li>StatisticSlot 负责记录请求是否被放行、请求是否被拒绝、请求是否处理异常、处理请求的耗时等指标数据，在 StatisticSlot 调用 DefaultNode 用于记录某项指标数据的方法时，DefaultNode 也会调用 ClusterNode 的相对应方法，完成两份指标数据的收集。</li>
+<li>DefaultNode 统计当前资源的各项指标数据的维度是同一个 Context（名称相同），而 ClusterNode 统计当前资源各项指标数据的维度是全局。</li>
+</ul>
+<h2 id="10-限流降级与流量效果控制器（上）"><a href="#10-限流降级与流量效果控制器（上）" class="headerlink" title="10 限流降级与流量效果控制器（上）"></a>10 限流降级与流量效果控制器（上）</h2><h2 id="11-限流降级与流量效果控制器（中）"><a href="#11-限流降级与流量效果控制器（中）" class="headerlink" title="11 限流降级与流量效果控制器（中）"></a>11 限流降级与流量效果控制器（中）</h2><h2 id="12-限流降级与流量效果控制器（下）"><a href="#12-限流降级与流量效果控制器（下）" class="headerlink" title="12 限流降级与流量效果控制器（下）"></a>12 限流降级与流量效果控制器（下）</h2><h2 id="13-熔断降级与系统自适应限流"><a href="#13-熔断降级与系统自适应限流" class="headerlink" title="13 熔断降级与系统自适应限流"></a>13 熔断降级与系统自适应限流</h2><h2 id="14-黑白名单限流与热点参数限流"><a href="#14-黑白名单限流与热点参数限流" class="headerlink" title="14 黑白名单限流与热点参数限流"></a>14 黑白名单限流与热点参数限流</h2><h2 id="15-自定义-ProcessorSlot-实现开关降级"><a href="#15-自定义-ProcessorSlot-实现开关降级" class="headerlink" title="15 自定义 ProcessorSlot 实现开关降级"></a>15 自定义 ProcessorSlot 实现开关降级</h2><h2 id="16-Sentinel-动态数据源：规则动态配置"><a href="#16-Sentinel-动态数据源：规则动态配置" class="headerlink" title="16 Sentinel 动态数据源：规则动态配置"></a>16 Sentinel 动态数据源：规则动态配置</h2><h2 id="17-Sentinel-主流框架适配"><a href="#17-Sentinel-主流框架适配" class="headerlink" title="17 Sentinel 主流框架适配"></a>17 Sentinel 主流框架适配</h2><h2 id="18-Sentinel-集群限流的实现（上）"><a href="#18-Sentinel-集群限流的实现（上）" class="headerlink" title="18 Sentinel 集群限流的实现（上）"></a>18 Sentinel 集群限流的实现（上）</h2><h2 id="19-Sentinel-集群限流的实现（下）"><a href="#19-Sentinel-集群限流的实现（下）" class="headerlink" title="19 Sentinel 集群限流的实现（下）"></a>19 Sentinel 集群限流的实现（下）</h2><h2 id="20-结束语：Sentinel-对应用的性能影响如何？"><a href="#20-结束语：Sentinel-对应用的性能影响如何？" class="headerlink" title="20 结束语：Sentinel 对应用的性能影响如何？"></a>20 结束语：Sentinel 对应用的性能影响如何？</h2><h2 id="21-番外篇：Sentinel-1-8-0-熔断降级新特性解读"><a href="#21-番外篇：Sentinel-1-8-0-熔断降级新特性解读" class="headerlink" title="21 番外篇：Sentinel 1.8.0 熔断降级新特性解读"></a>21 番外篇：Sentinel 1.8.0 熔断降级新特性解读</h2><h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><p><a target="_blank" rel="noopener" href="https://wujiuye.com/album/52c96863a60441829497e98226e2c337">https://wujiuye.com/album/52c96863a60441829497e98226e2c337</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/331a65c9/" title="《深入理解 Sentinel》笔记">https://dunwu.github.io/blog/pages/331a65c9/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E8%B0%83%E5%BA%A6/" rel="tag"># 调度</a>
+              <a href="/blog/tags/%E9%99%90%E6%B5%81/" rel="tag"># 限流</a>
+              <a href="/blog/tags/%E7%86%94%E6%96%AD/" rel="tag"># 熔断</a>
+              <a href="/blog/tags/%E9%99%8D%E7%BA%A7/" rel="tag"># 降级</a>
+              <a href="/blog/tags/Sentinel/" rel="tag"># Sentinel</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/c30183a4/" rel="prev" title="服务注册和发现">
+                  <i class="fa fa-angle-left"></i> 服务注册和发现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/f38610f8/" rel="next" title="Java 基础面试一">
+                  Java 基础面试一 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"4330b2891815d8220d1d9a88ceabe7bb"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

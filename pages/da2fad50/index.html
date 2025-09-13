@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Kafka 可靠传输消息不丢失如何保证消息的可靠性传输，或者说，如何保证消息不丢失？这对于任何 MQ 都是核心问题。 一条消息从生产到消费，可以划分三个阶段：   生产阶段：Producer 创建消息，并通过网络发送给 Broker。 存储阶段：Broker 收到消息并存储，如果是集群，还要同步副本给其他 Broker。 消费阶段：Consumer 向 Broker 请求消息，Broker 通过网">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka 可靠传输">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/da2fad50/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Kafka 可靠传输消息不丢失如何保证消息的可靠性传输，或者说，如何保证消息不丢失？这对于任何 MQ 都是核心问题。 一条消息从生产到消费，可以划分三个阶段：   生产阶段：Producer 创建消息，并通过网络发送给 Broker。 存储阶段：Broker 收到消息并存储，如果是集群，还要同步副本给其他 Broker。 消费阶段：Consumer 向 Broker 请求消息，Broker 通过网">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070727544.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200727140159.png">
+<meta property="article:published_time" content="2021-04-14T07:05:34.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.750Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="mq">
+<meta property="article:tag" content="kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070727544.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/da2fad50/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/da2fad50/","path":"/pages/da2fad50/","title":"Kafka 可靠传输"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kafka 可靠传输 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka-%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93"><span class="nav-number">1.</span> <span class="nav-text">Kafka 可靠传输</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E4%B8%8D%E4%B8%A2%E5%A4%B1"><span class="nav-number">1.1.</span> <span class="nav-text">消息不丢失</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.1.</span> <span class="nav-text">存储阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">副本机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%E6%95%B0"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">副本数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%AE%8C%E5%85%A8%E7%9A%84%E9%80%89%E4%B8%BB"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">不完全的选主</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%B0%91%E5%90%8C%E6%AD%A5%E5%89%AF%E6%9C%AC"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">最少同步副本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.2.</span> <span class="nav-text">生产阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ACK"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">ACK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E8%AF%95"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">重试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">错误处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.3.</span> <span class="nav-text">消费阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E8%80%85%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">消费者的可靠性配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E6%8F%90%E4%BA%A4%E5%81%8F%E7%A7%BB%E9%87%8F"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">显示提交偏移量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E6%B6%88%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text">重复消息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%94%AF%E4%B8%80%E7%BA%A6%E6%9D%9F%E5%AE%9E%E7%8E%B0%E5%B9%82%E7%AD%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">利用数据库的唯一约束实现幂等</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E6%9B%B4%E6%96%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%AE%BE%E7%BD%AE%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">为更新的数据设置前置条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E5%B9%B6%E6%A3%80%E6%9F%A5%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.3.</span> <span class="nav-text">记录并检查操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%9A%84%E6%9C%89%E5%BA%8F%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">消息的有序性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80%E3%80%81%E5%8D%95-Partition"><span class="nav-number">1.3.1.</span> <span class="nav-text">方案一、单 Partition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C%E3%80%81%E5%90%8C%E4%B8%80%E4%B8%AA-key-%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E7%BB%99%E6%8C%87%E5%AE%9A-Partition"><span class="nav-number">1.3.2.</span> <span class="nav-text">方案二、同一个 key 的消息发送给指定 Partition</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%A7%AF%E5%8E%8B"><span class="nav-number">1.4.</span> <span class="nav-text">消息积压</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E7%B3%BB%E7%BB%9F%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.5.</span> <span class="nav-text">验证系统可靠性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.6.</span> <span class="nav-text">最佳实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/da2fad50/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Kafka 可靠传输 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kafka 可靠传输<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/21.%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/02.MQ/01.Kafka/Kafka%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-14 15:05:34" itemprop="dateCreated datePublished" datetime="2021-04-14T15:05:34+08:00">2021-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/" itemprop="url" rel="index"><span itemprop="name">分布式通信</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/MQ/" itemprop="url" rel="index"><span itemprop="name">MQ</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/MQ/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Kafka-可靠传输"><a href="#Kafka-可靠传输" class="headerlink" title="Kafka 可靠传输"></a>Kafka 可靠传输</h1><h2 id="消息不丢失"><a href="#消息不丢失" class="headerlink" title="消息不丢失"></a>消息不丢失</h2><p>如何保证消息的可靠性传输，或者说，如何保证消息不丢失？这对于任何 MQ 都是核心问题。</p>
+<p>一条消息从生产到消费，可以划分三个阶段：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070727544.png"></p>
+<ul>
+<li><strong>生产阶段</strong>：Producer 创建消息，并通过网络发送给 Broker。</li>
+<li><strong>存储阶段</strong>：Broker 收到消息并存储，如果是集群，还要同步副本给其他 Broker。</li>
+<li><strong>消费阶段</strong>：Consumer 向 Broker 请求消息，Broker 通过网络传输给 Consumer。</li>
+</ul>
+<p>这三个阶段都可能丢失数据，所以要保证消息丢失，就需要任意一环都保证可靠。</p>
+<h3 id="存储阶段"><a href="#存储阶段" class="headerlink" title="存储阶段"></a>存储阶段</h3><p>存储阶段指的是 Kafka Server，也就是 Broker 如何保证消息不丢失。</p>
+<p>一句话概括，<strong>Kafka 只对“已提交”的消息（committed message）做有限度的持久化保证</strong>。</p>
+<p>上面的话可以解读为：</p>
+<ul>
+<li><strong>已提交</strong>：<strong>只有当消息被写入分区的若干同步副本时，才被认为是已提交的</strong>。为什么是若干个 Broker 呢？这取决于你对“已提交”的定义。你可以选择只要 Leader 成功保存该消息就算是已提交，也可以是令所有 Broker 都成功保存该消息才算是已提交。</li>
+<li><strong>持久化</strong>：Kafka 的数据存储在磁盘上，所以只要写入成功，天然就是持久化的。</li>
+<li><strong>只要还有一个副本是存活的，那么已提交的消息就不会丢失</strong>。</li>
+<li><strong>消费者只能读取已提交的消息</strong>。</li>
+</ul>
+<h4 id="副本机制"><a href="#副本机制" class="headerlink" title="副本机制"></a>副本机制</h4><p><strong>Kafka 的副本机制是 kafka 可靠性保证的核心</strong>。</p>
+<p>Kafka 的主题被分为多个分区，分区是基本的数据块。每个分区可以有多个副本，有一个是 Leader（主副本），其他是 Follower（从副本）。所有数据都直接发送给 Leader，或者直接从 Leader 读取事件。Follower 只需要与 Leader 保持同步，并及时复制最新的数据。当 Leader 宕机时，从 Follower 中选举一个成为新的 Leader。</p>
+<p>Broker 有 3 个配置参数会影响 Kafka 消息存储的可靠性。</p>
+<h4 id="副本数"><a href="#副本数" class="headerlink" title="副本数"></a>副本数</h4><p><strong><code>replication.factor</code> 的作用是设置每个分区的副本数</strong>。<code>replication.factor</code> 是主题级别配置； <code>default.replication.factor</code> 是 broker 级别配置。</p>
+<p>副本数越多，数据可靠性越高；但由于副本数增多，也会增加同步副本的开销，可能会降低集群的可用性。一般，建议设为 3，这也是 Kafka 的默认值。</p>
+<h4 id="不完全的选主"><a href="#不完全的选主" class="headerlink" title="不完全的选主"></a>不完全的选主</h4><p><code>unclean.leader.election.enable</code> 用于控制是否支持不同步的副本参与选举 Leader。<code>unclean.leader.election.enable</code> 是 broker 级别（实际上是集群范围内）配置，默认值为 true。</p>
+<ul>
+<li>如果设为 true，代表着<strong>允许不同步的副本成为主副本</strong>（即不完全的选举），那么将<strong>面临丢失消息的风险</strong>；</li>
+<li>如果设为 false，就要<strong>等待原先的主副本重新上线</strong>，从而降低了可用性。</li>
+</ul>
+<h4 id="最少同步副本"><a href="#最少同步副本" class="headerlink" title="最少同步副本"></a>最少同步副本</h4><p><strong><code>min.insync.replicas</code> 控制的是消息至少要被写入到多少个副本才算是“已提交”</strong>。<code>min.insync.replicas</code> 是主题级别和 broker 级别配置。</p>
+<p>尽管可以为一个主题配置 3 个副本，但还是可能会出现只有一个同步副本的情况。如果这个同步副本变为不可用，则必须在可用性和数据一致性之间做出选择。Kafka 中，消息只有被写入到所有的同步副本之后才被认为是已提交的。但如果只有一个同步副本，那么在这个副本不可用时，则数据就会丢失。</p>
+<p>如果要确保已经提交的数据被已写入不止一个副本，就需要把最小同步副本的设置为大一点的值。</p>
+<blockquote>
+<p>注意：要确保 <code>replication.factor</code> &gt; <code>min.insync.replicas</code>。如果两者相等，那么只要有一个副本挂机，整个分区就无法正常工作了。我们不仅要改善消息的持久性，防止数据丢失，还要在不降低可用性的基础上完成。推荐设置成 <code>replication.factor = min.insync.replicas + 1</code>。</p>
+</blockquote>
+<h3 id="生产阶段"><a href="#生产阶段" class="headerlink" title="生产阶段"></a>生产阶段</h3><p>在生产消息阶段，消息队列一般通过请求确认机制，来保证消息的可靠传递，Kafka 也不例外。</p>
+<p><a href="Kafka%E7%94%9F%E4%BA%A7">Kafka 生产</a> 中提到了，Kafka 有三种发送方式：同步、异步、异步回调。</p>
+<p>同步方式能保证消息不丢失，但性能太差；异步方式发送消息，通常会立即返回，但消息可能丢失。</p>
+<p>解决生产者丢失消息的方案：</p>
+<p>生产者使用异步回调方式 <code>producer.send(msg, callback)</code> 发送消息。callback（回调）能准确地告诉你消息是否真的提交成功了。一旦出现消息提交失败的情况，你就可以有针对性地进行处理。</p>
+<ul>
+<li>如果是因为那些瞬时错误，那么仅仅让 Producer 重试就可以了；</li>
+<li>如果是消息不合格造成的，那么可以调整消息格式后再次发送。</li>
+</ul>
+<p>然后，需要基于以下几点来保证 Kafka 生产者的可靠性：</p>
+<h4 id="ACK"><a href="#ACK" class="headerlink" title="ACK"></a>ACK</h4><p>生产者可选的确认模式有三种：<code>acks=0</code>、<code>acks=1</code>、<code>acks=all</code>。</p>
+<ul>
+<li><p><code>acks=0</code>、<code>acks=1</code> 都有丢失数据的风险。</p>
+</li>
+<li><p><code>acks=all</code> 意味着会等待所有同步副本都收到消息。再结合 <code>min.insync.replicas</code> ，就可以决定在得到确认响应前，至少有多少副本能够收到消息。</p>
+</li>
+</ul>
+<p>这是最保险的做法，但也会降低吞吐量。</p>
+<h4 id="重试"><a href="#重试" class="headerlink" title="重试"></a>重试</h4><p>如果 broker 返回的错误可以通过<strong>重试</strong>来解决，生产者会自动处理这些错误。</p>
+<ul>
+<li><strong>可重试错误</strong>，如：<code>LEADER_NOT_AVAILABLE</code>，主副本不可用，可能过一段时间，集群就会选举出新的主副本，重试可以解决问题。</li>
+<li><strong>不可重试错误</strong>，如：<code>INVALID_CONFIG</code>，即使重试，也无法改变配置选项，重试没有意义。</li>
+</ul>
+<p>需要注意的是：有时可能因为网络问题导致没有收到确认，但实际上消息已经写入成功。生产者会认为出现临时故障，重试发送消息，这样就会出现重复记录。所以，尽可能在业务上保证幂等性。</p>
+<p>设置 <code>retries</code> 为一个较大的值。这里的 <code>retries</code> 同样是 Producer 的参数，对应前面提到的 Producer 自动重试。当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了 retries &gt; 0 的 Producer 能够自动重试消息发送，避免消息丢失。</p>
+<h4 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h4><p>开发者需要自行处理的错误：</p>
+<ul>
+<li>不可重试的 broker 错误，如消息大小错误、认证错误等；</li>
+<li>消息发送前发生的错误，如序列化错误；</li>
+<li>生产者达到重试次数上限或消息占用的内存达到上限时发生的错误。</li>
+</ul>
+<h3 id="消费阶段"><a href="#消费阶段" class="headerlink" title="消费阶段"></a>消费阶段</h3><p>前文已经提到，<strong>消费者只能读取已提交的消息</strong>。这就保证了消费者接收到消息时已经具备了数据一致性。</p>
+<p>消费者唯一要做的是确保哪些消息是已经读取过的，哪些是没有读取过的（通过提交偏移量给 Broker 来确认）。如果消费者提交了偏移量却未能处理完消息，那么就有可能造成消息丢失，这也是消费者丢失消息的主要原因。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200727140159.png" alt="img"></p>
+<h4 id="消费者的可靠性配置"><a href="#消费者的可靠性配置" class="headerlink" title="消费者的可靠性配置"></a>消费者的可靠性配置</h4><ul>
+<li><code>group.id</code> - 如果希望消费者可以看到主题的所有消息，那么需要为它们设置唯一的 <code>group.id</code>。</li>
+<li><code>auto.offset.reset</code> - 有两个选项：<ul>
+<li><code>earliest</code> - 消费者会从分区的开始位置读取数据</li>
+<li><code>latest</code> - 消费者会从分区末尾位置读取数据</li>
+</ul>
+</li>
+<li><code>enable.auto.commit</code> - 消费者自动提交偏移量。如果设为 true，处理流程更简单，但无法保证重复处理消息。</li>
+<li><code>auto.commit.interval.ms</code> - 自动提交的频率，默认为每 5 秒提交一次。</li>
+</ul>
+<h4 id="显示提交偏移量"><a href="#显示提交偏移量" class="headerlink" title="显示提交偏移量"></a>显示提交偏移量</h4><blockquote>
+<p>如果 <code>enable.auto.commit</code> 设为 true，即自动提交，就无需考虑提交偏移量的问题。</p>
+</blockquote>
+<p>如果选择显示提交偏移量，需要考虑以下问题：</p>
+<ul>
+<li>必须在处理完消息后再发送确认（提交偏移量），不要收到消息立即确认。</li>
+<li>提交频率是性能和重复消息数之间的权衡</li>
+<li>分区再均衡</li>
+<li>消费可能需要重试机制</li>
+<li>超时处理</li>
+<li>消费者可能需要维护消费状态，如：处理完消息后，记录在数据库中。</li>
+<li>幂等性设计<ul>
+<li>写数据库：根据主键判断记录是否存在</li>
+<li>写 Redis：set 操作天然具有幂等性</li>
+<li>复杂的逻辑处理，则可以在消息中加入全局 ID</li>
+</ul>
+</li>
+</ul>
+<h2 id="重复消息"><a href="#重复消息" class="headerlink" title="重复消息"></a>重复消息</h2><p>在 MQTT 协议中，给出了三种传递消息时能够提供的服务质量标准，这三种服务质量从低到高依次是：</p>
+<ul>
+<li><strong>At most once</strong>：至多一次。消息在传递时，最多会被送达一次。换一个说法就是，没什么消息可靠性保证，允许丢消息。一般都是一些对消息可靠性要求不太高的监控场景使用，比如每分钟上报一次机房温度数据，可以接受数据少量丢失。</li>
+<li><strong>At least once</strong>: 至少一次。消息在传递时，至少会被送达一次。也就是说，不允许丢消息，但是允许有少量重复消息出现。</li>
+<li><strong>Exactly once</strong>：恰好一次。消息在传递时，只会被送达一次，不允许丢失也不允许重复，这个是最高的等级。</li>
+</ul>
+<p>绝大部分消息队列提供的服务质量都是 At least once，包括 RocketMQ、RabbitMQ 和 Kafka 都是这样。也就是说，消息队列很难保证消息不重复。</p>
+<p>一般解决重复消息的办法是，在消费端，<strong>保证消费消息的操作具备幂等性</strong>。</p>
+<p>常用的实现幂等操作的方法：</p>
+<h3 id="利用数据库的唯一约束实现幂等"><a href="#利用数据库的唯一约束实现幂等" class="headerlink" title="利用数据库的唯一约束实现幂等"></a>利用数据库的唯一约束实现幂等</h3><p>关系型数据库可以使用 <code>INSERT IF NOT EXIST</code> 语句防止重复；Redis 可以使用 <code>SETNX</code> 命令来防止重复；其他数据库只要支持类似语义，也是一个道理。</p>
+<h3 id="为更新的数据设置前置条件"><a href="#为更新的数据设置前置条件" class="headerlink" title="为更新的数据设置前置条件"></a>为更新的数据设置前置条件</h3><p>如果满足条件就更新数据，否则拒绝更新数据，在更新数据的时候，同时变更前置条件中需要判断的数据。这样，重复执行这个操作时，由于第一次更新数据的时候已经变更了前置条件中需要判断的数据，不满足前置条件，则不会重复执行更新数据操作。</p>
+<p>但是，如果我们要更新的数据不是数值，或者我们要做一个比较复杂的更新操作怎么办？用什么作为前置判断条件呢？更加通用的方法是，给数据增加一个版本号属性，每次更数据前，比较当前数据的版本号是否和消息中的版本号一致，如果不一致就拒绝更新数据，更新数据的同时将版本号 +1，一样可以实现幂等更新。</p>
+<h3 id="记录并检查操作"><a href="#记录并检查操作" class="headerlink" title="记录并检查操作"></a>记录并检查操作</h3><p>还有一种通用性最强，适用范围最广的实现幂等性方法：记录并检查操作，也称为“Token 机制或者 GUID（全局唯一 ID）机制”，实现的思路特别简单：在执行数据更新操作之前，先检查一下是否执行过这个更新操作。</p>
+<p>具体的实现方法是，在发送消息时，给每条消息指定一个全局唯一的 ID，消费时，先根据这个 ID 检查这条消息是否有被消费过，如果没有消费过，才更新数据，然后将消费状态置为已消费。</p>
+<p>需要注意的是，“检查消费状态，然后更新数据并且设置消费状态”中，三个操作必须作为一组操作保证原子性，才能真正实现幂等，否则就会出现 Bug。这一组操作可以通过分布式事务或分布式锁来保证其原子性。</p>
+<h2 id="消息的有序性"><a href="#消息的有序性" class="headerlink" title="消息的有序性"></a>消息的有序性</h2><p>某些场景下，可能会要求按序发送消息。</p>
+<h3 id="方案一、单-Partition"><a href="#方案一、单-Partition" class="headerlink" title="方案一、单 Partition"></a>方案一、单 Partition</h3><p>Kafka 每一个 Partition 只能隶属于消费者群组中的一个 Consumer，换句话说，每个 Partition 只能被一个 Consumer 消费。所以，如果 Topic 是单 Partition，自然是有序的。</p>
+<p>方案分析</p>
+<p>优点：简单粗暴。开发者什么也不用做。</p>
+<p>缺点：<strong>Kafka 基于 Partition 实现其高并发</strong>能力，如果使用单 Partition，会严重限制 Kafka 的吞吐量。</p>
+<p>结论：作为分布式消息引擎，限制并发能力，显然等同于自废武功，所以，这个方案几乎是不可接受的。</p>
+<h3 id="方案二、同一个-key-的消息发送给指定-Partition"><a href="#方案二、同一个-key-的消息发送给指定-Partition" class="headerlink" title="方案二、同一个 key 的消息发送给指定 Partition"></a>方案二、同一个 key 的消息发送给指定 Partition</h3><p>（1）生产者端显示指定 key 发往一个指定的 Partition，就可以保证同一个 key 在这个 Partition 中是有序的。</p>
+<p>（2）接下来，消费者端为每个 key 设定一个缓存队列，然后让一个独立线程负责消费指定 key 的队列，这就保证了消费消息也是有序的。</p>
+<h2 id="消息积压"><a href="#消息积压" class="headerlink" title="消息积压"></a>消息积压</h2><p>先修复消费者，然后停掉当前所有消费者。</p>
+<p>新建 Topic，扩大分区，以提高并发处理能力。</p>
+<p>创建临时消费者程序，并部署在多节点上，扩大消费处理能力。</p>
+<p>最后处理完积压消息后，恢复原先部署架构。</p>
+<h2 id="验证系统可靠性"><a href="#验证系统可靠性" class="headerlink" title="验证系统可靠性"></a>验证系统可靠性</h2><p>建议从 3 个层面验证系统的可靠性：</p>
+<ul>
+<li><strong>配置验证</strong></li>
+<li><strong>应用验证</strong><ul>
+<li>客户端和服务器断开连接</li>
+<li>选举</li>
+<li>依次重启 broker</li>
+<li>依次重启生产者</li>
+<li>依次重启消费者</li>
+</ul>
+</li>
+<li><strong>监控可靠性</strong><ul>
+<li>对于生产者来说，最重要的两个指标是消息的 <code>error-rate</code> 和 <code>retry-rate</code>。如果这两个指标上升，说明系统出了问题。</li>
+<li>对于消费者来说，最重要的指标是 <code>consumer-lag</code>，该指标表明了消费者的处理速度与最近提交到分区里的偏移量之间还有多少差距。</li>
+</ul>
+</li>
+</ul>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><p>生产者</p>
+<ol>
+<li>不要使用 <code>producer.send(msg)</code>，而要使用 <code>producer.send(msg, callback)</code>。记住，一定要使用带有回调通知的 <code>send</code> 方法。</li>
+<li>设置 <code>acks = all</code>。<code>acks</code> 是 Producer 的一个参数，代表了你对“已提交”消息的定义。如果设置成 all，则表明所有副本 Broker 都要接收到消息，该消息才算是“已提交”。这是最高等级的“已提交”定义。</li>
+<li>设置 <code>retries</code> 为一个较大的值。这里的 retries 同样是 Producer 的参数，对应前面提到的 Producer 自动重试。当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了 <code>retries &gt; 0</code> 的 Producer 能够自动重试消息发送，避免消息丢失。</li>
+</ol>
+<p>服务器（Kafka Broker）</p>
+<ol>
+<li>设置 <code>unclean.leader.election.enable = false。</code>这是 Broker 端的参数，它控制的是哪些 Broker 有资格竞选分区的 Leader。如果一个 Broker 落后原先的 Leader 太多，那么它一旦成为新的 Leader，必然会造成消息的丢失。故一般都要将该参数设置成 false，即不允许这种情况的发生。</li>
+<li>设置 <code>replication.factor</code> &gt;&#x3D; 3。这也是 Broker 端的参数。其实这里想表述的是，最好将消息多保存几份，毕竟目前防止消息丢失的主要机制就是冗余。</li>
+<li>设置 <code>min.insync.replicas</code> &gt; 1。这依然是 Broker 端参数，控制的是消息至少要被写入到多少个副本才算是“已提交”。设置成大于 1 可以提升消息持久性。在实际环境中千万不要使用默认值 1。</li>
+<li>确保 <code>replication.factor</code> &gt; <code>min.insync.replicas</code>。如果两者相等，那么只要有一个副本挂机，整个分区就无法正常工作了。我们不仅要改善消息的持久性，防止数据丢失，还要在不降低可用性的基础上完成。推荐设置成 <code>replication.factor = min.insync.replicas + 1</code>。</li>
+</ol>
+<p>消费者</p>
+<ol>
+<li>确保消息消费完成再提交。Consumer 端有个参数 <code>enable.auto.commit</code>，最好把它设置成 false，并采用手动提交位移的方式。就像前面说的，这对于单 Consumer 多线程处理的场景而言是至关重要的。</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><strong>官方</strong><ul>
+<li><a target="_blank" rel="noopener" href="http://kafka.apache.org/">Kafka 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/kafka">Kafka Github</a></li>
+<li><a target="_blank" rel="noopener" href="https://kafka.apache.org/documentation/">Kafka 官方文档</a></li>
+</ul>
+</li>
+<li><strong>书籍</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/27665114/">《Kafka 权威指南》</a></li>
+</ul>
+</li>
+<li><strong>教程</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100032301">消息队列高手课</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apachecn/kafka-doc-zh">Kafka 中文文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100029201">Kafka 核心技术与实战</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/da2fad50/" title="Kafka 可靠传输">https://dunwu.github.io/blog/pages/da2fad50/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/mq/" rel="tag"># mq</a>
+              <a href="/blog/tags/kafka/" rel="tag"># kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/50068496/" rel="prev" title="Kafka 消费">
+                  <i class="fa fa-angle-left"></i> Kafka 消费
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/49bc50c9/" rel="next" title="一篇文章让你彻底掌握 Scala">
+                  一篇文章让你彻底掌握 Scala <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"881a8c5010c628af28c61b1c989b8881"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="分布式调度面试服务注册和发现【基础】什么是服务注册和发现？:::details 要点 服务定义是服务提供者和服务消费者之间的约定，但是在微服务架构中，如何达成这个约定呢？这就依赖于服务注册和发现机制。 在微服务架构下，服务注册和发现机制中主要有三种角色：  服务提供者（RPC Server &#x2F; Provider） 服务消费者（RPC Client &#x2F; Consumer） 服务注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式调度面试">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/6af68a7a/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="分布式调度面试服务注册和发现【基础】什么是服务注册和发现？:::details 要点 服务定义是服务提供者和服务消费者之间的约定，但是在微服务架构中，如何达成这个约定呢？这就依赖于服务注册和发现机制。 在微服务架构下，服务注册和发现机制中主要有三种角色：  服务提供者（RPC Server &#x2F; Provider） 服务消费者（RPC Client &#x2F; Consumer） 服务注">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220415171843.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643409.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643410.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643411.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/web/nginx/nginx-load-balance.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643413.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643412.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648178.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648899.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649920.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649943.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650176.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650852.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650334.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250652913.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653034.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653412.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653974.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653207.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654770.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654220.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931974.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931939.png">
+<meta property="og:image" content="https://github.com/Netflix/Hystrix/wiki/images/soa-3-640.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230748006.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230748769.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230748277.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230749486.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230750231.png">
+<meta property="og:image" content="https://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/Netty%20%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E4%B8%8E%20RPC%20%E5%AE%9E%E8%B7%B5-%E5%AE%8C/assets/CgpVE1_okKiAGl0gAAMLshtTq-M933.png">
+<meta property="og:image" content="https://www.xuxueli.com/doc/static/xxl-job/images/img_Qohm.png">
+<meta property="og:image" content="https://shardingsphere.apache.org/elasticjob/current/img/architecture/elasticjob_lite.png">
+<meta property="og:image" content="https://shardingsphere.apache.org/elasticjob/current/img/architecture/elasticjob_cloud.png">
+<meta property="article:published_time" content="2024-12-26T08:51:30.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.747Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="协同">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220415171843.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/6af68a7a/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/6af68a7a/","path":"/pages/6af68a7a/","title":"分布式调度面试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式调度面试 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6%E9%9D%A2%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">分布式调度面试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">服务注册和发现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【基础】什么是服务注册和发现？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【中级】注册中心有哪些基本功能？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">元数据定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">元数据存储</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83-API"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">注册中心 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%81%A5%E5%BA%B7%E6%A3%80%E6%B5%8B"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">服务健康检测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%8A%B6%E6%80%81%E5%8F%98%E6%9B%B4%E9%80%9A%E7%9F%A5"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">服务状态变更通知</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">集群部署</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E6%9C%89%E5%93%AA%E4%BA%9B%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【高级】注册中心有哪些扩展功能？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">多注册中心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E8%AE%A2%E9%98%85%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">并行订阅服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E6%B3%A8%E9%94%80%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">批量注销服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%98%E6%9B%B4%E4%BF%A1%E6%81%AF%E5%A2%9E%E9%87%8F%E6%9B%B4%E6%96%B0"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">服务变更信息增量更新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E5%BC%80%E5%85%B3%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">心跳开关保护机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%8A%82%E7%82%B9%E6%91%98%E9%99%A4%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.3.6.</span> <span class="nav-text">服务节点摘除保护机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%99%BD%E5%90%8D%E5%8D%95%E6%9C%BA%E5%88%B6"><span class="nav-number">1.1.3.7.</span> <span class="nav-text">白名单机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="nav-number">1.1.3.8.</span> <span class="nav-text">静态注册中心</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.</span> <span class="nav-text">负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【基础】什么是负载均衡？为什么需要负载均衡？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%8A%80%E6%9C%AF%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【中级】负载均衡技术有哪些分类？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%BD%E4%BD%93%E7%BB%B4%E5%BA%A6%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">载体维度分类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.1.1.</span> <span class="nav-text">硬件负载均衡</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.1.2.</span> <span class="nav-text">软件负载均衡</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">网络通信分类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DNS-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.2.1.</span> <span class="nav-text">DNS 负载均衡</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HTTP-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.2.2.</span> <span class="nav-text">HTTP 负载均衡</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.2.3.</span> <span class="nav-text">反向代理负载均衡</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IP-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.2.4.</span> <span class="nav-text">IP 负载均衡</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.2.5.</span> <span class="nav-text">数据链路层负载均衡</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="nav-number">1.2.3.</span> <span class="nav-text">【高级】负载均衡有哪些算法？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">轮询算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">随机算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2-%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">加权轮询&#x2F;随机算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%B0%91%E8%BF%9E%E6%8E%A5%E6%95%B0%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">最少连接数算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%B0%91%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.5.</span> <span class="nav-text">最少响应时间算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.6.</span> <span class="nav-text">哈希算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.7.</span> <span class="nav-text">一致性哈希算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.3.8.</span> <span class="nav-text">虚拟一致性哈希算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">1.3.</span> <span class="nav-text">流量控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">【基础】什么是流量控制？为什么需要流量控制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E8%A1%A1%E9%87%8F%E6%8C%87%E6%A0%87%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">【基础】流量控制有哪些衡量指标？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">【中级】流量控制有哪些保护机制？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%99%8D%E7%BA%A7%EF%BC%9F"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">什么是降级？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%99%90%E6%B5%81%EF%BC%9F"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">什么是限流？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%86%94%E6%96%AD%EF%BC%9F"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">什么是熔断？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E8%A1%A1%E9%87%8F%E6%8C%87%E6%A0%87"><span class="nav-number">1.3.4.</span> <span class="nav-text">流量控制有哪些衡量指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E9%9A%94%E7%A6%BB%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.3.5.</span> <span class="nav-text">【中级】流量控制有哪些隔离模式？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E6%9C%89%E5%93%AA%E4%BA%9B%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="nav-number">1.3.6.</span> <span class="nav-text">【高级】有哪些限流算法？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E7%AA%97%E5%8F%A3%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.6.1.</span> <span class="nav-text">固定窗口限流算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.6.2.</span> <span class="nav-text">滑动窗口限流算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%8F%E6%A1%B6%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.6.3.</span> <span class="nav-text">漏桶限流算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.6.4.</span> <span class="nav-text">令牌桶限流算法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3%E8%B7%AF%E7%94%B1"><span class="nav-number">1.4.</span> <span class="nav-text">网关路由</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%EF%BC%9F%E8%B7%AF%E7%94%B1%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">【基础】什么是服务路由？路由有什么用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B8%B8%E8%A7%81%E8%A7%84%E5%88%99%EF%BC%9F"><span class="nav-number">1.4.2.</span> <span class="nav-text">服务路由有哪些常见规则？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%AF%E7%94%B1"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">条件路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E8%B7%AF%E7%94%B1"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">脚本路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE%E8%B7%AF%E7%94%B1"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">标签路由</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E8%A7%84%E5%88%99%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F"><span class="nav-number">1.4.3.</span> <span class="nav-text">路由规则获取方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.5.</span> <span class="nav-text">分布式任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E5%9C%A8-Java-%E4%B8%AD%EF%BC%8C%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E6%96%B9%E6%A1%88%EF%BC%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">【中级】在 Java 中，实现一个进程内定时任务有哪些方案？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Timer"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">Timer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ScheduledExecutorService"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">ScheduledExecutorService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DelayedQueue"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">DelayedQueue</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%BD%AE"><span class="nav-number">1.5.1.4.</span> <span class="nav-text">时间轮</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E6%96%B9%E6%A1%88%EF%BC%9F"><span class="nav-number">1.5.2.</span> <span class="nav-text">【中级】分布式定时任务有哪些方案？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Quartz"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">Quartz</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#XXL-Job"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">XXL-Job</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ElasticJob"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">ElasticJob</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/6af68a7a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式调度面试 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式调度面试<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/12.%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6%E9%9D%A2%E8%AF%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-12-26 16:51:30" itemprop="dateCreated datePublished" datetime="2024-12-26T16:51:30+08:00">2024-12-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/" itemprop="url" rel="index"><span itemprop="name">分布式调度</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>28k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>26 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分布式调度面试"><a href="#分布式调度面试" class="headerlink" title="分布式调度面试"></a>分布式调度面试</h1><h2 id="服务注册和发现"><a href="#服务注册和发现" class="headerlink" title="服务注册和发现"></a>服务注册和发现</h2><h3 id="【基础】什么是服务注册和发现？"><a href="#【基础】什么是服务注册和发现？" class="headerlink" title="【基础】什么是服务注册和发现？"></a>【基础】什么是服务注册和发现？</h3><p>:::details 要点</p>
+<p>服务定义是服务提供者和服务消费者之间的约定，但是在微服务架构中，如何达成这个约定呢？这就依赖于服务注册和发现机制。</p>
+<p>在微服务架构下，服务注册和发现机制中主要有三种角色：</p>
+<ul>
+<li><strong>服务提供者</strong>（RPC Server &#x2F; Provider）</li>
+<li><strong>服务消费者</strong>（RPC Client &#x2F; Consumer）</li>
+<li><strong>服务注册中心</strong>（Registry）</li>
+</ul>
+<p>服务发现通常依赖于<strong>注册中心</strong>来协调服务发现的过程，其步骤如下：</p>
+<ol>
+<li>服务提供者将接口信息以注册到注册中心。</li>
+<li>服务消费者从注册中心读取和订阅服务提供者的地址信息。</li>
+<li>如果有可用的服务，注册中心会主动通知服务消费者。</li>
+<li>服务消费者根据可用服务的地址列表，调用服务提供者的接口。</li>
+</ol>
+<p>这个过程很像是生活中的房屋租赁，房东将租房信息挂到中介公司，房客从中介公司查找租房信息。房客如果想要租房东的房子，通过中介公司牵线搭桥，联系上房东，双方谈妥签订协议，就可以正式建立起租赁关系。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220415171843.png" alt="img"></p>
+<p>:::</p>
+<h3 id="【中级】注册中心有哪些基本功能？"><a href="#【中级】注册中心有哪些基本功能？" class="headerlink" title="【中级】注册中心有哪些基本功能？"></a>【中级】注册中心有哪些基本功能？</h3><p>:::details 要点</p>
+<p>从服务注册和发现的流程，可以看出，<strong>注册中心是服务发现的核心组件</strong>。常见的注册中心组件有：Nacos、Consul、Zookeeper 等。</p>
+<p>注册中心的实现主要涉及几个问题：注册中心需要提供哪些接口，该如何部署；如何存储服务信息；如何监控服务提供者节点的存活；如果服务提供者节点有变化如何通知服务消费者，以及如何控制注册中心的访问权限。</p>
+<h4 id="元数据定义"><a href="#元数据定义" class="headerlink" title="元数据定义"></a>元数据定义</h4><p>构建微服务的首要问题是：服务提供者和服务消费者通信时，如何达成共识。具体来说，就是这个服务的接口名是什么？调用这个服务需要传递哪些参数？接口的返回值是什么类型？以及一些其他接口描述信息。</p>
+<p>常见的定义服务元数据的方式有：</p>
+<ul>
+<li><strong>XML 文件</strong> - 如果只是企业内部之间的服务调用，并且都是 Java 语言的话，选择 XML 配置方式是最简单的。</li>
+<li><strong>IDL 文件</strong> - 如果企业内部存在多个跨语言服务，建议使用 IDL 文件方式进行描述服务。</li>
+<li><strong>REST API</strong> - 如果存在对外开放服务调用的情形的话，使用 REST API 方式则更加通用。</li>
+</ul>
+<h4 id="元数据存储"><a href="#元数据存储" class="headerlink" title="元数据存储"></a>元数据存储</h4><p>注册中心本质上是一个用于保存元数据的分布式存储。你如果明白了这一点，就会了解实现一个注册中心的所有要点都是围绕这个目标去构建的。</p>
+<p>想要构建微服务，首先要解决的问题是，服务提供者如何发布一个服务，服务消费者如何引用这个服务。具体来说，就是这个服务的接口名是什么？调用这个服务需要传递哪些参数？接口的返回值是什么类型？以及一些其他接口描述信息。</p>
+<p>服务的<strong>元数据信息</strong>通常有以下信息：</p>
+<ul>
+<li>服务节点信息，如 IP、端口等。</li>
+<li>接口定义，如接口名、请求参数、响应参数等。</li>
+<li>请求失败的重试次数</li>
+<li>序列化方式</li>
+<li>压缩方式</li>
+<li>通信协议</li>
+<li>等等</li>
+</ul>
+<p>在具体存储时，注册中心一般会按照“服务 - 分组 - 节点信息”的<strong>层次化的结构</strong>来存储。</p>
+<h4 id="注册中心-API"><a href="#注册中心-API" class="headerlink" title="注册中心 API"></a>注册中心 API</h4><p>既然是分布式存储，势必要提供支持读写数据的接口，也就是 API，一般来说，需要支持以下功能：</p>
+<ul>
+<li><strong>服务注册接口</strong>：服务提供者通过调用服务注册接口来完成服务注册。</li>
+<li><strong>服务反注册接口</strong>：服务提供者通过调用服务反注册接口来完成服务注销。</li>
+<li><strong>心跳汇报接口</strong>：服务提供者通过调用心跳汇报接口完成节点存活状态上报。</li>
+<li><strong>服务订阅接口</strong>：服务消费者通过调用服务订阅接口完成服务订阅，获取可用的服务提供者节点列表。</li>
+<li><strong>服务变更查询接口</strong>：服务消费者通过调用服务变更查询接口，获取最新的可用服务节点列表。</li>
+</ul>
+<p>除此之外，为了便于管理，注册中心还必须提供一些后台管理的 API，例如：</p>
+<ul>
+<li><strong>服务查询接口</strong>：查询注册中心当前注册了哪些服务信息。</li>
+<li><strong>服务修改接口</strong>：修改注册中心中某一服务的信息。</li>
+</ul>
+<h4 id="服务健康检测"><a href="#服务健康检测" class="headerlink" title="服务健康检测"></a>服务健康检测</h4><p>注册中心除了要支持最基本的服务注册和服务订阅功能以外，还必须具备对服务提供者节点的健康状态检测功能，这样才能保证注册中心里保存的服务节点都是可用的。<strong>注册中心通常使用长连接或心跳探测方式检查服务健康状态</strong>。</p>
+<p>还是以 ZooKeeper 为例，它是基于 ZooKeeper 客户端和服务端的长连接和会话超时控制机制，来实现服务健康状态检测的。在 ZooKeeper 中，客户端和服务端建立连接后，会话也随之建立，并生成一个全局唯一的 Session ID。服务端和客户端维持的是一个长连接，在 SESSION_TIMEOUT 周期内，服务端会检测与客户端的链路是否正常，具体方式是通过客户端定时向服务端发送心跳消息（ping 消息），服务器重置下次 SESSION_TIMEOUT 时间。如果超过 SESSION_TIMEOUT 后服务端都没有收到客户端的心跳消息，则服务端认为这个 Session 就已经结束了，ZooKeeper 就会认为这个服务节点已经不可用，将会从注册中心中删除其信息。</p>
+<h4 id="服务状态变更通知"><a href="#服务状态变更通知" class="headerlink" title="服务状态变更通知"></a>服务状态变更通知</h4><p>一旦注册中心探测到有服务提供者节点新加入或者被剔除，就必须立刻通知所有订阅该服务的服务消费者，刷新本地缓存的服务节点信息，确保服务调用不会请求不可用的服务提供者节点。注册中心通常基于服务状态订阅来实现服务状态变更通知。</p>
+<p>继续以 ZooKeeper 为例，基于 ZooKeeper 的 Watcher 机制，来实现服务状态变更通知给服务消费者的。服务消费者在调用 ZooKeeper 的 getData 方法订阅服务时，还可以通过监听器 Watcher 的 process 方法获取服务的变更，然后调用 getData 方法来获取变更后的数据，刷新本地缓存的服务节点信息。</p>
+<h4 id="集群部署"><a href="#集群部署" class="headerlink" title="集群部署"></a>集群部署</h4><p>注册中心作为服务提供者和服务消费者之间沟通的桥梁，它的重要性不言而喻。所以注册中心一般都是采用集群部署来保证高可用性，并通过分布式一致性协议来确保集群中不同节点之间的数据保持一致。根据 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/CAP_theorem">CAP 理论</a>，三种特性无法同时达成，必须在可用性和一致性之间做取舍。于是，根据不同侧重点，注册中心可以分为 CP 和 AP 两个阵营：</p>
+<ul>
+<li><strong>CP 型注册中心</strong> - <strong>牺牲可用性来换取数据强一致性</strong>，最典型的例子就是 ZooKeeper，etcd，Consul 了。ZooKeeper 集群内只有一个 Leader，而且在 Leader 无法使用的时候通过算法选举出一个新的 Leader。这个 Leader 的目的就是保证写信息的时候只向这个 Leader 写入，Leader 会同步信息到 Followers，这个过程就可以保证数据的强一致性。但如果多个 ZooKeeper 之间网络出现问题，造成出现多个 Leader，发生脑裂的话，注册中心就不可用了。而 etcd 和 Consul 集群内都是通过 Raft 协议来保证强一致性，如果出现脑裂的话， 注册中心也不可用。</li>
+<li><strong>AP 型注册中心</strong> - <strong>牺牲一致性（只保证最终一致性）来换取可用性</strong>，最典型的例子就是 Eureka、Nacos 了。对比下 Zookeeper，Eureka 不用选举一个 Leader，每个 Eureka 服务器单独保存服务注册地址，因此有可能出现数据信息不一致的情况。但是当网络出现问题的时候，每台服务器都可以完成独立的服务。</li>
+</ul>
+<p>:::</p>
+<h3 id="【高级】注册中心有哪些扩展功能？"><a href="#【高级】注册中心有哪些扩展功能？" class="headerlink" title="【高级】注册中心有哪些扩展功能？"></a>【高级】注册中心有哪些扩展功能？</h3><p>:::details 要点</p>
+<h4 id="多注册中心"><a href="#多注册中心" class="headerlink" title="多注册中心"></a>多注册中心</h4><p>对于服务消费者来说，要能够同时从多个注册中心订阅服务；</p>
+<p>对于服务提供者来说，要能够同时向多个注册中心注册服务。</p>
+<h4 id="并行订阅服务"><a href="#并行订阅服务" class="headerlink" title="并行订阅服务"></a>并行订阅服务</h4><p>如果只支持串行订阅，如果服务消费者订阅的服务较多，并且某些服务节点的初始化连接过程中出现连接超时的情况，则后续所有的服务节点的初始化连接都需要等待它完成，这就会导致消费者启动非常慢。</p>
+<p>可以每订阅一个服务就单独用一个线程来处理，这样的话即使遇到个别服务节点连接超时，其他服务节点的初始化连接也不受影响，最慢也就是这个服务节点的初始化连接耗费的时间，最终所有服务节点的初始化连接耗时控制在了 30 秒以内。</p>
+<h4 id="批量注销服务"><a href="#批量注销服务" class="headerlink" title="批量注销服务"></a>批量注销服务</h4><p>在与注册中心的多次交互中，可能由于网络抖动、注册中心集群异常等原因，导致个别调用失败。对于注册中心来说，偶发的注册调用失败对服务调用基本没有影响，其结果顶多就是某一个服务少了一个可用的节点。但偶发的反注册调用失败会导致不可用的节点残留在注册中心中，变成“僵尸节点”。</p>
+<p>需要定时去清理注册中心中的“僵尸节点”，如果支持批量注销服务，就可以一次调用就把该节点上提供的所有服务同时注销掉。</p>
+<h4 id="服务变更信息增量更新"><a href="#服务变更信息增量更新" class="headerlink" title="服务变更信息增量更新"></a>服务变更信息增量更新</h4><p>为了减少服务消费者从注册中心中拉取的服务可用节点信息的数据量，这个时候可以通过增量更新的方式，注册中心只返回变化的那部分节点信息。尤其在只有少数节点信息变更时，此举可以大大减少服务消费者从注册中心拉取的数据量，从而最大程度避免产生网络风暴。</p>
+<h4 id="心跳开关保护机制"><a href="#心跳开关保护机制" class="headerlink" title="心跳开关保护机制"></a>心跳开关保护机制</h4><p>在网络频繁抖动的情况下，注册中心中可用的节点会不断变化，这时候服务消费者会频繁收到服务提供者节点变更的信息，于是就不断地请求注册中心来拉取最新的可用服务节点信息。当有成百上千个服务消费者，同时请求注册中心获取最新的服务提供者的节点信息时，可能会把注册中心的带宽给占满，尤其是注册中心是百兆网卡的情况下。</p>
+<p>所以针对这种情况，<strong>需要一种保护机制，即使在网络频繁抖动的时候，服务消费者也不至于同时去请求注册中心获取最新的服务节点信息</strong>。</p>
+<p>我曾经就遇到过这种情况，一个可行的解决方案就是给注册中心设置一个开关，当开关打开时，即使网络频繁抖动，注册中心也不会通知所有的服务消费者有服务节点信息变更，比如只给 10% 的服务消费者返回变更，这样的话就能将注册中心的请求量减少到原来的 1&#x2F;10。</p>
+<p>当然打开这个开关也是有一定代价的，它会导致服务消费者感知最新的服务节点信息延迟，原先可能在 10s 内就能感知到服务提供者节点信息的变更，现在可能会延迟到几分钟，所以在网络正常的情况下，开关并不适合打开；可以作为一个紧急措施，在网络频繁抖动的时候，才打开这个开关。</p>
+<h4 id="服务节点摘除保护机制"><a href="#服务节点摘除保护机制" class="headerlink" title="服务节点摘除保护机制"></a>服务节点摘除保护机制</h4><p>服务提供者在进程启动时，会注册服务到注册中心，并每隔一段时间，汇报心跳给注册中心，以标识自己的存活状态。如果隔了一段固定时间后，服务提供者仍然没有汇报心跳给注册中心，注册中心就会认为该节点已经处于“dead”状态，于是从服务的可用节点信息中移除出去。</p>
+<p>如果遇到网络问题，大批服务提供者节点汇报给注册中心的心跳信息都可能会传达失败，注册中心就会把它们都从可用节点列表中移除出去，造成剩下的可用节点难以承受所有的调用，引起“雪崩”。但是这种情况下，可能大部分服务提供者节点是可用的，仅仅因为网络原因无法汇报心跳给注册中心就被“无情”的摘除了。</p>
+<p><strong>这个时候就需要根据实际业务的情况，设定一个阈值比例，即使遇到刚才说的这种情况，注册中心也不能摘除超过这个阈值比例的节点</strong>。</p>
+<p>这个阈值比例可以根据实际业务的冗余度来确定，我通常会把这个比例设定在 20%，就是说注册中心不能摘除超过 20% 的节点。因为大部分情况下，节点的变化不会这么频繁，只有在网络抖动或者业务明确要下线大批量节点的情况下才有可能发生。而业务明确要下线大批量节点的情况是可以预知的，这种情况下可以关闭阈值保护；而正常情况下，应该打开阈值保护，以防止网络抖动时，大批量可用的服务节点被摘除。</p>
+<h4 id="白名单机制"><a href="#白名单机制" class="headerlink" title="白名单机制"></a>白名单机制</h4><p>在实际的微服务测试和部署时，通常包含多套环境，比如生产环境一套、测试环境一套。开发在进行业务自测、测试在进行回归测试时，一般都是用测试环境，部署的 RPC Server 节点注册到测试的注册中心集群。但经常会出现开发或者测试在部署时，错误的把测试环境下的服务节点注册到了线上注册中心集群，这样的话线上流量就会调用到测试环境下的 RPC Server 节点，可能会造成意想不到的后果。</p>
+<p>为了防止这种情况发生，注册中心需要提供一个保护机制，你可以把注册中心想象成一个带有门禁的房间，只有拥有门禁卡的 RPC Server 才能进入。在实际应用中，注册中心可以提供一个白名单机制，只有添加到注册中心白名单内的 RPC Server，才能够调用注册中心的注册接口，这样的话可以避免测试环境中的节点意外跑到线上环境中去。</p>
+<h4 id="静态注册中心"><a href="#静态注册中心" class="headerlink" title="静态注册中心"></a>静态注册中心</h4><p>因为服务提供者是向服务消费者提供服务的，服务是否可用，服务消费者应该比注册中心更清楚。因此，可以直接在服务消费者端，根据调用服务提供者是否成功来判定服务提供者是否可用。如果服务消费者调用某一个服务提供者节点连续失败超过一定次数，可以在本地内存中将这个节点标记为不可用。并且每隔一段固定时间，服务消费者都要向标记为不可用的节点发起保活探测，如果探测成功了，就将标记为不可用的节点再恢复为可用状态，重新发起调用。</p>
+<p>:::</p>
+<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><h3 id="【基础】什么是负载均衡？为什么需要负载均衡？"><a href="#【基础】什么是负载均衡？为什么需要负载均衡？" class="headerlink" title="【基础】什么是负载均衡？为什么需要负载均衡？"></a>【基础】什么是负载均衡？为什么需要负载均衡？</h3><p>:::details 要点</p>
+<p><strong>“负载均衡（Load Balance，简称 LB）”是一种技术，用来在多个计算机、网络连接、CPU、磁盘驱动器或其他资源中分配负载，以达到优化资源利用率、最大化吞吐率、最小化响应时间、同时避免过载的目的</strong>。</p>
+<p>负载均衡的主要作用如下：</p>
+<ul>
+<li><strong>高并发</strong>：负载均衡可以优化资源使用率，通过算法调整负载，尽力均匀的分配资源，以此提高资源利用率、从而提升整体吞吐量。</li>
+<li><strong>伸缩性</strong>：发生增减资源时，负载均衡可以自动调整分发，使得应用集群具备伸缩性。</li>
+<li><strong>高可用</strong>：负载均衡器可以监控候选机器，当某机器不可用时，自动跳过，将请求分发给可用的机器。这使得应用集群具备高可用的特性。</li>
+<li><strong>安全防护</strong>：有些负载均衡软件或硬件提供了安全性功能，如：黑白名单、防火墙，防 DDos 攻击等。</li>
+</ul>
+<p>:::</p>
+<h3 id="【中级】负载均衡技术有哪些分类？"><a href="#【中级】负载均衡技术有哪些分类？" class="headerlink" title="【中级】负载均衡技术有哪些分类？"></a>【中级】负载均衡技术有哪些分类？</h3><p>:::details 要点</p>
+<p>支持负载均衡的技术很多，我们可以通过不同维度去进行分类。</p>
+<h4 id="载体维度分类"><a href="#载体维度分类" class="headerlink" title="载体维度分类"></a>载体维度分类</h4><p>从支持负载均衡的载体来看，可以将负载均衡分为两类：</p>
+<ul>
+<li>硬件负载均衡</li>
+<li>软件负载均衡</li>
+</ul>
+<h5 id="硬件负载均衡"><a href="#硬件负载均衡" class="headerlink" title="硬件负载均衡"></a>硬件负载均衡</h5><p>硬件负载均衡，一般是在定制处理器上运行的独立负载均衡服务器，<strong>价格昂贵，土豪专属</strong>。</p>
+<p>硬件负载均衡的<strong>主流产品</strong>有：<a target="_blank" rel="noopener" href="https://f5.com/zh">F5</a> 和 <a target="_blank" rel="noopener" href="https://www.a10networks.com.cn/">A10</a>。</p>
+<p>硬件负载均衡的<strong>优点</strong>：</p>
+<ul>
+<li><strong>功能强大</strong>：支持全局负载均衡并提供较全面的、复杂的负载均衡算法。</li>
+<li><strong>性能强悍</strong>：硬件负载均衡由于是在专用处理器上运行，因此吞吐量大，可支持单机百万以上的并发。</li>
+<li><strong>安全性高</strong>：往往具备防火墙，防 DDos 攻击等安全功能。</li>
+</ul>
+<p>硬件负载均衡的<strong>缺点</strong>：</p>
+<ul>
+<li><strong>成本昂贵</strong>：购买和维护硬件负载均衡的成本都很高。</li>
+<li><strong>扩展性差</strong>：当访问量突增时，超过限度不能动态扩容。</li>
+</ul>
+<h5 id="软件负载均衡"><a href="#软件负载均衡" class="headerlink" title="软件负载均衡"></a>软件负载均衡</h5><p>软件负载均衡，<strong>应用最广泛</strong>，无论大公司还是小公司都会使用。</p>
+<p>软件负载均衡从软件层面实现负载均衡，一般可以在任何标准物理设备上运行。</p>
+<p>软件负载均衡的 <strong>主流产品</strong> 有：<a target="_blank" rel="noopener" href="https://www.nginx.com/">Nginx</a>、<a target="_blank" rel="noopener" href="http://www.haproxy.org/">HAProxy</a>、<a target="_blank" rel="noopener" href="https://github.com/alibaba/LVS">LVS</a>。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/alibaba/LVS">LVS</a> 可以作为四层负载均衡器。其负载均衡的性能要优于 Nginx。</li>
+<li><a target="_blank" rel="noopener" href="http://www.haproxy.org/">HAProxy</a> 可以作为 HTTP 和 TCP 负载均衡器。</li>
+<li><a target="_blank" rel="noopener" href="https://www.nginx.com/">Nginx</a>、<a target="_blank" rel="noopener" href="http://www.haproxy.org/">HAProxy</a> 可以作为四层或七层负载均衡器。</li>
+</ul>
+<p>软件负载均衡的 <strong>优点</strong>：</p>
+<ul>
+<li><strong>扩展性好</strong>：适应动态变化，可以通过添加软件负载均衡实例，动态扩展到超出初始容量的能力。</li>
+<li><strong>成本低廉</strong>：软件负载均衡可以在任何标准物理设备上运行，降低了购买和运维的成本。</li>
+</ul>
+<p>软件负载均衡的 <strong>缺点</strong>：</p>
+<ul>
+<li><strong>性能略差</strong>：相比于硬件负载均衡，软件负载均衡的性能要略低一些。</li>
+</ul>
+<h4 id="网络通信分类"><a href="#网络通信分类" class="headerlink" title="网络通信分类"></a>网络通信分类</h4><p>软件负载均衡从通信层面来看，又可以分为四层和七层负载均衡。</p>
+<ul>
+<li>七层负载均衡：就是可以根据访问用户的 HTTP 请求头、URL 信息将请求转发到特定的主机。<ul>
+<li>DNS 重定向</li>
+<li>HTTP 重定向</li>
+<li>反向代理</li>
+</ul>
+</li>
+<li>四层负载均衡：基于 IP 地址和端口进行请求的转发。<ul>
+<li>修改 IP 地址</li>
+<li>修改 MAC 地址</li>
+</ul>
+</li>
+</ul>
+<h5 id="DNS-负载均衡"><a href="#DNS-负载均衡" class="headerlink" title="DNS 负载均衡"></a>DNS 负载均衡</h5><p>DNS 负载均衡一般用于互联网公司，复杂的业务系统不适合使用。大型网站一般使用 DNS 负载均衡作为 <strong>第一级负载均衡手段</strong>，然后在内部使用其它方式做第二级负载均衡。DNS 负载均衡属于七层负载均衡。</p>
+<p>DNS 即 <strong>域名解析服务</strong>，是 OSI 第七层网络协议。DNS 被设计为一个树形结构的分布式应用，自上而下依次为：根域名服务器，一级域名服务器，二级域名服务器，… ，本地域名服务器。显然，如果所有数据都存储在根域名服务器，那么 DNS 查询的负载和开销会非常庞大。</p>
+<p>因此，DNS 查询相对于 DNS 层级结构，是一个逆向的递归流程，DNS 客户端依次请求本地 DNS 服务器，上一级 DNS 服务器，上上一级 DNS 服务器，… ，根 DNS 服务器（又叫权威 DNS 服务器），一旦命中，立即返回。为了减少查询次数，每一级 DNS 服务器都会设置 DNS 查询缓存。</p>
+<p>DNS 负载均衡的工作原理就是：<strong>基于 DNS 查询缓存，按照负载情况返回不同服务器的 IP 地址</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643409.png" alt="img"></p>
+<p>DNS 重定向的 <strong>优点</strong>：</p>
+<ul>
+<li><strong>使用简单</strong>：负载均衡工作，交给 DNS 服务器处理，省掉了负载均衡服务器维护的麻烦</li>
+<li><strong>提高性能</strong>：可以支持基于地址的域名解析，解析成距离用户最近的服务器地址（类似 CDN 的原理），可以加快访问速度，改善性能；</li>
+</ul>
+<p>DNS 重定向的 <strong>缺点</strong>：</p>
+<ul>
+<li><strong>可用性差</strong>：DNS 解析是多级解析，新增&#x2F;修改 DNS 后，解析时间较长；解析过程中，用户访问网站将失败；</li>
+<li><strong>扩展性差</strong>：DNS 负载均衡的控制权在域名商那里，无法对其做更多的改善和扩展；</li>
+<li><strong>维护性差</strong>：也不能反映服务器的当前运行状态；支持的算法少；不能区分服务器的差异（不能根据系统与服务的状态来判断负载）</li>
+</ul>
+<h5 id="HTTP-负载均衡"><a href="#HTTP-负载均衡" class="headerlink" title="HTTP 负载均衡"></a>HTTP 负载均衡</h5><p><strong>HTTP 负载均衡是基于 HTTP 重定向实现的</strong>。HTTP 负载均衡属于七层负载均衡。</p>
+<p>HTTP 重定向原理是：<strong>根据用户的 HTTP 请求计算出一个真实的服务器地址，将该服务器地址写入 HTTP 重定向响应中，返回给浏览器，由浏览器重新进行访问</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643410.png" alt="img"></p>
+<p>HTTP 重定向的 <strong>优点</strong>：<strong>方案简单</strong>。</p>
+<p>HTTP 重定向的 <strong>缺点</strong>：</p>
+<ul>
+<li><strong>额外的转发开销</strong>：每次访问需要两次请求服务器，增加了访问的延迟。</li>
+<li><strong>降低搜索排名</strong>：使用重定向后，搜索引擎会视为 SEO 作弊。</li>
+<li>如果负载均衡器宕机，就无法访问该站点。</li>
+</ul>
+<p>由于其缺点比较明显，所以这种负载均衡策略实际应用较少。</p>
+<h5 id="反向代理负载均衡"><a href="#反向代理负载均衡" class="headerlink" title="反向代理负载均衡"></a>反向代理负载均衡</h5><p>反向代理（Reverse Proxy）方式是指以 <strong>代理服务器</strong> 来接受网络请求，然后 <strong>将请求转发给内网中的服务器</strong>，并将从内网中的服务器上得到的结果返回给网络请求的客户端。反向代理负载均衡属于七层负载均衡。</p>
+<p>反向代理服务的主流产品：<strong>Nginx</strong>、<strong>Apache</strong>。</p>
+<p>正向代理与反向代理有什么区别？</p>
+<ul>
+<li>正向代理：发生在 <strong>客户端</strong>，是由用户主动发起的。翻墙软件就是典型的正向代理，客户端通过主动访问代理服务器，让代理服务器获得需要的外网数据，然后转发回客户端。</li>
+<li>反向代理：发生在 <strong>服务端</strong>，用户不知道代理的存在。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643411.png" alt="img"></p>
+<p>反向代理是如何实现负载均衡的呢？以 Nginx 为例，如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/web/nginx/nginx-load-balance.png" alt="img"></p>
+<p>首先，在代理服务器上设定好负载均衡规则。然后，当收到客户端请求，反向代理服务器拦截指定的域名或 IP 请求，根据负载均衡算法，将请求分发到候选服务器上。其次，如果某台候选服务器宕机，反向代理服务器会有容错处理，比如分发请求失败 3 次以上，将请求分发到其他候选服务器上。</p>
+<p>反向代理的 <strong>优点</strong>：</p>
+<ul>
+<li><strong>多种负载均衡算法</strong>：支持多种负载均衡算法，以应对不同的场景需求。</li>
+<li><strong>可以监控服务器</strong>：基于 HTTP 协议，可以监控转发服务器的状态，如：系统负载、响应时间、是否可用、连接数、流量等，从而根据这些数据调整负载均衡的策略。</li>
+</ul>
+<p>反向代理的 <strong>缺点</strong>：</p>
+<ul>
+<li><p><strong>额外的转发开销</strong>：反向代理的转发操作本身是有性能开销的，可能会包括创建连接，等待连接响应，分析响应结果等操作。</p>
+</li>
+<li><p><strong>增加系统复杂度</strong>：反向代理常用于做分布式应用的水平扩展，但反向代理服务存在以下问题，为了解决以下问题会给系统整体增加额外的复杂度和运维成本：</p>
+</li>
+<li><p>反向代理服务如果自身宕机，就无法访问站点，所以需要有 <strong>高可用</strong> 方案，常见的方案有：主备模式（一主一备）、双主模式（互为主备）。</p>
+<ul>
+<li>反向代理服务自身也存在性能瓶颈，随着需要转发的请求量不断攀升，需要有 <strong>可扩展</strong> 方案。</li>
+</ul>
+</li>
+</ul>
+<h5 id="IP-负载均衡"><a href="#IP-负载均衡" class="headerlink" title="IP 负载均衡"></a>IP 负载均衡</h5><p>IP 负载均衡是在网络层通过修改请求目的地址进行负载均衡。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643413.png" alt="img"></p>
+<p>如上图所示，IP 均衡处理流程大致为：</p>
+<ol>
+<li>客户端请求 192.168.137.10，由负载均衡服务器接收到报文。</li>
+<li>负载均衡服务器根据算法选出一个服务节点 192.168.0.1，然后将报文请求地址改为该节点的 IP。</li>
+<li>真实服务节点收到请求报文，处理后，返回响应数据到负载均衡服务器。</li>
+<li>负载均衡服务器将响应数据的源地址改负载均衡服务器地址，返回给客户端。</li>
+</ol>
+<p>IP 负载均衡在内核进程完成数据分发，较反向代理负载均衡有更好的处理性能。但是，由于所有请求响应都要经过负载均衡服务器，集群的吞吐量受制于负载均衡服务器的带宽。</p>
+<h5 id="数据链路层负载均衡"><a href="#数据链路层负载均衡" class="headerlink" title="数据链路层负载均衡"></a>数据链路层负载均衡</h5><p>数据链路层负载均衡是指在通信协议的数据链路层修改 mac 地址进行负载均衡。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643412.png" alt="img"></p>
+<p>在 Linux 平台上最好的链路层负载均衡开源产品是 LVS (Linux Virtual Server)。</p>
+<p>LVS 是基于 Linux 内核中 netfilter 框架实现的负载均衡系统。netfilter 是内核态的 Linux 防火墙机制，可以在数据包流经过程中，根据规则设置若干个关卡（hook 函数）来执行相关的操作。</p>
+<p>LVS 的工作流程大致如下：</p>
+<ul>
+<li>当用户访问 <a target="_blank" rel="noopener" href="http://www.sina.com.cn/">www.sina.com.cn</a> 时，用户数据通过层层网络，最后通过交换机进入 LVS 服务器网卡，并进入内核网络层。</li>
+<li>进入 PREROUTING 后经过路由查找，确定访问的目的 VIP 是本机 IP 地址，所以数据包进入到 INPUT 链上</li>
+<li>IPVS 是工作在 INPUT 链上，会根据访问的 <code>vip+port</code> 判断请求是否 IPVS 服务，如果是则调用注册的 IPVS HOOK 函数，进行 IPVS 相关主流程，强行修改数据包的相关数据，并将数据包发往 POSTROUTING 链上。</li>
+<li>POSTROUTING 上收到数据包后，根据目标 IP 地址（后端服务器），通过路由选路，将数据包最终发往后端的服务器上。</li>
+</ul>
+<p>开源 LVS 版本有 3 种工作模式，每种模式工作原理截然不同，说各种模式都有自己的优缺点，分别适合不同的应用场景，不过最终本质的功能都是能实现均衡的流量调度和良好的扩展性。主要包括三种模式：DR 模式、NAT 模式、Tunnel 模式。</p>
+<p>:::</p>
+<h3 id="【高级】负载均衡有哪些算法？"><a href="#【高级】负载均衡有哪些算法？" class="headerlink" title="【高级】负载均衡有哪些算法？"></a>【高级】负载均衡有哪些算法？</h3><p>:::details 要点</p>
+<p>负载均衡器的实现可以分为两个部分：</p>
+<ul>
+<li>根据负载均衡算法在候选机器列表选出一个机器；</li>
+<li>将请求数据发送到该机器上。</li>
+</ul>
+<p>负载均衡算法是负载均衡服务核心中的核心。负载均衡产品多种多样，但是各种负载均衡算法原理是共性的。</p>
+<p>负载均衡算法有很多种，分别适用于不同的应用场景。本章节将由浅入深的，逐一讲解各种负载均衡算法的策略和特性，并根据算法之间的互补关系将它们串联起来。</p>
+<blockquote>
+<p>注：负载均衡算法的实现，推荐阅读 <a target="_blank" rel="noopener" href="https://dubbo.apache.org/zh/docs/v2.7/dev/source/loadbalance/">Dubbo 官方负载均衡算法说明</a> ，源码讲解非常详细，非常值得借鉴。</p>
+<p>下文中的各种算法的可执行示例已归档在 Github 仓库：<a target="_blank" rel="noopener" href="https://github.com/dunwu/java-tutorial/tree/master/codes/java-distributed/java-load-balance">java-load-balance</a>，可以通过执行 <code>io.github.dunwu.javatech.LoadBalanceDemo</code> 查看各算法执行效果。</p>
+</blockquote>
+<h4 id="轮询算法"><a href="#轮询算法" class="headerlink" title="轮询算法"></a>轮询算法</h4><p><strong>“轮询算法（Round Robin）”的策略是：将请求“依次”分发到候选机器</strong>。</p>
+<p>如下图所示，轮询负载均衡器收到来自客户端的 6 个请求，编号为 1、4 的请求会被发送到服务端 0；编号为 2、5 的请求会被发送到服务端 1；编号为 3、6 的请求会被发送到服务端 2。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648178.png" alt="img"></p>
+<p><strong>轮询算法适合的场景需要满足：各机器处理能力相近，且每个请求工作量差异不大</strong>。</p>
+<h4 id="随机算法"><a href="#随机算法" class="headerlink" title="随机算法"></a>随机算法</h4><p><strong>“随机算法（Random）” 将请求“随机”分发到候选机器</strong>。</p>
+<p>如下图所示，随机负载均衡器收到来自客户端的 6 个请求，会随机分发请求，可能会出现：编号为 1、5 的请求会被发送到服务端 0；编号为 2、4 的请求会被发送到服务端 1；编号为 3、6 的请求会被发送到服务端 2。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648899.png" alt="img"></p>
+<p><strong>随机算法适合的场景需要满足：各机器处理能力相近，且每个请求工作量差异不大</strong>。</p>
+<p>学习过概率论的都知道，调用量较小的时候，可能负载并不均匀，<strong>调用量越大，负载越均衡</strong>。</p>
+<h4 id="加权轮询-随机算法"><a href="#加权轮询-随机算法" class="headerlink" title="加权轮询&#x2F;随机算法"></a>加权轮询&#x2F;随机算法</h4><p>轮询&#x2F;随机算法适合的场景都需要满足：各机器处理能力相近，且每个请求工作量差异不大。</p>
+<p>在理想状况下，假设每个机器的硬件条件相同，如：CPU、内存、网络 IO 等配置都相同；并且每个请求的耗时一样（请求传输时间、请求访问数据时间、计算时间等），这时轮询算法才能真正做到负载均衡。显然，要满足以上条件都相同是几乎不可能的，更不要说实际的网络通信中还有更多复杂的情况。</p>
+<p>以上，如果有一点不能满足，都无法做到真正的负载均衡。个体存在较大差异，当请求量较大时，处理较慢的机器可能会逐渐积压请求，从而导致过载甚至宕机。</p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>服务端 1 的处理能力远低于服务端 0 和服务端 2；</li>
+<li>轮询&#x2F;随机算法可以保证将请求尽量均匀的分发给两个机器；</li>
+<li>编号为 1、4 的请求被发送到服务端 0；编号为 3、6 的请求被发送到服务端 2；二者处理能力强，应对游刃有余；</li>
+<li>编号为 2、5 的请求被发送到服务端 1，服务端 1 处理能力弱，应对捉襟见肘，导致过载。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649920.png" alt="img"></p>
+<blockquote>
+<p>《蜘蛛侠》电影中有一句经典台词：<strong>能力越大，责任越大</strong>。显然，以上情况不符合这句话，处理能力强的机器并没有被分发到更多的请求，它的处理能力被闲置了。那么，如何解决这个问题呢？</p>
+</blockquote>
+<p>一种比较容易想到的思路是：引入权重属性，可以根据机器的硬件条件为其设置合理的权重值，负载均衡时，优先将请求分发到权重较高的机器。</p>
+<p>“加权轮询算法（Weighted Round Robbin）” 和“加权随机算法（Weighted Random）” 都采用了加权的思路，在轮询&#x2F;随机算法的基础上，引入了权重属性，优先将请求分发到权重较高的机器。这样，就可以针对性能高、处理速度快的机器设置较高的权重，让其处理更多的请求；而针对性能低、处理速度慢的机器则与之相反。一言以蔽之，加权策略强调了——能力越大，责任越大。</p>
+<p>如下图所示，服务端 0 设置权重为 3，服务端 1 设置权重为 1，服务端 2 设置权重为 2。负载均衡器收到来自客户端的 6 个请求，那么编号为 1、2、5 的请求会被发送到服务端 0，编号为 4 的请求会被发送到服务端 1，编号为 3、6 的请求会被发送到机器 2。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649943.png" alt="img"></p>
+<h4 id="最少连接数算法"><a href="#最少连接数算法" class="headerlink" title="最少连接数算法"></a>最少连接数算法</h4><p>加权轮询&#x2F;随机算法虽然一定程度上解决了机器处理能力不同时的负载均衡场景，但它最大的问题在于不能动态应对网络中负载不均的场景。加权的思路是在负载均衡处理的事前，预设好不同机器的权重，然后分发。然而，每个请求的连接时长不同，负载均衡器也不可能准确预估出请求的连接时长。因此，采用加权轮询&#x2F;随机算法算法，都无法动态应对连接时长不均的网络场景，可能会出现<strong>某些机器当前连接数过多，而另一些机器的连接过少</strong>的情况，即并非真正的流量负载均衡。</p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>3 个服务端的处理能力相同；</li>
+<li>编号为 1、4 的请求被发送到服务端 0，但是 1 很快就断开连接，此时只有 4 请求连接服务端 0；</li>
+<li>编号为 2、5 的请求被发送到服务端 1，但是 2 始终保持长连接；该系统继续运行时，服务端 1 发生过载；</li>
+<li>编号为 3、6 的请求被发送到服务端 2，但是 3 很快就断开连接，此时只有 6 请求连接服务端 2；</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650176.png" alt="img"></p>
+<p>既然，请求的连接时长不同，会导致有的服务端处理慢，积压大量连接数；而有的服务端处理快，保持的连接数少。那么，我们不妨想一下，如果负载均衡器监控一下服务端当前所持有的连接数，优先将请求分发给连接数少的服务端，不就能有效提高分发效率了吗？最少连接数算法正是采用这个思路去设计的。</p>
+<p><strong>“最少连接数算法（Least Connections）” 将请求分发到连接数&#x2F;请求数最少的候选机器</strong>。</p>
+<p>要根据机器连接数分发，显然要先维护机器的连接数。因此，<strong>最少连接数算法需要实时追踪每个候选机器的活跃连接数；然后，动态选出连接数最少的机器，优先分发请求</strong>。最少连接数算法会记录当前时刻，每个候选节点正在处理的连接数，然后选择连接数最小的节点。该策略能够动态、实时地反应机器的当前状况，较为合理地将负责分配均匀，适用于对当前系统负载较为敏感的场景。</p>
+<p>由此可见，<strong>最少连接数算法适用于对系统负载较为敏感且请求连接时长相差较大的场景</strong>。</p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>服务端 0 和服务端 1 的处理能力相同；</li>
+<li>编号为 1、3 的请求被发送到服务端 0，但是 1、3 很快就断开连接；</li>
+<li>编号为 2、4 的请求被发送到服务端 1，但是 2、4 保持长连接；</li>
+<li>由于服务端 0 当前连接数最少，编号为 5、6 的请求被分发到服务端 0。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650852.png" alt="img"></p>
+<p>“加权最少连接数算法（Weighted Least Connection）”在最少连接数算法的基础上，根据机器的性能为每台机器分配权重，再根据权重计算出每台机器能处理的连接数。</p>
+<h4 id="最少响应时间算法"><a href="#最少响应时间算法" class="headerlink" title="最少响应时间算法"></a>最少响应时间算法</h4><p><strong>“最少响应时间算法（Least Time）” 将请求分发到响应时间最短的候选机器</strong>。最少响应时间算法和最少连接数算法二者的目标其实是殊途同归，都是动态调整，将请求尽量分发到处理能力强的机器上。不同点在于，最少连接数关注的维度是机器持有的连接数，而最少响应时间关注的维度是机器上一次响应时间哪个最短。理论上来说，持有的连接数少，响应时间短，都可以表明机器潜在的处理能力比较强。</p>
+<p><strong>最少响应时间算法具有高度的敏感性、自适应性</strong>。但是，由于它需要持续监控候选机器的响应时延，相比于监控候选机器的连接数，会显著增加监控的开销。此外，请求的响应时延并不一定能完全反应机器的处理能力，有可能某机器上一次处理的请求恰好是一个开销非常小的请求。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650334.png" alt="img"></p>
+<h4 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h4><p>前面提到的负载均衡算法，都只适用于无状态应用。所谓无状态应用，意味着：请求无论分发到集群中的任意机器上，得到的响应都是相同的：然而，有状态服务则不然：请求分发到不同的机器上，得到的结果是不一样的。典型的无状态应用是普通的 Web 服务器；典型的有状态应用是各种分布式数据库（如：Redis、ElasticSearch 等），这些数据库存储了大量，乃至海量的数据，无法全部存储在一台机器上，为了提高整体容量以及吞吐量，采用了分区（分片）的设计，将数据化整为零的存储在不同机器上。</p>
+<p>对于有状态应用，不仅仅需要保证负载的均衡，更为重要的是，需要保证针对相同数据的请求始终访问的是相同的机器，否则，就无法获取到正确的数据。</p>
+<p>那么，如何解决有状态应用的负载均衡呢？有一种方案是哈希算法。</p>
+<p><strong>“哈希算法（Hash）” 根据一个 key （可以是唯一 ID、IP、URL 等），通过哈希函数计算得到一个数值，用该数值在候选机器列表的进行取模运算，得到的结果便是选中的机器</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250652913.png" alt="img"></p>
+<p>这种算法可以保证，同一关键字（IP 或 URL 等）的请求，始终会被转发到同一台机器上。哈希负载均衡算法常被用于实现会话粘滞（Sticky Session）。</p>
+<p>但是 ，哈希算法的问题是：当增减节点时，由于哈希取模函数的基数发生变化，会影响大部分的映射关系，从而导致之前的数据不可访问。要解决这个问题，就必须根据新的计算公式迁移数据。显然，如果数据量很大的情况下，迁移成本很高；并且，在迁移过程中，要保证业务平滑过渡，需要使用数据双写等较为复杂的技术手段。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653034.png" alt="img"></p>
+<h4 id="一致性哈希算法"><a href="#一致性哈希算法" class="headerlink" title="一致性哈希算法"></a>一致性哈希算法</h4><p>哈希算法的缺点是：当集群中出现增减节点时，由于哈希取模函数的基数发生变化，会导致大量集群中的机器不可用；需要通过代价高昂的数据迁移，来解决问题。那么，我们自然会希望有一种更优化的方案，来尽量减少影响的机器数。一致性哈希算法就是为了这个目标而应运而生。</p>
+<p>一致性哈希算法对哈希算法进行了改良。<strong>“一致性哈希算法（Consistent Hash）”，根据哈希算法将对应的 key 哈希到一个具有 2^32 个桶的空间，并且头尾相连（0 到 2^32-1），即一个闭合的环形，这个圆环被称为“哈希环”</strong>。哈希算法是对节点的数量进行取模运算；而一致性哈希算法则是对 2^32 进行取模运算。</p>
+<p><strong>哈希环的空间是按顺时针方向组织的</strong>，需要对指定 key 的数据进行读写时，会执行两步：</p>
+<ol>
+<li>先对节点进行哈希计算，计算的关键字通常是 IP 或其他唯一标识（例：hash(ip)），然后对 2^32 取模，以确定节点在哈希环上的位置。</li>
+<li>先对 key 进行哈希计算（hash(key)），然后对 2^32 取模，以确定 key 在哈希环上的位置。</li>
+<li>然后根据 key 的位置，顺时针找到的第一个节点，就是 key 对应的节点。</li>
+</ol>
+<p>所以，<strong>一致性哈希是将“存储节点”和“数据”都映射到一个顺时针排序的哈希环上</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653412.png" alt="img"></p>
+<p>一致性哈希算法会尽可能保证，相同的请求被分发到相同的机器上。<strong>当出现增减节点时，只影响哈希环中顺时针方向的相邻的节点，对其他节点无影响，不会引起剧烈变动</strong>。</p>
+<ul>
+<li><strong>相同的请求</strong>是指：一般在使用一致性哈希时，需要指定一个 key 用于 hash 计算，可能是：用户 ID、请求方 IP、请求服务名称，参数列表构成的串</li>
+<li><strong>尽可能</strong>是指：哈希环上出现增减节点时，少数机器的变化不应该影响大多数的请求。</li>
+</ul>
+<p>（1）增加节点</p>
+<p>如下图所示，假设，哈希环中新增了一个节点 S4，新增节点经过哈希计算映射到图中位置：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653974.png" alt="img"></p>
+<p>此时，只有 K1 收到影响；而 K0、K2 均不受影响。</p>
+<p>（2）减少节点</p>
+<p>如下图所示，假设，哈希环中减少了一个节点 S0：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653207.png" alt="img"></p>
+<p>此时，只有 K0 收到影响；而 K1、K2 均不受影响。</p>
+<p><strong>一致性哈希算法并不保证节点能够在哈希环上分布均匀</strong>，由此而产生一个问题，哈希环上可能有大量的请求集中在一个节点上。从概率角度来看，<strong>哈希环上的节点越多，分布就越均匀</strong>。正因为如此，一致性哈希算法不适用于节点数过少的场景。</p>
+<p>如下图所示：极端情况下，可能由于节点在哈希环上分布不均，有大量请求计算得到的 key 会被集中映射到少数节点，甚至某一个节点上。此外，节点分布不均匀的情况下，进行容灾与扩容时，哈希环上的相邻节点容易受到过大影响，从而引发雪崩式的连锁反应。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654770.png" alt="img"></p>
+<h4 id="虚拟一致性哈希算法"><a href="#虚拟一致性哈希算法" class="headerlink" title="虚拟一致性哈希算法"></a>虚拟一致性哈希算法</h4><p>在一致性哈希算法中，如果节点数过少，可能会分布不均，从而导致负载不均衡。在实际生产环境中，一个分布式系统应该具备良好的伸缩性，既能从容的扩展到大规模的集群，也要能支持小规模的集群。为此，又产生了虚拟哈希算法，进一步对一致性哈希算法进行了改良。</p>
+<p>虚拟哈希算法的解决思路是：虽然实际的集群可能节点数较少，但是在哈希环上引入大量的虚拟哈希节点。具体来说，<strong>“虚拟哈希算法”有二次映射：先将虚拟节点映射到哈希环上，再将虚拟节点映射到实际节点上。</strong></p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>分布式集群中有 4 个真实节点，分别是：S0、S1、S2、S3；</li>
+<li>我们不妨先假定分配给哈希环 12 个虚拟节点，并将虚拟节点映射到真实节点上，映射关系如下：<ul>
+<li>S0 - S0_0、S0_1、S0_2、S0_3</li>
+<li>S1 - S1_0、S1_1、S1_2、S1_3</li>
+<li>S2 - S2_0、S2_1、S2_2、S2_3</li>
+<li>S3 - S3_0、S3_1、S3_2、S3_3</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654220.png" alt="img"></p>
+<p>通过引入虚拟哈希节点，是的哈希环上的节点分布相对均匀了。举例来说，假如此时，某请求的 key 哈希取模后，先映射到哈希环的 [S3_2, S0_0]、[S3_0, S0_1]、[S3_1, S0_2] 这三个区间的任意一点；接下来的二次映射都会匹配到真实节点 S0。</p>
+<p>在实际应用中，虚拟哈希节点数一般都比较大（例如：Redis 的虚拟哈希槽有 16384 个），较大的数量保证了虚拟哈希环上的节点分布足够均匀。</p>
+<p>虚拟节点除了会提高节点的均衡度，还会提高系统的稳定性。<strong>当节点变化时，会有不同的节点共同分担系统的变化，因此稳定性更高</strong>。例如，当某个节点被移除时，分配给该节点的多个虚拟节点会被一并移除，而这些虚拟节点按顺时针方向的下一个虚拟节点，可能会对应不同的真实节点，即这些不同的真实节点共同分担了节点变化导致的压力。</p>
+<p>此外，有了虚拟节点后，可以通过调整分配给真实节点的虚拟节点数，来达到设置权重一样的效果，使得负载均衡更加灵活。</p>
+<p>综上所述，<strong>虚拟一致性哈希算法不仅适合硬件配置不同的节点的场景，而且适合节点规模会发生变化的场景</strong>。</p>
+<p>:::</p>
+<h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><h3 id="【基础】什么是流量控制？为什么需要流量控制？"><a href="#【基础】什么是流量控制？为什么需要流量控制？" class="headerlink" title="【基础】什么是流量控制？为什么需要流量控制？"></a>【基础】什么是流量控制？为什么需要流量控制？</h3><p>:::details 要点</p>
+<p><strong>流量控制（Flow Control）</strong>，根据流量、并发线程数、响应时间等指标，把随机到来的流量调整成合适的形状，即<strong>流量塑形</strong>。避免应用被瞬时的流量高峰冲垮，从而保障应用的高可用性。</p>
+<p>复杂的分布式系统架构中的应用程序往往具有数十个依赖项，每个依赖项都会不可避免地在某个时刻失败。 如果主机应用程序未与这些外部故障隔离开来，则可能会被波及。</p>
+<p>例如，对于依赖于 30 个服务的应用程序，假设每个服务的正常运行时间为 99.99％，则可以期望：</p>
+<blockquote>
+<p>99.99<sup>30</sup> &#x3D; 99.7％ 的正常运行时间</p>
+<p>10 亿个请求中的 0.3％&#x3D; 3,000,000 个失败</p>
+<p>即使所有依赖项都具有出色的正常运行时间，每月也会有 2 个小时以上的停机时间。</p>
+<p>然而，现实情况一般比这种估量情况更糟糕。</p>
+</blockquote>
+<hr>
+<p>当一切正常时，整体系统如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931974.png" alt="img"></p>
+<p>图片来自 <a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki">Hystrix Wiki</a></p>
+<p>在分布式系统架构下，这些强依赖的子服务稳定与否对系统的影响非常大。但是，依赖的子服务可能有很多不可控问题：如网络连接、资源繁忙、服务宕机等。例如：下图中有一个 QPS 为 50 的依赖服务 I 出现不可用，但是其他依赖服务是可用的。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401280931939.png" alt="img"></p>
+<p>图片来自 <a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki">Hystrix Wiki</a></p>
+<p>当流量很大的情况下，某个依赖的阻塞，会导致上游服务请求被阻塞。当这种级联故障愈演愈烈，就可能造成整个线上服务不可用的雪崩效应，如下图。这种情况若持续恶化，如果上游服务本身还被其他服务所依赖，就可能出现多米洛骨牌效应，导致多个服务都无法正常工作。</p>
+<p><img src="https://github.com/Netflix/Hystrix/wiki/images/soa-3-640.png" alt="img"></p>
+<p>图片来自 <a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki">Hystrix Wiki</a></p>
+<p>:::</p>
+<h3 id="【基础】流量控制有哪些衡量指标？"><a href="#【基础】流量控制有哪些衡量指标？" class="headerlink" title="【基础】流量控制有哪些衡量指标？"></a>【基础】流量控制有哪些衡量指标？</h3><p>:::details 要点</p>
+<p>:::</p>
+<h3 id="【中级】流量控制有哪些保护机制？"><a href="#【中级】流量控制有哪些保护机制？" class="headerlink" title="【中级】流量控制有哪些保护机制？"></a>【中级】流量控制有哪些保护机制？</h3><p>:::details 要点</p>
+<p>流量控制常见的手段就是限流、熔断、降级。</p>
+<h4 id="什么是降级？"><a href="#什么是降级？" class="headerlink" title="什么是降级？"></a>什么是降级？</h4><p><strong>降级</strong>是保障服务能够稳定运行的一种保护方式：面对突增的流量，牺牲一些吞吐量以换取系统的稳定。常见的降级实现方式有：开关降级、限流降级、熔断降级。</p>
+<h4 id="什么是限流？"><a href="#什么是限流？" class="headerlink" title="什么是限流？"></a>什么是限流？</h4><p>限流一般针对下游服务，当上游流量较大时，避免被上游服务的请求撑爆。</p>
+<p><strong>限流</strong>就是限制系统的输入和输出流量，以达到保护系统的目的。一般来说系统的吞吐量是可以被测算的，为了保证系统的稳定运行，一旦达到的需要限制的阈值，就需要限制流量并采取一些措施以完成限制流量的目的。比如：延迟处理，拒绝处理，或者部分拒绝处理等等。</p>
+<p>限流规则包含三个部分：时间粒度，接口粒度，最大限流值。限流规则设置是否合理直接影响到限流是否合理有效。</p>
+<h4 id="什么是熔断？"><a href="#什么是熔断？" class="headerlink" title="什么是熔断？"></a>什么是熔断？</h4><p>熔断一般针对上游服务，当下游服务超时&#x2F;异常较多时，避免被下游服务拖垮。</p>
+<p>当调用链路中某个资源出现不稳定，例如，超时异常比例升高的时候，则对这个资源的调用进行限制，并让请求快速失败，避免影响到其它的资源，最终产生雪崩的效果。</p>
+<p>熔断尽最大的可能去完成所有的请求，容忍一些失败，熔断也能自动恢复。熔断的常见策略有：</p>
+<ul>
+<li>在每秒请求异常数超过多少时触发熔断降级</li>
+<li>在每秒请求异常错误率超过多少时触发熔断降级</li>
+<li>在每秒请求平均耗时超过多少时触发熔断降级</li>
+</ul>
+<p>:::</p>
+<h3 id="流量控制有哪些衡量指标"><a href="#流量控制有哪些衡量指标" class="headerlink" title="流量控制有哪些衡量指标"></a>流量控制有哪些衡量指标</h3><p>:::details 要点</p>
+<p>流量控制有以下几个角度：</p>
+<ul>
+<li>流量指标，例如 QPS、并发线程数等。</li>
+<li>资源的调用关系，例如资源的调用链路，资源和资源之间的关系，调用来源等。</li>
+<li>控制效果，例如排队等待、直接拒绝、Warm Up（预热）等。</li>
+</ul>
+<p>:::</p>
+<h3 id="【中级】流量控制有哪些隔离模式？"><a href="#【中级】流量控制有哪些隔离模式？" class="headerlink" title="【中级】流量控制有哪些隔离模式？"></a>【中级】流量控制有哪些隔离模式？</h3><p>:::details 要点</p>
+<p>线程池隔离</p>
+<p>信号量隔离</p>
+<p>资源隔离</p>
+<p>:::</p>
+<h3 id="【高级】有哪些限流算法？"><a href="#【高级】有哪些限流算法？" class="headerlink" title="【高级】有哪些限流算法？"></a>【高级】有哪些限流算法？</h3><p>:::details 要点</p>
+<p>常见的限流算法有：固定窗口限流算法、滑动窗口限流算法、漏桶限流算法、令牌桶限流算法。</p>
+<h4 id="固定窗口限流算法"><a href="#固定窗口限流算法" class="headerlink" title="固定窗口限流算法"></a>固定窗口限流算法</h4><p><strong>固定窗口限流算法的原理</strong></p>
+<p>固定窗口限流算法的<strong>基本策略</strong>是：</p>
+<ol>
+<li>设置一个固定时间窗口，以及这个固定时间窗口内的最大请求数；</li>
+<li>为每个固定时间窗口设置一个计数器，用于统计请求数；</li>
+<li>一旦请求数超过最大请求数，则请求会被拦截。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230748006.png" alt="img"></p>
+<p><strong>固定窗口限流算法的利弊</strong></p>
+<p>固定窗口限流算法的<strong>优点</strong>是：实现简单。</p>
+<p>固定窗口限流算法的<strong>缺点</strong>是：存在<strong>临界问题</strong>。所谓临界问题，是指：流量分别集中在一个固定时间窗口的尾部和一个固定时间窗口的头部。举例来说，假设限流规则为每分钟不超过 100 次请求。在第一个时间窗口中，起初没有任何请求，在最后 1 s，收到 100 次请求，由于没有达到阈值，所有请求都通过；在第二个时间窗口中，第 1 秒就收到 100 次请求，而后续没有任何请求。虽然，这两个时间窗口内的流量都符合限流要求，但是在两个时间窗口临界的这 2s 内，实际上有 200 次请求，显然是超过预期吞吐量的，存在压垮系统的可能。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230748769.png" alt="img"></p>
+<h4 id="滑动窗口限流算法"><a href="#滑动窗口限流算法" class="headerlink" title="滑动窗口限流算法"></a>滑动窗口限流算法</h4><p><strong>滑动窗口限流算法的原理</strong></p>
+<p>滑动窗口限流算法是对固定窗口限流算法的改进，解决了临界问题。</p>
+<p>滑动窗口限流算法的<strong>基本策略</strong>是：</p>
+<ul>
+<li>将固定时间窗口分片为多个子窗口，每个子窗口的访问次数独立统计；</li>
+<li>当请求时间大于当前子窗口的最大时间时，则将当前子窗口废弃，并将计时窗口向前滑动，并将下一个子窗口置为当前窗口。</li>
+<li>要保证所有子窗口的统计数之和不能超过阈值。</li>
+</ul>
+<p>滑动窗口限流算法就是针对固定窗口限流算法的更细粒度的控制，分片越多，则限流越精准。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230748277.png" alt="img"></p>
+<p><strong>滑动窗口限流算法的利弊</strong></p>
+<p>滑动窗口限流算法的<strong>优点</strong>是：在滑动窗口限流算法中，临界位置的突发请求都会被算到时间窗口内，因此可以解决计数器算法的临界问题。</p>
+<p>滑动窗口限流算法的<strong>缺点</strong>是：</p>
+<ul>
+<li><strong>额外的内存开销</strong> - 滑动时间窗口限流算法的时间窗口是持续滑动的，并且除了需要一个计数器来记录时间窗口内接口请求次数之外，还需要记录在时间窗口内每个接口请求到达的时间点，所以存在额外的内存开销。</li>
+<li><strong>限流的控制粒度受限于窗口分片粒度</strong> - 滑动窗口限流算法，<strong>只能在选定的时间粒度上限流，对选定时间粒度内的更加细粒度的访问频率不做限制</strong>。但是，由于每个分片窗口都有额外的内存开销，所以也并不是分片数越多越好的。</li>
+</ul>
+<h4 id="漏桶限流算法"><a href="#漏桶限流算法" class="headerlink" title="漏桶限流算法"></a>漏桶限流算法</h4><p><strong>漏桶限流算法的原理</strong></p>
+<p>漏桶限流算法的<strong>基本策略</strong>是：</p>
+<ul>
+<li>水（请求）以任意速率由入口进入到漏桶中；</li>
+<li>水以固定的速率由出口出水（请求通过）；</li>
+<li>漏桶的容量是固定的，如果水的流入速率大于流出速率，最终会导致漏桶中的水溢出（这意味着请求拒绝）。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230749486.png" alt="img"></p>
+<p><strong>漏桶限流算法的利弊</strong></p>
+<p>漏桶限流算法的<strong>优点</strong>是：<strong>流量速率固定</strong>——即无论流量多大，即便是突发的大流量，处理请求的速度始终是固定的。</p>
+<p>漏桶限流算法的<strong>缺点</strong>是：不能灵活的调整流量。例如：一个集群通过增减节点的方式，弹性伸缩了其吞吐能力，漏桶限流算法无法随之调整。</p>
+<p><strong>漏桶策略适用于间隔性突发流量且流量不用即时处理的场景</strong>。</p>
+<h4 id="令牌桶限流算法"><a href="#令牌桶限流算法" class="headerlink" title="令牌桶限流算法"></a>令牌桶限流算法</h4><p><strong>令牌桶限流算法的原理</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202401230750231.png" alt="img"></p>
+<p>令牌桶算法的<strong>原理</strong>：</p>
+<ol>
+<li>接口限制 T 秒内最大访问次数为 N，则每隔 T&#x2F;N 秒会放一个 token 到桶中</li>
+<li>桶内最多存放 M 个 token，如果 token 到达时令牌桶已经满了，那么这个 token 就会被丢弃</li>
+<li>接口请求会先从令牌桶中取 token，拿到 token 则处理接口请求，拿不到 token 则进行限流处理</li>
+</ol>
+<p><strong>令牌桶限流算法的利弊</strong></p>
+<p>因为令牌桶存放了很多令牌，那么大量的突发请求会被执行，但是它不会出现临界问题，在令牌用完之后，令牌是以一个恒定的速率添加到令牌桶中的，因此不能再次发送大量突发请求。</p>
+<p>规定固定容量的桶，token 以固定速度往桶内填充，当桶满时 token 不会被继续放入，每过来一个请求把 token 从桶中移除，如果桶中没有 token 不能请求。</p>
+<p><strong>令牌桶算法适用于有突发特性的流量，且流量需要即时处理的场景</strong>。</p>
+<blockquote>
+<p><strong>扩展</strong></p>
+<p>Guava 的 RateLimiter 工具类就是基于令牌桶算法实现，其源码分析可以参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/forezp/article/details/100060686">RateLimiter 基于漏桶算法，但它参考了令牌桶算法</a></p>
+</blockquote>
+<p>:::</p>
+<h2 id="网关路由"><a href="#网关路由" class="headerlink" title="网关路由"></a>网关路由</h2><h3 id="【基础】什么是服务路由？路由有什么用？"><a href="#【基础】什么是服务路由？路由有什么用？" class="headerlink" title="【基础】什么是服务路由？路由有什么用？"></a>【基础】什么是服务路由？路由有什么用？</h3><p>:::details 要点</p>
+<p><strong>服务路由</strong>是指通过一定的规则从集群中选择合适的节点。</p>
+<p>负载均衡的作用和服务路由的功能看上去很近似，二者有什么区别呢？</p>
+<p>负载均衡的目标是提供服务分发而不是解决路由问题，常见的<strong>静态、动态负载均衡算法无法实现精细化的路由管理</strong>，但是负载均衡也可以简单看做是路由方案的一种。</p>
+<p>服务路由通常用于以下场景，目的在于实现流量隔离：</p>
+<ul>
+<li><strong>分组调用</strong>：一般来讲，为了保证服务的高可用性，实现异地多活的需求，一个服务往往不止部署在一个数据中心，而且出于节省成本等考虑，有些业务可能不仅在私有机房部署，还会采用公有云部署，甚至采用多家公有云部署。服务节点也会按照不同的数据中心分成不同的分组，这时对于服务消费者来说，选择哪一个分组调用，就必须有相应的路由规则。</li>
+<li><strong>蓝绿发布</strong>：蓝绿发布场景中，一共有两套服务群组：一套是提供旧版功能的服务群组，标记为<strong>绿色</strong>；另一套是提供新版功能的服务群组，标记为<strong>蓝色</strong>。两套服务群组都是功能完善的，并且正在运行的系统，只是服务版本和访问流量不同。新版群组（蓝色）通常是为了做内部测试、验收，不对外部用户暴露。<ul>
+<li>如果新版群组（蓝色）运行稳定，并测试、验收通过后，则通过服务路由、负载均衡等手段逐步将外部用户流量导向新版群组（蓝色）。</li>
+<li>如果新版群组（蓝色）运行不稳定，或测试、验收不通过，则排查、解决问题后，再继续测试、验收。</li>
+</ul>
+</li>
+<li><strong>灰度发布</strong>：灰度发布（又名金丝雀发布）是指在黑与白之间，能够平滑过渡的一种发布方式。在其上可以进行 A&#x2F;B 测试，即让一部分用户使用特性 A，一部分用户使用特性 B：如果用户对 B 没有什么反对意见，那么逐步扩大发布范围，直到把所有用户都迁移到 B 上面来。灰度发布可以保证整体系统的稳定，在初始灰度的时候就可以发现、调整问题，以保证其影响度。要支持灰度发布，就要求服务能够根据一定的规则，将流量隔离。</li>
+<li><strong>流量切换</strong>：在业务线上运行过程中，经常会遇到一些不可抗力因素导致业务故障，比如某个机房的光缆被挖断，或者发生着火等事故导致整个机房的服务都不可用。这个时候就需要按照某个指令，能够把原来调用这个机房服务的流量切换到其他正常的机房。</li>
+<li><strong>线下测试联调</strong>：线下测试时，可能会缺少相应环境。可以将测试应用注册到线上，然后开启路由规则，在本地进行测试。</li>
+<li><strong>读写分离</strong>。对于大多数互联网业务来说都是读多写少，所以在进行服务部署的时候，可以把读写分开部署，所有写接口可以部署在一起，而读接口部署在另外的节点上。</li>
+</ul>
+<p>:::</p>
+<h3 id="服务路由有哪些常见规则？"><a href="#服务路由有哪些常见规则？" class="headerlink" title="服务路由有哪些常见规则？"></a>服务路由有哪些常见规则？</h3><p>:::details 要点</p>
+<h4 id="条件路由"><a href="#条件路由" class="headerlink" title="条件路由"></a>条件路由</h4><p><strong>条件路由是基于条件表达式的路由规则</strong>。各个 RPC 框架的条件路由表达式各不相同。</p>
+<p>我们不妨参考一下 Dubbo 的条件路由。Dubbo 的条件路由有两种配置粒度，如下：</p>
+<ul>
+<li><p><strong>应用粒度</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># app1 的消费者只能消费所有端口为 20880 的服务实例</span></span><br><span class="line"><span class="comment"># app2 的消费者只能消费所有端口为 20881 的服务实例</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">scope:</span> <span class="string">application</span></span><br><span class="line"><span class="attr">force:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">runtime:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">governance-conditionrouter-consumer</span></span><br><span class="line"><span class="attr">conditions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">application=app1</span> <span class="string">=&gt;</span> <span class="string">address=*:20880</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">application=app2</span> <span class="string">=&gt;</span> <span class="string">address=*:20881</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>服务粒度</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DemoService 的 sayHello 方法只能消费所有端口为 20880 的服务实例</span></span><br><span class="line"><span class="comment"># DemoService 的 sayHi 方法只能消费所有端口为 20881 的服务实例</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">scope:</span> <span class="string">service</span></span><br><span class="line"><span class="attr">force:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">runtime:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">org.apache.dubbo.samples.governance.api.DemoService</span></span><br><span class="line"><span class="attr">conditions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">method=sayHello</span> <span class="string">=&gt;</span> <span class="string">address=*:20880</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">method=sayHi</span> <span class="string">=&gt;</span> <span class="string">address=*:20881</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>其中，<code>conditions</code> 定义具体的路由规则内容。<code>conditions</code> 部分是规则的主体，由 1 到任意多条规则组成。详见：<a target="_blank" rel="noopener" href="https://dubbo.apache.org/zh/docs/v2.7/user/examples/routing-rule/">Dubbo 路由规则</a></p>
+</blockquote>
+<p>Dubbo 的条件路由规则由两个条件组成，分别用于对服务消费者和提供者进行匹配。条件路由规则的格式如下：</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">[服务消费者匹配条件]</span> =&gt; <span class="comment">[服务提供者匹配条件]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>服务消费者匹配条件：所有参数和消费者的 URL 进行对比，当消费者满足匹配条件时，对该消费者执行后面的过滤规则。</li>
+<li>服务提供者匹配条件：所有参数和提供者的 URL 进行对比，消费者最终只拿到过滤后的地址列表。</li>
+</ul>
+<p><code>condition://</code> 代表了这是一段用条件表达式编写的路由规则，下面是一个条件路由规则示例：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> <span class="operator">=</span> <span class="number">10.20</span>.<span class="number">153.10</span> <span class="operator">=</span>&gt; host <span class="operator">=</span> <span class="number">10.20</span>.<span class="number">153.11</span></span><br></pre></td></tr></table></figure>
+
+<p>该条规则表示 IP 为 <code>10.20.153.10</code> 的服务消费者<strong>只可</strong>调用 IP 为 <code>10.20.153.11</code> 机器上的服务，不可调用其他机器上的服务。</p>
+<p>下面列举一些 Dubbo 条件路由的典型应用场景：</p>
+<ul>
+<li>如果服务消费者的匹配条件为空，就表示<strong>所有的服务消费者都可以访问</strong>，就像下面的表达式一样。</li>
+</ul>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=&gt; host != <span class="number">10.20</span>.<span class="number">153.11</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果服务提供者的过滤条件为空，就表示<strong>禁止所有的服务消费者访问</strong>，就像下面的表达式一样。</li>
+</ul>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> <span class="operator">=</span> <span class="number">10.20</span>.<span class="number">153.10</span> <span class="operator">=</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>排除某个服务节点</strong></li>
+</ul>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=&gt; host != <span class="number">172.22</span>.<span class="number">3.91</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>白名单</strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">register.ip != 10.20.153.10,10.20.153.11 =&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>黑名单</strong></li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">register</span>.ip = <span class="number">10.20.153.10</span>,<span class="number">10.20.153.11</span> =&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>只暴露部分机器节点</strong></li>
+</ul>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=&gt; host = <span class="number">172.22</span>.<span class="number">3.1</span>*,<span class="number">172.22</span>.<span class="number">3.2</span>*</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>为重要应用提供额外的机器节点</strong></li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">application</span> != kylin =&gt; host != <span class="number">172.22.3.95</span>,<span class="number">172.22.3.96</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>读写分离</strong></li>
+</ul>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">method</span> = <span class="title function_">find</span>*,<span class="title function_">list</span>*,<span class="title function_">get</span>*,<span class="title function_">is</span>* =&gt; <span class="title function_">host</span> = 172.22.3.94,172.22.3.95,172.22.3.96</span><br><span class="line"><span class="title function_">method</span> != <span class="title function_">find</span>*,<span class="title function_">list</span>*,<span class="title function_">get</span>*,<span class="title function_">is</span>* =&gt; <span class="title function_">host</span> = 172.22.3.97,172.22.3.98</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>前后台分离</strong></li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">application</span> = bops =&gt; host = <span class="number">172.22.3.91</span>,<span class="number">172.22.3.92</span>,<span class="number">172.22.3.93</span></span><br><span class="line"><span class="attribute">application</span> != bops =&gt; host = <span class="number">172.22.3.94</span>,<span class="number">172.22.3.95</span>,<span class="number">172.22.3.96</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>隔离不同机房网段</strong></li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> != <span class="number">172</span>.<span class="number">22</span>.<span class="number">3</span>.* =&gt; host != <span class="number">172</span>.<span class="number">22</span>.<span class="number">3</span>.*</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>提供者与消费者部署在同集群内，<strong>本机只访问本机的服务</strong></li>
+</ul>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=&gt; host = $host</span><br></pre></td></tr></table></figure>
+
+<h4 id="脚本路由"><a href="#脚本路由" class="headerlink" title="脚本路由"></a>脚本路由</h4><p><strong>脚本路由</strong>是基于脚本语言的路由规则，常用的脚本语言比如 JavaScript、Groovy、JRuby 等。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;script://0.0.0.0/com.foo.BarService?category=routers&amp;dynamic=false&amp;rule=&#x27;</span> +</span><br><span class="line">  <span class="variable constant_">URL</span>.<span class="title function_">encode</span>(<span class="string">&#x27;（function route(invokers) &#123; ... &#125; (invokers)）&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里面 <code>script://</code> 就代表了这是一段脚本语言编写的路由规则，具体规则定义在脚本语言的 route 方法实现里，比如下面这段用 JavaScript 编写的 route() 方法表达的意思是，只有 IP 为 <code>10.20.153.10</code> 的服务消费者可以发起服务调用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">route</span>(<span class="params">invokers</span>)&#123;</span><br><span class="line">  <span class="keyword">var</span> result = <span class="keyword">new</span> java.<span class="property">util</span>.<span class="title class_">ArrayList</span>(invokers.<span class="title function_">size</span>());</span><br><span class="line">  <span class="keyword">for</span>(i =<span class="number">0</span>; i &lt; invokers.<span class="title function_">size</span>(); i ++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="string">&quot;10.20.153.10&quot;</span>.<span class="title function_">equals</span>(invokers.<span class="title function_">get</span>(i).<span class="title function_">getUrl</span>().<span class="title function_">getHost</span>()))&#123;</span><br><span class="line">       result.<span class="title function_">add</span>(invokers.<span class="title function_">get</span>(i));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line"> &#125; (invokers)）;</span><br></pre></td></tr></table></figure>
+
+<h4 id="标签路由"><a href="#标签路由" class="headerlink" title="标签路由"></a>标签路由</h4><p><strong>标签路由</strong>通过将某一个或多个服务的提供者划分到同一个分组，约束流量只在指定分组中流转，从而实现流量隔离的目的，可以作为蓝绿发布、灰度发布等场景的能力基础。</p>
+<p>标签主要是指对服务提供者的分组，目前有两种方式可以完成实例分组，分别是<strong>动态规则打标</strong>和<strong>静态规则打标</strong>。一般，动态规则优先级比静态规则更高，当两种规则同时存在且出现冲突时，将以动态规则为准。</p>
+<p>以 Dubbo 的标签路由用法为例</p>
+<p>（1）<strong>动态规则打标</strong>，可随时在<strong>服务治理控制台</strong>下发标签归组规则</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># governance-tagrouter-provider 应用增加了两个标签分组 tag1 和 tag2</span></span><br><span class="line"><span class="comment"># tag1 包含一个实例 127.0.0.1:20880</span></span><br><span class="line"><span class="comment"># tag2 包含一个实例 127.0.0.1:20881</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line">  <span class="attr">force:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">runtime:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">key:</span> <span class="string">governance-tagrouter-provider</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tag1</span></span><br><span class="line">      <span class="attr">addresses:</span> [<span class="string">&quot;127.0.0.1:20880&quot;</span>]</span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tag2</span></span><br><span class="line">      <span class="attr">addresses:</span> [<span class="string">&quot;127.0.0.1:20881&quot;</span>]</span><br><span class="line"> <span class="string">...</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）<strong>静态规则打标</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:provider</span> <span class="attr">tag</span>=<span class="string">&quot;tag1&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>or</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">tag</span>=<span class="string">&quot;tag1&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>or</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar xxx-provider.jar -Ddubbo.provider.tag=&#123;the tag you want, may come from OS ENV&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）<strong>服务消费者指定标签路由</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RpcContext.getContext().setAttachment(Constants.REQUEST_TAG_KEY,<span class="string">&quot;tag1&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>请求标签的作用域为每一次 invocation，使用 <code>attachment</code> 来传递请求标签，注意保存在 <code>attachment</code> 中的值将会在一次完整的远程调用中持续传递，得益于这样的特性，我们只需要在起始调用时，通过一行代码的设置，达到标签的持续传递。</p>
+<h3 id="路由规则获取方式"><a href="#路由规则获取方式" class="headerlink" title="路由规则获取方式"></a>路由规则获取方式</h3><p>路由规则的获取方式主要有三种：</p>
+<ul>
+<li><strong>本地静态配置</strong>：顾名思义就是路由规则存储在服务消费者本地上。服务消费者发起调用时，从本地固定位置读取路由规则，然后按照路由规则选取一个服务节点发起调用。</li>
+<li><strong>配置中心管理</strong>：这种方式下，所有的服务消费者都从配置中心获取路由规则，由配置中心来统一管理。</li>
+<li><strong>注册中心动态下发</strong>：这种方式下，一般是运维人员或者开发人员，通过服务治理平台修改路由规则，服务治理平台调用配置中心接口，把修改后的路由规则持久化到配置中心。因为服务消费者订阅了路由规则的变更，于是就会从配置中心获取最新的路由规则，按照最新的路由规则来执行。</li>
+</ul>
+<p>一般来讲，<strong>服务路由最好是存储在配置中心</strong>，由配置中心来统一管理。这样的话，所有的服务消费者就不需要在本地管理服务路由，因为大部分的服务消费者并不关心服务路由的问题，或者说也不需要去了解其中的细节。通过配置中心，统一给各个服务消费者下发统一的服务路由，节省了沟通和管理成本。</p>
+<p>但也不排除某些服务消费者有特定的需求，需要定制自己的路由规则，这个时候就适合通过本地配置来定制。</p>
+<p>而动态下发可以理解为一种高级功能，它能够动态地修改路由规则，在某些业务场景下十分有用。比如某个数据中心存在问题，需要把调用这个数据中心的服务消费者都切换到其他数据中心，这时就可以通过动态下发的方式，向配置中心下发一条路由规则，将所有调用这个数据中心的请求都迁移到别的地方。</p>
+<p>:::</p>
+<h2 id="分布式任务"><a href="#分布式任务" class="headerlink" title="分布式任务"></a>分布式任务</h2><h3 id="【中级】在-Java-中，实现一个进程内定时任务有哪些方案？"><a href="#【中级】在-Java-中，实现一个进程内定时任务有哪些方案？" class="headerlink" title="【中级】在 Java 中，实现一个进程内定时任务有哪些方案？"></a>【中级】在 Java 中，实现一个进程内定时任务有哪些方案？</h3><p>:::details 要点</p>
+<p>定时器有非常多的使用场景，例如生成年&#x2F;月&#x2F;周&#x2F;日统计报表、财务对账、会员积分结算、邮件推送等，都是定时器的使用场景。定时器一般有三种表现形式：按固定周期定时执行、延迟一定时间后执行、指定某个时刻执行。</p>
+<p>定时器的本质是设计一种数据结构，能够存储和调度任务集合，而且 deadline 越近的任务拥有更高的优先级。那么定时器如何知道一个任务是否到期了呢？定时器需要通过轮询的方式来实现，每隔一个时间片去检查任务是否到期。</p>
+<p>所以定时器的内部结构一般需要一个任务队列和一个异步轮询线程，并且能够提供三种基本操作：</p>
+<ul>
+<li>Schedule 新增任务至任务集合；</li>
+<li>Cancel 取消某个任务；</li>
+<li>Run 执行到期的任务。</li>
+</ul>
+<p>JDK 原生提供了三种常用的定时器实现方式，分别为 <code>Timer</code>、<code>DelayedQueue</code> 和 <code>ScheduledThreadPoolExecutor</code>。</p>
+<p>JDK 内置的三种实现定时器的方式，实现思路都非常相似，都离不开<strong>任务</strong>、<strong>任务管理</strong>、<strong>任务调度</strong>三个角色。三种定时器新增和取消任务的时间复杂度都是 <code>O(logn)</code>，面对海量任务插入和删除的场景，这三种定时器都会遇到比较严重的性能瓶颈。<strong>对于性能要求较高的场景，一般都会采用时间轮算法来实现定时器</strong>。</p>
+<h4 id="Timer"><a href="#Timer" class="headerlink" title="Timer"></a>Timer</h4><p>Timer 属于 JDK 比较早期版本的实现，它可以实现固定周期的任务，以及延迟任务。<code>Timer</code> 会启动一个异步线程去执行到期的任务，任务可以只被调度执行一次，也可以周期性反复执行多次。我们先来看下 <code>Timer</code> 是如何使用的，示例代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Timer</span> <span class="variable">timer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Timer</span>();</span><br><span class="line">timer.scheduleAtFixedRate(<span class="keyword">new</span> <span class="title class_">TimerTask</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="number">10000</span>, <span class="number">1000</span>);  <span class="comment">// 10s 后调度一个周期为 1s 的定时任务</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看出，任务是由 <code>TimerTask</code> 类实现，<code>TimerTask</code> 是实现了 <code>Runnable</code> 接口的抽象类，<code>Timer</code> 负责调度和执行 <code>TimerTask</code>。接下来我们看下 <code>Timer</code> 的内部构造。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Timer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">TaskQueue</span> <span class="variable">queue</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TaskQueue</span>();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">TimerThread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TimerThread</span>(queue);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Timer</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        thread.setName(name);</span><br><span class="line">        thread.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>TaskQueue</code> 是由数组结构实现的小根堆，deadline 最近的任务位于堆顶端，<code>queue[1]</code> 始终是最优先被执行的任务。所以使用小根堆的数据结构，<code>Run</code> 操作时间复杂度 <code>O(1)</code>，新增（<code>Schedule</code>）和取消（<code>Cancel</code>）操作的时间复杂度都是 <code>O(logn)</code>。</p>
+<p><code>Timer</code> 内部启动了一个 <code>TimerThread</code> 异步线程，不论有多少任务被加入数组，始终都是由 <code>TimerThread</code> 负责处理。<code>TimerThread</code> 会定时轮询 <code>TaskQueue</code> 中的任务，如果堆顶的任务的 deadline 已到，那么执行任务；如果是周期性任务，执行完成后重新计算下一次任务的 deadline，并再次放入小根堆；如果是单次执行的任务，执行结束后会从 <code>TaskQueue</code> 中删除。</p>
+<p><code>Timer</code> 只使用一个线程来执行任务意味着同一时间只能有一个任务得到执行，而前一个任务的延迟或者异常会影响到之后的任务。如果有一个定时任务在运行时，产生未处理的异常，那么当前这个线程就会停止，那么所有的定时任务都会停止，受到影响。</p>
+<p><strong>不推荐使用 <code>Timer</code></strong> ，因为 Timer 存在以下设计缺陷：</p>
+<ul>
+<li>Timer 是单线程模式。如果某个 TimerTask 执行时间很久，会影响其他任务的调度。</li>
+<li>Timer 的任务调度是基于系统绝对时间的，如果系统时间不正确，可能会出现问题。</li>
+<li>TimerTask 如果执行出现异常，Timer 并不会捕获，会导致线程终止，其他任务永远不会执行。</li>
+</ul>
+<h4 id="ScheduledExecutorService"><a href="#ScheduledExecutorService" class="headerlink" title="ScheduledExecutorService"></a>ScheduledExecutorService</h4><p>为了解决 <code>Timer</code> 的设计缺陷，JDK 提供了功能更加丰富的 <code>ScheduledThreadPoolExecutor</code>。<code>ScheduledThreadPoolExecutor</code> 提供了周期执行任务和延迟执行任务的特性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScheduledExecutorServiceTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">ScheduledExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newScheduledThreadPool(<span class="number">5</span>);</span><br><span class="line">         <span class="comment">// 1s 延迟后开始执行任务，每 2s 重复执行一次</span></span><br><span class="line">        executor.scheduleAtFixedRate(() -&gt; System.out.println(<span class="string">&quot;Hello World&quot;</span>), <span class="number">1000</span>, <span class="number">2000</span>, TimeUnit.MILLISECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ScheduledThreadPoolExecutor</code> 继承于 <code>ThreadPoolExecutor</code>，因此它具备线程池异步处理任务的能力。线程池主要负责管理创建和管理线程，并从自身的阻塞队列中不断获取任务执行。线程池有两个重要的角色，分别是任务和阻塞队列。<code>ScheduledThreadPoolExecutor</code> 在 <code>ThreadPoolExecutor</code> 的基础上，重新设计了任务 <code>ScheduledFutureTask</code> 和阻塞队列 <code>DelayedWorkQueue</code>。<code>ScheduledFutureTask</code> 继承于 <code>FutureTask</code>，并重写了 <code>run()</code> 方法，使其具备周期执行任务的能力。<code>DelayedWorkQueue</code> 内部是优先级队列，deadline 最近的任务在队列头部。对于周期执行的任务，在执行完会重新设置时间，并再次放入队列中。</p>
+<h4 id="DelayedQueue"><a href="#DelayedQueue" class="headerlink" title="DelayedQueue"></a>DelayedQueue</h4><p><code>DelayedQueue</code> 是 JDK 中一种可以延迟获取对象的阻塞队列，其内部是采用优先级队列 <code>PriorityQueue</code> 存储对象。<code>DelayQueue</code> 中的每个对象都必须实现 <code>Delayed</code> 接口，并重写 <code>compareTo</code> 和 <code>getDelay</code> 方法。<code>DelayedQueue</code> 的使用方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DelayQueueTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        BlockingQueue&lt;SampleTask&gt; delayQueue = <span class="keyword">new</span> <span class="title class_">DelayQueue</span>&lt;&gt;();</span><br><span class="line">        <span class="type">long</span> <span class="variable">now</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        delayQueue.put(<span class="keyword">new</span> <span class="title class_">SampleTask</span>(now + <span class="number">1000</span>));</span><br><span class="line">        delayQueue.put(<span class="keyword">new</span> <span class="title class_">SampleTask</span>(now + <span class="number">2000</span>));</span><br><span class="line">        delayQueue.put(<span class="keyword">new</span> <span class="title class_">SampleTask</span>(now + <span class="number">3000</span>));</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="keyword">new</span> <span class="title class_">Date</span>(delayQueue.take().getTime()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">SampleTask</span> <span class="keyword">implements</span> <span class="title class_">Delayed</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">long</span> time;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">SampleTask</span><span class="params">(<span class="type">long</span> time)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.time = time;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getTime</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> time;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compareTo</span><span class="params">(Delayed o)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> Long.compare(<span class="built_in">this</span>.getDelay(TimeUnit.MILLISECONDS), o.getDelay(TimeUnit.MILLISECONDS));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getDelay</span><span class="params">(TimeUnit unit)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> unit.convert(time - System.currentTimeMillis(), TimeUnit.MILLISECONDS);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>DelayQueue</code> 提供了 <code>put()</code> 和 <code>take()</code> 的阻塞方法，可以向队列中添加对象和取出对象。对象被添加到 <code>DelayQueue</code> 后，会根据 <code>compareTo()</code> 方法进行优先级排序。<code>getDelay()</code> 方法用于计算消息延迟的剩余时间，只有 <code>getDelay &lt;=0</code> 时，该对象才能从 <code>DelayQueue</code> 中取出。</p>
+<p><code>DelayQueue</code> 在日常开发中最常用的场景就是实现重试机制。例如，接口调用失败或者请求超时后，可以将当前请求对象放入 <code>DelayQueue</code>，通过一个异步线程 <code>take()</code> 取出对象然后继续进行重试。如果还是请求失败，继续放回 <code>DelayQueue</code>。为了限制重试的频率，可以设置重试的最大次数以及采用指数退避算法设置对象的 deadline，如 2s、4s、8s、16s ……以此类推。</p>
+<p>相比于 <code>Timer</code>，<code>DelayQueue</code> 只实现了任务管理的功能，需要与异步线程配合使用。<code>DelayQueue</code> 使用优先级队列实现任务的优先级排序，新增（<code>Schedule</code>）和取消（<code>Cancel</code>）操作的时间复杂度也是 <code>O(logn)</code>。</p>
+<h4 id="时间轮"><a href="#时间轮" class="headerlink" title="时间轮"></a>时间轮</h4><p>JDK 内置的三种实现定时器的方式，实现思路都非常相似，都离不开<strong>任务</strong>、<strong>任务管理</strong>、<strong>任务调度</strong>三个角色。三种定时器新增和取消任务的时间复杂度都是 <code>O(logn)</code>，面对海量任务插入和删除的场景，这三种定时器都会遇到比较严重的性能瓶颈。<strong>对于性能要求较高的场景，一般都会采用时间轮算法来实现定时器</strong>。</p>
+<p>时间轮（Timing Wheel）是 George Varghese 和 Tony Lauck 在 1996 年的论文 <a target="_blank" rel="noopener" href="https://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">Hashed and Hierarchical Timing Wheels: data structures to efficiently implement a timer facility</a> 实现的，它在 Linux 内核中使用广泛，是 Linux 内核定时器的实现方法和基础之一。</p>
+<p>时间轮可以理解为一种环形结构，像钟表一样被分为多个 slot 槽位。每个 slot 代表一个时间段，每个 slot 中可以存放多个任务，使用的是链表结构保存该时间段到期的所有任务。时间轮通过一个时针随着时间一个个 slot 转动，并执行 slot 中的所有到期任务。</p>
+<p><img src="https://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/Netty%20%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90%E4%B8%8E%20RPC%20%E5%AE%9E%E8%B7%B5-%E5%AE%8C/assets/CgpVE1_okKiAGl0gAAMLshtTq-M933.png" alt="图片 22.png"></p>
+<p>任务是如何添加到时间轮当中的呢？可以根据任务的到期时间进行取模，然后将任务分布到不同的 slot 中。如上图所示，时间轮被划分为 8 个 slot，每个 slot 代表 1s，当前时针指向 2。假如现在需要调度一个 3s 后执行的任务，应该加入 <code>2+3=5</code> 的 slot 中；如果需要调度一个 12s 以后的任务，需要等待时针完整走完一圈 round 零 4 个 slot，需要放入第 <code>(2+12)%8=6</code> 个 slot。</p>
+<p>那么当时针走到第 6 个 slot 时，怎么区分每个任务是否需要立即执行，还是需要等待下一圈 round，甚至更久时间之后执行呢？所以我们需要把 round 信息保存在任务中。例如图中第 6 个 slot 的链表中包含 3 个任务，第一个任务 round&#x3D;0，需要立即执行；第二个任务 round&#x3D;1，需要等待 <code>1*8=8s</code> 后执行；第三个任务 round&#x3D;2，需要等待 <code>2*8=8s</code> 后执行。所以当时针转动到对应 slot 时，只执行 round&#x3D;0 的任务，slot 中其余任务的 round 应当减 1，等待下一个 round 之后执行。</p>
+<p>上面介绍了时间轮算法的基本理论，可以看出时间轮有点类似 HashMap，如果多个任务如果对应同一个 slot，处理冲突的方法采用的是拉链法。在任务数量比较多的场景下，适当增加时间轮的 slot 数量，可以减少时针转动时遍历的任务个数。</p>
+<p>时间轮定时器最大的优势就是，任务的新增和取消都是 O(1) 时间复杂度，而且只需要一个线程就可以驱动时间轮进行工作。</p>
+<p>HashedWheelTimer 是 Netty 中时间轮算法的实现类。</p>
+<p>:::</p>
+<h3 id="【中级】分布式定时任务有哪些方案？"><a href="#【中级】分布式定时任务有哪些方案？" class="headerlink" title="【中级】分布式定时任务有哪些方案？"></a>【中级】分布式定时任务有哪些方案？</h3><p>:::details 要点</p>
+<p>分布式定时任务常见方案有：</p>
+<ul>
+<li>Quartz</li>
+<li>XXL-Job</li>
+<li>ElasticJob</li>
+</ul>
+<h4 id="Quartz"><a href="#Quartz" class="headerlink" title="Quartz"></a>Quartz</h4><p>Quartz 是一个经典的开源定时调度框架。它支持进程内调度和分布式调度。</p>
+<p>Quartz 提供两种基本作业存储类型：</p>
+<ul>
+<li><strong>RAMJobStore</strong> - 在默认情况下 Quartz 将任务调度的运行信息保存在内存中，这种方法提供了最佳的性能，因为内存中数据访问最快。不足之处是缺乏数据的持久性，当程序路途停止或系统崩溃时，所有运行的信息都会丢失。</li>
+<li><strong>JobStoreTX</strong> - 所有的任务信息都会保存到数据库中，可以控制事物，还有就是如果应用服务器关闭或者重启，任务信息都不会丢失，并且可以恢复因服务器关闭或者重启而导致执行失败的任务</li>
+</ul>
+<h4 id="XXL-Job"><a href="#XXL-Job" class="headerlink" title="XXL-Job"></a>XXL-Job</h4><p><a target="_blank" rel="noopener" href="https://github.com/xuxueli/xxl-job">xxl-job</a> 是一个分布式任务调度平台。</p>
+<p><strong>设计思想</strong></p>
+<p>将调度行为抽象形成“调度中心”公共平台，而平台自身并不承担业务逻辑，“调度中心”负责发起调度请求。</p>
+<p>将任务抽象成分散的 JobHandler，交由“执行器”统一管理，“执行器”负责接收调度请求并执行对应的 JobHandler 中业务逻辑。</p>
+<p>因此，“调度”和“任务”两部分可以相互解耦，提高系统整体稳定性和扩展性；</p>
+<p><strong>系统组成</strong></p>
+<ul>
+<li><strong>调度模块（调度中心）</strong>：<br>负责管理调度信息，按照调度配置发出调度请求，自身不承担业务代码。调度系统与任务解耦，提高了系统可用性和稳定性，同时调度系统性能不再受限于任务模块；<br>支持可视化、简单且动态的管理调度信息，包括任务新建，更新，删除，GLUE 开发和任务报警等，所有上述操作都会实时生效，同时支持监控调度结果以及执行日志，支持执行器 Failover。</li>
+<li><strong>执行模块（执行器）</strong>：<br>负责接收调度请求并执行任务逻辑。任务模块专注于任务的执行等操作，开发和维护更加简单和高效；<br>接收“调度中心”的执行请求、终止请求和日志请求等。</li>
+</ul>
+<p><img src="https://www.xuxueli.com/doc/static/xxl-job/images/img_Qohm.png" alt="输入图片说明"></p>
+<h4 id="ElasticJob"><a href="#ElasticJob" class="headerlink" title="ElasticJob"></a>ElasticJob</h4><p>两个相互独立的子项目 ElasticJob-Lite 和 ElasticJob-Cloud 组成。 它通过弹性调度、资源管控、以及作业治理的功能，打造一个适用于互联网场景的分布式调度解决方案，并通过开放的架构设计，提供多元化的作业生态。 它的各个产品使用统一的作业 API，开发者仅需一次开发，即可随意部署。</p>
+<p>ElasticJob 采用去中心化架构，没有作业调度中心。它以框架的形式，集成到应用中，提供调度服务。</p>
+<p>ElasticJob-Lite 定位为轻量级无中心化解决方案，使用 jar 的形式提供分布式任务的协调服务。</p>
+<p><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/elasticjob/current/img/architecture/elasticjob_lite.png"><img src="https://shardingsphere.apache.org/elasticjob/current/img/architecture/elasticjob_lite.png" alt="ElasticJob Architecture"></a></p>
+<p>ElasticJob-Cloud 采用自研 Mesos Framework 的解决方案，额外提供资源治理、应用分发以及进程隔离等功能。</p>
+<p><img src="https://shardingsphere.apache.org/elasticjob/current/img/architecture/elasticjob_cloud.png" alt="ElasticJob-Cloud Architecture"></p>
+<p>ElasticJob-Lite 和 ElasticJob-Cloud 对比：</p>
+<table>
+<thead>
+<tr>
+<th align="left">ElasticJob-Lite</th>
+<th align="left">ElasticJob-Cloud</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">无中心化</td>
+<td align="left">是</td>
+<td><code>否</code></td>
+</tr>
+<tr>
+<td align="left">资源分配</td>
+<td align="left">不支持</td>
+<td><code>支持</code></td>
+</tr>
+<tr>
+<td align="left">作业模式</td>
+<td align="left">常驻</td>
+<td><code>常驻 + 瞬时</code></td>
+</tr>
+<tr>
+<td align="left">部署依赖</td>
+<td align="left">ZooKeeper</td>
+<td><code>ZooKeeper + Mesos</code></td>
+</tr>
+</tbody></table>
+<p>ElasticJob-Cloud 的优势在于对资源细粒度治理，适用于需要削峰填谷的大数据系统。</p>
+<p>:::</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/6af68a7a/" title="分布式调度面试">https://dunwu.github.io/blog/pages/6af68a7a/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/%E5%8D%8F%E5%90%8C/" rel="tag"># 协同</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/372a9cc0/" rel="prev" title="分布式协同面试">
+                  <i class="fa fa-angle-left"></i> 分布式协同面试
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/51c889e6/" rel="next" title="《极客时间教程 - 秒杀系统》笔记">
+                  《极客时间教程 - 秒杀系统》笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"451dfb2258af3eec0815e8ba2580d677"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

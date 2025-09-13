@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="系统安全性架构 关键词：XSS、CSRF、SQL 注入、DoS、消息摘要、加密算法、证书  认证SSOSSO(Single Sign On)，即单点登录。所谓单点登录，就是同平台的诸多应用登陆一次，下一次就免登陆的功能。 SSO 需要解决多个异构系统之间的问题：  Session 共享问题 跨域问题  Session 共享问题分布式 Session 的几种实现策略：  粘性 Session - 缺">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统安全性架构">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/90e6cebe/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="系统安全性架构 关键词：XSS、CSRF、SQL 注入、DoS、消息摘要、加密算法、证书  认证SSOSSO(Single Sign On)，即单点登录。所谓单点登录，就是同平台的诸多应用登陆一次，下一次就免登陆的功能。 SSO 需要解决多个异构系统之间的问题：  Session 共享问题 跨域问题  Session 共享问题分布式 Session 的几种实现策略：  粘性 Session - 缺">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119195646.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119202448.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051203.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051204.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051205.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051206.png">
+<meta property="og:image" content="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051207.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119210359.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119210528.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/594774-feb7c1074d151113.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/509/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/594774-059b93e4209e8fa6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/397/format/webp">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/CN3L7POv7d8Ku1QMnXGU.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/7MEIhTRfnGmV0T5MBYoH.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/zZMuljfwRvu8Be6oEFlV.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/eQKuv1vmlhA7eNDvlb1t.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/7OfSVWkovU90yPLCAYXl.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/UGJGmWviv32mWGgEkYpC.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/KHqjDiWnyZrOxgJnvjRX.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/uPzZ1iOh0bQpKkYbWCAc.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/x1pHe9duvadzeUfoeOac.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/VZLXACV2P72RTzJn0Us8.png">
+<meta property="og:image" content="http://image.woshipm.com/wp-files/2018/07/lGcyi0RJKsKmDI6C0bXy.png">
+<meta property="article:published_time" content="2018-07-05T07:11:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.722Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119195646.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/90e6cebe/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/90e6cebe/","path":"/pages/90e6cebe/","title":"系统安全性架构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>系统安全性架构 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E6%80%A7%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">系统安全性架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A4%E8%AF%81"><span class="nav-number">1.1.</span> <span class="nav-text">认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SSO"><span class="nav-number">1.1.1.</span> <span class="nav-text">SSO</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Session-%E5%85%B1%E4%BA%AB%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Session 共享问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cookie-%E8%B7%A8%E5%9F%9F"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">Cookie 跨域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CAS"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">CAS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Oauth-2-0"><span class="nav-number">1.1.2.</span> <span class="nav-text">Oauth 2.0</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%88%E6%9D%83%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">授权模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%88%E6%9D%83%E7%A0%81%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">授权码模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8C%96%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">简化模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E4%BB%A4%E7%89%8C"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">更新令牌</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%89%B4%E6%9D%83"><span class="nav-number">1.2.</span> <span class="nav-text">鉴权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RBAC"><span class="nav-number">1.2.1.</span> <span class="nav-text">RBAC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%92%E8%89%B2%E7%BB%A7%E6%89%BF"><span class="nav-number">1.2.2.</span> <span class="nav-text">角色继承</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%8C%E8%B4%A3%E5%88%86%E7%A6%BB-Separation-of-Duty"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">职责分离(Separation of Duty)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RBAC0-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">RBAC0 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RBAC1-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.4.</span> <span class="nav-text">RBAC1 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RBAC2-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.5.</span> <span class="nav-text">RBAC2 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RBAC3-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.6.</span> <span class="nav-text">RBAC3 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9D%83%E9%99%90"><span class="nav-number">1.2.7.</span> <span class="nav-text">什么是权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%BB%84%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.8.</span> <span class="nav-text">用户组的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90"><span class="nav-number">1.2.9.</span> <span class="nav-text">实例分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1-RBAC-%E6%9D%83%E9%99%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.2.10.</span> <span class="nav-text">如何设计 RBAC 权限系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90-1"><span class="nav-number">1.2.11.</span> <span class="nav-text">实例分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A1%E8%AE%A1"><span class="nav-number">1.3.</span> <span class="nav-text">审计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB"><span class="nav-number">1.4.</span> <span class="nav-text">网站攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS"><span class="nav-number">1.4.1.</span> <span class="nav-text">XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%89%8B%E6%AE%B5%E5%92%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">攻击手段和目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E6%89%8B%E6%AE%B5"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">应对手段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSRF"><span class="nav-number">1.4.2.</span> <span class="nav-text">CSRF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-1"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%89%8B%E6%AE%B5%E5%92%8C%E7%9B%AE%E7%9A%84-1"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">攻击手段和目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E6%89%8B%E6%AE%B5-1"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">应对手段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E6%B3%A8%E5%85%A5"><span class="nav-number">1.4.3.</span> <span class="nav-text">SQL 注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5-2"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%89%8B%E6%AE%B5%E5%92%8C%E7%9B%AE%E7%9A%84-2"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">攻击手段和目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E6%89%8B%E6%AE%B5-2"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">应对手段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DoS"><span class="nav-number">1.4.4.</span> <span class="nav-text">DoS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">攻击方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E6%89%8B%E6%AE%B5-3"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">应对手段</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AF"><span class="nav-number">1.5.</span> <span class="nav-text">加密技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E6%91%98%E8%A6%81"><span class="nav-number">1.5.1.</span> <span class="nav-text">消息摘要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.5.2.</span> <span class="nav-text">加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">对称加密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">非对称加密</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">密钥安全管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6"><span class="nav-number">1.5.3.</span> <span class="nav-text">证书</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">证书原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E8%BF%87%E6%BB%A4"><span class="nav-number">1.6.</span> <span class="nav-text">信息过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%8C%B9%E9%85%8D"><span class="nav-number">1.6.1.</span> <span class="nav-text">文本匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%91%E5%90%8D%E5%8D%95"><span class="nav-number">1.6.2.</span> <span class="nav-text">黑名单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95"><span class="nav-number">1.6.3.</span> <span class="nav-text">分类算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E6%8E%A7%E5%88%B6"><span class="nav-number">1.7.</span> <span class="nav-text">风险控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E7%A7%8D%E7%B1%BB"><span class="nav-number">1.7.1.</span> <span class="nav-text">风险种类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E6%8E%A7%E5%88%B6%E6%89%8B%E6%AE%B5"><span class="nav-number">1.7.2.</span> <span class="nav-text">风险控制手段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E"><span class="nav-number">1.7.3.</span> <span class="nav-text">规则引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.7.4.</span> <span class="nav-text">统计模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/90e6cebe/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="系统安全性架构 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统安全性架构<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/01.%E6%9E%B6%E6%9E%84/00.%E7%BB%BC%E5%90%88/07.%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E6%80%A7%E6%9E%B6%E6%9E%84.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-05 15:11:00" itemprop="dateCreated datePublished" datetime="2018-07-05T15:11:00+08:00">2018-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>18k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="系统安全性架构"><a href="#系统安全性架构" class="headerlink" title="系统安全性架构"></a>系统安全性架构</h1><blockquote>
+<p>关键词：XSS、CSRF、SQL 注入、DoS、消息摘要、加密算法、证书</p>
+</blockquote>
+<h2 id="认证"><a href="#认证" class="headerlink" title="认证"></a>认证</h2><h3 id="SSO"><a href="#SSO" class="headerlink" title="SSO"></a>SSO</h3><p><strong>SSO(Single Sign On)，即单点登录</strong>。所谓单点登录，就是同平台的诸多应用登陆一次，下一次就免登陆的功能。</p>
+<p>SSO 需要解决多个异构系统之间的问题：</p>
+<ul>
+<li>Session 共享问题</li>
+<li>跨域问题</li>
+</ul>
+<h4 id="Session-共享问题"><a href="#Session-共享问题" class="headerlink" title="Session 共享问题"></a>Session 共享问题</h4><p>分布式 Session 的几种实现策略：</p>
+<ul>
+<li>粘性 Session - 缺点：当<strong>服务器节点宕机时，将丢失该服务器节点上的所有 Session</strong>。</li>
+<li>应用服务器间的 Session 复制共享 - 缺点：<strong>占用过多内存</strong>；<strong>同步过程占用网络带宽以及服务器处理器时间</strong>。</li>
+<li>基于缓存的 Session 共享 ✅ （推荐方案） - 不过需要程序自身控制 Session 读写，可以考虑基于 spring-session + redis 这种成熟的方案来处理。</li>
+</ul>
+<h4 id="Cookie-跨域"><a href="#Cookie-跨域" class="headerlink" title="Cookie 跨域"></a>Cookie 跨域</h4><p><strong>Cookie 不能跨域</strong>！比如：浏览器不会把 <a target="_blank" rel="noopener" href="http://www.google.com/">www.google.com</a> 的 cookie 传给 <a target="_blank" rel="noopener" href="http://www.baidu.com./">www.baidu.com。</a></p>
+<p>这就存在一个问题：由于域名不同，用户在系统 A 登录后，浏览器记录系统 A 的 Cookie，但是访问系统 B 的时候不会携带这个 Cookie。</p>
+<p>针对 <strong>Cookie 不能跨域</strong> 的问题，有几种解决方案：</p>
+<ul>
+<li>服务端生成 Cookie 后，返回给客户端，客户端解析 Cookie ，提取 Token （比如 JWT），此后每次请求都携带这个 Token。</li>
+<li>多个域名共享 Cookie，在返回 Cookie 给客户端的时候，在 Cookie 中设置 domain 白名单。</li>
+<li>将 Token 保存在 <strong><code>SessionStroage</code></strong> 中（不依赖 Cookie 就没有跨域的问题了）。</li>
+</ul>
+<h4 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h4><p>CAS 是实现 SSO 的主流方式。</p>
+<p>CAS 分为两部分，CAS Server 和 CAS Client</p>
+<ul>
+<li><strong><code>CAS Server</code></strong> - 负责用户的认证工作，就像是把第一次登录用户的一个标识存在这里，以便此用户在其他系统登录时验证其需不需要再次登录。</li>
+<li><strong><code>CAS Client</code></strong> - 业务应用，需要接入 CAS Server。当用户访问我们的应用时，首先需要重定向到 CAS Server 端进行验证，要是原来登陆过，就免去登录，重定向到下游系统，否则进行用户名密码登陆操作。</li>
+</ul>
+<p>术语：</p>
+<ul>
+<li><strong><code>Ticket Granting Ticket (TGT)</code></strong> - 可以认为是 CAS Server 根据用户名、密码生成的一张票，存在 Server 端。</li>
+<li><strong><code>Ticket Granting Cookie (TGC)</code></strong> - 其实就是一个 Cookie，存放用户身份信息，由 Server 发给 Client 端。</li>
+<li><strong><code>Service Ticket (ST)</code></strong> - 由 TGT 生成的一次性票据，用于验证，只能用一次。</li>
+</ul>
+<p>CAS 工作流程：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119195646.png" alt="img"></p>
+<ol>
+<li>用户访问 CAS Client A（业务系统），第一次访问，重定向到认证服务中心（CAS Server）。CAS Server 发现当前请求中没有 Cookie，再重定向到 CAS Server 的登录页面。重定向请求的 URL 中包含访问地址，以便认证成功后直接跳转到访问页面。</li>
+<li>用户在登录页面输入用户名、密码等认证信息，认证成功后，CAS Server 生成 TGT，再用 TGT 生成一个 ST。然后返回 ST 和 TGC（Cookie）给浏览器。</li>
+<li>浏览器携带 ST 再度访问之前想访问的 CAS Client A 页面。</li>
+<li>CAS Client A 收到 ST 后，向 CAS Server 验证 ST 的有效性。验证通过则允许用户访问页面。</li>
+<li>此时，如果登录另一个 CAS Client B，会先重定向到 CAS Server，CAS Server 可以判断这个 CAS Client B 是第一次访问，但是本地有 TGC，所以无需再次登录。用 TGC 创建一个 ST，返回给浏览器。</li>
+<li>重复类似 3、4 步骤。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119202448.png" alt="img"></p>
+<p>以上了归纳总结如下：</p>
+<ol>
+<li><strong>访问服务</strong> - 用户访问 SSO Client 资源。</li>
+<li><strong>定向认证</strong> - SSO Client 重定向用户请求到 SSO Server。</li>
+<li><strong>用户认证</strong> - 用户身份认证。</li>
+<li><strong>发放票据</strong> - SSO Server 会产生一个 Service Ticket (ST) 并返回给浏览器。</li>
+<li><strong>验证票据</strong> - 浏览器每次访问 SSO Client 时，携带 ST，SSO Client 向 SSO Server 验证票据。只有验证通过，才允许访问。</li>
+<li><strong>传输用户信息</strong> - SSO Server 验证票据通过后，传输用户认证结果信息给 SSO Client。</li>
+</ol>
+<h3 id="Oauth-2-0"><a href="#Oauth-2-0" class="headerlink" title="Oauth 2.0"></a>Oauth 2.0</h3><h4 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h4><p>OAuth 在”客户端”与”服务提供商”之间，设置了一个授权层（authorization layer）。”客户端”不能直接登录”服务提供商”，只能登录授权层，以此将用户与客户端区分开来。”客户端”登录授权层所用的令牌（token），与用户的密码不同。用户可以在登录的时候，指定授权层令牌的权限范围和有效期。</p>
+<p>“客户端”登录授权层以后，”服务提供商”根据令牌的权限范围和有效期，向”客户端”开放用户储存的资料。</p>
+<p>OAuth 2.0 的运行流程如下图，摘自 RFC 6749。</p>
+<div align="center"><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051203.png"/></div>
+（A）用户打开客户端以后，客户端要求用户给予授权。
+
+<p>（B）用户同意给予客户端授权。</p>
+<p>（C）客户端使用上一步获得的授权，向认证服务器申请令牌。</p>
+<p>（D）认证服务器对客户端进行认证以后，确认无误，同意发放令牌。</p>
+<p>（E）客户端使用令牌，向资源服务器申请获取资源。</p>
+<p>（F）资源服务器确认令牌无误，同意向客户端开放资源。</p>
+<p>不难看出来，上面六个步骤之中，B 是关键，即用户怎样才能给于客户端授权。有了这个授权以后，客户端就可以获取令牌，进而凭令牌获取资源。</p>
+<h4 id="授权模式"><a href="#授权模式" class="headerlink" title="授权模式"></a>授权模式</h4><p>客户端必须得到用户的授权（authorization grant），才能获得令牌（access token）。OAuth 2.0 定义了四种授权方式。</p>
+<ul>
+<li>授权码模式（authorization code）</li>
+<li>简化模式（implicit）</li>
+<li>密码模式（resource owner password credentials）</li>
+<li>客户端模式（client credentials）</li>
+</ul>
+<h4 id="授权码模式"><a href="#授权码模式" class="headerlink" title="授权码模式"></a>授权码模式</h4><p>授权码模式（authorization code）是功能最完整、流程最严密的授权模式。它的特点就是通过客户端的后台服务器，与”服务提供商”的认证服务器进行互动。</p>
+<div align="center"><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051204.png"/></div>
+它的步骤如下：
+
+<p>（A）用户访问客户端，后者将前者导向认证服务器。</p>
+<p>（B）用户选择是否给予客户端授权。</p>
+<p>（C）假设用户给予授权，认证服务器将用户导向客户端事先指定的”重定向 URI”（redirection URI），同时附上一个授权码。</p>
+<p>（D）客户端收到授权码，附上早先的”重定向 URI”，向认证服务器申请令牌。这一步是在客户端的后台的服务器上完成的，对用户不可见。</p>
+<p>（E）认证服务器核对了授权码和重定向 URI，确认无误后，向客户端发送访问令牌（access token）和更新令牌（refresh token）。</p>
+<p>下面是上面这些步骤所需要的参数。</p>
+<p>A 步骤中，客户端申请认证的 URI，包含以下参数：</p>
+<ul>
+<li>response_type：表示授权类型，必选项，此处的值固定为”code”</li>
+<li>client_id：表示客户端的 ID，必选项</li>
+<li>redirect_uri：表示重定向 URI，可选项</li>
+<li>scope：表示申请的权限范围，可选项</li>
+<li>state：表示客户端的当前状态，可以指定任意值，认证服务器会原封不动地返回这个值。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /authorize?response_type=code&amp;client_id=s6BhdRkqt3&amp;state=xyz</span><br><span class="line">  &amp;redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>server.example.com</span><br></pre></td></tr></table></figure>
+
+<p>C 步骤中，服务器回应客户端的 URI，包含以下参数：</p>
+<ul>
+<li>code：表示授权码，必选项。该码的有效期应该很短，通常设为 10 分钟，客户端只能使用该码一次，否则会被授权服务器拒绝。该码与客户端 ID 和重定向 URI，是一一对应关系。</li>
+<li>state：如果客户端的请求中包含这个参数，认证服务器的回应也必须一模一样包含这个参数。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">302</span> Found</span><br><span class="line"><span class="attribute">Location</span><span class="punctuation">: </span>https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA</span><br><span class="line">    &amp;state=xyz</span><br></pre></td></tr></table></figure>
+
+<p>D 步骤中，客户端向认证服务器申请令牌的 HTTP 请求，包含以下参数：</p>
+<ul>
+<li>grant_type：表示使用的授权模式，必选项，此处的值固定为”authorization_code”。</li>
+<li>code：表示上一步获得的授权码，必选项。</li>
+<li>redirect_uri：表示重定向 URI，必选项，且必须与 A 步骤中的该参数值保持一致。</li>
+<li>client_id：表示客户端 ID，必选项。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/token</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>server.example.com</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-llvm">grant_type<span class="operator">=</span>authorization_code&amp;code<span class="operator">=</span>SplxlOBeZQQYbYS<span class="number">6</span>WxSbIA</span></span><br><span class="line"><span class="language-llvm">&amp;redirect_uri<span class="operator">=</span>https<span class="variable">%3</span>A<span class="variable">%2</span>F<span class="variable">%2</span>Fclient<span class="variable">%2</span>Eexample<span class="variable">%2</span>Ecom<span class="variable">%2</span>Fcb</span></span><br></pre></td></tr></table></figure>
+
+<p>E 步骤中，认证服务器发送的 HTTP 回复，包含以下参数：</p>
+<ul>
+<li>access_token：表示访问令牌，必选项。</li>
+<li>token_type：表示令牌类型，该值大小写不敏感，必选项，可以是 bearer 类型或 mac 类型。</li>
+<li>expires_in：表示过期时间，单位为秒。如果省略该参数，必须其他方式设置过期时间。</li>
+<li>refresh_token：表示更新令牌，用来获取下一次的访问令牌，可选项。</li>
+<li>scope：表示权限范围，如果与客户端申请的范围一致，此项可省略。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json;charset=UTF-8</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>no-store</span><br><span class="line"><span class="attribute">Pragma</span><span class="punctuation">: </span>no-cache</span><br><span class="line"></span><br><span class="line"><span class="language-json"><span class="punctuation">&#123;</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;access_token&quot;</span><span class="punctuation">:</span><span class="string">&quot;2YotnFZFEjr1zCsicMWpAA&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;token_type&quot;</span><span class="punctuation">:</span><span class="string">&quot;example&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;expires_in&quot;</span><span class="punctuation">:</span><span class="number">3600</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;refresh_token&quot;</span><span class="punctuation">:</span><span class="string">&quot;tGzv3JOkF0XG5Qx2TlKWIA&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;example_parameter&quot;</span><span class="punctuation">:</span><span class="string">&quot;example_value&quot;</span></span></span><br><span class="line"><span class="language-json"><span class="punctuation">&#125;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>从上面代码可以看到，相关参数使用 JSON 格式发送（Content-Type: application&#x2F;json）。此外，HTTP 头信息中明确指定不得缓存。</p>
+<h4 id="简化模式"><a href="#简化模式" class="headerlink" title="简化模式"></a>简化模式</h4><p>简化模式（implicit grant type）不通过第三方应用程序的服务器，直接在浏览器中向认证服务器申请令牌，跳过了”授权码”这个步骤，因此得名。所有步骤在浏览器中完成，令牌对访问者是可见的，且客户端不需要认证。</p>
+<div align="center"><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051205.png"/></div>
+它的步骤如下：
+
+<p>（A）客户端将用户导向认证服务器。</p>
+<p>（B）用户决定是否给于客户端授权。</p>
+<p>（C）假设用户给予授权，认证服务器将用户导向客户端指定的”重定向 URI”，并在 URI 的 Hash 部分包含了访问令牌。</p>
+<p>（D）浏览器向资源服务器发出请求，其中不包括上一步收到的 Hash 值。</p>
+<p>（E）资源服务器返回一个网页，其中包含的代码可以获取 Hash 值中的令牌。</p>
+<p>（F）浏览器执行上一步获得的脚本，提取出令牌。</p>
+<p>（G）浏览器将令牌发给客户端。</p>
+<p>下面是上面这些步骤所需要的参数。</p>
+<p>A 步骤中，客户端发出的 HTTP 请求，包含以下参数：</p>
+<ul>
+<li>response_type：表示授权类型，此处的值固定为”token”，必选项。</li>
+<li>client_id：表示客户端的 ID，必选项。</li>
+<li>redirect_uri：表示重定向的 URI，可选项。</li>
+<li>scope：表示权限范围，可选项。</li>
+<li>state：表示客户端的当前状态，可以指定任意值，认证服务器会原封不动地返回这个值。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /authorize?response_type=token&amp;client_id=s6BhdRkqt3&amp;state=xyz</span><br><span class="line">  &amp;redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>server.example.com</span><br></pre></td></tr></table></figure>
+
+<p>C 步骤中，认证服务器回应客户端的 URI，包含以下参数：</p>
+<ul>
+<li>access_token：表示访问令牌，必选项。</li>
+<li>token_type：表示令牌类型，该值大小写不敏感，必选项。</li>
+<li>expires_in：表示过期时间，单位为秒。如果省略该参数，必须其他方式设置过期时间。</li>
+<li>scope：表示权限范围，如果与客户端申请的范围一致，此项可省略。</li>
+<li>state：如果客户端的请求中包含这个参数，认证服务器的回应也必须一模一样包含这个参数。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">302</span> Found</span><br><span class="line"><span class="attribute">Location</span><span class="punctuation">: </span>http://example.com/cb#access_token=2YotnFZFEjr1zCsicMWpAA</span><br><span class="line">         &amp;state=xyz&amp;token_type=example&amp;expires_in=3600</span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，认证服务器用 HTTP 头信息的 Location 栏，指定浏览器重定向的网址。注意，在这个网址的 Hash 部分包含了令牌。</p>
+<p>根据上面的 D 步骤，下一步浏览器会访问 Location 指定的网址，但是 Hash 部分不会发送。接下来的 E 步骤，服务提供商的资源服务器发送过来的代码，会提取出 Hash 中的令牌。</p>
+<p>密码模式</p>
+<p>密码模式（Resource Owner Password Credentials Grant）中，用户向客户端提供自己的用户名和密码。客户端使用这些信息，向”服务商提供商”索要授权。</p>
+<p>在这种模式中，用户必须把自己的密码给客户端，但是客户端不得储存密码。这通常用在用户对客户端高度信任的情况下，比如客户端是操作系统的一部分，或者由一个著名公司出品。而认证服务器只有在其他授权模式无法执行的情况下，才能考虑使用这种模式。</p>
+<div align="center"><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051206.png"/></div>
+
+<p>它的步骤如下：</p>
+<p>（A）用户向客户端提供用户名和密码。</p>
+<p>（B）客户端将用户名和密码发给认证服务器，向后者请求令牌。</p>
+<p>（C）认证服务器确认无误后，向客户端提供访问令牌。</p>
+<p>B 步骤中，客户端发出的 HTTP 请求，包含以下参数：</p>
+<ul>
+<li>grant_type：表示授权类型，此处的值固定为”password”，必选项。</li>
+<li>username：表示用户名，必选项。</li>
+<li>password：表示用户的密码，必选项。</li>
+<li>scope：表示权限范围，可选项。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/token</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>server.example.com</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-dts">grant_<span class="attr">type</span><span class="operator">=</span>password<span class="variable">&amp;username</span>=johndoe<span class="variable">&amp;password</span>=A3ddj3w</span></span><br></pre></td></tr></table></figure>
+
+<p>C 步骤中，认证服务器向客户端发送访问令牌，下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json;charset=UTF-8</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>no-store</span><br><span class="line"><span class="attribute">Pragma</span><span class="punctuation">: </span>no-cache</span><br><span class="line"></span><br><span class="line"><span class="language-json"><span class="punctuation">&#123;</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;access_token&quot;</span><span class="punctuation">:</span><span class="string">&quot;2YotnFZFEjr1zCsicMWpAA&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;token_type&quot;</span><span class="punctuation">:</span><span class="string">&quot;example&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;expires_in&quot;</span><span class="punctuation">:</span><span class="number">3600</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;refresh_token&quot;</span><span class="punctuation">:</span><span class="string">&quot;tGzv3JOkF0XG5Qx2TlKWIA&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;example_parameter&quot;</span><span class="punctuation">:</span><span class="string">&quot;example_value&quot;</span></span></span><br><span class="line"><span class="language-json"><span class="punctuation">&#125;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，各个参数的含义参见《授权码模式》一节。</p>
+<p>整个过程中，客户端不得保存用户的密码。</p>
+<p>客户端模式</p>
+<p>客户端模式（Client Credentials Grant）指客户端以自己的名义，而不是以用户的名义，向”服务提供商”进行认证。严格地说，客户端模式并不属于 OAuth 框架所要解决的问题。在这种模式中，用户直接向客户端注册，客户端以自己的名义要求”服务提供商”提供服务，其实不存在授权问题。</p>
+<div align="center"><img src="http://www.ruanyifeng.com/blogimg/asset/2014/bg2014051207.png"/></div>
+
+<p>它的步骤如下：</p>
+<p>（A）客户端向认证服务器进行身份认证，并要求一个访问令牌。</p>
+<p>（B）认证服务器确认无误后，向客户端提供访问令牌。</p>
+<p>A 步骤中，客户端发出的 HTTP 请求，包含以下参数：</p>
+<ul>
+<li>grant<em>type：表示授权类型，此处的值固定为”client</em>credentials”，必选项。</li>
+<li>scope：表示权限范围，可选项。</li>
+</ul>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/token</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>server.example.com</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-ini"><span class="attr">grant_type</span>=client_credentials</span></span><br></pre></td></tr></table></figure>
+
+<p>认证服务器必须以某种方式，验证客户端身份。</p>
+<p>B 步骤中，认证服务器向客户端发送访问令牌，下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json;charset=UTF-8</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>no-store</span><br><span class="line"><span class="attribute">Pragma</span><span class="punctuation">: </span>no-cache</span><br><span class="line"></span><br><span class="line"><span class="language-json"><span class="punctuation">&#123;</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;access_token&quot;</span><span class="punctuation">:</span><span class="string">&quot;2YotnFZFEjr1zCsicMWpAA&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;token_type&quot;</span><span class="punctuation">:</span><span class="string">&quot;example&quot;</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;expires_in&quot;</span><span class="punctuation">:</span><span class="number">3600</span><span class="punctuation">,</span></span></span><br><span class="line"><span class="language-json"> <span class="attr">&quot;example_parameter&quot;</span><span class="punctuation">:</span><span class="string">&quot;example_value&quot;</span></span></span><br><span class="line"><span class="language-json"><span class="punctuation">&#125;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，各个参数的含义参见《授权码模式》一节。</p>
+<h4 id="更新令牌"><a href="#更新令牌" class="headerlink" title="更新令牌"></a>更新令牌</h4><p>如果用户访问的时候，客户端的”访问令牌”已经过期，则需要使用”更新令牌”申请一个新的访问令牌。</p>
+<p>客户端发出更新令牌的 HTTP 请求，包含以下参数：</p>
+<ul>
+<li>grant<em>type：表示使用的授权模式，此处的值固定为”refresh</em>token”，必选项。</li>
+<li>refresh_token：表示早前收到的更新令牌，必选项。</li>
+<li>scope：表示申请的授权范围，不可以超出上一次申请的范围，如果省略该参数，则表示与上一次一致。</li>
+</ul>
+<p>下面是一个例子。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/token</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>server.example.com</span><br><span class="line"><span class="attribute">Authorization</span><span class="punctuation">: </span>Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"><span class="language-angelscript">grant_type=<span class="built_in">ref</span>resh_token&amp;<span class="built_in">ref</span>resh_token=tGzv3JOkF0XG5Qx2TlKWIA</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="鉴权"><a href="#鉴权" class="headerlink" title="鉴权"></a>鉴权</h2><h3 id="RBAC"><a href="#RBAC" class="headerlink" title="RBAC"></a>RBAC</h3><p>**<em>RBAC（Role-Based Access Control）即：基于角色的权限控制</em>**。通过角色关联用户，角色关联权限的方式间接赋予用户权限。</p>
+<p>每个用户关联一个或多个角色，每个角色关联一个或多个权限，从而可以实现了非常灵活的权限管理。角色可以根据实际业务需求灵活创建，这样就省去了每新增一个用户就要关联一遍所有权限的麻烦。简单来说 RBAC 就是：用户关联角色，角色关联权限。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119210359.png" alt="img"></p>
+<h3 id="角色继承"><a href="#角色继承" class="headerlink" title="角色继承"></a>角色继承</h3><p>角色继承(Hierarchical Role) 就是指角色可以继承于其他角色，在拥有其他角色权限的同时，自己还可以关联额外的权限。这种设计可以给角色分组和分层，一定程度简化了权限管理工作。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200119210528.png" alt="img"></p>
+<h4 id="职责分离-Separation-of-Duty"><a href="#职责分离-Separation-of-Duty" class="headerlink" title="职责分离(Separation of Duty)"></a>职责分离(Separation of Duty)</h4><p>为了避免用户拥有过多权限而产生利益冲突，例如一个篮球运动员同时拥有裁判的权限（看一眼就给你判犯规狠不狠？），另一种职责分离扩展版的 RBAC 被提出。</p>
+<p>职责分离有两种模式：</p>
+<p>静态职责分离(Static Separation of Duty)：用户无法同时被赋予有冲突的角色。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/594774-feb7c1074d151113.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/509/format/webp" alt="img"></p>
+<p>动态职责分离(Dynamic Separation of Duty)：用户在一次会话（Session）中不能同时激活自身所拥有的、互相有冲突的角色，只能选择其一。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/594774-059b93e4209e8fa6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/397/format/webp" alt="img"></p>
+<p>讲了这么多 RBAC，都还只是在用户和权限之间进行设计，并没有涉及到用户和对象之间的权限判断，而在实际业务系统中限制用户能够使用的对象是很常见的需求。</p>
+<h3 id="RBAC0-模型"><a href="#RBAC0-模型" class="headerlink" title="RBAC0 模型"></a>RBAC0 模型</h3><p>最简单的用户、角色、权限模型。这里面又包含了 2 种：</p>
+<ol>
+<li>用户和角色是多对一关系，即：一个用户只充当一种角色，一种角色可以有多个用户担当。</li>
+<li>用户和角色是多对多关系，即：一个用户可同时充当多种角色，一种角色可以有多个用户担当。</li>
+</ol>
+<p>那么，什么时候该使用多对一的权限体系，什么时候又该使用多对多的权限体系呢？</p>
+<p>如果系统功能比较单一，使用人员较少，岗位权限相对清晰且确保不会出现兼岗的情况，此时可以考虑用多对一的权限体系。其余情况尽量使用多对多的权限体系，保证系统的可扩展性。如：张三既是行政，也负责财务工作，那张三就同时拥有行政和财务两个角色的权限。</p>
+<h3 id="RBAC1-模型"><a href="#RBAC1-模型" class="headerlink" title="RBAC1 模型"></a>RBAC1 模型</h3><p>相对于 RBAC0 模型，增加了子角色，引入了继承概念，即子角色可以继承父角色的所有权限。</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/CN3L7POv7d8Ku1QMnXGU.png" alt="img"></p>
+<p><strong>使用场景：</strong>如某个业务部门，有经理、主管、专员。主管的权限不能大于经理，专员的权限不能大于主管，如果采用 RBAC0 模型做权限系统，极可能出现分配权限失误，最终出现主管拥有经理都没有的权限的情况。</p>
+<p>而 RBAC1 模型就很好解决了这个问题，创建完经理角色并配置好权限后，主管角色的权限继承经理角色的权限，并且支持在经理权限上删减主管权限。</p>
+<h3 id="RBAC2-模型"><a href="#RBAC2-模型" class="headerlink" title="RBAC2 模型"></a>RBAC2 模型</h3><p>基于 RBAC0 模型，增加了对角色的一些限制：角色互斥、基数约束、先决条件角色等。</p>
+<ul>
+<li><strong>角色互斥：</strong>同一用户不能分配到一组互斥角色集合中的多个角色，互斥角色是指权限互相制约的两个角色。案例：财务系统中一个用户不能同时被指派给会计角色和审计员角色。</li>
+<li><strong>基数约束：</strong>一个角色被分配的用户数量受限，它指的是有多少用户能拥有这个角色。例如：一个角色专门为公司 CEO 创建的，那这个角色的数量是有限的。</li>
+<li><strong>先决条件角色：</strong>指要想获得较高的权限，要首先拥有低一级的权限。例如：先有副总经理权限，才能有总经理权限。</li>
+<li><strong>运行时互斥：</strong>例如，允许一个用户具有两个角色的成员资格，但在运行中不可同时激活这两个角色。</li>
+</ul>
+<h3 id="RBAC3-模型"><a href="#RBAC3-模型" class="headerlink" title="RBAC3 模型"></a>RBAC3 模型</h3><p>称为统一模型，它包含了 RBAC1 和 RBAC2，利用传递性，也把 RBAC0 包括在内，综合了 RBAC0、RBAC1 和 RBAC2 的所有特点，这里就不在多描述了。</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/7MEIhTRfnGmV0T5MBYoH.png" alt="img"></p>
+<h3 id="什么是权限"><a href="#什么是权限" class="headerlink" title="什么是权限"></a>什么是权限</h3><p>说了这么久用户-角色-权限，可能小伙伴们都了解了什么是用户、什么是角色。但是有的小伙伴会好奇，那权限又是个什么玩意呢？</p>
+<p>权限是资源的集合，这里的资源指的是软件中所有的内容，包括模块、菜单、页面、字段、操作功能（增删改查）等等。具体的权限配置上，目前形式多种多样，按照我个人的理解，可以将权限分为：<strong>页面权限、操作权限和数据权限</strong>（这种分类法，主要是结合自己在工作中的实际情况理解总结而来，若有不足之处，也请大家指出）。</p>
+<p><strong>页面权限：</strong>所有系统都是由一个个的页面组成，页面再组成模块，用户是否能看到这个页面的菜单、是否能进入这个页面就称为页面权限。</p>
+<p>如下图：</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/zZMuljfwRvu8Be6oEFlV.png" alt="img"></p>
+<p>客户列表、客户黑名单、客户审批页面组成了客户管理这个模块。对于普通用户，不能进行审批操作，即无客户审批页面权限，在他的账号登录后侧边导航栏只显示客户列表、客户黑名单两个菜单。</p>
+<p><strong>操作权限：</strong>用户凡是在操作系统中的任何动作、交互都是操作权限，如增删改查等。</p>
+<p><strong>数据权限：</strong>一般业务管理系统，都有数据私密性的要求：哪些人可以看到哪些数据，不可以看到哪些数据。</p>
+<p>简单举个例子：某系统中有销售部门，销售专员负责推销商品，销售主管负责管理销售专员日常工作，经理负责组织管理销售主管作业。</p>
+<p>如下图：</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/eQKuv1vmlhA7eNDvlb1t.png" alt="img"></p>
+<p>按照实际理解，‘销售专员张三’登录时，只能看到自己负责的数据；销售主管 2 登录时，能看到他所领导的所有业务员负责的数据，但看不到其他团队业务员负责的数据。</p>
+<p>换另外一句话就是：我的客户只有我和我的直属上级以及直属上级的领导能看到，这就是我理解的数据权限。</p>
+<p>要实现数据权限有多种方式：</p>
+<ol>
+<li>可以利用 RBAC1 模型，通过角色分级来实现。</li>
+<li>在‘用户-角色-权限’的基础上，增加用户与组织的关联关系，用组织决定用户的数据权限。</li>
+</ol>
+<p>具体如何做呢？</p>
+<p><strong>① 组织层级划分：</strong></p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/7OfSVWkovU90yPLCAYXl.png" alt="img"></p>
+<p><strong>② 数据可视权限规则制定：</strong>上级组织只能看到下级组织员工负责的数据，而不能看到其他平级组织及其下级组织的员工数据等。</p>
+<p>通过以上两点，系统就可以在用户登录时，自动判断要给用户展示哪些数据了。</p>
+<h3 id="用户组的使用"><a href="#用户组的使用" class="headerlink" title="用户组的使用"></a>用户组的使用</h3><p>当平台用户基数增大，角色类型增多时，如果直接给用户配角色，管理员的工作量就会很大。这时候我们可以引入一个概念“用户组”，就是将相同属性的用户归类到一起。</p>
+<p>例如：加入用户组的概念后，可以将部门看做一个用户组，再给这个部门直接赋予角色（1 万员工部门可能就几十个），使部门拥有部门权限，这样这个部门的所有用户都有了部门权限，而不需要为每一个用户再单独指定角色，极大的减少了分配权限的工作量。</p>
+<p>同时，也可以为特定的用户指定角色，这样用户除了拥有所属用户组的所有权限外，还拥有自身特定的权限。</p>
+<p>用户组的优点，除了减少工作量，还有更便于理解、增加多级管理关系等。如：我们在进行组织机构配置的时候，除了加入部门，还可以加入科室、岗位等层级，来为用户组内部成员的权限进行等级上的区分。</p>
+<p>关于用户组的详细疑难解答，请查看<a target="_blank" rel="noopener" href="https://wen.woshipm.com/question/detail/88fues.html%E3%80%82%E5%9C%A8%E8%BF%99%E9%87%8C%E4%B9%9F%E5%8D%81%E5%88%86%E6%84%9F%E8%B0%A2%E4%B8%BA%E6%88%91%E8%A7%A3%E7%AD%94%E7%96%91%E6%83%91%E7%9A%84%E6%9C%8B%E5%8F%8B%E4%BB%AC%EF%BC%81">https://wen.woshipm.com/question/detail/88fues.html。在这里也十分感谢为我解答疑惑的朋友们！</a></p>
+<h3 id="实例分析"><a href="#实例分析" class="headerlink" title="实例分析"></a>实例分析</h3><h3 id="如何设计-RBAC-权限系统"><a href="#如何设计-RBAC-权限系统" class="headerlink" title="如何设计 RBAC 权限系统"></a>如何设计 RBAC 权限系统</h3><p>首先，我们思考一下一个简单的权限系统应该具备哪些内容？</p>
+<p>答案显而易见，RBAC 模型：<strong>用户-角色-权限</strong>。所以最基本的我们应该具备用户、角色、权限这三个内容。</p>
+<p>接下来，我们思考，究竟如何将三者关联起来。回顾前文，角色作为枢纽，关联用户、权限。所以在 RBAC 模型下，我们应该：<strong>创建一个角色，并为这个角色赋予相应权限，最后将角色赋予用户</strong>。</p>
+<p>将这个问题抽象为流程，如下图：</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/UGJGmWviv32mWGgEkYpC.png" alt="img"></p>
+<p>现在，基本的流程逻辑已经抽象出来了，接下来，分析该如何设计呢？</p>
+<ul>
+<li>第一步，需要角色管理列表，在角色管理列表能快速创建一个角色，且创建角色的同时能为角色配置权限，并且支持创建成功的角色列表能随时进行权限配置的的修改；</li>
+<li>第二步，需要用户管理列表，在用户管理列表能快速添加一个用户，且添加用户时有让用户关联角色的功能。</li>
+</ul>
+<p>简单来说权限系统设计就包含以上两步，接下来为大家进行实例分析。</p>
+<h3 id="实例分析-1"><a href="#实例分析-1" class="headerlink" title="实例分析"></a>实例分析</h3><p><strong>① 创建角色列表</strong></p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/KHqjDiWnyZrOxgJnvjRX.png" alt="img"></p>
+<p>在角色列表快速创建一个角色：点击创建角色，支持创建角色时配置权限。</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/uPzZ1iOh0bQpKkYbWCAc.png" alt="img"></p>
+<p><strong>② 创建用户列表</strong></p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/x1pHe9duvadzeUfoeOac.png" alt="img"></p>
+<p>在用户列表快速创建一个用户：支持用户关联角色的功能。</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/VZLXACV2P72RTzJn0Us8.png" alt="img"></p>
+<p>上述案例是基于最简单的 RBAC0 模型创建，适用于大部分常规的权限管理系统。</p>
+<p>下面再分析一下 RBAC1 中角色分级具体如何设计。</p>
+<ol>
+<li><strong>在 RBAC0 的基础上，加上角色等级这个字段。</strong></li>
+<li><strong>权限分配规则制定</strong>：低等级角色只能在高等级角色权限基础上进行删减权限。</li>
+</ol>
+<p>具体界面呈现如下图：</p>
+<p><img src="http://image.woshipm.com/wp-files/2018/07/lGcyi0RJKsKmDI6C0bXy.png" alt="img"></p>
+<p>以上就是简单的 RBAC 系统设计，若需更复杂的，还请读者根据上面的分析自行揣摩思考，尽管样式不同，但万变不离其宗，理解清楚 RBAC 模型后，结合自己的业务就可以设计出一套符合自己平台需求的角色权限系统，具体的就不再多阐述了。</p>
+<h2 id="审计"><a href="#审计" class="headerlink" title="审计"></a>审计</h2><p>TODO</p>
+<h2 id="网站攻击"><a href="#网站攻击" class="headerlink" title="网站攻击"></a>网站攻击</h2><p>互联网环境鱼龙混杂，网站被攻击是常见现象，所以了解一些常见的网站攻击手段十分必要。下面列举比较常见的 4 种攻击手段：</p>
+<h3 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p><strong><code>跨站脚本（Cross-site scripting，通常简称为XSS）</code></strong> 是一种网站应用程序的安全漏洞攻击，是代码注入的一种。它允许恶意用户将代码注入到网页上，其他用户在观看网页时就会受到影响。这类攻击通常包含了 HTML 以及用户端脚本语言。</p>
+<p>XSS 攻击示例：</p>
+<p>假如有下面一个 textbox</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;address1&quot;</span> <span class="attr">value</span>=<span class="string">&quot;value1from&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>value1from 是来自用户的输入，如果用户不是输入 value1from,而是输入 <code>&quot;/&gt;&lt;script&gt;alert(document.cookie)&lt;/script&gt;&lt;!-</code> 那么就会变成：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;address1&quot;</span> <span class="attr">value</span>=<span class="string">&quot;&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">  <span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">&lt;!- &quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>嵌入的 JavaScript 代码将会被执行。攻击的威力，取决于用户输入了什么样的脚本。</p>
+<h4 id="攻击手段和目的"><a href="#攻击手段和目的" class="headerlink" title="攻击手段和目的"></a>攻击手段和目的</h4><p>常用的 XSS 攻击手段和目的有：</p>
+<ul>
+<li>盗用 cookie，获取敏感信息。</li>
+<li>利用植入 Flash，通过 <code>crossdomain</code> 权限设置进一步获取更高权限；或者利用 Java 等得到类似的操作。</li>
+<li>利用 <code>iframe</code>、<code>frame</code>、<code>XMLHttpRequest</code> 或上述 Flash 等方式，以（被攻击）用户的身份执行一些管理动作，或执行一些一般的如发微博、加好友、发私信等操作。</li>
+<li>利用可被攻击的域受到其他域信任的特点，以受信任来源的身份请求一些平时不允许的操作，如进行不当的投票活动。</li>
+<li>在访问量极大的一些页面上的 XSS 可以攻击一些小型网站，实现 DDoS 攻击的效果。</li>
+</ul>
+<h4 id="应对手段"><a href="#应对手段" class="headerlink" title="应对手段"></a>应对手段</h4><ul>
+<li><strong>过滤特殊字符</strong> - 将用户所提供的内容进行过滤，从而避免 HTML 和 Jascript 代码的运行。如 <code>&gt;</code> 转义为 <code>&amp;gt</code>、<code>&lt;</code> 转义为 <code>&amp;lt</code> 等，就可以防止大部分攻击。为了避免对不必要的内容错误转移，如 <code>3&lt;5</code> 中的 <code>&lt;</code> 需要进行文本匹配后再转移，如：<code>&lt;img src=</code> 这样的上下文中的 <code>&lt;</code> 才转义。</li>
+<li><strong>设置 Cookie 为 HttpOnly</strong> - 设置了 HttpOnly 的 Cookie 可以防止 JavaScript 脚本调用，就无法通过 document.cookie 获取用户 Cookie 信息。</li>
+</ul>
+<blockquote>
+<p>:point_right: 参考阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%A8%E7%B6%B2%E7%AB%99%E6%8C%87%E4%BB%A4%E7%A2%BC">Wiki 词条 - 跨站脚本</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/TankXiao/archive/2012/03/21/2337194.html">Web 安全测试之 XSS</a></li>
+</ul>
+</blockquote>
+<h3 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h3><h4 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h4><p>**<code>跨站请求伪造（Cross-site request forgery，CSRF）</code>**，也被称为 one-click attack 或者 session riding，通常缩写为 CSRF 或者 XSRF。它是一种挟持用户在当前已登录的 Web 应用程序上执行非本意的操作的攻击方法。和跨站脚本（XSS）相比，XSS 利用的是用户对指定网站的信任，CSRF 利用的是网站对用户网页浏览器的信任。</p>
+<h4 id="攻击手段和目的-1"><a href="#攻击手段和目的-1" class="headerlink" title="攻击手段和目的"></a>攻击手段和目的</h4><p>可以如此理解 CSRF：攻击者盗用了你的身份，以你的名义发送恶意请求。</p>
+<p>CSRF 能做的事太多：</p>
+<ul>
+<li>以你名义发送邮件，发消息</li>
+<li>用你的账号购买商品</li>
+<li>用你的名义完成虚拟货币转账</li>
+<li>泄露个人隐私</li>
+<li>…</li>
+</ul>
+<h4 id="应对手段-1"><a href="#应对手段-1" class="headerlink" title="应对手段"></a>应对手段</h4><ul>
+<li><strong>表单 Token</strong> - CSRF 是一个伪造用户请求的操作，所以需要构造用户请求的所有参数才可以。表单 Token 通过在请求参数中添加随机数的办法来阻止攻击者获得所有请求参数。</li>
+<li><strong>验证码</strong> - 请求提交时，需要用户输入验证码，以避免用户在不知情的情况下被攻击者伪造请求。</li>
+<li><strong>Referer check</strong> - HTTP 请求头的 Referer 域中记录着请求资源，可通过检查请求来源，验证其是否合法。</li>
+</ul>
+<blockquote>
+<p>:point_right: 参考阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0">Wiki 词条 - 跨站请求伪造</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html">浅谈 CSRF 攻击方式</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22521378">“每日一题”CSRF 是什么？</a><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22521378">“每日一题”CSRF 是什么？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/855395f9603b">WEB 安全之-CSRF（跨站请求伪造）</a></li>
+</ul>
+</blockquote>
+<h3 id="SQL-注入"><a href="#SQL-注入" class="headerlink" title="SQL 注入"></a>SQL 注入</h3><h4 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h4><p>**<code>SQL 注入攻击（SQL injection）</code>**，是发生于应用程序之数据层的安全漏洞。简而言之，是在输入的字符串之中注入 SQL 指令，在设计不良的程序当中忽略了检查，那么这些注入进去的指令就会被数据库服务器误认为是正常的 SQL 指令而运行，因此遭到破坏或是入侵。</p>
+<p>攻击示例：</p>
+<p>考虑以下简单的登录表单：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/login&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>Username: <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>Password: <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;登陆&quot;</span> /&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们的处理里面的 SQL 可能是这样的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">username:<span class="operator">=</span>r.Form.Get(&quot;username&quot;)</span><br><span class="line">password:<span class="operator">=</span>r.Form.Get(&quot;password&quot;)</span><br><span class="line"><span class="keyword">sql</span>:<span class="operator">=</span>&quot;SELECT * FROM user WHERE username=&#x27;&quot;<span class="operator">+</span>username<span class="operator">+</span>&quot;&#x27; AND password=&#x27;&quot;<span class="operator">+</span>password<span class="operator">+</span>&quot;&#x27;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果用户的输入的用户名如下，密码任意</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myuser<span class="string">&#x27; or &#x27;</span>foo<span class="string">&#x27; = &#x27;</span>foo<span class="string">&#x27; --</span></span><br></pre></td></tr></table></figure>
+
+<p>那么我们的 SQL 变成了如下所示：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> <span class="keyword">user</span> <span class="keyword">WHERE</span> username<span class="operator">=</span><span class="string">&#x27;myuser&#x27;</span> <span class="keyword">or</span> <span class="string">&#x27;foo&#x27;</span> <span class="operator">=</span> <span class="string">&#x27;foo&#x27;</span> <span class="comment">--&#x27;&#x27; AND password=&#x27;xxx&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 SQL 里面 <code>--</code> 是注释标记，所以查询语句会在此中断。这就让攻击者在不知道任何合法用户名和密码的情况下成功登录了。</p>
+<p>对于 MSSQL 还有更加危险的一种 SQL 注入，就是控制系统，下面这个可怕的例子将演示如何在某些版本的 MSSQL 数据库上执行系统命令。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>:<span class="operator">=</span>&quot;SELECT * FROM products WHERE name LIKE &#x27;%&quot;<span class="operator">+</span>prod<span class="operator">+</span>&quot;%&#x27;&quot;</span><br><span class="line">Db.Exec(<span class="keyword">sql</span>)</span><br></pre></td></tr></table></figure>
+
+<p>如果攻击提交 <code>a%&#39; exec master..xp_cmdshell &#39;net user test testpass /ADD&#39; --</code> 作为变量 prod 的值，那么 sql 将会变成</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sql</span>:<span class="operator">=</span>&quot;SELECT * FROM products WHERE name LIKE &#x27;%a%&#x27; exec master..xp_cmdshell &#x27;net user test testpass /ADD&#x27;--%&#x27;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>MSSQL 服务器会执行这条 SQL 语句，包括它后面那个用于向系统添加新用户的命令。如果这个程序是以 sa 运行而 MSSQLSERVER 服务又有足够的权限的话，攻击者就可以获得一个系统帐号来访问主机了。</p>
+<p>虽然以上的例子是针对某一特定的数据库系统的，但是这并不代表不能对其它数据库系统实施类似的攻击。针对这种安全漏洞，只要使用不同方法，各种数据库都有可能遭殃。</p>
+<h4 id="攻击手段和目的-2"><a href="#攻击手段和目的-2" class="headerlink" title="攻击手段和目的"></a>攻击手段和目的</h4><ul>
+<li>数据表中的数据外泄，例如个人机密数据，账户数据，密码等。</li>
+<li>数据结构被黑客探知，得以做进一步攻击（例如 <code>SELECT * FROM sys.tables</code>）。</li>
+<li>数据库服务器被攻击，系统管理员账户被窜改（例如 <code>ALTER LOGIN sa WITH PASSWORD=&#39;xxxxxx&#39;</code>）。</li>
+<li>获取系统较高权限后，有可能得以在网页加入恶意链接、恶意代码以及 XSS 等。</li>
+<li>经由数据库服务器提供的操作系统支持，让黑客得以修改或控制操作系统（例如 xp_cmdshell “net stop iisadmin”可停止服务器的 IIS 服务）。</li>
+<li>破坏硬盘数据，瘫痪全系统（例如 xp_cmdshell “FORMAT C:”）。</li>
+</ul>
+<h4 id="应对手段-2"><a href="#应对手段-2" class="headerlink" title="应对手段"></a>应对手段</h4><ul>
+<li><strong>使用参数化查询</strong> - 建议使用数据库提供的参数化查询接口，参数化的语句使用参数而不是将用户输入变量嵌入到 SQL 语句中，即不要直接拼接 SQL 语句。例如使用 database&#x2F;sql 里面的查询函数 <code>Prepare</code> 和 <code>Query</code> ，或者 <code>Exec(query string, args ...interface&#123;&#125;)</code>。</li>
+<li><strong>单引号转换</strong> - 在组合 SQL 字符串时，先针对所传入的参数进行字符替换（将单引号字符替换为连续 2 个单引号字符）。</li>
+</ul>
+<blockquote>
+<p>:point_right: 参考阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SQL%E8%B3%87%E6%96%99%E9%9A%B1%E7%A2%BC%E6%94%BB%E6%93%8A">Wiki 词条 - SQL 注入攻击</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/09.4.md">避免 SQL 注入</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.jobbole.com/83092/">实例讲解 SQL 注入攻击</a></li>
+</ul>
+</blockquote>
+<h3 id="DoS"><a href="#DoS" class="headerlink" title="DoS"></a>DoS</h3><p>**<code>拒绝服务攻击（denial-of-service attack, DoS）亦称洪水攻击</code>**，是一种网络攻击手法，其目的在于使目标电脑的网络或系统资源耗尽，使服务暂时中断或停止，导致其正常用户无法访问。</p>
+<p>当黑客使用网络上两个或以上被攻陷的电脑作为“僵尸”向特定的目标发动“拒绝服务”式攻击时，称为分布式拒绝服务攻击（distributed denial-of-service attack，缩写：DDoS attack、DDoS）。</p>
+<h4 id="攻击方式"><a href="#攻击方式" class="headerlink" title="攻击方式"></a>攻击方式</h4><ul>
+<li>带宽消耗型攻击</li>
+<li>资源消耗型攻击</li>
+</ul>
+<h4 id="应对手段-3"><a href="#应对手段-3" class="headerlink" title="应对手段"></a>应对手段</h4><ul>
+<li><strong>防火墙</strong> - 允许或拒绝特定通讯协议，端口或 IP 地址。当攻击从少数不正常的 IP 地址发出时，可以简单的使用拒绝规则阻止一切从攻击源 IP 发出的通信。</li>
+<li><strong>路由器、交换机</strong> - 具有速度限制和访问控制能力。</li>
+<li><strong>流量清洗</strong> - 通过采用抗 DoS 软件处理，将正常流量和恶意流量区分开。</li>
+</ul>
+<blockquote>
+<p>:point_right: 参考阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%98%BB%E6%96%B7%E6%9C%8D%E5%8B%99%E6%94%BB%E6%93%8A">拒绝服务攻击</a></li>
+</ul>
+</blockquote>
+<h2 id="加密技术"><a href="#加密技术" class="headerlink" title="加密技术"></a>加密技术</h2><p>对于网站来说，用户信息、账户等等敏感数据一旦泄漏，后果严重，所以为了保护数据，应对这些信息进行加密处理。</p>
+<p>信息加密技术一般分为：</p>
+<ul>
+<li>消息摘要</li>
+<li>加密算法<ul>
+<li>对称加密</li>
+<li>非对称加密</li>
+</ul>
+</li>
+<li>证书</li>
+</ul>
+<h3 id="消息摘要"><a href="#消息摘要" class="headerlink" title="消息摘要"></a>消息摘要</h3><p>常用数字签名算法：MD5、SHA 等。</p>
+<p>应用场景：将用户密码以消息摘要形式保存到数据库中。</p>
+<blockquote>
+<p>:point_right: 参考阅读： <a href="https://dunwu.github.io/waterdrop/pages/9c7d7935/">Java 编码和加密</a></p>
+</blockquote>
+<h3 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h3><h4 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h4><p>对称加密指加密和解密所使用的密钥是同一个密钥。</p>
+<p>常用对称加密算法：DES、AES 等。</p>
+<p>应用场景：Cookie 加密、通信机密等。</p>
+<h4 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h4><p>非对称加密指加密和解密所使用的不是同一个密钥，而是一个公私钥对。用公钥加密的信息必须用私钥才能解开；反之，用私钥加密的信息只有用公钥才能解开。</p>
+<p>常用非对称加密算法：RSA 等。</p>
+<p>应用场景：HTTPS 传输中浏览器使用的数字证书实质上是经过权威机构认证的非对称加密公钥。</p>
+<blockquote>
+<p>:point_right: 参考阅读： <a href="https://dunwu.github.io/waterdrop/pages/9c7d7935/">Java 编码和加密</a></p>
+</blockquote>
+<h4 id="密钥安全管理"><a href="#密钥安全管理" class="headerlink" title="密钥安全管理"></a>密钥安全管理</h4><p>保证密钥安全的方法：</p>
+<ol>
+<li>把密钥和算法放在一个独立的服务器上，对外提供加密和解密服务，应用系统通过调用这个服务，实现数据的加解密。</li>
+<li>把加解密算法放在应用系统中，密钥则放在独立服务器中，为了提高密钥的安全性，实际存储时，密钥被切分成数片，加密后分别保存在不同存储介质中。</li>
+</ol>
+<h3 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h3><p><strong>证书可以称为信息安全加密的终极手段</strong>。公开密钥认证（英语：Public key certificate），又称公开密钥证书、公钥证书、数字证书（digital certificate）、数字认证、身份证书（identity certificate）、电子证书或安全证书，是用于公开密钥基础建设的电子文件，用来证明公开密钥拥有者的身份。此文件包含了公钥信息、拥有者身份信息（主体）、以及数字证书认证机构（发行者）对这份文件的数字签名，以保证这个文件的整体内容正确无误。</p>
+<p>透过信任权威数字证书认证机构的根证书、及其使用公开密钥加密作数字签名核发的公开密钥认证，形成信任链架构，已在 TLS 实现并在万维网的 HTTP 以 HTTPS、在电子邮件的 SMTP 以 STARTTLS 引入并广泛应用。</p>
+<p>众所周知，常见的应用层协议 HTTP、FTP、Telnet 本身不保证信息安全。但是加入了 SSL&#x2F;TLS 加密数据包机制的 HTTPS、FTPS、Telnets 是信息安全的。传输层安全性协议（Transport Layer Security, TLS），及其前身安全套接层（Secure Sockets Layer, SSL）是一种安全协议，目的是为互联网通信，提供安全及数据完整性保障。</p>
+<h4 id="证书原理"><a href="#证书原理" class="headerlink" title="证书原理"></a>证书原理</h4><p>SSL&#x2F;TLS 协议的基本思路是采用公钥加密法，也就是说，客户端先向服务器端索要公钥，然后用公钥加密信息，服务器收到密文后，用自己的私钥解密。</p>
+<p>这里有两个问题：</p>
+<p>（1）<strong>如何保证公钥不被篡改？</strong></p>
+<p>解决方法：将公钥放在数字证书中。只要证书是可信的，公钥就是可信的。</p>
+<p>（2）<strong>公钥加密计算量太大，如何减少耗用的时间？</strong></p>
+<p>解决方法：每一次对话（session），客户端和服务器端都生成一个”对话密钥”（session key），用它来加密信息。由于”对话密钥”是对称加密，所以运算速度非常快，而服务器公钥只用于加密”对话密钥”本身，这样就减少了加密运算的消耗时间。</p>
+<p>SSL&#x2F;TLS 协议的基本过程是这样的：</p>
+<ol>
+<li>客户端向服务器端索要并验证公钥。</li>
+<li>双方协商生成”对话密钥”。</li>
+<li>双方采用”对话密钥”进行加密通信。</li>
+</ol>
+<blockquote>
+<p>:point_right: 参考阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%82%B3%E8%BC%B8%E5%B1%A4%E5%AE%89%E5%85%A8%E6%80%A7%E5%8D%94%E5%AE%9A">传输层安全性协议</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%96%8B%E9%87%91%E9%91%B0%E8%AA%8D%E8%AD%89">公开密钥认证</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL&#x2F;TLS 协议运行机制的概述</a></li>
+</ul>
+</blockquote>
+<h2 id="信息过滤"><a href="#信息过滤" class="headerlink" title="信息过滤"></a>信息过滤</h2><p>在网络中，广告和垃圾信息屡见不鲜，泛滥成灾。</p>
+<p>常见的信息过滤与反垃圾手段有：</p>
+<h3 id="文本匹配"><a href="#文本匹配" class="headerlink" title="文本匹配"></a>文本匹配</h3><p>解决敏感词过滤。系统维护一份敏感词清单，如果信息中含有敏感词，则自动进行过滤或拒绝信息。</p>
+<h3 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h3><p>黑名单就是将一些已经被识别出有违规行为的 IP、域名、邮箱等加入黑名单，拒绝其请求。</p>
+<p>黑名单可以通过 Hash 表来实现，方法简单，复杂度小，适于一般应用场景。</p>
+<p>但如果黑名单列表非常大时，Hash 表要占用很大的内存空间，这时就不再使用了。这种情况下，可以使用布隆过滤器来实现，即通过一个二进制列表和一组随机数映射函数来实现。</p>
+<h3 id="分类算法"><a href="#分类算法" class="headerlink" title="分类算法"></a>分类算法</h3><p>对于海量信息，难以通过人工去审核。对广告贴。</p>
+<p>垃圾邮件等内容的识别比较好的自动化方法就是采用分类算法。</p>
+<p>简单来说，即将批量已分类的样本输入分类算法进行训练，得到一个分类模型，然后利用分类算法结合分类模型去对信息进行识别。想了解具体做法，需要去理解机器学习相关知识。</p>
+<h2 id="风险控制"><a href="#风险控制" class="headerlink" title="风险控制"></a>风险控制</h2><p>网络给商务、金融领域带来极大便利的同时，也将风险带给了对网络安全一无所知的人们。由于交易双方信息的不对等，使得交易存在着风险，而当交易发生在网络上时，风险就更加难以控制了。</p>
+<h3 id="风险种类"><a href="#风险种类" class="headerlink" title="风险种类"></a>风险种类</h3><ul>
+<li>账户风险 - 盗用账户、恶意注册账户等</li>
+<li>买家风险 - 虚假询盘、恶意拒收、恶意下单、黄牛党抢购热门商品等</li>
+<li>卖家风险 - 虚假发货、出售违禁品、侵权等</li>
+<li>交易风险 - 信用卡盗刷、交易欺诈、洗钱、套现、电信诈骗等</li>
+</ul>
+<h3 id="风险控制手段"><a href="#风险控制手段" class="headerlink" title="风险控制手段"></a>风险控制手段</h3><p>大型电商网站系统或金融系统都配备专业的风控团队进行风险控制。风险控制手段既包括人工审核也包括自动审核。</p>
+<p>自动风控的技术手段主要有规则引擎和统计模型。</p>
+<h3 id="规则引擎"><a href="#规则引擎" class="headerlink" title="规则引擎"></a>规则引擎</h3><p>在交易中，买家、卖家的某些指标满足一定条件时，就会被认为存在风险。如：交易金额超过某个数值；用户来自黑名单；用户和上次登录的地址距离差距很大；用户在一定时间内频繁交易等等。</p>
+<p>如果以上这些条件都通过 if … else … 式样的代码去实现，代码维护、扩展会非常不便。因此，就有了规则引擎来处理这类问题。规则引擎是一种将业务规则和规则处理逻辑相分离的技术，业务规则由运营人员通过管理界面去编辑，实现无需修改代码，即可实时的使用新规则。</p>
+<h3 id="统计模型"><a href="#统计模型" class="headerlink" title="统计模型"></a>统计模型</h3><p>规则引擎虽然技术简单，但是随着规则不断增加，规模越来越大。可能会出现规则冲突，难以维护的情况，并且规则越多，性能也越差。</p>
+<p>为了解决这种问题，就有了统计模型。统计模型会使用分类算法或更复杂的机器学习算法进行智能统计。根据历史交易中的信息训练分类，然后将经过采集加工后的交易信息输入分类算法，得到交易风险值，然后基于此，做出预测。</p>
+<p>经过充分训练后的统计模型，准确率不低于规则引擎。但是，需要有领域专家、行业专家介入，建立合理的训练模型，并不断优化。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11322972.html">《大型网站技术架构：核心原理与案例分析》</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%A8%E7%B6%B2%E7%AB%99%E6%8C%87%E4%BB%A4%E7%A2%BC">Wiki 词条 - 跨站脚本</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/TankXiao/archive/2012/03/21/2337194.html">Web 安全测试之 XSS</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0">Wiki 词条 - 跨站请求伪造</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html">浅谈 CSRF 攻击方式</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22521378">“每日一题”CSRF 是什么？</a><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22521378">“每日一题”CSRF 是什么？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/855395f9603b">WEB 安全之-CSRF（跨站请求伪造）</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SQL%E8%B3%87%E6%96%99%E9%9A%B1%E7%A2%BC%E6%94%BB%E6%93%8A">Wiki 词条 - SQL 注入攻击</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/09.4.md">避免 SQL 注入</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.jobbole.com/83092/">实例讲解 SQL 注入攻击</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%98%BB%E6%96%B7%E6%9C%8D%E5%8B%99%E6%94%BB%E6%93%8A">拒绝服务攻击</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%82%B3%E8%BC%B8%E5%B1%A4%E5%AE%89%E5%85%A8%E6%80%A7%E5%8D%94%E5%AE%9A">传输层安全性协议</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%96%8B%E9%87%91%E9%91%B0%E8%AA%8D%E8%AD%89">公开密钥认证</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL&#x2F;TLS 协议运行机制的概述</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html">http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.coin163.com/java/cas/cas.html">CAS 实现 SSO 单点登录原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ce0944b4a903">权限系统设计模型分析（DAC，MAC，RBAC，ABAC）</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.woshipm.com/pd/1150093.html">RBAC 模型：基于用户-角色-权限控制的一些思考</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/90e6cebe/" title="系统安全性架构">https://dunwu.github.io/blog/pages/90e6cebe/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/blog/tags/%E5%AE%89%E5%85%A8/" rel="tag"># 安全</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/0e6f048d/" rel="prev" title="秒杀系统设计">
+                  <i class="fa fa-angle-left"></i> 秒杀系统设计
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/f3a87538/" rel="next" title="系统扩展性架构">
+                  系统扩展性架构 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"a83f9152eb7969bc10ab6fc028df73d4"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

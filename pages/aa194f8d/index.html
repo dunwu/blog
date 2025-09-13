@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="逻辑时钟什么是逻辑时钟1978 年，Lamport 在 Time, Clocks, and the Ordering of Events in a Distributed System 中提出了逻辑时钟的概念，来解决分布式系统中区分事件发生的时序问题。 逻辑时钟指的是分布式系统中用于区分事件的发生顺序的时间机制。 为什么需要逻辑时钟对于程序来说，时间维度非常重要，很多业务逻辑都依赖于时间。常见的场">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逻辑时钟">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/aa194f8d/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="逻辑时钟什么是逻辑时钟1978 年，Lamport 在 Time, Clocks, and the Ordering of Events in a Distributed System 中提出了逻辑时钟的概念，来解决分布式系统中区分事件发生的时序问题。 逻辑时钟指的是分布式系统中用于区分事件的发生顺序的时间机制。 为什么需要逻辑时钟对于程序来说，时间维度非常重要，很多业务逻辑都依赖于时间。常见的场">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170810350.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170811135.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170812797.png">
+<meta property="article:published_time" content="2024-04-28T14:02:18.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.744Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="逻辑时钟">
+<meta property="article:tag" content="物理时钟">
+<meta property="article:tag" content="向量时钟">
+<meta property="article:tag" content="全序">
+<meta property="article:tag" content="偏序">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170810350.webp">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/aa194f8d/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/aa194f8d/","path":"/pages/aa194f8d/","title":"逻辑时钟"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>逻辑时钟 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F"><span class="nav-number">1.</span> <span class="nav-text">逻辑时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是逻辑时钟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F"><span class="nav-number">1.2.</span> <span class="nav-text">为什么需要逻辑时钟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%BA%8F%E5%92%8C%E5%81%8F%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">全序和偏序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%81%8F%E5%BA%8F"><span class="nav-number">1.3.1.</span> <span class="nav-text">什么是偏序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%85%A8%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">什么是全序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E5%BA%8F%E7%9A%84%E5%85%B3%E9%94%AE"><span class="nav-number">1.3.3.</span> <span class="nav-text">时序的关键</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F-1"><span class="nav-number">1.4.</span> <span class="nav-text">逻辑时钟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E6%97%B6%E9%92%9F"><span class="nav-number">1.5.</span> <span class="nav-text">向量时钟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E5%90%91%E9%87%8F%E6%97%B6%E9%92%9F"><span class="nav-number">1.6.</span> <span class="nav-text">版本向量时钟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/aa194f8d/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="逻辑时钟 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逻辑时钟<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/00.%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-04-28 22:02:18" itemprop="dateCreated datePublished" datetime="2024-04-28T22:02:18+08:00">2024-04-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="逻辑时钟"><a href="#逻辑时钟" class="headerlink" title="逻辑时钟"></a>逻辑时钟</h1><h2 id="什么是逻辑时钟"><a href="#什么是逻辑时钟" class="headerlink" title="什么是逻辑时钟"></a>什么是逻辑时钟</h2><p>1978 年，Lamport 在 <a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf"><strong>Time, Clocks, and the Ordering of Events in a Distributed System</strong></a> 中提出了逻辑时钟的概念，来解决分布式系统中区分事件发生的时序问题。</p>
+<p><strong>逻辑时钟指的是分布式系统中用于区分事件的发生顺序的时间机制</strong>。</p>
+<h2 id="为什么需要逻辑时钟"><a href="#为什么需要逻辑时钟" class="headerlink" title="为什么需要逻辑时钟"></a>为什么需要逻辑时钟</h2><p>对于程序来说，时间维度非常重要，很多业务逻辑都依赖于时间。常见的场景有：</p>
+<ul>
+<li>某个请求是否超时了？</li>
+<li>某项服务 P99 的响应时间是多少？</li>
+<li>在过去五分钟，服务平均每秒处理多少个查询？</li>
+<li>用户在我们的网站上浏览花了多段时间？</li>
+<li>这篇文章什么时候发表？</li>
+<li>在什么时间发送提醒邮件？</li>
+<li>这个缓存条目何时过期？</li>
+<li>日志文件中错误消息的时间戳是多少？</li>
+</ul>
+<p>分布式系统，意味着整个系统中有多个节点。为了让多节点的系统时间保持同步，需要有一个对表机制，来保证各节点的时间一致。一种常见方法是使用 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Network_Time_Protocol">NTP</a>，它的工作机制是使用专门的高精度时间服务器来作为基准，调整服务器的本地时间。即使使用了 NTP，也难免存在微小的误差，在有些场景中（如金融）是不能接受的。</p>
+<p><strong>在分布式系统中，由于跨节点通信不可能即时完成，因此在多节点上难以确定事件的先后顺序</strong>。而逻辑时钟就是一种定义时序先后顺序的方案。</p>
+<h2 id="全序和偏序"><a href="#全序和偏序" class="headerlink" title="全序和偏序"></a>全序和偏序</h2><p>全序和偏序是集合论中的概念，用于描述集合中元素之间的关系。</p>
+<h3 id="什么是偏序"><a href="#什么是偏序" class="headerlink" title="什么是偏序"></a>什么是偏序</h3><p>偏序是指集合中的元素之间存在一种关系，使得任意两个元素之间可能存在比较，但不一定所有元素都可以相互比较。这种关系不一定是传递的或者反对称的。例如，集合中的子集关系就是一个偏序关系，因为不是所有的子集都可以相互比较。</p>
+<p>设 R 是集合 A 上的一个二元关系，若 R 满足：</p>
+<p>（1）自反性：对任意 <code>x∈A</code>，有 <code>xRx</code>；</p>
+<p>（2）反对称性（即<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E5%8F%8D%E5%AF%B9%E7%A7%B0%E5%85%B3%E7%B3%BB&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:555298363%7D">反对称关系</a>）：对任意 <code>x,y∈A</code>，若 <code>xRy</code>，且 <code>yRx</code>，则 <code>x=y</code>；</p>
+<p>（3）传递性：对任意 <code>x,y,z∈A</code>，若 <code>xRy</code>，且 <code>yRz</code>，则 <code>xRz</code>。</p>
+<p>则称 R 为 A 上的偏序关系。</p>
+<h3 id="什么是全序"><a href="#什么是全序" class="headerlink" title="什么是全序"></a>什么是全序</h3><p>全序是指集合中的元素之间存在一种关系，使得任意两个元素都可以进行比较，且这种比较关系是传递的，反对称的。换句话说，任意两个元素都可以比较大小，并且不会出现无法比较的情况。例如，实数集合上的小于等于关系就是一个全序关系。</p>
+<p>设集合 X 上有一全序关系，如果我们把这种关系用 ≤ 表述，则下列陈述对于 X 中的所有 a, b 和 c 成立：</p>
+<p>如果 a ≤ b 且 b ≤ a 则 a &#x3D; b（<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E5%8F%8D%E5%AF%B9%E7%A7%B0%E6%80%A7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:555298363%7D">反对称性</a>）</p>
+<p>如果 a ≤ b 且 b ≤ c 则 a ≤ c（<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E4%BC%A0%E9%80%92%E6%80%A7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:555298363%7D">传递性</a>）</p>
+<p>a ≤ b 或 b ≤ a (完全性)</p>
+<p><strong>注意</strong>：</p>
+<p>完全性本身也包括了<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E8%87%AA%E5%8F%8D%E6%80%A7&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:555298363%7D">自反性</a>。 所以，全序关系必是<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?q=%E5%81%8F%E5%BA%8F%E5%85%B3%E7%B3%BB&search_source=Entity&hybrid_search_source=Entity&hybrid_search_extra=%7B%22sourceType%22:%22answer%22,%22sourceId%22:555298363%7D">偏序关系</a>。</p>
+<h3 id="时序的关键"><a href="#时序的关键" class="headerlink" title="时序的关键"></a>时序的关键</h3><p><strong>两个事件可以建立因果（时序）关系的前提是：两个事件之间是否发生过信息传递。</strong>在分布式系统中，进程间通信的手段（共享内存、消息发送等）都属于信息传递，如果两个进程间没有任何交互，实际上他们之间内部事件的时序也无关紧要。但是有交互的情况下，特别是多个节点的要保持同一副本的情况下，事件的时序非常重要。</p>
+<h2 id="逻辑时钟-1"><a href="#逻辑时钟-1" class="headerlink" title="逻辑时钟"></a>逻辑时钟</h2><p>分布式系统中按是否存在节点交互可分为三类事件，一类发生于节点内部，二是发送事件，三是接收事件。Lamport 时间戳原理如下：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170810350.webp" alt="Lamport timestamps space time (图片来源: wikipedia)_"></p>
+<ol>
+<li>每个事件对应一个 Lamport 时间戳，初始值为 0</li>
+<li>如果事件在节点内发生，时间戳加 1</li>
+<li>如果事件属于发送事件，时间戳加 1 并在消息中带上该时间戳</li>
+<li>如果事件属于接收事件，时间戳 &#x3D; Max(本地时间戳，消息中的时间戳) + 1</li>
+</ol>
+<p>假设有事件 a、b，C(a)、C(b)分别表示事件 a、b 对应的 Lamport 时间戳，如果 a-&gt;b,则 C(a) &lt; C(b)，a 发生在 b 之前(happened before)，例如图 1 中有 C1 -&gt; B1。通过该定义，事件集中 Lamport 时间戳不等的事件可进行比较，我们获得事件的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Partially_ordered_set#Formal_definition">偏序关系</a>(partial order)。</p>
+<p>如果 C(a) &#x3D; C(b)，那 a、b 事件的顺序又是怎样的？假设 a、b 分别在节点 P、Q 上发生，Pi、Qj 分别表示我们给 P、Q 的编号，如果 C(a) &#x3D; C(b) 并且 Pi &lt; Qj，同样定义为 a 发生在 b 之前，记作 a &#x3D;&gt; b。假如我们对图 1 的 A、B、C 分别编号 Ai &#x3D; 1、Bj &#x3D; 2、Ck &#x3D; 3，因 C(B4) &#x3D; C(C3) 并且 Bj &lt; Ck，则 B4 &#x3D;&gt; C3。</p>
+<p>通过以上定义，我们可以对所有事件排序、获得事件的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Total_order">全序关系</a>(total order)。上图例子，我们可以从 C1 到 A4 进行排序。</p>
+<h2 id="向量时钟"><a href="#向量时钟" class="headerlink" title="向量时钟"></a>向量时钟</h2><p>Lamport 时间戳帮助我们得到事件顺序关系，但还有一种顺序关系不能用 Lamport 时间戳很好地表示出来，那就是同时发生关系(concurrent)(4)。例如图 1 中事件 B4 和事件 C3 没有因果关系，属于同时发生事件，但 Lamport 时间戳定义两者有先后顺序。</p>
+<p>Vector clock 是在 Lamport 时间戳基础上演进的另一种逻辑时钟方法，它通过 vector 结构不但记录本节点的 Lamport 时间戳，同时也记录了其他节点的 Lamport 时间戳(5)(6)。Vector clock 的原理与 Lamport 时间戳类似，使用图例如下：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170811135.webp" alt="Vector clock space time (图片来源: wikipedia)"></p>
+<p>假设有事件 a、b 分别在节点 P、Q 上发生，Vector clock 分别为 Ta、Tb，如果 Tb[Q] &gt; Ta[Q] 并且 Tb[P] &gt;&#x3D; Ta[P]，则 a 发生于 b 之前，记作 a -&gt; b。到目前为止还和 Lamport 时间戳差别不大，那 Vector clock 怎么判别同时发生关系呢？</p>
+<p>如果 Tb[Q] &gt; Ta[Q] 并且 Tb[P] &lt; Ta[P]，则认为 a、b 同时发生，记作 a &lt;-&gt; b。例如图 2 中节点 B 上的第 4 个事件 (A:2，B:4，C:1) 与节点 C 上的第 2 个事件 (B:3，C:2) 没有因果关系、属于同时发生事件。</p>
+<h2 id="版本向量时钟"><a href="#版本向量时钟" class="headerlink" title="版本向量时钟"></a>版本向量时钟</h2><p>基于 Vector clock 我们可以获得任意两个事件的顺序关系，结果或为先后顺序或为同时发生，识别事件顺序在工程实践中有很重要的引申应用，最常见的应用是发现数据冲突(detect conflict)。</p>
+<p>分布式系统中数据一般存在多个副本(replication)，多个副本可能被同时更新，这会引起副本间数据不一致，Version vector 的实现与 Vector clock 非常类似，目的用于发现数据冲突。下面通过一个例子说明 Version vector 的用法：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170812797.png" alt="Version Vector Clock"></p>
+<ul>
+<li>client 端写入数据，该请求被 Sx 处理并创建相应的 vector ([Sx, 1])，记为数据 D1</li>
+<li>第 2 次请求也被 Sx 处理，数据修改为 D2，vector 修改为([Sx, 2])</li>
+<li>第 3、第 4 次请求分别被 Sy、Sz 处理，client 端先读取到 D2，然后 D3、D4 被写入 Sy、Sz</li>
+<li>第 5 次更新时 client 端读取到 D2、D3 和 D4 3 个数据版本，通过类似 Vector clock 判断同时发生关系的方法可判断 D3、D4 存在数据冲突，最终通过一定方法解决数据冲突并写入 D5</li>
+</ul>
+<p>Vector clock 只用于发现数据冲突，不能解决数据冲突。如何解决数据冲突因场景而异，具体方法有以最后更新为准(last write win)，或将冲突的数据交给 client 由 client 端决定如何处理，或通过 quorum 决议事先避免数据冲突的情况发生(11)。</p>
+<p>由于记录了所有数据在所有节点上的逻辑时钟信息，Vector clock 和 Version vector 在实际应用中可能面临的一个问题是 vector 过大，用于数据管理的元数据(meta data)甚至大于数据本(12)。</p>
+<p>解决该问题的方法是使用 server id 取代 client id 创建 vector (因为 server 的数量相对 client 稳定)，或设定最大的 size、如果超过该 size 值则淘汰最旧的 vector 信息(10)(13)。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf"><strong>Time, Clocks, and the Ordering of Events in a Distributed System</strong></a>，<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1163428"><strong>译文</strong></a>，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56146800"><strong>解读</strong></a> - Lamport 介绍 happened before、偏序关系（partial ordering）、逻辑时钟（Logical Clocks）概念，提出解决分布式系统中区分事件发生的时序问题的方法。</li>
+<li><a target="_blank" rel="noopener" href="http://courses.csail.mit.edu/6.852/01/papers/VirtTime_GlobState.pdf"><strong>Virtual Time and Global States of Distributed Systems</strong></a>，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56886156"><strong>解读</strong></a> - 逻辑时钟无法描述事件的因果关系。本文提出了向量时钟，这种算法利用了向量这种数据结构将全局各个进程的逻辑时间戳广播给各个进程，通过向量时间戳就能够比较任意两个事件的因果关系。</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23278509"><strong>分布式系统理论基础 - 时间、时钟和事件顺序</strong></a></li>
+<li><a target="_blank" rel="noopener" href="https://writings.sh/post/logical-clocks">https://writings.sh/post/logical-clocks</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/aa194f8d/" title="逻辑时钟">https://dunwu.github.io/blog/pages/aa194f8d/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/" rel="tag"># 逻辑时钟</a>
+              <a href="/blog/tags/%E7%89%A9%E7%90%86%E6%97%B6%E9%92%9F/" rel="tag"># 物理时钟</a>
+              <a href="/blog/tags/%E5%90%91%E9%87%8F%E6%97%B6%E9%92%9F/" rel="tag"># 向量时钟</a>
+              <a href="/blog/tags/%E5%85%A8%E5%BA%8F/" rel="tag"># 全序</a>
+              <a href="/blog/tags/%E5%81%8F%E5%BA%8F/" rel="tag"># 偏序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/da131252/" rel="prev" title="ZAB 协议">
+                  <i class="fa fa-angle-left"></i> ZAB 协议
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/7b7b3cb9/" rel="next" title="《极客时间教程 - 深入浅出分布式技术原理》笔记">
+                  《极客时间教程 - 深入浅出分布式技术原理》笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"389c173b42226b8e305bfcf6e8cec704"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

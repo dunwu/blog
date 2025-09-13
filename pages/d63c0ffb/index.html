@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Java 并发简介 摘要 - 并发编程并非 Java 语言所独有，而是一种成熟的编程范式，Java 只是用自己的方式实现了并发工作模型。学习 Java 并发编程，应该先熟悉并发的基本概念，然后进一步了解并发的特性以及其特性所面临的问题。掌握了这些，当学习 Java 并发工具时，才会明白它们各自是为了解决什么问题，为什么要这样设计。通过这样由点到面的学习方式，更容易融会贯通，将并发知识形成体系化。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 并发简介">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/d63c0ffb/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Java 并发简介 摘要 - 并发编程并非 Java 语言所独有，而是一种成熟的编程范式，Java 只是用自己的方式实现了并发工作模型。学习 Java 并发编程，应该先熟悉并发的基本概念，然后进一步了解并发的特性以及其特性所面临的问题。掌握了这些，当学习 Java 并发工具时，才会明白它们各自是为了解决什么问题，为什么要这样设计。通过这样由点到面的学习方式，更容易融会贯通，将并发知识形成体系化。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409042331169.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409042332517.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409042334004.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409050712813.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409050740102.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409050752194.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202504221021138.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/concurrent/processes-vs-threads.jpg">
+<meta property="article:published_time" content="2019-05-06T07:33:13.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.702Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="JavaCore">
+<meta property="article:tag" content="线程">
+<meta property="article:tag" content="安全性">
+<meta property="article:tag" content="活跃性">
+<meta property="article:tag" content="性能">
+<meta property="article:tag" content="死锁">
+<meta property="article:tag" content="活锁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409042331169.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/d63c0ffb/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/d63c0ffb/","path":"/pages/d63c0ffb/","title":"Java 并发简介"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java 并发简介 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-%E5%B9%B6%E5%8F%91%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Java 并发简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%B6%E5%8F%91"><span class="nav-number">1.1.</span> <span class="nav-text">什么是并发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">并发的优点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E5%8D%87%E8%B5%84%E6%BA%90%E5%88%A9%E7%94%A8%E7%8E%87"><span class="nav-number">1.2.1.</span> <span class="nav-text">提升资源利用率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%93%8D%E5%BA%94%E6%9B%B4%E5%BF%AB"><span class="nav-number">1.2.2.</span> <span class="nav-text">程序响应更快</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.</span> <span class="nav-text">安全性问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E5%8F%AF%E8%A7%81%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.1.</span> <span class="nav-text">缓存导致的可见性问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%88%87%E6%8D%A2%E5%B8%A6%E6%9D%A5%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.2.</span> <span class="nav-text">线程切换带来的原子性问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%9C%89%E5%BA%8F%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.3.</span> <span class="nav-text">编译优化带来的有序性问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E8%AF%81%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E7%9A%84%E6%80%9D%E8%B7%AF"><span class="nav-number">1.3.4.</span> <span class="nav-text">保证并发安全的思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E5%90%8C%E6%AD%A5%EF%BC%88%E9%98%BB%E5%A1%9E%E5%90%8C%E6%AD%A5%EF%BC%89"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">互斥同步（阻塞同步）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%90%8C%E6%AD%A5"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">非阻塞同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E5%90%8C%E6%AD%A5"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">无同步</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B4%BB%E8%B7%83%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">活跃性问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%EF%BC%88Deadlock%EF%BC%89"><span class="nav-number">1.4.1.</span> <span class="nav-text">死锁（Deadlock）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%AD%BB%E9%94%81"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">什么是死锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E6%AD%BB%E9%94%81"><span class="nav-number">1.4.2.</span> <span class="nav-text">如何定位死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">如何避免死锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BB%E9%94%81%EF%BC%88Livelock%EF%BC%89"><span class="nav-number">1.4.3.</span> <span class="nav-text">活锁（Livelock）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B4%BB%E9%94%81"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">什么是活锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E6%B4%BB%E9%94%81"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">避免活锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A5%A5%E9%A5%BF%EF%BC%88Starvation%EF%BC%89"><span class="nav-number">1.4.4.</span> <span class="nav-text">饥饿（Starvation）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%A5%A5%E9%A5%BF"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">什么是饥饿</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E9%A5%A5%E9%A5%BF"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">解决饥饿</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.</span> <span class="nav-text">性能问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.5.1.</span> <span class="nav-text">上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">资源限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B"><span class="nav-number">1.6.</span> <span class="nav-text">并发编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#J-U-C-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.7.</span> <span class="nav-text">J.U.C 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%9C%AF%E8%AF%AD"><span class="nav-number">1.8.</span> <span class="nav-text">并发术语</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E3%80%81%E5%B9%B6%E8%A1%8C%E3%80%81%E5%B9%B6%E5%8F%91"><span class="nav-number">1.8.1.</span> <span class="nav-text">串行、并行、并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5"><span class="nav-number">1.8.2.</span> <span class="nav-text">同步和异步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E5%A1%9E%E5%92%8C%E9%9D%9E%E9%98%BB%E5%A1%9E"><span class="nav-number">1.8.3.</span> <span class="nav-text">阻塞和非阻塞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E3%80%81%E7%AE%A1%E7%A8%8B%E3%80%81%E5%8D%8F%E7%A8%8B"><span class="nav-number">1.8.4.</span> <span class="nav-text">进程、线程、管程、协程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6%E5%92%8C%E4%B8%B4%E7%95%8C%E5%8C%BA"><span class="nav-number">1.8.5.</span> <span class="nav-text">竞态条件和临界区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/d63c0ffb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java 并发简介 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 并发简介<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/05.%E5%B9%B6%E5%8F%91/Java_%E5%B9%B6%E5%8F%91_%E7%AE%80%E4%BB%8B.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-05-06 15:33:13" itemprop="dateCreated datePublished" datetime="2019-05-06T15:33:13+08:00">2019-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/%E5%B9%B6%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">并发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Java-并发简介"><a href="#Java-并发简介" class="headerlink" title="Java 并发简介"></a>Java 并发简介</h1><blockquote>
+<p><strong>摘要</strong> - 并发编程并非 Java 语言所独有，而是一种成熟的编程范式，Java 只是用自己的方式实现了并发工作模型。学习 Java 并发编程，应该先熟悉并发的基本概念，然后进一步了解并发的特性以及其特性所面临的问题。掌握了这些，当学习 Java 并发工具时，才会明白它们各自是为了解决什么问题，为什么要这样设计。通过这样由点到面的学习方式，更容易融会贯通，将并发知识形成体系化。</p>
+</blockquote>
+<h2 id="什么是并发"><a href="#什么是并发" class="headerlink" title="什么是并发"></a>什么是并发</h2><p>技术在进步，CPU、内存、I&#x2F;O 设备的性能也在不断提高。但是，始终存在一个核心矛盾：<strong>CPU、内存、I&#x2F;O 设备存在很大的速度差异</strong> - CPU 远快于内存，内存远快于 I&#x2F;O 设备。木桶短板理论告诉我们：一只木桶能装多少水，取决于最短的那块木板。同理，程序整体性能取决于最慢的操作（即 I&#x2F;O 操作），所以单方面提高 CPU、内存的性能是无效的。</p>
+<p>为了合理利用 CPU 的高性能，平衡这三者的速度差异，计算机体系机构、操作系统、编译程序都做出了贡献，主要体现为：</p>
+<ul>
+<li><strong>CPU 增加了缓存</strong>，以均衡与 CPU 内存的速度差异；</li>
+<li><strong>操作系统增加了进程、线程</strong>，以分时复用 CPU，进而均衡 CPU 与 I&#x2F;O 的速度差异；</li>
+<li><strong>编译程序优化指令执行次序</strong>，使得缓存能够得到更加合理地利用。</li>
+</ul>
+<p>其中，进程、线程使得计算机、程序有了<strong>并发</strong>处理任务的能力。<strong>并发</strong>是指具备处理多个任务的能力，但不一定要同时。</p>
+<h2 id="并发的优点"><a href="#并发的优点" class="headerlink" title="并发的优点"></a>并发的优点</h2><p>并发所带来的好处有：</p>
+<ul>
+<li>提升资源利用率</li>
+<li>程序响应更快</li>
+</ul>
+<h3 id="提升资源利用率"><a href="#提升资源利用率" class="headerlink" title="提升资源利用率"></a>提升资源利用率</h3><p>想象一下，一个应用程序需要从本地文件系统中读取和处理文件的情景。比方说，从磁盘读取一个文件需要 5 秒，处理一个文件需要 2 秒。处理两个文件则需要：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">5 秒读取文件 A</span><br><span class="line">2 秒处理文件 A</span><br><span class="line">5 秒读取文件 B</span><br><span class="line"><span class="section">2 秒处理文件 B</span></span><br><span class="line"><span class="section">---------------------</span></span><br><span class="line">总共需要 14 秒</span><br></pre></td></tr></table></figure>
+
+<p>从磁盘中读取文件的时候，大部分的 CPU 时间用于等待磁盘去读取数据。在这段时间里，CPU 非常的空闲。它可以做一些别的事情。通过改变操作的顺序，就能够更好的使用 CPU 资源。看下面的顺序：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">5 秒读取文件 A</span><br><span class="line">5 秒读取文件 B + 2 秒处理文件 A</span><br><span class="line"><span class="section">2 秒处理文件 B</span></span><br><span class="line"><span class="section">---------------------</span></span><br><span class="line">总共需要 12 秒</span><br></pre></td></tr></table></figure>
+
+<p>CPU 等待第一个文件被读取完。然后开始读取第二个文件。当第二文件在被读取的时候，CPU 会去处理第一个文件。记住，在等待磁盘读取文件的时候，CPU 大 部分时间是空闲的。</p>
+<p>总的说来，CPU 能够在等待 IO 的时候做一些其他的事情。这个不一定就是磁盘 IO。它也可以是网络的 IO，或者用户输入。通常情况下，网络和磁盘的 IO 比 CPU 和内存的 IO 慢的多。</p>
+<h3 id="程序响应更快"><a href="#程序响应更快" class="headerlink" title="程序响应更快"></a>程序响应更快</h3><p>将一个单线程应用程序变成多线程应用程序的另一个常见的目的是实现一个响应更快的应用程序。设想一个服务器应用，它在某一个端口监听进来的请求。当一个请求到来时，它去处理这个请求，然后再返回去监听。</p>
+<p>服务器的流程如下所述：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(server is active) &#123;</span><br><span class="line">    listen <span class="keyword">for</span> request</span><br><span class="line">    process request</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果一个请求需要占用大量的时间来处理，在这段时间内新的客户端就无法发送请求给服务端。只有服务器在监听的时候，请求才能被接收。另一种设计是，监听线程把请求传递给工作者线程 (worker thread)，然后立刻返回去监听。而工作者线程则能够处理这个请求并发送一个回复给客户端。这种设计如下所述：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(server is active) &#123;</span><br><span class="line">    listen <span class="keyword">for</span> request</span><br><span class="line">    hand request to worker thread</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式，服务端线程迅速地返回去监听。因此，更多的客户端能够发送请求给服务端。这个服务也变得响应更快。</p>
+<p>桌面应用也是同样如此。如果你点击一个按钮开始运行一个耗时的任务，这个线程既要执行任务又要更新窗口和按钮，那么在任务执行的过程中，这个应用程序看起来好像没有反应一样。相反，任务可以传递给工作者线程（worker thread)。当工作者线程在繁忙地处理任务的时候，窗口线程可以自由地响应其他用户的请求。当工作者线程完成任务的时候，它发送信号给窗口线程。窗口线程便可以更新应用程序窗口，并显示任务的结果。对用户而言，这种具有工作者线程设计的程序显得响应速度更快。</p>
+<p>任何事物都有利弊，并发也不例外。我们知道了并发带来的好处：提升资源利用率、程序响应更快，同时也要认识到并发带来的问题，主要有：</p>
+<ul>
+<li>安全性问题</li>
+<li>活跃性问题</li>
+<li>性能问题</li>
+</ul>
+<p>下面会一一讲解。</p>
+<h2 id="安全性问题"><a href="#安全性问题" class="headerlink" title="安全性问题"></a>安全性问题</h2><p>并发最重要的问题是并发安全问题。所谓<strong>并发安全</strong>，是指保证程序的正确性，使得并发处理结果符合预期。</p>
+<p>并发安全需要保证几个基本特性：</p>
+<ul>
+<li><strong>可见性</strong> - 是一个线程修改了某个共享变量，其状态能够立即被其他线程知晓，通常被解释为将线程本地状态反映到主内存上，<code>volatile</code> 就是负责保证可见性的。</li>
+<li><strong>原子性</strong> - 简单说就是相关操作不会中途被其他线程干扰，一般通过同步机制（加锁：<code>sychronized</code>、<code>Lock</code>）实现。</li>
+<li><strong>有序性</strong> - 是保证线程内串行语义，避免指令重排等。</li>
+</ul>
+<h3 id="缓存导致的可见性问题"><a href="#缓存导致的可见性问题" class="headerlink" title="缓存导致的可见性问题"></a>缓存导致的可见性问题</h3><p>一个线程对共享变量的修改，另外一个线程能够立刻看到，称为 <strong>可见性</strong>。</p>
+<p>在单核时代，所有的线程都是在一颗 CPU 上执行，CPU 缓存与内存的数据一致性容易解决。因为所有线程都是操作同一个 CPU 的缓存，一个线程对缓存的写，对另外一个线程来说一定是可见的。例如在下面的图中，线程 A 和线程 B 都是操作同一个 CPU 里面的缓存，所以线程 A 更新了变量 V 的值，那么线程 B 之后再访问变量 V，得到的一定是 V 的最新值（线程 A 写过的值）。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409042331169.png"></p>
+<p>多核时代，每颗 CPU 都有自己的缓存，这时 CPU 缓存与内存的数据一致性就没那么容易解决了，当多个线程在不同的 CPU 上执行时，这些线程操作的是不同的 CPU 缓存。比如下图中，线程 A 操作的是 CPU-1 上的缓存，而线程 B 操作的是 CPU-2 上的缓存，很明显，这个时候线程 A 对变量 V 的操作对于线程 B 而言就不具备可见性了。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409042332517.png"></p>
+<p>::: tabs#计数器示例</p>
+<p>@tab 线程不安全的计数器</p>
+<p>【示例】线程不安全的计数器示例 ❌</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NotThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NotThreadSafeCounter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">long</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">cnt</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (cnt++ &lt; <span class="number">100000</span>) &#123;</span><br><span class="line">            count += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">NotThreadSafeCounter</span> <span class="variable">demo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NotThreadSafeCounter</span>();</span><br><span class="line">        <span class="comment">// 创建两个线程，执行 add() 操作</span></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">t1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            demo.add();</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">t2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            demo.add();</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 启动两个线程</span></span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">        <span class="comment">// 等待两个线程执行结束</span></span><br><span class="line">        t1.join();</span><br><span class="line">        t2.join();</span><br><span class="line">        System.out.println(<span class="string">&quot;count = &quot;</span> + count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// count = 156602</span></span><br><span class="line"><span class="comment">// 实际结果总是会小于预期值 200000</span></span><br></pre></td></tr></table></figure>
+
+<p>这段程序的目的是将 count 变量累加到 100000，两个线程执行，则应该累加到 200000，但实际结果总是会小于预期值 200000。</p>
+<p>假设线程 A 和线程 B 同时开始执行，那么第一次都会将 count&#x3D;0 读到各自的 CPU 缓存里，执行完 count+&#x3D;1 之后，各自 CPU 缓存里的值都是 1，同时写入内存后，我们会发现内存中是 1，而不是我们期望的 2。之后由于各自的 CPU 缓存里都有了 count 的值，两个线程都是基于 CPU 缓存里的 count 值来计算，所以导致最终 count 的值都是小于 20000 的。这就是缓存的可见性问题。</p>
+<p>@tab 线程安全的计数器</p>
+<p>【示例】线程安全的计数器示例 ✔</p>
+<p>针对上面线程不安全的计数器最简单的改造方法就是在 add() 方法上增加 <code>synchronized</code> 锁，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadSafeCounter</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">cnt</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (cnt++ &lt; <span class="number">100000</span>) &#123;</span><br><span class="line">            count += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>:::</p>
+<h3 id="线程切换带来的原子性问题"><a href="#线程切换带来的原子性问题" class="headerlink" title="线程切换带来的原子性问题"></a>线程切换带来的原子性问题</h3><p>由于 IO 太慢，早期的操作系统就发明了多进程。CPU 会给各个程序分配一个允许执行时间段，即<strong>时间片</strong>。从表面上看，各程序是同时运行的；实际上， 如果在时间片结束时进程还在运行，则 CPU 将被剥夺并分配给另一个进程。 如果进程在时间片结束前阻塞或结束，则 CPU 当即进行切换（称为“任务切换”）。</p>
+<p>Java 的并发也是基于任务切换。Java 中，即使是一条语句，也可能需要执行多条 CPU 指令。<strong>一个或者多个操作在 CPU 执行的过程中不被中断的特性称为原子性</strong>。</p>
+<p>CPU 能保证的原子操作是 CPU 指令级别的，而不是高级语言的操作符。违背直觉的是，高级语言里一条语句往往需要多条 CPU 指令完成，例如上面代码中的<code>count += 1</code>，至少需要三条 CPU 指令。</p>
+<ul>
+<li>指令 1：首先，需要把变量 count 从内存加载到 CPU 的寄存器；</li>
+<li>指令 2：之后，在寄存器中执行+1 操作；</li>
+<li>指令 3：最后，将结果写入内存（缓存机制导致可能写入的是 CPU 缓存而不是内存）。</li>
+</ul>
+<p>因此，执行 <code>count += 1</code> 不是原子操作。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409042334004.png"></p>
+<h3 id="编译优化带来的有序性问题"><a href="#编译优化带来的有序性问题" class="headerlink" title="编译优化带来的有序性问题"></a>编译优化带来的有序性问题</h3><p>有序性指的是程序按照代码的先后顺序执行。编译器为了优化性能，有时候会改变程序中语句的先后顺序，例如程序中：<code>a=6; b=7;</code> 编译器优化后可能变成 <code>b=7; a=6;</code>，在这个例子中，编译器调整了语句的顺序，但是不影响程序的最终结果。不过有时候编译器及解释器的优化可能导致意想不到的 Bug。</p>
+<p>在 Java 领域一个经典的案例就是利用双重检查创建单例对象。</p>
+<p>【示例】双重检查创建单例对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">  <span class="keyword">static</span> Singleton instance;</span><br><span class="line">  <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">synchronized</span>(Singleton.class) &#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">null</span>)</span><br><span class="line">          instance = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假设有两个线程 A、B 同时调用 getInstance() 方法，他们会同时发现 <code>instance == null</code> ，于是同时对 Singleton.class 加锁，此时 JVM 保证只有一个线程能够加锁成功（假设是线程 A），另外一个线程则会处于等待状态（假设是线程 B）；线程 A 会创建一个 Singleton 实例，之后释放锁，锁释放后，线程 B 被唤醒，线程 B 再次尝试加锁，此时是可以加锁成功的，加锁成功后，线程 B 检查 <code>instance == null</code> 时会发现，已经创建过 Singleton 实例了，所以线程 B 不会再创建一个 Singleton 实例。</p>
+<p>这看上去一切都很完美，无懈可击，但实际上这个 getInstance() 方法并不完美。问题出在哪里呢？出在 new 操作上，我们以为的 new 操作应该是：</p>
+<ol>
+<li>分配一块内存 M；</li>
+<li>在内存 M 上初始化 Singleton 对象；</li>
+<li>然后 M 的地址赋值给 instance 变量。</li>
+</ol>
+<p>但是实际上优化后的执行路径却是这样的：</p>
+<ol>
+<li>分配一块内存 M；</li>
+<li>将 M 的地址赋值给 instance 变量；</li>
+<li>最后在内存 M 上初始化 Singleton 对象。</li>
+</ol>
+<p>优化后会导致什么问题呢？我们假设线程 A 先执行 getInstance() 方法，当执行完指令 2 时恰好发生了线程切换，切换到了线程 B 上；如果此时线程 B 也执行 getInstance() 方法，那么线程 B 在执行第一个判断时会发现 <code>instance != null</code> ，所以直接返回 instance，而此时的 instance 是没有初始化过的，如果我们这个时候访问 instance 的成员变量就可能触发空指针异常。</p>
+<h3 id="保证并发安全的思路"><a href="#保证并发安全的思路" class="headerlink" title="保证并发安全的思路"></a>保证并发安全的思路</h3><h4 id="互斥同步（阻塞同步）"><a href="#互斥同步（阻塞同步）" class="headerlink" title="互斥同步（阻塞同步）"></a>互斥同步（阻塞同步）</h4><p>互斥同步是最常见的并发正确性保障手段。</p>
+<p><strong>同步是指在多线程并发访问共享数据时，保证共享数据在同一时刻只能被一个线程访问</strong>。</p>
+<p>互斥是实现同步的一种手段。临界区（Critical Sections）、互斥量（Mutex）和信号量（Semaphore）都是主要的互斥实现方式。</p>
+<p>最典型的案例是使用 <code>synchronized</code> 或 <code>Lock</code> 。</p>
+<p><strong>互斥同步最主要的问题是线程阻塞和唤醒所带来的性能问题</strong>，互斥同步属于一种悲观的并发策略，总是认为只要不去做正确的同步措施，那就肯定会出现问题。无论共享数据是否真的会出现竞争，它都要进行加锁（这里讨论的是概念模型，实际上虚拟机会优化掉很大一部分不必要的加锁）、用户态核心态转换、维护锁计数器和检查是否有被阻塞的线程需要唤醒等操作。</p>
+<h4 id="非阻塞同步"><a href="#非阻塞同步" class="headerlink" title="非阻塞同步"></a>非阻塞同步</h4><p>随着硬件指令集的发展，我们可以使用基于冲突检测的乐观并发策略：先进行操作，如果没有其它线程争用共享数据，那操作就成功了，否则采取补偿措施（不断地重试，直到成功为止）。这种乐观的并发策略的许多实现都不需要将线程阻塞，因此这种同步操作称为非阻塞同步。</p>
+<p>为什么说乐观锁需要 <strong>硬件指令集的发展</strong> 才能进行？因为需要操作和冲突检测这两个步骤具备原子性。而这点是由硬件来完成，如果再使用互斥同步来保证就失去意义了。</p>
+<p>这类乐观锁指令常见的有：</p>
+<ul>
+<li>测试并设置（Test-and-Set）</li>
+<li>获取并增加（Fetch-and-Increment）</li>
+<li>交换（Swap）</li>
+<li>比较并交换（CAS）</li>
+<li>加载链接、条件存储（Load-linked &#x2F; Store-Conditional）</li>
+</ul>
+<p>Java 典型应用场景：J.U.C 包中的原子类（基于 <code>Unsafe</code> 类的 CAS 操作）</p>
+<h4 id="无同步"><a href="#无同步" class="headerlink" title="无同步"></a>无同步</h4><p>要保证线程安全，不一定非要进行同步。同步只是保证共享数据争用时的正确性，如果一个方法本来就不涉及共享数据，那么自然无须同步。</p>
+<p>Java 中的 <strong>无同步方案</strong> 有：</p>
+<ul>
+<li><strong>可重入代码</strong> - 也叫纯代码。如果一个方法，它的 <strong>返回结果是可以预测的</strong>，即只要输入了相同的数据，就能返回相同的结果，那它就满足可重入性，当然也是线程安全的。</li>
+<li><strong>线程本地存储</strong> - 使用 <strong><code>ThreadLocal</code> 为共享变量在每个线程中都创建了一个本地副本</strong>，这个副本只能被当前线程访问，其他线程无法访问，那么自然是线程安全的。</li>
+</ul>
+<h2 id="活跃性问题"><a href="#活跃性问题" class="headerlink" title="活跃性问题"></a>活跃性问题</h2><p>程序运行时，当某个操作无法继续执行下去时，就会产生活跃性问题。</p>
+<p>对于串行程序，活跃性问题的常见形式是无意中造成的死循环，使得循环之后的代码无法执行。</p>
+<p>对于并发程序，会有一些其他的活跃性问题，常见形式有：</p>
+<ul>
+<li>死锁</li>
+<li>活锁</li>
+<li>饥饿</li>
+</ul>
+<h3 id="死锁（Deadlock）"><a href="#死锁（Deadlock）" class="headerlink" title="死锁（Deadlock）"></a>死锁（Deadlock）</h3><h4 id="什么是死锁"><a href="#什么是死锁" class="headerlink" title="什么是死锁"></a>什么是死锁</h4><p><strong>死锁</strong>：<strong>一组互相竞争资源的线程因互相等待，导致“永久”阻塞的现象</strong>。</p>
+<p>死锁是一种特定的程序状态，在实体之间，由于循环依赖导致彼此一直处于等待之中，没有任何个体可以继续前进。死锁不仅仅是在线程之间会发生，存在资源独占的进程之间同样也可能出现死锁。通常来说，我们大多是聚焦在多线程场景中的死锁，指两个或多个线程之间，由于互相持有对方需要的锁，而永久处于阻塞的状态。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409050712813.png"></p>
+<p>【示例】存在死锁的示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Account</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> balance;</span><br><span class="line">  <span class="comment">// 转账</span></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(Account target, <span class="type">int</span> amt)</span>&#123;</span><br><span class="line">    <span class="comment">// 锁定转出账户</span></span><br><span class="line">    <span class="keyword">synchronized</span>(<span class="built_in">this</span>) &#123;</span><br><span class="line">      <span class="comment">// 锁定转入账户</span></span><br><span class="line">      <span class="keyword">synchronized</span>(target) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.balance &gt; amt) &#123;</span><br><span class="line">          <span class="built_in">this</span>.balance -= amt;</span><br><span class="line">          target.balance += amt;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="如何定位死锁"><a href="#如何定位死锁" class="headerlink" title="如何定位死锁"></a>如何定位死锁</h3><p>定位死锁最常见的方式就是利用 jstack 等工具获取线程栈，然后定位互相之间的依赖关系，进而找到死锁。如果是比较明显的死锁，往往 jstack 等就能直接定位，类似 JConsole 甚至可以在图形界面进行有限的死锁检测。</p>
+<p>如果我们是开发自己的管理工具，需要用更加程序化的方式扫描服务进程、定位死锁，可以考虑使用 Java 提供的标准管理 API，<code>ThreadMXBean</code>，其直接就提供了 <code>findDeadlockedThreads()</code> 方法用于定位。</p>
+<h4 id="如何避免死锁"><a href="#如何避免死锁" class="headerlink" title="如何避免死锁"></a>如何避免死锁</h4><p>只有以下这四个条件都发生时才会出现死锁：</p>
+<ul>
+<li><strong>互斥</strong>，共享资源 X 和 Y 只能被一个线程占用；</li>
+<li><strong>占有且等待</strong>，线程 T1 已经取得共享资源 X，在等待共享资源 Y 的时候，不释放共享资源 X；</li>
+<li><strong>不可抢占</strong>，其他线程不能强行抢占线程 T1 占有的资源；</li>
+<li><strong>循环等待</strong>，线程 T1 等待线程 T2 占有的资源，线程 T2 等待线程 T1 占有的资源，就是循环等待。</li>
+</ul>
+<p><strong>也就是说只要破坏任意一个，就可以避免死锁的发生</strong>。</p>
+<p>其中，互斥这个条件我们没有办法破坏，因为我们用锁为的就是互斥。不过其他三个条件都是有办法破坏掉的，到底如何做呢？</p>
+<ol>
+<li>对于“占用且等待”这个条件，我们可以一次性申请所有的资源，这样就不存在等待了。</li>
+<li>对于“不可抢占”这个条件，占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源，这样不可抢占这个条件就破坏掉了。超时释放锁</li>
+<li>对于“循环等待”这个条件，可以靠按序申请资源来预防。所谓按序申请，是指资源是有线性顺序的，申请的时候可以先申请资源序号小的，再申请资源序号大的，这样线性化后自然就不存在循环了。</li>
+</ol>
+<h3 id="活锁（Livelock）"><a href="#活锁（Livelock）" class="headerlink" title="活锁（Livelock）"></a>活锁（Livelock）</h3><h4 id="什么是活锁"><a href="#什么是活锁" class="headerlink" title="什么是活锁"></a>什么是活锁</h4><p>活锁是一个递归的情况，两个或更多的线程会不断重复一个特定的代码逻辑。预期的逻辑通常为其他线程提供机会继续支持’this’线程。</p>
+<p>想象这样一个例子：两个人在狭窄的走廊里相遇，二者都很礼貌，试图移到旁边让对方先通过。但是他们最终在没有取得任何进展的情况下左右摇摆，因为他们都在同一时间向相同的方向移动。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409050740102.png"></p>
+<p>如图所示：两个线程想要通过一个 Worker 对象访问共享公共资源的情况，但是当他们看到另一个 Worker（在另一个线程上调用）也是“活动的”时，它们会尝试将该资源交给其他工作者并等待为它完成。如果最初我们让两名工作人员都活跃起来，他们将会面临活锁问题。</p>
+<h4 id="避免活锁"><a href="#避免活锁" class="headerlink" title="避免活锁"></a>避免活锁</h4><p>解决“<strong>活锁</strong>”的方案很简单，谦让时，尝试等待一个随机的时间就可以了。由于等待的时间是随机的，所以同时相撞后再次相撞的概率就很低了。“等待一个随机时间”的方案虽然很简单，却非常有效，Raft 这样知名的分布式一致性算法中也用到了它。</p>
+<h3 id="饥饿（Starvation）"><a href="#饥饿（Starvation）" class="headerlink" title="饥饿（Starvation）"></a>饥饿（Starvation）</h3><h4 id="什么是饥饿"><a href="#什么是饥饿" class="headerlink" title="什么是饥饿"></a>什么是饥饿</h4><ul>
+<li>高优先级线程吞噬所有的低优先级线程的 CPU 时间。</li>
+<li>线程被永久堵塞在一个等待进入同步块的状态，因为其他线程总是能在它之前持续地对该同步块进行访问。</li>
+<li>线程在等待一个本身（在其上调用 wait()) 也处于永久等待完成的对象，因为其他线程总是被持续地获得唤醒。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409050752194.png"></p>
+<p>饥饿问题最经典的例子就是哲学家问题。如图所示：有五个哲学家用餐，每个人要获得两支筷子才可以就餐。当 2、4 就餐时，1、3、5 永远无法就餐，只能看着盘中的美食饥饿的等待着。</p>
+<h4 id="解决饥饿"><a href="#解决饥饿" class="headerlink" title="解决饥饿"></a>解决饥饿</h4><p>Java 不可能实现 100% 的公平性，我们依然可以通过同步结构在线程间实现公平性的提高。</p>
+<p>有三种方案：</p>
+<ul>
+<li>保证资源充足</li>
+<li>公平地分配资源</li>
+<li>避免持有锁的线程长时间执行</li>
+</ul>
+<p>这三个方案中，方案一和方案三的适用场景比较有限，因为很多场景下，资源的稀缺性是没办法解决的，持有锁的线程执行的时间也很难缩短。倒是方案二的适用场景相对来说更多一些。</p>
+<p>那如何公平地分配资源呢？在并发编程里，主要是使用<strong>公平锁</strong>。所谓公平锁，是一种先来后到的方案，线程的等待是有顺序的，排在等待队列前面的线程会优先获得资源。</p>
+<h2 id="性能问题"><a href="#性能问题" class="headerlink" title="性能问题"></a>性能问题</h2><p>并发执行一定比串行执行快吗？线程越多执行越快吗？</p>
+<p>答案是：<strong>并发不一定比串行快</strong>。因为并发过程中，有创建线程和线程上下文切换的开销。</p>
+<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>当 CPU 从执行一个线程切换到执行另一个线程时，CPU 需要保存当前线程的本地数据，程序指针等状态，并加载下一个要执行的线程的本地数据，程序指针等。这个开关被称为<strong>上下文切换（Context Switch）</strong>。</p>
+<p>如果频繁地出现上下文切换，将带来极大的开销：恢复执行上下文，丢失局部性，并且 CPU 时间将更多地花在线程调度而不是线程运行上。当线程共享数据时，必须使用同步机制，而这些机制往往会抑制某些编译器优化，使内存缓存区中的数据无效，以及增加共享内存总线的同步流量。所有这些因素都会产生额外的性能开销。</p>
+<p>减少上下文切换的方法：</p>
+<ul>
+<li>无锁并发编程 - 多线程竞争锁时，会引起上下文切换，所以多线程处理数据时，可以用一些办法来避免使用锁，如将数据的 ID 按照 Hash 算法取模分段，不同的线程处理不同段的数据。</li>
+<li>CAS 算法 - Java 的 Atomic 包使用 CAS 算法来更新数据，而不需要加锁。</li>
+<li>使用最少线程 - 避免创建不需要的线程，比如任务很少，但是创建了很多线程来处理，这样会造成大量线程都处于等待状态。</li>
+<li>使用协程 - 在单线程里实现多任务的调度，并在单线程里维持多个任务间的切换。</li>
+</ul>
+<h3 id="资源限制"><a href="#资源限制" class="headerlink" title="资源限制"></a>资源限制</h3><p>程序的执行速度受限于计算机硬件资源或软件资源。在并发编程中，将代码执行速度加快的原则是将代码中串行执行的部分变成并发执行。但是，如果将某段串行的代码并发执行，因为受限于资源仍然在串行执行，这时候程序不仅不会加快执行，反而会更慢，因为增加了上下文切换和资源调度的时间。</p>
+<p>如何解决资源限制的问题呢？在资源受限的情况下，可以根据不同的资源限制调整程序的并发度：</p>
+<ul>
+<li>对于硬件资源限制，可以考虑使用集群并行执行程序。</li>
+<li>对于软件资源限制，可以考虑使用资源池将资源复用。</li>
+</ul>
+<h2 id="并发编程"><a href="#并发编程" class="headerlink" title="并发编程"></a>并发编程</h2><p>并发编程可以抽象成三个核心问题：分工、同步、互斥。</p>
+<ul>
+<li><strong>分工</strong> - 是指如何高效地拆解任务并分配给线程。</li>
+<li><strong>同步</strong> - 是指线程之间如何协作。</li>
+<li><strong>互斥</strong> - 是指保证同一时刻只允许一个线程访问共享资源。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202504221021138.png"></p>
+<h2 id="J-U-C-简介"><a href="#J-U-C-简介" class="headerlink" title="J.U.C 简介"></a>J.U.C 简介</h2><p>Java 的 <code>java.util.concurrent</code> 包（简称 J.U.C）中提供了大量并发工具类，是 Java 并发能力的主要体现（注意，不是全部，有部分并发能力的支持在其他包中）。从功能上，大致可以分为：</p>
+<ul>
+<li><strong>原子类</strong> - 如：<code>AtomicInteger</code>、<code>AtomicIntegerArray</code>、<code>AtomicReference</code>、<code>AtomicStampedReference</code> 等。</li>
+<li><strong>锁</strong> - 如：<code>ReentrantLock</code>、<code>ReentrantReadWriteLock</code> 等。</li>
+<li><strong>并发容器</strong> - 如：<code>ConcurrentHashMap</code>、<code>CopyOnWriteArrayList</code>、<code>CopyOnWriteArraySet</code> 等。</li>
+<li><strong>阻塞队列</strong> - 如：<code>ArrayBlockingQueue</code>、<code>LinkedBlockingQueue</code> 等。</li>
+<li><strong>非阻塞队列</strong> - 如： <code>ConcurrentLinkedQueue</code> 、<code>LinkedTransferQueue</code> 等。</li>
+<li><strong>线程池</strong> - 如：<code>ThreadPoolExecutor</code>、<code>Executors</code> 等。</li>
+</ul>
+<p>J.U.C 包中的工具类是基于 <code>synchronized</code>、<code>volatile</code>、<code>CAS</code>、<code>ThreadLocal</code> 这样的并发核心机制打造的。所以，要想深入理解 J.U.C 工具类的特性、为什么具有这样那样的特性，就必须先理解这些核心机制。</p>
+<h2 id="并发术语"><a href="#并发术语" class="headerlink" title="并发术语"></a>并发术语</h2><p>并发编程中有很多术语概念相近，容易让人混淆。本节内容通过对比分析，力求让读者清晰理解其概念以及差异。</p>
+<h3 id="串行、并行、并发"><a href="#串行、并行、并发" class="headerlink" title="串行、并行、并发"></a>串行、并行、并发</h3><p>并发和并行是最容易让新手费解的概念，那么如何理解二者呢？其最关键的差异在于：是否是<strong>同时</strong>发生：</p>
+<ul>
+<li><strong>串行</strong> - 是指<strong>任务按照顺序依次执行</strong>，每个任务在前一个任务完成后才能开始执行。</li>
+<li><strong>并行</strong> - 是指<strong>具备同时处理多个任务的能力</strong>。</li>
+<li><strong>并发</strong> - 是指<strong>具备处理多个任务的能力，但不一定要同时</strong>。</li>
+</ul>
+<blockquote>
+<p>下面是我见过最生动的说明，摘自 <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/33515481/answer/58849148">并发与并行的区别是什么？——知乎的高票答案</a>：</p>
+<ul>
+<li>你吃饭吃到一半，电话来了，你一直到吃完了以后才去接，这就说明你不支持并发也不支持并行。</li>
+<li>你吃饭吃到一半，电话来了，你停了下来接了电话，接完后继续吃饭，这说明你支持并发。</li>
+<li>你吃饭吃到一半，电话来了，你一边打电话一边吃饭，这说明你支持并行。</li>
+</ul>
+</blockquote>
+<h3 id="同步和异步"><a href="#同步和异步" class="headerlink" title="同步和异步"></a>同步和异步</h3><ul>
+<li><strong>同步</strong> - 是指在发出一个调用时，在没有得到结果之前，该调用就不返回。但是一旦调用返回，就得到返回值了。</li>
+<li><strong>异步</strong> - 则是相反，调用在发出之后，这个调用就直接返回了，所以没有返回结果。换句话说，当一个异步过程调用发出后，调用者不会立刻得到结果。而是在调用发出后，被调用者通过状态、通知来通知调用者，或通过回调函数处理这个调用。</li>
+</ul>
+<blockquote>
+<p>举例来说明：</p>
+<ul>
+<li>同步就像是打电话：不挂电话，通话不会结束。</li>
+<li>异步就像是发短信：发完短信后，就可以做其他事；当收到回复短信时，手机会通过铃声或振动来提醒。</li>
+</ul>
+</blockquote>
+<h3 id="阻塞和非阻塞"><a href="#阻塞和非阻塞" class="headerlink" title="阻塞和非阻塞"></a>阻塞和非阻塞</h3><p>阻塞和非阻塞关注的是程序在等待调用结果（消息，返回值）时的状态：</p>
+<ul>
+<li><strong>阻塞</strong> - 是指<strong>调用结果返回之前，当前线程会被挂起</strong>。调用线程只有在得到结果之后才会返回。</li>
+<li><strong>非阻塞</strong> - 是指在不能立刻得到结果之前，该<strong>调用不会阻塞当前线程</strong>。</li>
+</ul>
+<blockquote>
+<p>举例来说明：</p>
+<ul>
+<li>阻塞调用就像是打电话，通话不结束，不能放下。</li>
+<li>非阻塞调用就像是发短信，发完短信后，就可以做其他事，短信来了，手机会提醒。</li>
+</ul>
+</blockquote>
+<h3 id="进程、线程、管程、协程"><a href="#进程、线程、管程、协程" class="headerlink" title="进程、线程、管程、协程"></a>进程、线程、管程、协程</h3><ul>
+<li><strong>进程（Process）</strong> - 进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动。进程是操作系统进行资源分配的基本单位。<strong>进程可视为一个正在运行的程序</strong>。</li>
+<li><strong>线程（Thread）</strong> - <strong>线程是操作系统进行调度的基本单位</strong>。</li>
+<li><strong>管程（Monitor）</strong> - <strong>管程是指管理共享变量以及对共享变量的操作过程，让他们支持并发</strong>。<ul>
+<li>Java 通过 synchronized 关键字及 wait()、notify()、notifyAll() 这三个方法来实现管程技术。</li>
+<li><strong>管程和信号量是等价的，所谓等价指的是用管程能够实现信号量，也能用信号量实现管程</strong>。</li>
+</ul>
+</li>
+<li><strong>协程（Coroutine）</strong> - <strong>协程可以理解为一种轻量级的线程</strong>。<ul>
+<li>从操作系统的角度来看，线程是在内核态中调度的，而协程是在用户态调度的，所以相对于线程来说，协程切换的成本更低。</li>
+<li>协程虽然也有自己的栈，但是相比线程栈要小得多，典型的线程栈大小差不多有 1M，而协程栈的大小往往只有几 K 或者几十 K。所以，无论是从时间维度还是空间维度来看，协程都比线程轻量得多。</li>
+<li>Go、Python、Lua、Kotlin 等语言都支持协程；Java OpenSDK 中的 Loom 项目目标就是支持协程。</li>
+</ul>
+</li>
+</ul>
+<p>进程和线程的差异：</p>
+<ul>
+<li>一个程序至少有一个进程，一个进程至少有一个线程。</li>
+<li>线程比进程划分更细，所以执行开销更小，并发性更高</li>
+<li>进程是一个实体，拥有独立的资源；而同一个进程中的多个线程共享进程的资源。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/concurrent/processes-vs-threads.jpg" alt="img"></p>
+<p>JVM 在单个进程中运行，JVM 中的线程共享属于该进程的堆。这就是为什么几个线程可以访问同一个对象。线程共享堆并拥有自己的堆栈空间。这是一个线程如何调用一个方法以及它的局部变量是如何保持线程安全的。但是堆不是线程安全的并且为了线程安全必须进行同步。</p>
+<h3 id="竞态条件和临界区"><a href="#竞态条件和临界区" class="headerlink" title="竞态条件和临界区"></a>竞态条件和临界区</h3><ul>
+<li><strong>竞态条件（Race Condition）</strong> - 程序的执行结果依赖多线程执行的顺序。通俗的说，即<strong>多个线程竞争访问同一个资源</strong>。</li>
+<li><strong>临界区（Critical Sections）</strong> - 指的是<strong>访问共享资源的程序片段</strong>。</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/10484692/">《Java 并发编程实战》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/26591326/">《Java 并发编程的艺术》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/34907497/">《深入理解 Java 虚拟机》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100023901">极客时间教程 - Java 并发编程实战</a></li>
+<li><a target="_blank" rel="noopener" href="http://tutorials.jenkov.com/java-concurrency/benefits.html">http://tutorials.jenkov.com/java-concurrency/benefits.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.logicbig.com/tutorials/core-java-tutorial/java-multi-threading/thread-deadlock.html">https://www.logicbig.com/tutorials/core-java-tutorial/java-multi-threading/thread-deadlock.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.logicbig.com/tutorials/core-java-tutorial/java-multi-threading/thread-livelock.html">https://www.logicbig.com/tutorials/core-java-tutorial/java-multi-threading/thread-livelock.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.logicbig.com/tutorials/core-java-tutorial/java-multi-threading/thread-starvation.html">https://www.logicbig.com/tutorials/core-java-tutorial/java-multi-threading/thread-starvation.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/33515481">https://www.zhihu.com/question/33515481</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/yaosiming2011/article/details/44280797">https://blog.csdn.net/yaosiming2011/article/details/44280797</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/d63c0ffb/" title="Java 并发简介">https://dunwu.github.io/blog/pages/d63c0ffb/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+              <a href="/blog/tags/JavaCore/" rel="tag"># JavaCore</a>
+              <a href="/blog/tags/%E7%BA%BF%E7%A8%8B/" rel="tag"># 线程</a>
+              <a href="/blog/tags/%E5%AE%89%E5%85%A8%E6%80%A7/" rel="tag"># 安全性</a>
+              <a href="/blog/tags/%E6%B4%BB%E8%B7%83%E6%80%A7/" rel="tag"># 活跃性</a>
+              <a href="/blog/tags/%E6%80%A7%E8%83%BD/" rel="tag"># 性能</a>
+              <a href="/blog/tags/%E6%AD%BB%E9%94%81/" rel="tag"># 死锁</a>
+              <a href="/blog/tags/%E6%B4%BB%E9%94%81/" rel="tag"># 活锁</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/9003d665/" rel="prev" title="深入理解 Java 异常">
+                  <i class="fa fa-angle-left"></i> 深入理解 Java 异常
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/368271ca/" rel="next" title="HBase 运维">
+                  HBase 运维 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"9bc9806bd1ff16277746bcef50109540"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

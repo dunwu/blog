@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Redis 高级数据类型 关键词：BitMap、HyperLogLog、Geo、Stream  Redis 支持的高级数据类型：BitMap、HyperLogLog、GEO、Stream 使用 Redis ，不仅要了解其数据类型的特性，还需要根据业务场景，灵活的、高效的使用其数据类型来建模。 BitMapBitMap 简介Bitmap，即位图，是一串连续的二进制数组（0 和 1），可以通过偏移量（">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 高级数据类型">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/9cfc1b29/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Redis 高级数据类型 关键词：BitMap、HyperLogLog、Geo、Stream  Redis 支持的高级数据类型：BitMap、HyperLogLog、GEO、Stream 使用 Redis ，不仅要了解其数据类型的特性，还需要根据业务场景，灵活的、高效的使用其数据类型来建模。 BitMapBitMap 简介Bitmap，即位图，是一串连续的二进制数组（0 和 1），可以通过偏移量（">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-24T02:45:38.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.736Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="KV数据库">
+<meta property="article:tag" content="数据类型">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/9cfc1b29/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/9cfc1b29/","path":"/pages/9cfc1b29/","title":"Redis 高级数据类型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 高级数据类型 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E9%AB%98%E7%BA%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">Redis 高级数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BitMap"><span class="nav-number">1.1.</span> <span class="nav-text">BitMap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BitMap-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">BitMap 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BitMap-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">BitMap 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BitMap-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.1.3.</span> <span class="nav-text">BitMap 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BitMap-%E5%BA%94%E7%94%A8"><span class="nav-number">1.1.4.</span> <span class="nav-text">BitMap 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AD%BE%E5%88%B0%E7%BB%9F%E8%AE%A1"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">签到统计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E7%94%A8%E6%88%B7%E6%98%AF%E5%90%A6%E7%99%BB%E5%BD%95"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">判断用户是否登录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E7%AD%BE%E5%88%B0%E7%94%A8%E6%88%B7%E6%80%BB%E6%95%B0"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">连续签到用户总数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">1.2.</span> <span class="nav-text">HyperLogLog</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">HyperLogLog 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">HyperLogLog 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.3.</span> <span class="nav-text">HyperLogLog 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HyperLogLog-%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.4.</span> <span class="nav-text">HyperLogLog 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%99%BE%E4%B8%87%E7%BA%A7%E7%BD%91%E9%A1%B5-UV-%E8%AE%A1%E6%95%B0"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">百万级网页 UV 计数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GEO"><span class="nav-number">1.3.</span> <span class="nav-text">GEO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">GEO 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.2.</span> <span class="nav-text">GEO 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.3.</span> <span class="nav-text">GEO 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GEO-%E5%BA%94%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">GEO 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BB%B4%E6%BB%B4%E5%8F%AB%E8%BD%A6"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">滴滴叫车</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stream"><span class="nav-number">1.4.</span> <span class="nav-text">Stream</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Stream-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">Stream 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stream-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.2.</span> <span class="nav-text">Stream 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stream-%E5%BA%94%E7%94%A8"><span class="nav-number">1.4.3.</span> <span class="nav-text">Stream 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">消息队列</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/9cfc1b29/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 高级数据类型 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 高级数据类型<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/05.KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/Redis_%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%BA%8C.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-24 10:45:38" itemprop="dateCreated datePublished" datetime="2020-06-24T10:45:38+08:00">2020-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">KV数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Redis-高级数据类型"><a href="#Redis-高级数据类型" class="headerlink" title="Redis 高级数据类型"></a>Redis 高级数据类型</h1><blockquote>
+<p>关键词：<code>BitMap</code>、<code>HyperLogLog</code>、<code>Geo</code>、<code>Stream</code></p>
+</blockquote>
+<p>Redis 支持的高级数据类型：BitMap、HyperLogLog、GEO、Stream</p>
+<p>使用 Redis ，不仅要了解其数据类型的特性，还需要根据业务场景，灵活的、高效的使用其数据类型来建模。</p>
+<h2 id="BitMap"><a href="#BitMap" class="headerlink" title="BitMap"></a>BitMap</h2><h3 id="BitMap-简介"><a href="#BitMap-简介" class="headerlink" title="BitMap 简介"></a>BitMap 简介</h3><p>Bitmap，<strong>即位图，是一串连续的二进制数组（0 和 1）</strong>，可以通过偏移量（offset）定位元素。由于 bit 是计算机中最小的单位，使用它进行储存将<strong>非常节省空间</strong>，特别适合一些数据量大且使用<strong>二值统计的场景</strong>。例如在一个系统中，不同的用户使用单调递增的用户 ID 表示。40 亿（$$2^{32}$$ &#x3D; $$4<em>1024</em>1024*1024$$ ≈ 40 亿）用户只需要 512M 内存就能记住某种状态，例如用户是否已登录。</p>
+<h3 id="BitMap-实现"><a href="#BitMap-实现" class="headerlink" title="BitMap 实现"></a>BitMap 实现</h3><p>实际上，<strong>BitMap 不是真实的数据结构，而是基于 String 实现的一组位操作</strong>。</p>
+<p>由于 STRING 是二进制安全的，并且其最大长度是 512 MB，所以 BitMap 能最大设置 $$2^{32}$$ 个不同的 bit。</p>
+<h3 id="BitMap-命令"><a href="#BitMap-命令" class="headerlink" title="BitMap 命令"></a>BitMap 命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SETBIT</code></td>
+<td>对 key 所储存的字符串值，设置或清除指定偏移量上的位(bit)</td>
+</tr>
+<tr>
+<td><code>GETBIT</code></td>
+<td>对 key 所储存的字符串值，获取指定偏移量上的位(bit)</td>
+</tr>
+<tr>
+<td><code>BITOP</code></td>
+<td>对一个或多个字符串执行位运算</td>
+</tr>
+</tbody></table>
+<p>【示例】SETBIT、GETBIT 操作</p>
+<p>假设有 1000 个传感器，标记为 0-999。现在，想要快速确定某传感器是否在一小时内对服务器执行了 ping 操作。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">传感器 123 在 2024 年 1 月 1 日 00:00 内对服务器执行 ping 操作</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SETBIT pings:2024-01-01-00:00 123 1</span></span><br><span class="line">(integer) 0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">传感器 123 是否在 2024 年 1 月 1 日 00:00 内对服务器执行 ping 操作</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">GETBIT pings:2024-01-01-00:00 123</span></span><br><span class="line">1</span><br><span class="line">What about sensor 456?</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">GETBIT pings:2024-01-01-00:00 456</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<p>【示例】BITOP 操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">BitMap间的运算</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">operations 位移操作符，枚举值</span></span><br><span class="line">  AND 与运算 &amp;</span><br><span class="line">  OR 或运算 |</span><br><span class="line">  XOR 异或 ^</span><br><span class="line">  NOT 取反 ~</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">result 计算的结果，会存储在该key中</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">key1 … keyn 参与运算的key，可以有多个，空格分割，not运算只能一个key</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">当 BITOP 处理不同长度的字符串时，较短的那个字符串所缺少的部分会被看作 0。返回值是保存到 destkey 的字符串的长度（以字节byte为单位），和输入 key 中最长的字符串长度相等。</span></span><br><span class="line">BITOP [operations] [result] [key1] [keyn…]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回指定key中第一次出现指定value(0/1)的位置</span></span><br><span class="line">BITPOS [key] [value]</span><br></pre></td></tr></table></figure>
+
+<h3 id="BitMap-应用"><a href="#BitMap-应用" class="headerlink" title="BitMap 应用"></a>BitMap 应用</h3><p>Bitmap 类型非常适合二值状态统计的场景，这里的二值状态就是指集合元素的取值就只有 0 和 1 两种，在记录海量数据时，Bitmap 能够有效地节省内存空间。</p>
+<h4 id="签到统计"><a href="#签到统计" class="headerlink" title="签到统计"></a>签到统计</h4><p>在签到打卡的场景中，我们只用记录签到（1）或未签到（0），所以它就是非常典型的二值状态。</p>
+<p>签到统计时，每个用户一天的签到用 1 个 bit 位就能表示，一个月（假设是 31 天）的签到情况用 31 个 bit 位就可以，而一年的签到也只需要用 365 个 bit 位，根本不用太复杂的集合类型。</p>
+<p>假设我们要统计 ID 100 的用户在 2022 年 6 月份的签到情况，就可以按照下面的步骤进行操作。</p>
+<p>第一步，执行下面的命令，记录该用户 6 月 3 号已签到。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETBIT uid:sign:100:202206 2 1</span><br></pre></td></tr></table></figure>
+
+<p>第二步，检查该用户 6 月 3 日是否签到。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GETBIT uid:sign:100:202206 2</span><br></pre></td></tr></table></figure>
+
+<p>第三步，统计该用户在 6 月份的签到次数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BITCOUNT uid:sign:100:202206</span><br></pre></td></tr></table></figure>
+
+<p>这样，我们就知道该用户在 6 月份的签到情况了。</p>
+<blockquote>
+<p>如何统计这个月首次打卡时间呢？</p>
+</blockquote>
+<p>Redis 提供了 <code>BITPOS key bitValue [start] [end]</code>指令，返回数据表示 Bitmap 中第一个值为 <code>bitValue</code> 的 offset 位置。</p>
+<p>在默认情况下，命令将检测整个位图，用户可以通过可选的 <code>start</code> 参数和 <code>end</code> 参数指定要检测的范围。所以我们可以通过执行这条命令来获取 userID &#x3D; 100 在 2022 年 6 月份<strong>首次打卡</strong>日期：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BITPOS uid:sign:100:202206 1</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，因为 offset 从 0 开始的，所以我们需要将返回的 value + 1。</p>
+<h4 id="判断用户是否登录"><a href="#判断用户是否登录" class="headerlink" title="判断用户是否登录"></a>判断用户是否登录</h4><p>Bitmap 提供了 <code>GETBIT、SETBIT</code> 操作，通过一个偏移值 offset 对 bit 数组的 offset 位置的 bit 位进行读写操作，需要注意的是 offset 从 0 开始。</p>
+<p>只需要一个 key &#x3D; login_status 表示存储用户登陆状态集合数据，将用户 ID 作为 offset，在线就设置为 1，下线设置 0。通过 <code>GETBIT</code>判断对应的用户是否在线。50000 万 用户只需要 6 MB 的空间。</p>
+<p>假如我们要判断 ID &#x3D; 10086 的用户的登陆情况：</p>
+<p>第一步，执行以下指令，表示用户已登录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETBIT login_status 10086 1</span><br></pre></td></tr></table></figure>
+
+<p>第二步，检查该用户是否登陆，返回值 1 表示已登录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GETBIT login_status 10086</span><br></pre></td></tr></table></figure>
+
+<p>第三步，登出，将 offset 对应的 value 设置成 0。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETBIT login_status 10086 0</span><br></pre></td></tr></table></figure>
+
+<h4 id="连续签到用户总数"><a href="#连续签到用户总数" class="headerlink" title="连续签到用户总数"></a>连续签到用户总数</h4><p>如何统计出这连续 7 天连续打卡用户总数呢？</p>
+<p>我们把每天的日期作为 Bitmap 的 key，userId 作为 offset，若是打卡则将 offset 位置的 bit 设置成 1。</p>
+<p>key 对应的集合的每个 bit 位的数据则是一个用户在该日期的打卡记录。</p>
+<p>一共有 7 个这样的 Bitmap，如果我们能对这 7 个 Bitmap 的对应的 bit 位做 “与”运算。同样的 UserID offset 都是一样的，当一个 userID 在 7 个 Bitmap 对应对应的 offset 位置的 bit &#x3D; 1 就说明该用户 7 天连续打卡。</p>
+<p>结果保存到一个新 Bitmap 中，我们再通过 <code>BITCOUNT</code> 统计 bit &#x3D; 1 的个数便得到了连续打卡 7 天的用户总数了。</p>
+<p>Redis 提供了 <code>BITOP operation destkey key [key ...]</code>这个指令用于对一个或者多个 key 的 Bitmap 进行位元操作。</p>
+<ul>
+<li><code>operation</code> 可以是 <code>and</code>、<code>OR</code>、<code>NOT</code>、<code>XOR</code>。当 BITOP 处理不同长度的字符串时，较短的那个字符串所缺少的部分会被看作 <code>0</code> 。空的 <code>key</code> 也被看作是包含 <code>0</code> 的字符串序列。</li>
+</ul>
+<p>假设要统计 3 天连续打卡的用户数，则是将三个 bitmap 进行 AND 操作，并将结果保存到 destmap 中，接着对 destmap 执行 BITCOUNT 统计，如下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">与操作</span></span><br><span class="line">BITOP AND destmap bitmap:01 bitmap:02 bitmap:03</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">统计 bit 位 =  1 的个数</span></span><br><span class="line">BITCOUNT destmap</span><br></pre></td></tr></table></figure>
+
+<p>即使一天产生一个亿的数据，Bitmap 占用的内存也不大，大约占 12 MB 的内存（10^8&#x2F;8&#x2F;1024&#x2F;1024），7 天的 Bitmap 的内存开销约为 84 MB。同时我们最好给 Bitmap 设置过期时间，让 Redis 删除过期的打卡数据，节省内存。</p>
+<h2 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog"></a>HyperLogLog</h2><h3 id="HyperLogLog-简介"><a href="#HyperLogLog-简介" class="headerlink" title="HyperLogLog 简介"></a>HyperLogLog 简介</h3><p>Redis HyperLogLog 是 Redis 2.8.9 版本新增的数据类型，是一种<strong>用于“统计基数”的数据集合类型</strong>，基数统计就是指统计一个集合中不重复的元素个数。但要注意，**HyperLogLog 是统计规则是基于概率完成的，不是非常准确，标准误算率是 0.81%**。</p>
+<p>所以，简单来说 HyperLogLog <strong>提供不精确的去重计数</strong>。</p>
+<p>HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的内存空间总是固定的、并且是很小的。</p>
+<p>在 Redis 里面，<strong>每个 HyperLogLog 键只需要花费 12 KB 内存，就可以计算接近 <code>2^64</code> 个不同元素的基数</strong>，和元素越多就越耗费内存的 Set 和 Hash 类型相比，HyperLogLog 就非常节省空间。</p>
+<p>这什么概念？举个例子给大家对比一下。</p>
+<p>用 Java 语言来说，一般 long 类型占用 8 字节，而 1 字节有 8 位，即：1 byte &#x3D; 8 bit，即 long 数据类型最大可以表示的数是：<code>2^63-1</code>。对应上面的<code>2^64</code>个数，假设此时有<code>2^63-1</code>这么多个数，从 <code>0 ~ 2^63-1</code>，按照<code>long</code>以及<code>1k = 1024 字节</code>的规则来计算内存总数，就是：<code>((2^63-1) * 8/1024)K</code>，这是很庞大的一个数，存储空间远远超过<code>12K</code>，而 <code>HyperLogLog</code> 却可以用 <code>12K</code> 就能统计完。</p>
+<h3 id="HyperLogLog-实现"><a href="#HyperLogLog-实现" class="headerlink" title="HyperLogLog 实现"></a>HyperLogLog 实现</h3><p>HyperLogLog 的实现涉及到很多数学问题，太费脑子了，我也没有搞懂，如果你想了解一下，课下可以看看这个：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/HyperLogLog">HyperLogLog</a>。</p>
+<h3 id="HyperLogLog-命令"><a href="#HyperLogLog-命令" class="headerlink" title="HyperLogLog 命令"></a>HyperLogLog 命令</h3><p>HyperLogLog 命令很少，就三个。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加指定元素到 HyperLogLog 中</span></span><br><span class="line">PFADD key element [element ...]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回给定 HyperLogLog 的基数估算值。</span></span><br><span class="line">PFCOUNT key [key ...]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将多个 HyperLogLog 合并为一个 HyperLogLog</span></span><br><span class="line">PFMERGE destkey sourcekey [sourcekey ...]</span><br></pre></td></tr></table></figure>
+
+<h3 id="HyperLogLog-应用"><a href="#HyperLogLog-应用" class="headerlink" title="HyperLogLog 应用"></a>HyperLogLog 应用</h3><h4 id="百万级网页-UV-计数"><a href="#百万级网页-UV-计数" class="headerlink" title="百万级网页 UV 计数"></a>百万级网页 UV 计数</h4><p>Redis HyperLogLog 优势在于只需要花费 12 KB 内存，就可以计算接近 2^64 个元素的基数，和元素越多就越耗费内存的 Set 和 Hash 类型相比，HyperLogLog 就非常节省空间。</p>
+<p>所以，非常适合统计百万级以上的网页 UV 的场景。</p>
+<p>在统计 UV 时，你可以用 PFADD 命令（用于向 HyperLogLog 中添加新元素）把访问页面的每个用户都添加到 HyperLogLog 中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFADD page1:uv user1 user2 user3 user4 user5</span><br></pre></td></tr></table></figure>
+
+<p>接下来，就可以用 PFCOUNT 命令直接获得 page1 的 UV 值了，这个命令的作用就是返回 HyperLogLog 的统计结果。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFCOUNT page1:uv</span><br></pre></td></tr></table></figure>
+
+<p>不过，有一点需要你注意一下，HyperLogLog 的统计规则是基于概率完成的，所以它给出的统计结果是有一定误差的，标准误算率是 0.81%。</p>
+<p>这也就意味着，你使用 HyperLogLog 统计的 UV 是 100 万，但实际的 UV 可能是 101 万。虽然误差率不算大，但是，如果你需要精确统计结果的话，最好还是继续用 Set 或 Hash 类型。</p>
+<h2 id="GEO"><a href="#GEO" class="headerlink" title="GEO"></a>GEO</h2><h3 id="GEO-简介"><a href="#GEO-简介" class="headerlink" title="GEO 简介"></a>GEO 简介</h3><p>Redis GEO 是 Redis 3.2 版本新增的数据类型，主要用于存储地理位置信息，并对存储的信息进行操作。</p>
+<p>在日常生活中，我们越来越依赖搜索“附近的餐馆”、在打车软件上叫车，这些都离不开基于位置信息服务（Location-Based Service，LBS）的应用。LBS 应用访问的数据是和人或物关联的一组经纬度信息，而且要能查询相邻的经纬度范围，GEO 就非常适合应用在 LBS 服务的场景中。</p>
+<h3 id="GEO-实现"><a href="#GEO-实现" class="headerlink" title="GEO 实现"></a>GEO 实现</h3><p>GEO 本身并没有设计新的底层数据结构，而是直接使用了 Zset 类型。</p>
+<p>GEO 类型使用 GeoHash 编码方法实现了经纬度到 Sorted Set 中元素权重分数的转换，这其中的两个关键机制就是“对二维地图做区间划分”和“对区间进行编码”。一组经纬度落在某个区间后，就用区间的编码值来表示，并把编码值作为 Sorted Set 元素的权重分数。</p>
+<p>这样一来，我们就可以把经纬度保存到 Sorted Set 中，利用 Sorted Set 提供的“按权重进行有序范围查找”的特性，实现 LBS 服务中频繁使用的“搜索附近”的需求。</p>
+<h3 id="GEO-命令"><a href="#GEO-命令" class="headerlink" title="GEO 命令"></a>GEO 命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">存储指定的地理空间位置，可以将一个或多个经度(longitude)、纬度(latitude)、位置名称(member)添加到指定的 key 中。</span></span><br><span class="line">GEOADD key longitude latitude member [longitude latitude member ...]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从给定的 key 里返回所有指定名称(member)的位置（经度和纬度），不存在的返回 nil。</span></span><br><span class="line">GEOPOS key member [member ...]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回两个给定位置之间的距离。</span></span><br><span class="line">GEODIST key member1 member2 [m|km|ft|mi]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">根据用户给定的经纬度坐标来获取指定范围内的地理位置集合。</span></span><br><span class="line">GEORADIUS key longitude latitude radius m|km|ft|mi [WITHCOORD] [WITHDIST] [WITHHASH] [COUNT count] [ASC|DESC] [STORE key] [STOREDIST key]</span><br></pre></td></tr></table></figure>
+
+<h3 id="GEO-应用"><a href="#GEO-应用" class="headerlink" title="GEO 应用"></a>GEO 应用</h3><h4 id="滴滴叫车"><a href="#滴滴叫车" class="headerlink" title="滴滴叫车"></a>滴滴叫车</h4><p>这里以滴滴叫车的场景为例，介绍下具体如何使用 GEO 命令：GEOADD 和 GEORADIUS 这两个命令。</p>
+<p>假设车辆 ID 是 33，经纬度位置是（116.034579，39.030452），我们可以用一个 GEO 集合保存所有车辆的经纬度，集合 key 是 cars:locations。</p>
+<p>执行下面的这个命令，就可以把 ID 号为 33 的车辆的当前经纬度位置存入 GEO 集合中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GEOADD cars:locations 116.034579 39.030452 33</span><br></pre></td></tr></table></figure>
+
+<p>当用户想要寻找自己附近的网约车时，LBS 应用就可以使用 GEORADIUS 命令。</p>
+<p>例如，LBS 应用执行下面的命令时，Redis 会根据输入的用户的经纬度信息（116.054579，39.030452），查找以这个经纬度为中心的 5 公里内的车辆信息，并返回给 LBS 应用。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GEORADIUS cars:locations 116.054579 39.030452 5 km ASC COUNT 10</span><br></pre></td></tr></table></figure>
+
+<h2 id="Stream"><a href="#Stream" class="headerlink" title="Stream"></a>Stream</h2><h3 id="Stream-简介"><a href="#Stream-简介" class="headerlink" title="Stream 简介"></a>Stream 简介</h3><p>Redis Stream 是 Redis 5.0 版本新增加的数据类型，Redis 专门为消息队列设计的数据类型。</p>
+<p>在 Redis 5.0 Stream 没出来之前，消息队列的实现方式都有着各自的缺陷，例如：</p>
+<ul>
+<li>发布订阅模式，不能持久化也就无法可靠的保存消息，并且对于离线重连的客户端不能读取历史消息的缺陷；</li>
+<li>List 实现消息队列的方式不能重复消费，一个消息消费完就会被删除，而且生产者需要自行实现全局唯一 ID。</li>
+</ul>
+<p>基于以上问题，Redis 5.0 便推出了 Stream 类型也是此版本最重要的功能，用于完美地实现消息队列，它支持消息的持久化、支持自动生成全局唯一 ID、支持 ack 确认消息的模式、支持消费组模式等，让消息队列更加的稳定和可靠。</p>
+<h3 id="Stream-命令"><a href="#Stream-命令" class="headerlink" title="Stream 命令"></a>Stream 命令</h3><p>Stream 消息队列操作命令：</p>
+<ul>
+<li>XADD：插入消息，保证有序，可以自动生成全局唯一 ID；</li>
+<li>XLEN：查询消息长度；</li>
+<li>XREAD：用于读取消息，可以按 ID 读取数据；</li>
+<li>XDEL：根据消息 ID 删除消息；</li>
+<li>DEL：删除整个 Stream；</li>
+<li>XRANGE：读取区间消息</li>
+<li>XREADGROUP：按消费组形式读取消息；</li>
+<li>XPENDING 和 XACK：<ul>
+<li>XPENDING 命令可以用来查询每个消费组内所有消费者“已读取、但尚未确认”的消息；</li>
+<li>XACK 命令用于向消息队列确认消息处理已完成；</li>
+</ul>
+</li>
+</ul>
+<h3 id="Stream-应用"><a href="#Stream-应用" class="headerlink" title="Stream 应用"></a>Stream 应用</h3><h4 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h4><p>生产者通过 XADD 命令插入一条消息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">* 表示让 Redis 为插入的数据自动生成一个全局唯一的 ID</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">往名称为 mymq 的消息队列中插入一条消息，消息的键是 name，值是 xiaolin</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XADD mymq * name xiaolin</span></span><br><span class="line">&quot;1654254953808-0&quot;</span><br></pre></td></tr></table></figure>
+
+<p>插入成功后会返回全局唯一的 ID：”1654254953808-0”。消息的全局唯一 ID 由两部分组成：</p>
+<ul>
+<li>第一部分“1654254953808”是数据插入时，以毫秒为单位计算的当前服务器时间；</li>
+<li>第二部分表示插入消息在当前毫秒内的消息序号，这是从 0 开始编号的。例如，“1654254953808-0”就表示在“1654254953808”毫秒内的第 1 条消息。</li>
+</ul>
+<p>消费者通过 XREAD 命令从消息队列中读取消息时，可以指定一个消息 ID，并从这个消息 ID 的下一条消息开始进行读取（注意是输入消息 ID 的下一条信息开始读取，不是查询输入 ID 的消息）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从 ID 号为 1654254953807-0 的消息开始，读取后续的所有消息（示例中一共 1 条）。</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREAD STREAMS mymq 1654254953807-0</span></span><br><span class="line">1) 1) &quot;mymq&quot;</span><br><span class="line">   2) 1) 1) &quot;1654254953808-0&quot;</span><br><span class="line">         2) 1) &quot;name&quot;</span><br><span class="line">            2) &quot;xiaolin&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果<strong>想要实现阻塞读（当没有数据时，阻塞住），可以调用 XRAED 时设定 BLOCK 配置项</strong>，实现类似于 BRPOP 的阻塞读取操作。</p>
+<p>比如，下面这命令，设置了 BLOCK 10000 的配置项，10000 的单位是毫秒，表明 XREAD 在读取最新消息时，如果没有消息到来，XREAD 将阻塞 10000 毫秒（即 10 秒），然后再返回。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">命令最后的“$”符号表示读取最新的消息</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREAD BLOCK 10000 STREAMS mymq $</span></span><br><span class="line">(nil)</span><br><span class="line">(10.00s)</span><br></pre></td></tr></table></figure>
+
+<p>Stream 的基础方法，使用 xadd 存入消息和 xread 循环阻塞读取消息的方式可以实现简易版的消息队列，交互流程如下图所示：</p>
+<blockquote>
+<p>前面介绍的这些操作 List 也支持的，接下来看看 Stream 特有的功能。</p>
+</blockquote>
+<p>Stream 可以以使用 <strong>XGROUP 创建消费组</strong>，创建消费组之后，Stream 可以使用 XREADGROUP 命令让消费组内的消费者读取消息。</p>
+<p>创建两个消费组，这两个消费组消费的消息队列是 mymq，都指定从第一条消息开始读取：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建一个名为 group1 的消费组，0-0 表示从第一条消息开始读取。</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XGROUP CREATE mymq group1 0-0</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建一个名为 group2 的消费组，0-0 表示从第一条消息开始读取。</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XGROUP CREATE mymq group2 0-0</span></span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<p>消费组 group1 内的消费者 consumer1 从 mymq 消息队列中读取所有消息的命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">命令最后的参数“&gt;”，表示从第一条尚未被消费的消息开始读取。</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREADGROUP GROUP group1 consumer1 STREAMS mymq &gt;</span></span><br><span class="line">1) 1) &quot;mymq&quot;</span><br><span class="line">   2) 1) 1) &quot;1654254953808-0&quot;</span><br><span class="line">         2) 1) &quot;name&quot;</span><br><span class="line">            2) &quot;xiaolin&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>消息队列中的消息一旦被消费组里的一个消费者读取了，就不能再被该消费组内的其他消费者读取了，即同一个消费组里的消费者不能消费同一条消息</strong>。</p>
+<p>比如说，我们执行完刚才的 XREADGROUP 命令后，再执行一次同样的命令，此时读到的就是空值了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREADGROUP GROUP group1 consumer1 STREAMS mymq &gt;</span></span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure>
+
+<p>但是，<strong>不同消费组的消费者可以消费同一条消息（但是有前提条件，创建消息组的时候，不同消费组指定了相同位置开始读取消息）</strong>。</p>
+<p>比如说，刚才 group1 消费组里的 consumer1 消费者消费了一条 id 为 1654254953808-0 的消息，现在用 group2 消费组里的 consumer1 消费者消费消息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREADGROUP GROUP group2 consumer1 STREAMS mymq &gt;</span></span><br><span class="line">1) 1) &quot;mymq&quot;</span><br><span class="line">   2) 1) 1) &quot;1654254953808-0&quot;</span><br><span class="line">         2) 1) &quot;name&quot;</span><br><span class="line">            2) &quot;xiaolin&quot;</span><br></pre></td></tr></table></figure>
+
+<p>因为我创建两组的消费组都是从第一条消息开始读取，所以可以看到第二组的消费者依然可以消费 id 为 1654254953808-0 的这一条消息。因此，不同的消费组的消费者可以消费同一条消息。</p>
+<p>使用消费组的目的是让组内的多个消费者共同分担读取消息，所以，我们通常会让每个消费者读取部分消息，从而实现消息读取负载在多个消费者间是均衡分布的。</p>
+<p>例如，我们执行下列命令，让 group2 中的 consumer1、2、3 各自读取一条消息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">让 group2 中的 consumer1 从 mymq 消息队列中消费一条消息</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREADGROUP GROUP group2 consumer1 COUNT 1 STREAMS mymq &gt;</span></span><br><span class="line">1) 1) &quot;mymq&quot;</span><br><span class="line">   2) 1) 1) &quot;1654254953808-0&quot;</span><br><span class="line">         2) 1) &quot;name&quot;</span><br><span class="line">            2) &quot;xiaolin&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">让 group2 中的 consumer2 从 mymq 消息队列中消费一条消息</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREADGROUP GROUP group2 consumer2 COUNT 1 STREAMS mymq &gt;</span></span><br><span class="line">1) 1) &quot;mymq&quot;</span><br><span class="line">   2) 1) 1) &quot;1654256265584-0&quot;</span><br><span class="line">         2) 1) &quot;name&quot;</span><br><span class="line">            2) &quot;xiaolincoding&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">让 group2 中的 consumer3 从 mymq 消息队列中消费一条消息</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XREADGROUP GROUP group2 consumer3 COUNT 1 STREAMS mymq &gt;</span></span><br><span class="line">1) 1) &quot;mymq&quot;</span><br><span class="line">   2) 1) 1) &quot;1654256271337-0&quot;</span><br><span class="line">         2) 1) &quot;name&quot;</span><br><span class="line">            2) &quot;Tom&quot;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>基于 Stream 实现的消息队列，如何保证消费者在发生故障或宕机再次重启后，仍然可以读取未处理完的消息？</p>
+</blockquote>
+<p>Streams 会自动使用内部队列（也称为 PENDING List）留存消费组里每个消费者读取的消息，直到消费者使用 XACK 命令通知 Streams“消息已经处理完成”。</p>
+<p>消费确认增加了消息的可靠性，一般在业务处理完成之后，需要执行 XACK 命令确认消息已经被消费完成，整个流程的执行如下图所示：</p>
+<p>如果消费者没有成功处理消息，它就不会给 Streams 发送 XACK 命令，消息仍然会留存。此时，<strong>消费者可以在重启后，用 XPENDING 命令查看已读取、但尚未确认处理完成的消息</strong>。</p>
+<p>例如，我们来查看一下 group2 中各个消费者已读取、但尚未确认的消息个数，命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; XPENDING mymq group2</span><br><span class="line">1) (integer) 3</span><br><span class="line">2) &quot;1654254953808-0&quot;  # 表示 group2 中所有消费者读取的消息最小 ID</span><br><span class="line">3) &quot;1654256271337-0&quot;  # 表示 group2 中所有消费者读取的消息最大 ID</span><br><span class="line">4) 1) 1) &quot;consumer1&quot;</span><br><span class="line">      2) &quot;1&quot;</span><br><span class="line">   2) 1) &quot;consumer2&quot;</span><br><span class="line">      2) &quot;1&quot;</span><br><span class="line">   3) 1) &quot;consumer3&quot;</span><br><span class="line">      2) &quot;1&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果想查看某个消费者具体读取了哪些数据，可以执行下面的命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 group2 里 consumer2 已从 mymq 消息队列中读取了哪些消息</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XPENDING mymq group2 - + 10 consumer2</span></span><br><span class="line">1) 1) &quot;1654256265584-0&quot;</span><br><span class="line">   2) &quot;consumer2&quot;</span><br><span class="line">   3) (integer) 410700</span><br><span class="line">   4) (integer) 1</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，consumer2 已读取的消息的 ID 是 1654256265584-0。</p>
+<p><strong>一旦消息 1654256265584-0 被 consumer2 处理了，consumer2 就可以使用 XACK 命令通知 Streams，然后这条消息就会被删除</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XACK mymq group2 1654256265584-0</span></span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure>
+
+<p>当我们再使用 XPENDING 命令查看时，就可以看到，consumer2 已经没有已读取、但尚未确认处理的消息了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">XPENDING mymq group2 - + 10 consumer2</span></span><br><span class="line">(empty array)</span><br></pre></td></tr></table></figure>
+
+<p>好了，基于 Stream 实现的消息队列就说到这里了，小结一下：</p>
+<ul>
+<li>消息保序：XADD&#x2F;XREAD</li>
+<li>阻塞读取：XREAD block</li>
+<li>重复消息处理：Stream 在使用 XADD 命令，会自动生成全局唯一 ID；</li>
+<li>消息可靠性：内部使用 PENDING List 自动保存消息，使用 XPENDING 命令查看消费组已经读取但是未被确认的消息，消费者使用 XACK 确认消息；</li>
+<li>支持消费组形式消费数据</li>
+</ul>
+<blockquote>
+<p>Redis 基于 Stream 消息队列与专业的消息队列有哪些差距？</p>
+</blockquote>
+<p>一个专业的消息队列，必须要做到两大块：</p>
+<ul>
+<li>消息不丢。</li>
+<li>消息可堆积。</li>
+</ul>
+<p><em>1、Redis Stream 消息会丢失吗？</em></p>
+<p>使用一个消息队列，其实就分为三大块：<strong>生产者、队列中间件、消费者</strong>，所以要保证消息就是保证三个环节都不能丢失数据。</p>
+<p>Redis Stream 消息队列能不能保证三个环节都不丢失数据？</p>
+<ul>
+<li>Redis 生产者会不会丢消息？生产者会不会丢消息，取决于生产者对于异常情况的处理是否合理。从消息被生产出来，然后提交给 MQ 的过程中，只要能正常收到（MQ 中间件）的 ack 确认响应，就表示发送成功，所以只要处理好返回值和异常，如果返回异常则进行消息重发，那么这个阶段是不会出现消息丢失的。</li>
+<li>Redis 消费者会不会丢消息？不会，因为 Stream（MQ 中间件）会自动使用内部队列（也称为 PENDING List）留存消费组里每个消费者读取的消息，但是未被确认的消息。消费者可以在重启后，用 XPENDING 命令查看已读取、但尚未确认处理完成的消息。等到消费者执行完业务逻辑后，再发送消费确认 XACK 命令，也能保证消息的不丢失。</li>
+<li>Redis 消息中间件会不会丢消息？<strong>会</strong>，Redis 在以下 2 个场景下，都会导致数据丢失：<ul>
+<li>AOF 持久化配置为每秒写盘，但这个写盘过程是异步的，Redis 宕机时会存在数据丢失的可能</li>
+<li>主从复制也是异步的，<a target="_blank" rel="noopener" href="https://xiaolincoding.com/redis/cluster/master_slave_replication.html#redis-%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%E5%A6%82%E4%BD%95%E5%87%8F%E5%B0%91%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1">主从切换时，也存在丢失数据的可能</a>。</li>
+</ul>
+</li>
+</ul>
+<p>可以看到，Redis 在队列中间件环节无法保证消息不丢。像 RabbitMQ 或 Kafka 这类专业的队列中间件，在使用时是部署一个集群，生产者在发布消息时，队列中间件通常会写“多个节点”，也就是有多个副本，这样一来，即便其中一个节点挂了，也能保证集群的数据不丢失。</p>
+<p><em>2、Redis Stream 消息可堆积吗？</em></p>
+<p>Redis 的数据都存储在内存中，这就意味着一旦发生消息积压，则会导致 Redis 的内存持续增长，如果超过机器内存上限，就会面临被 OOM 的风险。</p>
+<p>所以 Redis 的 Stream 提供了可以指定队列最大长度的功能，就是为了避免这种情况发生。</p>
+<p>当指定队列最大长度时，队列长度超过上限后，旧消息会被删除，只保留固定长度的新消息。这么来看，Stream 在消息积压时，如果指定了最大长度，还是有可能丢失消息的。</p>
+<p>但 Kafka、RabbitMQ 专业的消息队列它们的数据都是存储在磁盘上，当消息积压时，无非就是多占用一些磁盘空间。</p>
+<p>因此，把 Redis 当作队列来使用时，会面临的 2 个问题：</p>
+<ul>
+<li>Redis 本身可能会丢数据；</li>
+<li>面对消息挤压，内存资源会紧张；</li>
+</ul>
+<p>所以，能不能将 Redis 作为消息队列来使用，关键看你的业务场景：</p>
+<ul>
+<li>如果你的业务场景足够简单，对于数据丢失不敏感，而且消息积压概率比较小的情况下，把 Redis 当作队列是完全可以的。</li>
+<li>如果你的业务有海量消息，消息积压的概率比较大，并且不能接受数据丢失，那么还是用专业的消息队列中间件吧。</li>
+</ul>
+<blockquote>
+<p>补充：Redis 发布&#x2F;订阅机制为什么不可以作为消息队列？</p>
+</blockquote>
+<p>发布订阅机制存在以下缺点，都是跟丢失数据有关：</p>
+<ol>
+<li>发布&#x2F;订阅机制没有基于任何数据类型实现，所以不具备“数据持久化”的能力，也就是发布&#x2F;订阅机制的相关操作，不会写入到 RDB 和 AOF 中，当 Redis 宕机重启，发布&#x2F;订阅机制的数据也会全部丢失。</li>
+<li>发布订阅模式是“发后既忘”的工作模式，如果有订阅者离线重连之后不能消费之前的历史消息。</li>
+<li>当消费端有一定的消息积压时，也就是生产者发送的消息，消费者消费不过来时，如果超过 32M 或者是 60s 内持续保持在 8M 以上，消费端会被强行断开，这个参数是在配置文件中设置的，默认值是 <code>client-output-buffer-limit pubsub 32mb 8mb 60</code>。</li>
+</ol>
+<p>所以，发布&#x2F;订阅机制只适合即时通讯的场景，比如<a target="_blank" rel="noopener" href="https://xiaolincoding.com/redis/cluster/sentinel.html#%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E6%98%AF%E5%A6%82%E4%BD%95%E7%BB%84%E6%88%90%E7%9A%84">构建哨兵集群</a>的场景采用了发布&#x2F;订阅机制。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Redis 后续版本又支持四种数据类型，它们的应用场景如下：</p>
+<ul>
+<li>BitMap（2.2 版新增）：二值状态统计的场景，比如签到、判断用户登陆状态、连续签到用户总数等；</li>
+<li>HyperLogLog（2.8 版新增）：海量数据基数统计的场景，比如百万级网页 UV 计数等；</li>
+<li>GEO（3.2 版新增）：存储地理位置信息的场景，比如滴滴叫车；</li>
+<li>Stream（5.0 版新增）：消息队列，相比于基于 List 类型实现的消息队列，有这两个特有的特性：自动生成全局唯一消息 ID，支持以消费组形式消费数据。</li>
+</ul>
+<p>针对 Redis 是否适合做消息队列，关键看你的业务场景：</p>
+<ul>
+<li>如果你的业务场景足够简单，对于数据丢失不敏感，而且消息积压概率比较小的情况下，把 Redis 当作队列是完全可以的。</li>
+<li>如果你的业务有海量消息，消息积压的概率比较大，并且不能接受数据丢失，那么还是用专业的消息队列中间件吧。</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://redis.io/">Redis 官网</a></li>
+<li><a target="_blank" rel="noopener" href="http://redis.cn/">Redis 官方文档中文版</a></li>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11791607.html">《Redis 实战》</a></li>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11486101.html">《Redis 设计与实现》</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u011957758/article/details/74783347">一看就懂系列之 详解 redis 的 bitmap 在亿级项目中的应用</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.getspool.com/2011/11/29/fast-easy-realtime-metrics-using-redis-BitMap/">Fast, easy, realtime metrics using Redis BitMap</a></li>
+<li><a target="_blank" rel="noopener" href="https://xiaolincoding.com/redis/data_struct/command.html#string">Redis 常见数据类型和应用场景</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/9cfc1b29/" title="Redis 高级数据类型">https://dunwu.github.io/blog/pages/9cfc1b29/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># KV数据库</a>
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag"># 数据类型</a>
+              <a href="/blog/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/7fdb1c11/" rel="prev" title="Redis 集群">
+                  <i class="fa fa-angle-left"></i> Redis 集群
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/76331397/" rel="next" title="Redis 基本数据类型">
+                  Redis 基本数据类型 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"c022aa1f82119e782cc4e0d5034001df"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

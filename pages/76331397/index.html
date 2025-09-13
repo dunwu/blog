@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Redis 基本数据类型 关键词：String、Hash、List、Set、Zset  Redis 提供了多种数据类型，每种数据类型有丰富的命令支持。 Redis 支持的基本数据类型：STRING、HASH、LIST、SET、ZSET Redis 支持的高级数据类型：BitMap、HyperLogLog、GEO、Stream 使用 Redis ，不仅要了解其数据类型的特性，还需要根据业务场景，灵活">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 基本数据类型">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/76331397/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Redis 基本数据类型 关键词：String、Hash、List、Set、Zset  Redis 提供了多种数据类型，每种数据类型有丰富的命令支持。 Redis 支持的基本数据类型：STRING、HASH、LIST、SET、ZSET Redis 支持的高级数据类型：BitMap、HyperLogLog、GEO、Stream 使用 Redis ，不仅要了解其数据类型的特性，还需要根据业务场景，灵活">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202309232155082.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-string.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100759580.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100759674.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100800212.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SpringSession.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-hash.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100803215.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100804441.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100805761.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-list.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100802398.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100802787.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-set.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100806680.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100806732.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-zset.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100808991.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100808319.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100810255.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100812776.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202309232144470.jpg">
+<meta property="article:published_time" content="2020-06-24T02:45:38.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.736Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="数据类型">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="KV 数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202309232155082.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/76331397/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/76331397/","path":"/pages/76331397/","title":"Redis 基本数据类型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 基本数据类型 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">Redis 基本数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#String"><span class="nav-number">1.1.</span> <span class="nav-text">String</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#String-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">String 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">String 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.1.3.</span> <span class="nav-text">String 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-%E5%BA%94%E7%94%A8"><span class="nav-number">1.1.4.</span> <span class="nav-text">String 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">缓存对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">计数器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">分布式锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB-Session-%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">共享 Session 信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hash"><span class="nav-number">1.2.</span> <span class="nav-text">Hash</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">Hash 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">Hash 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.3.</span> <span class="nav-text">Hash 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash-%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.4.</span> <span class="nav-text">Hash 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">缓存对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%AD%E7%89%A9%E8%BD%A6"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">购物车</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List"><span class="nav-number">1.3.</span> <span class="nav-text">List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#List-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">List 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.2.</span> <span class="nav-text">List 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.3.</span> <span class="nav-text">List 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List-%E5%BA%94%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">List 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%87%AA%E5%8A%A8%E8%A1%A5%E5%85%A8"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">输入自动补全</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Set"><span class="nav-number">1.4.</span> <span class="nav-text">Set</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Set-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">Set 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">Set 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.3.</span> <span class="nav-text">Set 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set-%E5%BA%94%E7%94%A8"><span class="nav-number">1.4.4.</span> <span class="nav-text">Set 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%82%B9%E8%B5%9E"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">点赞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B1%E5%90%8C%E5%85%B3%E6%B3%A8"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">共同关注</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%BD%E5%A5%96%E6%B4%BB%E5%8A%A8"><span class="nav-number">1.4.4.3.</span> <span class="nav-text">抽奖活动</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zset"><span class="nav-number">1.5.</span> <span class="nav-text">Zset</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Zset-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.5.1.</span> <span class="nav-text">Zset 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Zset-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">Zset 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Zset-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.5.3.</span> <span class="nav-text">Zset 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Zset-%E5%BA%94%E7%94%A8"><span class="nav-number">1.5.4.</span> <span class="nav-text">Zset 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">排行榜</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E7%BC%80%E6%8E%92%E5%BA%8F"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">前缀排序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/76331397/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 基本数据类型 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 基本数据类型<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/05.KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/Redis_%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-24 10:45:38" itemprop="dateCreated datePublished" datetime="2020-06-24T10:45:38+08:00">2020-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">KV数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>18k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Redis-基本数据类型"><a href="#Redis-基本数据类型" class="headerlink" title="Redis 基本数据类型"></a>Redis 基本数据类型</h1><blockquote>
+<p>关键词：<code>String</code>、<code>Hash</code>、<code>List</code>、<code>Set</code>、<code>Zset</code></p>
+</blockquote>
+<p>Redis 提供了多种数据类型，每种数据类型有丰富的命令支持。</p>
+<p>Redis 支持的基本数据类型：STRING、HASH、LIST、SET、ZSET</p>
+<p>Redis 支持的高级数据类型：BitMap、HyperLogLog、GEO、Stream</p>
+<p>使用 Redis ，不仅要了解其数据类型的特性，还需要根据业务场景，灵活的、高效的使用其数据类型来建模。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202309232155082.png"></p>
+<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><h3 id="String-简介"><a href="#String-简介" class="headerlink" title="String 简介"></a>String 简介</h3><p>String 类型是键值对结构。</p>
+<p>String 类型是<strong>二进制安全</strong>的。二进制安全是指，String 类型不仅可以保存文本数据，还可以保存任意格式的二进制数据，如：图片、音频、视频、压缩文件等。</p>
+<p>默认情况下，String 类型的值最大可为 <strong>512 MB</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-string.png"></p>
+<h3 id="String-实现"><a href="#String-实现" class="headerlink" title="String 实现"></a>String 实现</h3><p>String 类型的底层的数据结构实现主要是 int 和 SDS（简单动态字符串）。</p>
+<p>SDS 和我们认识的 C 字符串不太一样，之所以没有使用 C 语言的字符串表示，因为 SDS 相比于 C 的原生字符串：</p>
+<ul>
+<li><strong>SDS 不仅可以保存文本数据，还可以保存二进制数据</strong>。因为 <code>SDS</code> 使用 <code>len</code> 属性的值而不是空字符来判断字符串是否结束，并且 SDS 的所有 API 都会以处理二进制的方式来处理 SDS 存放在 <code>buf[]</code> 数组里的数据。所以 SDS 不光能存放文本数据，而且能保存图片、音频、视频、压缩文件这样的二进制数据。</li>
+<li>**SDS 获取字符串长度的时间复杂度是 O(1)**。因为 C 语言的字符串并不记录自身长度，所以获取长度的复杂度为 O(n)；而 SDS 结构里用 <code>len</code> 属性记录了字符串长度，所以复杂度为 <code>O(1)</code>。</li>
+<li><strong>Redis 的 SDS API 是安全的，拼接字符串不会造成缓冲区溢出</strong>。因为 SDS 在拼接字符串之前会检查 SDS 空间是否满足要求，如果空间不够会自动扩容，所以不会导致缓冲区溢出的问题。</li>
+</ul>
+<p><strong>字符串对象的编码可以是 <code>int</code> 、 <code>raw</code> 或者 <code>embstr</code></strong> 。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100759580.svg"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100759674.svg"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100800212.svg"></p>
+<p>字符串对象保存各类型值的编码方式：</p>
+<table>
+<thead>
+<tr>
+<th align="left">值</th>
+<th align="left">编码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">可以用 <code>long</code> 类型保存的整数。</td>
+<td align="left"><code>int</code></td>
+</tr>
+<tr>
+<td align="left">可以用 <code>long double</code> 类型保存的浮点数。</td>
+<td align="left"><code>embstr</code> 或者 <code>raw</code></td>
+</tr>
+<tr>
+<td align="left">字符串值， 或者因为长度太大而没办法用 <code>long</code> 类型表示的整数， 又或者因为长度太大而没办法用 <code>long double</code> 类型表示的浮点数。</td>
+<td align="left"><code>embstr</code> 或者 <code>raw</code></td>
+</tr>
+</tbody></table>
+<p>如果一个字符串对象保存的是整数值， 并且这个整数值可以用 <code>long</code> 类型来表示， 那么字符串对象会将整数值保存在字符串对象结构的 <code>ptr</code> 属性里面（将 <code>void*</code> 转换成 <code>long</code> ）， 并将字符串对象的编码设置为 <code>int</code> 。</p>
+<p>【示例】set 整数值</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SET number 10086</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">OBJECT ENCODING number</span></span><br><span class="line">&quot;int&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度大于 <code>39</code> 字节， 那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值， 并将对象的编码设置为 <code>raw</code> 。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; SET story <span class="string">&quot;Long, long, long ago there lived a king ...&quot;</span></span><br><span class="line">OK</span><br><span class="line"></span><br><span class="line">&gt; STRLEN <span class="title function_">story</span></span><br><span class="line"><span class="params">(integer)</span> 43</span><br><span class="line"></span><br><span class="line">&gt; OBJECT ENCODING story</span><br><span class="line">&quot;raw&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果字符串对象保存的是一个字符串值， 并且这个字符串值的长度小于等于 <code>39</code> 字节， 那么字符串对象将使用 <code>embstr</code> 编码的方式来保存这个字符串值。<code>embstr</code> 编码是专门用于保存短字符串的一种优化编码方式。</p>
+<p>【示例】set 字符串值</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; SET msg <span class="string">&quot;hello&quot;</span></span><br><span class="line">OK</span><br><span class="line"></span><br><span class="line">&gt; OBJECT ENCODING msg</span><br><span class="line"><span class="string">&quot;embstr&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="String-命令"><a href="#String-命令" class="headerlink" title="String 命令"></a>String 命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SET</code></td>
+<td>存储一个字符串值</td>
+</tr>
+<tr>
+<td><code>SETNX</code></td>
+<td>仅当键不存在时，才存储字符串值</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td>获取指定 key 的值</td>
+</tr>
+<tr>
+<td><code>MGET</code></td>
+<td>获取一个或多个指定 key 的值</td>
+</tr>
+<tr>
+<td><code>INCRBY</code></td>
+<td>将 key 中储存的数字加上指定的增量值</td>
+</tr>
+<tr>
+<td><code>DECRBY</code></td>
+<td>将 key 中储存的数字减去指定的减量值</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>更多命令请参考：<a target="_blank" rel="noopener" href="https://redis.io/commands#string">Redis String 类型官方命令文档</a></p>
+</blockquote>
+<p>【示例】SET、GET、DEL 操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(name) 的 value 保存为 dunwu</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="built_in">set</span> name dunwu</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取 key(name) 的 value</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">get name</span></span><br><span class="line">&quot;dunwu&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(name) 的 value 保存为 unknown（覆盖原 value）</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="built_in">set</span> name unknown</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">get name</span></span><br><span class="line">&quot;unknown&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">检查 key(name) 是否存在</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">exists name</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除 key(name)</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">del name</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">exists name</span></span><br><span class="line">(integer) 0</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">get name</span></span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure>
+
+<p>【示例】SETNX 操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">检查 key(lock) 是否存在</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">exists lock</span></span><br><span class="line">(integer) 0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(lock) 的 value 保存为 1，保存成功</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">setnx lock 1</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(lock) 的 value 保存为 2，由于 key 已存在，保存失败</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">setnx lock 2</span></span><br><span class="line">(integer) 0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取 key(lock) 的 value</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">get lock</span></span><br><span class="line">&quot;1&quot;</span><br></pre></td></tr></table></figure>
+
+<p>【示例】MSET、MGET 操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">批量设置 one、two、three 这 3 个 key</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">mset one 1 tow 2 three 3</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">批量获取 one、two、three 3 个 key 的 value</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">mget one tow three</span></span><br><span class="line">1) &quot;1&quot;</span><br><span class="line">2) &quot;2&quot;</span><br><span class="line">3) &quot;3&quot;</span><br></pre></td></tr></table></figure>
+
+<p>【示例】INCR、DECR、INCRBY、DECRBY 操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(counter) 的 value 保存为 0</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="built_in">set</span> counter 0</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(counter) 的 value 加 1</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">incr counter</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(counter) 的 value 加 9</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">incrby counter 9</span></span><br><span class="line">(integer) 10</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(counter) 的 value 减 1</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">decr counter</span></span><br><span class="line">(integer) 9</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将 key(counter) 的 value 减 9</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">decrby counter 9</span></span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="String-应用"><a href="#String-应用" class="headerlink" title="String 应用"></a>String 应用</h3><p><strong>适用场景：缓存、计数器、共享 Session</strong></p>
+<h4 id="缓存对象"><a href="#缓存对象" class="headerlink" title="缓存对象"></a>缓存对象</h4><p>使用 String 来缓存对象有两种方式：</p>
+<p>（1）缓存对象的 JSON 值</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="built_in">set</span> user:1 &#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;dunwu&quot;</span>,<span class="string">&quot;sex&quot;</span>:<span class="string">&quot;man&quot;</span>&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）将 key 分离为 user:ID: 属性的形式，采用 MSET 存储，用 MGET 获取各属性值</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">mset user:1:name dunwu user:1:sex man</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">mget user:1:name user:1:sex</span></span><br><span class="line">1) &quot;dunwu&quot;</span><br><span class="line">2) &quot;man&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h4><p>【需求场景】</p>
+<p>统计网站某内容的点击量、收藏量、点赞数等等。</p>
+<p>【解决方案】</p>
+<blockquote>
+<p>使用 Redis 的 String 类型存储一个计数器。</p>
+</blockquote>
+<p>维护计数器的常见操作如下：</p>
+<ul>
+<li>增加统计值 - 使用 <code>INCR</code>、<code>DECR</code> 命令</li>
+<li>减少统计值 - 使用 <code>INCRBY</code>、<code>DECRBY</code> 操作</li>
+</ul>
+<p>【示例代码】</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">初始化 ID 为 1024 的博文访问量为 0</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="built_in">set</span> blog:view:1024 0</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ID 为 1024 的博文访问量加 1</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">incr blog:view:1024</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ID 为 1024 的博文访问量加 1</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">incr blog:view:1024</span></span><br><span class="line">(integer) 2</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 ID 为 1024 的博文访问量</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">get blog:view:1024</span></span><br><span class="line">&quot;2&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h4><p>（1）申请锁</p>
+<p>SET 命令有个 NX 参数可以实现“key 不存在才插入”，可以用它来实现分布式锁：</p>
+<ul>
+<li>如果 key 不存在，则显示插入成功，可以用来表示加锁成功；</li>
+<li>如果 key 存在，则会显示插入失败，可以用来表示加锁失败。</li>
+</ul>
+<p>一般而言，还会对分布式锁加上过期时间，分布式锁的命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET key value NX PX 30000</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>key - 就是分布式锁的关键字；</li>
+<li>value - 是客户端生成的唯一的标识；</li>
+<li>NX - 表示只有 <code>key</code> 不存在的时候才会设置成功。（如果此时 redis 中存在这个 key，那么设置失败，返回 <code>nil</code>）</li>
+<li>PX 30000 - 表示：30s 后，key 会被删除（这意味着锁被释放了）。设置过期时间，是为了防止出现各种意外，导致锁始终无法释放的情况。</li>
+</ul>
+<p>（2）释放锁</p>
+<p>释放锁就是删除 key ，但是一般可以用 <code>lua</code> 脚本删除，判断 value 一样才删除，这是为了保证释放锁操作和申请所操作是同一个客户端。由于涉及两个操作，为了保证原子性，可以使用 lua 脚本来实现，因为 Redis 执行 Lua 脚本时，是以原子性方式执行的。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 删除锁的时候，找到 key 对应的 value，跟自己传过去的 value 做比较，如果是一样的才删除。</span></span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&quot;get&quot;</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">&quot;del&quot;</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="共享-Session-信息"><a href="#共享-Session-信息" class="headerlink" title="共享 Session 信息"></a>共享 Session 信息</h4><p>在分布式场景下，一个用户的 Session 如果只存储在一个服务器上，那么当负载均衡器把用户的下一个请求转发到另一个服务器上，该服务器没有用户的 Session，就可能导致用户需要重新进行登录等操作。</p>
+<p>分布式 Session 的几种实现策略：</p>
+<ol>
+<li>粘性 session</li>
+<li>应用服务器间的 session 复制共享</li>
+<li>基于缓存的 session 共享 ✅</li>
+</ol>
+<p>基于缓存的 session 共享实现</p>
+<blockquote>
+<p><strong>使用一个单独的存储服务器存储 Session 数据</strong>，可以存在 MySQL 数据库上，也可以存在 Redis 或者 Memcached 这种内存型数据库。</p>
+<p>缺点：需要去实现存取 Session 的代码。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SpringSession.jpg"></p>
+<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><h3 id="Hash-简介"><a href="#Hash-简介" class="headerlink" title="Hash 简介"></a>Hash 简介</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-hash.png"></p>
+<p>Hash 是一个键值对（key - value）集合，其中 value 的形式如： <code>value=[&#123;field1，value1&#125;，...&#123;fieldN，valueN&#125;]</code>。Hash 特别适合用于存储对象。</p>
+<h3 id="Hash-实现"><a href="#Hash-实现" class="headerlink" title="Hash 实现"></a>Hash 实现</h3><p>哈希对象的编码可以是 <code>ziplist</code> 或者 <code>hashtable</code> 。</p>
+<p><code>ziplist</code> 编码的哈希对象使用压缩列表作为底层实现，每当有新的键值对要加入到哈希对象时， 程序会先将保存了键的压缩列表节点推入到压缩列表表尾， 然后再将保存了值的压缩列表节点推入到压缩列表表尾。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100803215.svg"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100804441.svg"></p>
+<p><code>hashtable</code> 编码的哈希对象使用字典作为底层实现， 哈希对象中的每个键值对都使用一个字典键值对来保存。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100805761.svg"></p>
+<p>当哈希对象同时满足以下两个条件时， 使用 <code>ziplist</code> 编码；否则，使用 <code>hashtable</code> 编码。</p>
+<ol>
+<li>哈希对象保存的所有键值对的键和值的字符串长度都小于 <code>64</code> 字节（可由 <code>hash-max-ziplist-value</code> 配置）；</li>
+<li>哈希对象保存的键值对数量小于 <code>512</code> 个（可由 <code>hash-max-ziplist-entries</code> 配置）；</li>
+</ol>
+<blockquote>
+<p>注意：这两个条件的上限值是可以修改的， 具体请看配置文件中关于 <code>hash-max-ziplist-value</code> 选项和 <code>hash-max-ziplist-entries</code> 选项的说明。</p>
+</blockquote>
+<h3 id="Hash-命令"><a href="#Hash-命令" class="headerlink" title="Hash 命令"></a>Hash 命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HSET</code></td>
+<td>将指定字段的值设为 value</td>
+</tr>
+<tr>
+<td><code>HGET</code></td>
+<td>获取指定字段的值</td>
+</tr>
+<tr>
+<td><code>HGETALL</code></td>
+<td>获取所有键值对</td>
+</tr>
+<tr>
+<td><code>HMSET</code></td>
+<td>设置多个键值对</td>
+</tr>
+<tr>
+<td><code>HMGET</code></td>
+<td>获取所有指定字段的值</td>
+</tr>
+<tr>
+<td><code>HDEL</code></td>
+<td>删除指定字段</td>
+</tr>
+<tr>
+<td><code>HINCRBY</code></td>
+<td>为指定字段的整数值加上增量</td>
+</tr>
+<tr>
+<td><code>HKEYS</code></td>
+<td>获取所有字段</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>更多命令请参考：<a target="_blank" rel="noopener" href="https://redis.io/commands#hash">Redis Hash 类型官方命令文档</a></p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">存储一个哈希表 key 的键值</span></span><br><span class="line">HSET key field value</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取哈希表 key 对应的 field 键值</span></span><br><span class="line">HGET key field</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在一个哈希表 key 中存储多个键值对</span></span><br><span class="line">HMSET key field value [field value...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">批量获取哈希表 key 中多个 field 键值</span></span><br><span class="line">HMGET key field [field ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除哈希表 key 中的 field 键值</span></span><br><span class="line">HDEL key field [field ...]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回哈希表 key 中 field 的数量</span></span><br><span class="line">HLEN key</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回哈希表 key 中所有的键值</span></span><br><span class="line">HGETALL key</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">为哈希表 key 中 field 键的值加上增量 n</span></span><br><span class="line">HINCRBY key field n</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hash-应用"><a href="#Hash-应用" class="headerlink" title="Hash 应用"></a>Hash 应用</h3><blockquote>
+<p><strong>Hash 类型适用于存储结构化数据</strong>。</p>
+</blockquote>
+<h4 id="缓存对象-1"><a href="#缓存对象-1" class="headerlink" title="缓存对象"></a>缓存对象</h4><p>Hash 类型的（key，field，value）的结构与对象的（对象 id，属性，值）的结构相似，也可以用来存储对象。</p>
+<p>我们以用户信息为例，它在关系型数据库中的结构是这样的：</p>
+<p>我们可以使用如下命令，将用户对象的信息存储到 Hash 类型：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">存储一个哈希表 uid:1 的键值</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">HMSET uid:1 name Tom age 15</span></span><br><span class="line">2</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">存储一个哈希表 uid:2 的键值</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">HMSET uid:2 name Jerry age 13</span></span><br><span class="line">2</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取哈希表用户 <span class="built_in">id</span> 为 1 中所有的键值</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">HGETALL uid:1</span></span><br><span class="line">1) &quot;name&quot;</span><br><span class="line">2) &quot;Tom&quot;</span><br><span class="line">3) &quot;age&quot;</span><br><span class="line">4) &quot;15&quot;</span><br></pre></td></tr></table></figure>
+
+<p>Redis Hash 存储其结构如下图：</p>
+<p>在介绍 String 类型的应用场景时有所介绍，String + Json 也是存储对象的一种方式，那么存储对象时，到底用 String + json 还是用 Hash 呢？</p>
+<p>一般对象用 String + Json 存储，对象中某些频繁变化的属性可以考虑抽出来用 Hash 类型存储。</p>
+<h4 id="购物车"><a href="#购物车" class="headerlink" title="购物车"></a>购物车</h4><p>【需求场景】</p>
+<p>用户浏览电商平台，添加商品到购物车，并支持查看购物车。需要考虑未登录的情况。</p>
+<p>【解决方案】</p>
+<blockquote>
+<p>可以使用 HASH 类型来实现购物车功能。</p>
+<p>以用户 session 为 key，存储了商品 ID 和商品数量的映射。其中，商品 id 为 field，商品数量为 value。</p>
+<p>为什么不使用用户 ID？</p>
+<p>因为很多场景下需要支持用户在免登陆的情况下使用购物车的，因为未登录，所以无法知道用户的用户 ID，这种情况下使用用户 session 更合适。并且由于绑定的是 session，可以在清空 session 时，顺便清空购物车缓存，更加方便。</p>
+</blockquote>
+<p>维护购物车的常见操作如下：</p>
+<ul>
+<li>添加商品 - <code>HSET cart:&#123;session&#125; &#123;商品 id&#125; 1</code></li>
+<li>添加数量 - <code>HINCRBY cart:&#123;session&#125; &#123;商品 id&#125; 1</code></li>
+<li>商品总数 - <code>HLEN cart:&#123;session&#125;</code></li>
+<li>删除商品 - <code>HDEL cart:&#123;session&#125; &#123;商品 id&#125;</code></li>
+<li>获取购物车所有商品 - <code>HGETALL cart:&#123;session&#125;</code></li>
+</ul>
+<p>当前仅仅是将商品 ID 存储到了 Redis 中，在回显商品具体信息的时候，还需要拿着商品 id 查询一次数据库，获取完整的商品的信息。</p>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>Redis 中的 List 类型就是有序列表。</p>
+<h3 id="List-简介"><a href="#List-简介" class="headerlink" title="List 简介"></a>List 简介</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-list.png"></p>
+<p>List 列表是简单的字符串列表，<strong>按照插入顺序排序</strong>，可以从头部或尾部向 List 列表添加元素。</p>
+<p>列表的最大长度为 <code>2^32 - 1</code>，也即每个列表支持超过 <code>40 亿</code>个元素。</p>
+<h3 id="List-实现"><a href="#List-实现" class="headerlink" title="List 实现"></a>List 实现</h3><p>列表对象的编码可以是 <code>ziplist</code> 或者 <code>linkedlist</code> 。</p>
+<p><code>ziplist</code> 编码的列表对象使用压缩列表作为底层实现， 每个压缩列表节点（entry）保存了一个列表元素。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100802398.svg"></p>
+<p><code>inkedlist</code> 编码的列表对象使用双链表作为底层实现。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100802787.svg"></p>
+<p>当列表对象可以同时满足以下两个条件时， 列表对象使用 <code>ziplist</code> 编码；否则，使用 <code>linkedlist</code> 编码</p>
+<ol>
+<li>列表对象保存的所有字符串元素的长度都小于 <code>64</code> 字节；</li>
+<li>列表对象保存的元素数量小于 <code>512</code> 个；</li>
+</ol>
+<blockquote>
+<p>注意</p>
+<p>以上两个条件的上限值是可以修改的， 具体请看配置文件中关于 <code>list-max-ziplist-value</code> 选项和 <code>list-max-ziplist-entries</code> 选项的说明。</p>
+</blockquote>
+<h3 id="List-命令"><a href="#List-命令" class="headerlink" title="List 命令"></a>List 命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LPUSH</code></td>
+<td>将给定值推入列表的右端。</td>
+</tr>
+<tr>
+<td><code>RPUSH</code></td>
+<td>将给定值推入列表的右端。</td>
+</tr>
+<tr>
+<td><code>LPOP</code></td>
+<td>从列表的左端弹出一个值，并返回被弹出的值。</td>
+</tr>
+<tr>
+<td><code>RPOP</code></td>
+<td>从列表的右端弹出一个值，并返回被弹出的值。</td>
+</tr>
+<tr>
+<td><code>LRANGE</code></td>
+<td>获取列表在给定范围上的所有值。</td>
+</tr>
+<tr>
+<td><code>LINDEX</code></td>
+<td>获取列表在给定位置上的单个元素。</td>
+</tr>
+<tr>
+<td><code>LREM</code></td>
+<td>从列表的左端弹出一个值，并返回被弹出的值。</td>
+</tr>
+<tr>
+<td><code>LTRIM</code></td>
+<td>只保留指定区间内的元素，删除其他元素。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>更多命令请参考：<a target="_blank" rel="noopener" href="https://redis.io/commands#list">Redis List 类型官方命令文档</a></p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将一个或多个值 value 插入到 key 列表的表头（最左边），最后的值在最前面</span></span><br><span class="line">LPUSH key value [value ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将一个或多个值 value 插入到 key 列表的表尾（最右边）</span></span><br><span class="line">RPUSH key value [value ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">移除并返回 key 列表的头元素</span></span><br><span class="line">LPOP key</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">移除并返回 key 列表的尾元素</span></span><br><span class="line">RPOP key</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回列表 key 中指定区间内的元素，区间以偏移量 start 和 stop 指定，从 0 开始</span></span><br><span class="line">LRANGE key start stop</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从 key 列表表头弹出一个元素，没有就阻塞 <span class="built_in">timeout</span> 秒，如果 <span class="built_in">timeout</span>=0 则一直阻塞</span></span><br><span class="line">BLPOP key [key ...] timeout</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从 key 列表表尾弹出一个元素，没有就阻塞 <span class="built_in">timeout</span> 秒，如果 <span class="built_in">timeout</span>=0 则一直阻塞</span></span><br><span class="line">BRPOP key [key ...] timeout</span><br></pre></td></tr></table></figure>
+
+<h3 id="List-应用"><a href="#List-应用" class="headerlink" title="List 应用"></a>List 应用</h3><h4 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h4><p>消息队列在存取消息时，必须要满足三个需求，分别是<strong>消息保序、处理重复的消息和保证消息可靠性</strong>。</p>
+<p>Redis 的 List 和 Stream 两种数据类型，就可以满足消息队列的这三个需求。我们先来了解下基于 List 的消息队列实现方法，后面在介绍 Stream 数据类型时候，在详细说说 Stream。</p>
+<p><em>1、如何满足消息保序需求？</em></p>
+<p>List 本身就是按先进先出的顺序对数据进行存取的，所以，如果使用 List 作为消息队列保存消息的话，就已经能满足消息保序的需求了。</p>
+<p>List 可以使用 LPUSH + RPOP（或者反过来，RPUSH+LPOP）命令实现消息队列。</p>
+<ul>
+<li><p>生产者使用 <code>LPUSH key value[value...]</code> 将消息插入到队列的头部，如果 key 不存在则会创建一个空的队列再插入消息。</p>
+</li>
+<li><p>消费者使用 <code>RPOP key</code> 依次读取队列的消息，先进先出。</p>
+</li>
+</ul>
+<p>不过，在消费者读取数据时，有一个潜在的性能风险点。</p>
+<p>在生产者往 List 中写入数据时，List 并不会主动地通知消费者有新消息写入，如果消费者想要及时处理消息，就需要在程序中不停地调用 <code>RPOP</code> 命令（比如使用一个 while(1) 循环）。如果有新消息写入，RPOP 命令就会返回结果，否则，RPOP 命令返回空值，再继续循环。</p>
+<p>所以，即使没有新消息写入 List，消费者也要不停地调用 RPOP 命令，这就会导致消费者程序的 CPU 一直消耗在执行 RPOP 命令上，带来不必要的性能损失。</p>
+<p>为了解决这个问题，Redis 提供了 BRPOP 命令。<strong>BRPOP 命令也称为阻塞式读取，客户端在没有读到队列数据时，自动阻塞，直到有新的数据写入队列，再开始读取新数据</strong>。和消费者程序自己不停地调用 RPOP 命令相比，这种方式能节省 CPU 开销。</p>
+<p><em>2、如何处理重复的消息？</em></p>
+<p>消费者要实现重复消息的判断，需要 2 个方面的要求：</p>
+<ul>
+<li>每个消息都有一个全局的 ID。</li>
+<li>消费者要记录已经处理过的消息的 ID。当收到一条消息后，消费者程序就可以对比收到的消息 ID 和记录的已处理过的消息 ID，来判断当前收到的消息有没有经过处理。如果已经处理过，那么，消费者程序就不再进行处理了。</li>
+</ul>
+<p>但是 <strong>List 并不会为每个消息生成 ID 号，所以我们需要自行为每个消息生成一个全局唯一 ID</strong>，生成之后，我们在用 LPUSH 命令把消息插入 List 时，需要在消息中包含这个全局唯一 ID。</p>
+<p>例如，我们执行以下命令，就把一条全局 ID 为 111000102、库存量为 99 的消息插入了消息队列：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">LPUSH mq <span class="string">&quot;111000102:stock:99&quot;</span></span></span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure>
+
+<p><em>3、如何保证消息可靠性？</em></p>
+<p>当消费者程序从 List 中读取一条消息后，List 就不会再留存这条消息了。所以，如果消费者程序在处理消息的过程出现了故障或宕机，就会导致消息没有处理完成，那么，消费者程序再次启动后，就没法再次从 List 中读取消息了。</p>
+<p>为了留存消息，List 类型提供了 <code>BRPOPLPUSH</code> 命令，这个命令的<strong>作用是让消费者程序从一个 List 中读取消息，同时，Redis 会把这个消息再插入到另一个 List（可以叫作备份 List）留存</strong>。</p>
+<p>这样一来，如果消费者程序读了消息但没能正常处理，等它重启后，就可以从备份 List 中重新读取消息并进行处理了。</p>
+<p>好了，到这里可以知道基于 List 类型的消息队列，满足消息队列的三大需求（消息保序、处理重复的消息和保证消息可靠性）。</p>
+<ul>
+<li>消息保序：使用 LPUSH + RPOP；</li>
+<li>阻塞读取：使用 BRPOP；</li>
+<li>重复消息处理：生产者自行实现全局唯一 ID；</li>
+<li>消息的可靠性：使用 BRPOPLPUSH</li>
+</ul>
+<blockquote>
+<p>List 作为消息队列有什么缺陷？</p>
+</blockquote>
+<p><strong>List 不支持多个消费者消费同一条消息</strong>，因为一旦消费者拉取一条消息后，这条消息就从 List 中删除了，无法被其它消费者再次消费。</p>
+<p>要实现一条消息可以被多个消费者消费，那么就要将多个消费者组成一个消费组，使得多个消费者可以消费同一条消息，但是 <strong>List 类型并不支持消费组的实现</strong>。</p>
+<p>这就要说起 Redis 从 5.0 版本开始提供的 Stream 数据类型了，Stream 同样能够满足消息队列的三大需求，而且它还支持“消费组”形式的消息读取。</p>
+<h4 id="输入自动补全"><a href="#输入自动补全" class="headerlink" title="输入自动补全"></a>输入自动补全</h4><p>【需求场景】</p>
+<p>根据用户输入，自动补全信息，如：联系人、商品名等。</p>
+<ul>
+<li>典型场景一 - 社交网站后台记录用户最近联系过的 100 个好友，当用户查找好友时，根据输入的关键字自动补全姓名。</li>
+<li>典型场景二 - 电商网站后台记录用户最近浏览过的 10 件商品，当用户查找商品是，根据输入的关键字自动补全商品名称。</li>
+</ul>
+<p>【解决方案】</p>
+<blockquote>
+<p>使用 Redis 的 List 类型存储一个最近信息列表，然后在需要自动补全信息时展示相应数量的数据。</p>
+</blockquote>
+<p>维护最近信息列表的常见操作如下：</p>
+<ul>
+<li>如果指定信息已经存在于最近信息列表里，那么从列表里移除。使用 <code>LREM</code> 命令。</li>
+<li>将指定信息添加到最近信息列表的头部。使用 <code>LPUSH</code> 命令。</li>
+<li>添加操作完成后，如果最近信息列表中的数量超过上限 N，进行裁剪操作。使用 <code>LTRIM</code> 命令。</li>
+</ul>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p>Redis 中的 Set 类型就是无序且去重的集合。</p>
+<h3 id="Set-简介"><a href="#Set-简介" class="headerlink" title="Set 简介"></a>Set 简介</h3><div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-set.png" width="400"/>
+</div>
+
+<p>Set 类型是一个无序并唯一的键值集合，它的存储顺序不会按照插入的先后顺序进行存储。</p>
+<p>一个集合最多可以存储 <code>2^32-1</code> 个元素。概念和数学中个的集合基本类似，可以交集，并集，差集等等，所以 Set 类型除了支持集合内的增删改查，同时还支持多个集合取交集、并集、差集。</p>
+<p>Set 类型和 List 类型的区别如下：</p>
+<ul>
+<li>List 可以存储重复元素，Set 只能存储非重复元素；</li>
+<li>List 是按照元素的先后顺序存储元素的，而 Set 则是无序方式存储元素的。</li>
+</ul>
+<h3 id="Set-实现"><a href="#Set-实现" class="headerlink" title="Set 实现"></a>Set 实现</h3><p>集合对象的编码可以是 <code>intset</code> 或者 <code>hashtable</code> 。</p>
+<p><code>intset</code> 编码的集合对象使用整数集合作为底层实现， 集合对象包含的所有元素都被保存在整数集合里面。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100806680.svg"></p>
+<p><code>hashtable</code> 编码的集合对象使用字典作为底层实现， 字典的每个键都是一个字符串对象， 每个字符串对象包含了一个集合元素， 而字典的值则全部被设置为 <code>NULL</code> 。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100806732.svg"></p>
+<p>当集合对象可以同时满足以下两个条件时，集合对象使用 <code>intset</code> 编码；否则，使用 <code>hashtable</code> 编码：</p>
+<ol>
+<li>集合对象保存的所有元素都是整数值；</li>
+<li>集合对象保存的元素数量不超过 <code>512</code> 个；</li>
+</ol>
+<blockquote>
+<p>注意：第二个条件的上限值是可以修改的， 具体请看配置文件中关于 <code>set-max-intset-entries</code> 选项的说明。</p>
+</blockquote>
+<h3 id="Set-命令"><a href="#Set-命令" class="headerlink" title="Set 命令"></a>Set 命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SADD</code></td>
+<td>将给定元素添加到集合。</td>
+</tr>
+<tr>
+<td><code>SMEMBERS</code></td>
+<td>返回集合包含的所有元素。</td>
+</tr>
+<tr>
+<td><code>SISMEMBER</code></td>
+<td>检查给定元素是否存在于集合中。</td>
+</tr>
+<tr>
+<td><code>SREM</code></td>
+<td>如果给定的元素存在于集合中，那么移除这个元素。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>更多命令请参考：<a target="_blank" rel="noopener" href="https://redis.io/commands#set">Redis Set 类型官方命令文档</a></p>
+</blockquote>
+<p>Set 常用操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">往集合 key 中存入元素，元素存在则忽略，若 key 不存在则新建</span></span><br><span class="line">SADD key member [member ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从集合 key 中删除元素</span></span><br><span class="line">SREM key member [member ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取集合 key 中所有元素</span></span><br><span class="line">SMEMBERS key</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取集合 key 中的元素个数</span></span><br><span class="line">SCARD key</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">判断 member 元素是否存在于集合 key 中</span></span><br><span class="line">SISMEMBER key member</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从集合 key 中随机选出 count 个元素，元素不从 key 中删除</span></span><br><span class="line">SRANDMEMBER key [count]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从集合 key 中随机选出 count 个元素，元素从 key 中删除</span></span><br><span class="line">SPOP key [count]</span><br></pre></td></tr></table></figure>
+
+<p>Set 运算操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">交集运算</span></span><br><span class="line">SINTER key [key ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将交集结果存入新集合 destination 中</span></span><br><span class="line">SINTERSTORE destination key [key ...]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">并集运算</span></span><br><span class="line">SUNION key [key ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将并集结果存入新集合 destination 中</span></span><br><span class="line">SUNIONSTORE destination key [key ...]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">差集运算</span></span><br><span class="line">SDIFF key [key ...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将差集结果存入新集合 destination 中</span></span><br><span class="line">SDIFFSTORE destination key [key ...]</span><br></pre></td></tr></table></figure>
+
+<h3 id="Set-应用"><a href="#Set-应用" class="headerlink" title="Set 应用"></a>Set 应用</h3><p>集合的主要几个特性，无序、不可重复、支持并交差等操作。</p>
+<p>因此 Set 类型比较适合用来数据去重和保障数据的唯一性，还可以用来统计多个集合的交集、错集和并集等，当我们存储的数据是无序并且需要去重的情况下，比较适合使用集合类型进行存储。</p>
+<p>但是要提醒你一下，这里有一个潜在的风险。<strong>Set 的差集、并集和交集的计算复杂度较高，在数据量较大的情况下，如果直接执行这些计算，会导致 Redis 实例阻塞</strong>。</p>
+<p>在主从集群中，为了避免主库因为 Set 做聚合计算（交集、差集、并集）时导致主库被阻塞，我们可以选择一个从库完成聚合统计，或者把数据返回给客户端，由客户端来完成聚合统计。</p>
+<h4 id="点赞"><a href="#点赞" class="headerlink" title="点赞"></a>点赞</h4><p>Set 类型可以保证一个用户只能点一个赞，这里举例子一个场景，key 是文章 id，value 是用户 id。</p>
+<p><code>uid:1</code> 、<code>uid:2</code>、<code>uid:3</code> 三个用户分别对 article:1 文章点赞了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">uid:1 用户对文章 article:1 点赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SADD article:1 uid:1</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">uid:2 用户对文章 article:1 点赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SADD article:1 uid:2</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">uid:3 用户对文章 article:1 点赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SADD article:1 uid:3</span></span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure>
+
+<p><code>uid:1</code> 取消了对 article:1 文章点赞。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; SREM article:1 uid:1</span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure>
+
+<p>获取 article:1 文章所有点赞用户 :</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SMEMBERS article:1</span></span><br><span class="line">1) &quot;uid:3&quot;</span><br><span class="line">2) &quot;uid:2&quot;</span><br></pre></td></tr></table></figure>
+
+<p>获取 article:1 文章的点赞用户数量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SCARD article:1</span></span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure>
+
+<p>判断用户 <code>uid:1</code> 是否对文章 article:1 点赞了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SISMEMBER article:1 uid:1</span></span><br><span class="line">(integer) 0  # 返回 0 说明没点赞，返回 1 则说明点赞了</span><br></pre></td></tr></table></figure>
+
+<h4 id="共同关注"><a href="#共同关注" class="headerlink" title="共同关注"></a>共同关注</h4><p>Set 类型支持交集运算，所以可以用来计算共同关注的好友、公众号等。</p>
+<p>key 可以是用户 id，value 则是已关注的公众号的 id。</p>
+<p><code>uid:1</code> 用户关注公众号 id 为 5、6、7、8、9，<code>uid:2</code> 用户关注公众号 id 为 7、8、9、10、11。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">uid:1 用户关注公众号 <span class="built_in">id</span> 为 5、6、7、8、9</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SADD uid:1 5 6 7 8 9</span></span><br><span class="line">(integer) 5</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">uid:2  用户关注公众号 <span class="built_in">id</span> 为 7、8、9、10、11</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SADD uid:2 7 8 9 10 11</span></span><br><span class="line">(integer) 5</span><br></pre></td></tr></table></figure>
+
+<p><code>uid:1</code> 和 <code>uid:2</code> 共同关注的公众号：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取共同关注</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SINTER uid:1 uid:2</span></span><br><span class="line">1) &quot;7&quot;</span><br><span class="line">2) &quot;8&quot;</span><br><span class="line">3) &quot;9&quot;</span><br></pre></td></tr></table></figure>
+
+<p>给 <code>uid:2</code> 推荐 <code>uid:1</code> 关注的公众号：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SDIFF uid:1 uid:2</span></span><br><span class="line">1) &quot;5&quot;</span><br><span class="line">2) &quot;6&quot;</span><br></pre></td></tr></table></figure>
+
+<p>验证某个公众号是否同时被 <code>uid:1</code> 或 <code>uid:2</code> 关注：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SISMEMBER uid:1 5</span></span><br><span class="line">(integer) 1 # 返回 1，说明关注了</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SISMEMBER uid:2 5</span></span><br><span class="line">(integer) 0 # 返回 0，说明没关注</span><br></pre></td></tr></table></figure>
+
+<h4 id="抽奖活动"><a href="#抽奖活动" class="headerlink" title="抽奖活动"></a>抽奖活动</h4><p>存储某活动中中奖的用户名，Set 类型因为有去重功能，可以保证同一个用户不会中奖两次。</p>
+<p>key 为抽奖活动名，value 为员工名称，把所有员工名称放入抽奖箱：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SADD lucky Tom Jerry John Sean Marry Lindy Sary Mark</span></span><br><span class="line">(integer) 5</span><br></pre></td></tr></table></figure>
+
+<p>如果允许重复中奖，可以使用 SRANDMEMBER 命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">抽取 1 个一等奖：</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SRANDMEMBER lucky 1</span></span><br><span class="line">1) &quot;Tom&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">抽取 2 个二等奖：</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SRANDMEMBER lucky 2</span></span><br><span class="line">1) &quot;Mark&quot;</span><br><span class="line">2) &quot;Jerry&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">抽取 3 个三等奖：</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SRANDMEMBER lucky 3</span></span><br><span class="line">1) &quot;Sary&quot;</span><br><span class="line">2) &quot;Tom&quot;</span><br><span class="line">3) &quot;Jerry&quot;</span><br></pre></td></tr></table></figure>
+
+<p>如果不允许重复中奖，可以使用 SPOP 命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">抽取一等奖 1 个</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SPOP lucky 1</span></span><br><span class="line">1) &quot;Sary&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">抽取二等奖 2 个</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SPOP lucky 2</span></span><br><span class="line">1) &quot;Jerry&quot;</span><br><span class="line">2) &quot;Mark&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">抽取三等奖 3 个</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">SPOP lucky 3</span></span><br><span class="line">1) &quot;John&quot;</span><br><span class="line">2) &quot;Sean&quot;</span><br><span class="line">3) &quot;Lindy&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h2><p>Redis 中的 Zset 类型就是有序且去重的集合。</p>
+<h3 id="Zset-简介"><a href="#Zset-简介" class="headerlink" title="Zset 简介"></a>Zset 简介</h3><p>Zset 类型（有序集合类型）相比于 Set 类型多了一个排序属性 score（分值），对于有序集合 ZSet 来说，每个存储元素相当于有两个值组成的，一个是有序结合的元素值，一个是排序值。</p>
+<p>有序集合保留了集合不能有重复成员的特性（分值可以重复），但不同的是，有序集合中的元素可以排序。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/database/redis/redis-datatype-zset.png" width="400"/>
+</div>
+
+<h3 id="Zset-实现"><a href="#Zset-实现" class="headerlink" title="Zset 实现"></a>Zset 实现</h3><p>有序集合的编码可以是 <code>ziplist</code> 或者 <code>skiplist</code> 。</p>
+<p><code>ziplist</code> 编码的有序集合对象使用压缩列表作为底层实现， 每个集合元素使用两个紧挨在一起的压缩列表节点来保存， 第一个节点保存元素的成员（member）， 而第二个元素则保存元素的分值（score）。压缩列表内的集合元素按分值从小到大进行排序， 分值较小的元素被放置在靠近表头的方向， 而分值较大的元素则被放置在靠近表尾的方向。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100808991.svg"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100808319.svg"></p>
+<p><code>skiplist</code> 编码的有序集合对象使用 <code>zset</code> 结构作为底层实现， 一个 <code>zset</code> 结构同时包含一个字典和一个跳跃表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zset</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    zskiplist *zsl;</span><br><span class="line"></span><br><span class="line">    dict *dict;</span><br><span class="line"></span><br><span class="line">&#125; zset;</span><br></pre></td></tr></table></figure>
+
+<p><code>zset</code> 结构中的 <code>zsl</code> 跳跃表按分值从小到大保存了所有集合元素， 每个跳跃表节点都保存了一个集合元素： 跳跃表节点的 <code>object</code> 属性保存了元素的成员， 而跳跃表节点的 <code>score</code> 属性则保存了元素的分值。 通过这个跳跃表， 程序可以对有序集合进行范围型操作， 比如 ZRANK 、 ZRANGE 等命令就是基于跳跃表 API 来实现的。</p>
+<p>除此之外， <code>zset</code> 结构中的 <code>dict</code> 字典为有序集合创建了一个从成员到分值的映射， 字典中的每个键值对都保存了一个集合元素： 字典的键保存了元素的成员， 而字典的值则保存了元素的分值。 通过这个字典， 程序可以用 O(1) 复杂度查找给定成员的分值， ZSCORE 命令就是根据这一特性实现的， 而很多其他有序集合命令都在实现的内部用到了这一特性。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100810255.svg"></p>
+<p>有序集合每个元素的成员都是一个字符串对象， 而每个元素的分值都是一个 <code>double</code> 类型的浮点数。 值得一提的是， 虽然 <code>zset</code> 结构同时使用跳跃表和字典来保存有序集合元素， 但这两种数据结构都会通过指针来共享相同元素的成员和分值， 所以同时使用跳跃表和字典来保存集合元素不会产生任何重复成员或者分值， 也不会因此而浪费额外的内存。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202410100812776.svg"></p>
+<p>当有序集合对象可以同时满足以下两个条件时，有序集合对象使用 <code>ziplist</code> 编码；否则，使用 <code>skiplist</code> 编码。</p>
+<ul>
+<li>有序集合保存的元素数量小于 <code>128</code> 个；</li>
+<li>有序集合保存的所有元素成员的长度都小于 <code>64</code> 字节；</li>
+</ul>
+<blockquote>
+<p>注意：以上两个条件的上限值是可以修改的， 具体请看配置文件中关于 <code>zset-max-ziplist-entries</code> 选项和 <code>zset-max-ziplist-value</code> 选项的说明。</p>
+</blockquote>
+<p><strong>在 Redis 7.0 中，压缩列表数据结构已经废弃了，交由 listpack 数据结构来实现了。</strong></p>
+<h3 id="Zset-命令"><a href="#Zset-命令" class="headerlink" title="Zset 命令"></a>Zset 命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ZADD</code></td>
+<td>将一个带有给定分值的成员添加到有序集合里面</td>
+</tr>
+<tr>
+<td><code>ZRANGE</code></td>
+<td>顺序排序，并返回指定排名区间的成员</td>
+</tr>
+<tr>
+<td><code>ZREVRANGE</code></td>
+<td>反序排序，并返回指定排名区间的成员</td>
+</tr>
+<tr>
+<td><code>ZRANGEBYSCORE</code></td>
+<td>顺序排序，并返回指定排名区间的成员及其分值</td>
+</tr>
+<tr>
+<td><code>ZREVRANGEBYSCORE</code></td>
+<td>反序排序，并返回指定排名区间的成员及其分值</td>
+</tr>
+<tr>
+<td><code>ZREM</code></td>
+<td>移除指定的成员</td>
+</tr>
+<tr>
+<td><code>ZSCORE</code></td>
+<td>返回指定成员的分值</td>
+</tr>
+<tr>
+<td><code>ZCARD</code></td>
+<td>返回所有成员数</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>更多命令请参考：<a target="_blank" rel="noopener" href="https://redis.io/commands#sorted_set">Redis ZSet 类型官方命令文档</a></p>
+</blockquote>
+<p>Zset 常用操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">往有序集合 key 中加入带分值元素</span></span><br><span class="line">ZADD key score member [[score member]...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">往有序集合 key 中删除元素</span></span><br><span class="line">ZREM key member [member...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回有序集合 key 中元素 member 的分值</span></span><br><span class="line">ZSCORE key member</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回有序集合 key 中元素个数</span></span><br><span class="line">ZCARD key</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">为有序集合 key 中元素 member 的分值加上 increment</span></span><br><span class="line">ZINCRBY key increment member</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">正序获取有序集合 key 从 start 下标到 stop 下标的元素</span></span><br><span class="line">ZRANGE key start stop [WITHSCORES]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">倒序获取有序集合 key 从 start 下标到 stop 下标的元素</span></span><br><span class="line">ZREVRANGE key start stop [WITHSCORES]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回有序集合中指定分数区间内的成员，分数由低到高排序。</span></span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回指定成员区间内的成员，按字典正序排列，分数必须相同。</span></span><br><span class="line">ZRANGEBYLEX key min max [LIMIT offset count]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回指定成员区间内的成员，按字典倒序排列，分数必须相同</span></span><br><span class="line">ZREVRANGEBYLEX key max min [LIMIT offset count]</span><br></pre></td></tr></table></figure>
+
+<p>Zset 运算操作（相比于 Set 类型，ZSet 类型没有支持差集运算）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">并集计算（相同元素分值相加），numberkeys 一共多少个 key，WEIGHTS 每个 key 对应的分值乘积</span></span><br><span class="line">ZUNIONSTORE destkey numberkeys key [key...]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">交集计算（相同元素分值相加），numberkeys 一共多少个 key，WEIGHTS 每个 key 对应的分值乘积</span></span><br><span class="line">ZINTERSTORE destkey numberkeys key [key...]</span><br></pre></td></tr></table></figure>
+
+<h3 id="Zset-应用"><a href="#Zset-应用" class="headerlink" title="Zset 应用"></a>Zset 应用</h3><p>Zset 类型（Sorted Set，有序集合）可以根据元素的权重来排序，我们可以自己来决定每个元素的权重值。比如说，我们可以根据元素插入 Sorted Set 的时间确定权重值，先插入的元素权重小，后插入的元素权重大。</p>
+<p>在面对需要展示最新列表、排行榜等场景时，如果数据更新频繁或者需要分页显示，可以优先考虑使用 Sorted Set。</p>
+<h4 id="排行榜"><a href="#排行榜" class="headerlink" title="排行榜"></a>排行榜</h4><p>【需求场景】</p>
+<p>各种排行榜，如：内容平台（视频、歌曲、文章）的播放量&#x2F;收藏量&#x2F;评分排行榜；电商网站的销售排行榜；</p>
+<p>【解决方案】</p>
+<p>有序集合比较典型的使用场景就是排行榜。例如学生成绩的排名榜、游戏积分排行榜、视频播放排名、电商系统中商品的销量排名等。</p>
+<p>我们以博文点赞排名为例，dunwu 发表了五篇博文，分别获得赞为 200、40、100、50、150。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">article:1 文章获得了 200 个赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD user:dunwu:ranking 200 article:1</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">article:2 文章获得了 40 个赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD user:dunwu:ranking 40 article:2</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">article:3 文章获得了 100 个赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD user:dunwu:ranking 100 article:3</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">article:4 文章获得了 50 个赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD user:dunwu:ranking 50 article:4</span></span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">article:5 文章获得了 150 个赞</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD user:dunwu:ranking 150 article:5</span></span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure>
+
+<p>文章 article:4 新增一个赞，可以使用 ZINCRBY 命令（为有序集合 key 中元素 member 的分值加上 increment）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZINCRBY user:dunwu:ranking 1 article:4</span></span><br><span class="line">&quot;51&quot;</span><br></pre></td></tr></table></figure>
+
+<p>查看某篇文章的赞数，可以使用 ZSCORE 命令（返回有序集合 key 中元素个数）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZSCORE user:dunwu:ranking article:4</span></span><br><span class="line">&quot;50&quot;</span><br></pre></td></tr></table></figure>
+
+<p>获取 dunwu 文章赞数最多的 3 篇文章，可以使用 ZREVRANGE 命令（倒序获取有序集合 key 从 start 下标到 stop 下标的元素）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">WITHSCORES 表示把 score 也显示出来</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZREVRANGE user:dunwu:ranking 0 2 WITHSCORES</span></span><br><span class="line">1) &quot;article:1&quot;</span><br><span class="line">2) &quot;200&quot;</span><br><span class="line">3) &quot;article:5&quot;</span><br><span class="line">4) &quot;150&quot;</span><br><span class="line">5) &quot;article:3&quot;</span><br><span class="line">6) &quot;100&quot;</span><br></pre></td></tr></table></figure>
+
+<p>获取 dunwu 100 赞到 200 赞的文章，可以使用 ZRANGEBYSCORE 命令（返回有序集合中指定分数区间内的成员，分数由低到高排序）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZRANGEBYSCORE user:dunwu:ranking 100 200 WITHSCORES</span></span><br><span class="line">1) &quot;article:3&quot;</span><br><span class="line">2) &quot;100&quot;</span><br><span class="line">3) &quot;article:5&quot;</span><br><span class="line">4) &quot;150&quot;</span><br><span class="line">5) &quot;article:1&quot;</span><br><span class="line">6) &quot;200&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="前缀排序"><a href="#前缀排序" class="headerlink" title="前缀排序"></a>前缀排序</h4><p>使用有序集合的 <code>ZRANGEBYLEX</code> 或 <code>ZREVRANGEBYLEX</code> 可以帮助我们实现电话号码或姓名的排序，我们以 <code>ZRANGEBYLEX</code> （返回指定成员区间内的成员，按 key 正序排列，分数必须相同）为例。</p>
+<p><strong>注意：不要在分数不一致的 SortSet 集合中去使用 ZRANGEBYLEX 和 ZREVRANGEBYLEX 指令，因为获取的结果会不准确。</strong></p>
+<p><em>1、电话排序</em></p>
+<p>我们可以将电话号码存储到 SortSet 中，然后根据需要来获取号段：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD phone 0 13100111100 0 13110114300 0 13132110901</span></span><br><span class="line">(integer) 3</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD phone 0 13200111100 0 13210414300 0 13252110901</span></span><br><span class="line">(integer) 3</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZADD phone 0 13300111100 0 13310414300 0 13352110901</span></span><br><span class="line">(integer) 3</span><br></pre></td></tr></table></figure>
+
+<p>获取所有号码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZRANGEBYLEX phone - +</span></span><br><span class="line">1) &quot;13100111100&quot;</span><br><span class="line">2) &quot;13110114300&quot;</span><br><span class="line">3) &quot;13132110901&quot;</span><br><span class="line">4) &quot;13200111100&quot;</span><br><span class="line">5) &quot;13210414300&quot;</span><br><span class="line">6) &quot;13252110901&quot;</span><br><span class="line">7) &quot;13300111100&quot;</span><br><span class="line">8) &quot;13310414300&quot;</span><br><span class="line">9) &quot;13352110901&quot;</span><br></pre></td></tr></table></figure>
+
+<p>获取 132 号段的号码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZRANGEBYLEX phone [132 (133</span></span><br><span class="line">1) &quot;13200111100&quot;</span><br><span class="line">2) &quot;13210414300&quot;</span><br><span class="line">3) &quot;13252110901&quot;</span><br></pre></td></tr></table></figure>
+
+<p>获取 132、133 号段的号码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZRANGEBYLEX phone [132 (134</span></span><br><span class="line">1) &quot;13200111100&quot;</span><br><span class="line">2) &quot;13210414300&quot;</span><br><span class="line">3) &quot;13252110901&quot;</span><br><span class="line">4) &quot;13300111100&quot;</span><br><span class="line">5) &quot;13310414300&quot;</span><br><span class="line">6) &quot;13352110901&quot;</span><br></pre></td></tr></table></figure>
+
+<p><em>2、姓名排序</em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">zadd names 0 Toumas 0 Jake 0 Bluetuo 0 Gaodeng 0 Aimini 0 Aidehua</span></span><br><span class="line">(integer) 6</span><br></pre></td></tr></table></figure>
+
+<p>获取所有人的名字：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZRANGEBYLEX names - +</span></span><br><span class="line">1) &quot;Aidehua&quot;</span><br><span class="line">2) &quot;Aimini&quot;</span><br><span class="line">3) &quot;Bluetuo&quot;</span><br><span class="line">4) &quot;Gaodeng&quot;</span><br><span class="line">5) &quot;Jake&quot;</span><br><span class="line">6) &quot;Toumas&quot;</span><br></pre></td></tr></table></figure>
+
+<p>获取名字中大写字母 A 开头的所有人：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZRANGEBYLEX names [A (B</span></span><br><span class="line">1) &quot;Aidehua&quot;</span><br><span class="line">2) &quot;Aimini&quot;</span><br></pre></td></tr></table></figure>
+
+<p>获取名字中大写字母 C 到 Z 的所有人：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">ZRANGEBYLEX names [C [Z</span></span><br><span class="line">1) &quot;Gaodeng&quot;</span><br><span class="line">2) &quot;Jake&quot;</span><br><span class="line">3) &quot;Toumas&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Redis 常见的五种数据类型：<strong>String（字符串），Hash（哈希），List（列表），Set（集合）及 Zset（sorted set：有序集合）</strong>。</p>
+<p>这五种数据类型都由多种数据结构实现的，主要是出于时间和空间的考虑，当数据量小的时候使用更简单的数据结构，有利于节省内存，提高性能。</p>
+<p>可以看到，Redis 数据类型的底层数据结构随着版本的更新也有所不同，比如：</p>
+<ul>
+<li>在 Redis 3.0 版本中 List 对象的底层数据结构由“双向链表”或“压缩表列表”实现，但是在 3.2 版本之后，List 数据类型底层数据结构是由 quicklist 实现的；</li>
+<li>在最新的 Redis 代码中，压缩列表数据结构已经废弃了，交由 listpack 数据结构来实现了。</li>
+</ul>
+<p>Redis 五种数据类型的应用场景：</p>
+<ul>
+<li>String 类型的应用场景：缓存对象、分布式锁、共享 session、计数器、限流、分布式 ID 等。</li>
+<li>List 类型的应用场景：消息队列（有两个问题：1. 生产者需要自行实现全局唯一 ID；2. 不能以消费组形式消费数据）、输入自动补全等。</li>
+<li>Hash 类型：缓存对象、购物车等。</li>
+<li>Set 类型：聚合计算（并集、交集、差集）场景，比如点赞、共同关注、抽奖活动等。</li>
+<li>Zset 类型：排序场景，比如排行榜、电话和姓名排序等。</li>
+</ul>
+<p>Redis 后续版本又支持四种数据类型，它们的应用场景如下：</p>
+<ul>
+<li>BitMap（2.2 版新增）：二值状态统计的场景，比如签到、判断用户登陆状态、连续签到用户总数等；</li>
+<li>HyperLogLog（2.8 版新增）：海量数据基数统计的场景，比如百万级网页 UV 计数等；</li>
+<li>GEO（3.2 版新增）：存储地理位置信息的场景，比如滴滴叫车；</li>
+<li>Stream（5.0 版新增）：消息队列，相比于基于 List 类型实现的消息队列，有这两个特有的特性：自动生成全局唯一消息 ID，支持以消费组形式消费数据。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202309232144470.jpg"></p>
+<p>针对 Redis 是否适合做消息队列，关键看你的业务场景：</p>
+<ul>
+<li>如果你的业务场景足够简单，对于数据丢失不敏感，而且消息积压概率比较小的情况下，把 Redis 当作队列是完全可以的。</li>
+<li>如果你的业务有海量消息，消息积压的概率比较大，并且不能接受数据丢失，那么还是用专业的消息队列中间件吧。</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11791607.html">《Redis 实战》</a></li>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11486101.html">《Redis 设计与实现》</a></li>
+<li><a target="_blank" rel="noopener" href="https://dunwucoding.com/redis/data_struct/command.html#string">Redis 常见数据类型和应用场景</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/76331397/" title="Redis 基本数据类型">https://dunwu.github.io/blog/pages/76331397/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="tag"># 数据类型</a>
+              <a href="/blog/tags/redis/" rel="tag"># redis</a>
+              <a href="/blog/tags/KV-%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># KV 数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/9cfc1b29/" rel="prev" title="Redis 高级数据类型">
+                  <i class="fa fa-angle-left"></i> Redis 高级数据类型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/a57cb309/" rel="next" title="Redis 持久化">
+                  Redis 持久化 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"c48bb163618151c3a9b472386e44a543"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

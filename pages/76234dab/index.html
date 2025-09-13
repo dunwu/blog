@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="MongoDB 索引::: info 概述 索引通常能够极大的提高查询的效率。如果没有索引，MongoDB 在读取数据时必须扫描 collection 中的每个 document 并选取那些符合查询条件的记录。这种扫描全集合的查询是非常低效的，特别是在处理大量的数据时。查询可能要花费几十秒甚至几分钟，这种性能开销是不可接受的。索引可提高查询性能，但添加索引会影响写入操作的性能。对于写入读取率高的集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB 索引">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/76234dab/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="MongoDB 索引::: info 概述 索引通常能够极大的提高查询的效率。如果没有索引，MongoDB 在读取数据时必须扫描 collection 中的每个 document 并选取那些符合查询条件的记录。这种扫描全集合的查询是非常低效的，特别是在处理大量的数据时。查询可能要花费几十秒甚至几分钟，这种性能开销是不可接受的。索引可提高查询性能，但添加索引会影响写入操作的性能。对于写入读取率高的集">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200921210621.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503052211281.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503052213721.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503052214522.svg">
+<meta property="article:published_time" content="2020-09-21T13:22:57.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.734Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="文档数据库">
+<meta property="article:tag" content="mongodb">
+<meta property="article:tag" content="索引">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200921210621.svg">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/76234dab/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/76234dab/","path":"/pages/76234dab/","title":"MongoDB 索引"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MongoDB 索引 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MongoDB-%E7%B4%A2%E5%BC%95"><span class="nav-number">1.</span> <span class="nav-text">MongoDB 索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">索引简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">默认索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">索引操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">创建索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">删除索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">索引类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E5%AD%97%E6%AE%B5%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.1.</span> <span class="nav-text">单字段索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%90%88%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.2.</span> <span class="nav-text">复合索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%94%AE%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.3.</span> <span class="nav-text">多键索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.4.</span> <span class="nav-text">文本索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%B0%E7%90%86%E7%A9%BA%E9%97%B4%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.5.</span> <span class="nav-text">地理空间索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.6.</span> <span class="nav-text">哈希索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">索引策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E7%AD%89"><span class="nav-number">1.4.1.</span> <span class="nav-text">相等</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8C%83%E5%9B%B4"><span class="nav-number">1.4.3.</span> <span class="nav-text">范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/76234dab/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MongoDB 索引 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB 索引<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/04.%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/mongodb/MongoDB_%E7%B4%A2%E5%BC%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-21 21:22:57" itemprop="dateCreated datePublished" datetime="2020-09-21T21:22:57+08:00">2020-09-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">文档数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/mongodb/" itemprop="url" rel="index"><span itemprop="name">mongodb</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="MongoDB-索引"><a href="#MongoDB-索引" class="headerlink" title="MongoDB 索引"></a>MongoDB 索引</h1><p>::: info 概述</p>
+<p>索引通常能够极大的提高查询的效率。如果<strong>没有索引</strong>，MongoDB 在读取数据时<strong>必须扫描 collection 中的每个 document</strong> 并选取那些符合查询条件的记录。这种扫描全集合的查询是非常低效的，特别是在处理大量的数据时。查询可能要花费几十秒甚至几分钟，这种性能开销是不可接受的。索引可提高查询性能，但<strong>添加索引会影响写入操作的性能</strong>。对于写入读取率高的集合，由于每次插入操作都必须同时更新所有索引，因此会带来较高的索引成本。</p>
+<p>本文介绍了 MongoDB 的基本索引操作、索引类型，和设置索引的策略。掌握了 MongoDB 索引的要点，有助于提高访问 MongoDB 数据的效率。</p>
+<p>:::</p>
+<span id="more"></span>
+
+<h2 id="索引简介"><a href="#索引简介" class="headerlink" title="索引简介"></a>索引简介</h2><p>索引通常能够极大的提高查询的效率。如果<strong>没有索引</strong>，MongoDB 在读取数据时<strong>必须扫描 collection 中的每个 document</strong> 并选取那些符合查询条件的记录。这种扫描全集合的查询是非常低效的，特别是在处理大量的数据时。查询可能要花费几十秒甚至几分钟，这种性能开销是不可接受的。索引可提高查询性能，但<strong>添加索引会影响写入操作的性能</strong>。对于写入读取率高的集合，由于每次插入操作都必须同时更新所有索引，因此会带来较高的索引成本。</p>
+<p>索引是一种特殊的数据结构，它以易于遍历的形式存储一小部分集合数据集。<strong>MongoDB 索引使用 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/B-tree">B-tree</a> 数据结构</strong>。索引可存储某个特定字段或多个字段的值，并按字段的值进行排序。索引条目的排序支持高效的相等匹配和基于范围的查询操作。此外，<strong>MongoDB 还可使用索引中的顺序来返回排序后的结果</strong>。</p>
+<p><strong>MongoDB 在 collection 数据级别上定义索引</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200921210621.svg" alt="MongoDB 索引"></p>
+<h3 id="默认索引"><a href="#默认索引" class="headerlink" title="默认索引"></a>默认索引</h3><p>MongoDB 在创建集合时会在 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/index-unique/#std-label-index-type-unique"><code>_id</code></a> 字段上创建一个 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/document/#std-label-document-id-field">唯一索引</a>。<code>_id</code> 索引可防止客户端插入两个具有相同 <code>_id</code> 字段值的文档。无法删除此索引。</p>
+<h2 id="索引操作"><a href="#索引操作" class="headerlink" title="索引操作"></a>索引操作</h2><h3 id="创建索引"><a href="#创建索引" class="headerlink" title="创建索引"></a>创建索引</h3><p><strong>MongoDB 使用 <code>createIndex()</code> 方法来创建索引</strong>。</p>
+<p><code>createIndex()</code> 语法如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">collection.<span class="title function_">createIndex</span>( &#123; <span class="language-xml"><span class="tag">&lt;<span class="name">key</span> <span class="attr">and</span> <span class="attr">index</span> <span class="attr">type</span> <span class="attr">specification</span>&gt;</span> &#125;, function(err, result) &#123;</span></span><br><span class="line"><span class="language-xml">   console.log(result);</span></span><br><span class="line"><span class="language-xml">   callback(result);</span></span><br><span class="line"><span class="language-xml">&#125; )</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/create-index/">创建索引</a></p>
+</blockquote>
+<h3 id="删除索引"><a href="#删除索引" class="headerlink" title="删除索引"></a>删除索引</h3><p>MongoDB 提供了两个方法来删除索引：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/method/db.collection.dropIndex/#mongodb-method-db.collection.dropIndex"><code>db.collection.dropIndex()</code></a> - 从集合中删除特定索引。</li>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/method/db.collection.dropIndexes/#mongodb-method-db.collection.dropIndexes"><code>db.collection.dropIndexes()</code></a> - 从集合或索引数组中删除所有可移动索引（如果指定）。</li>
+</ul>
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/drop-index/">删除索引</a></p>
+</blockquote>
+<h2 id="索引类型"><a href="#索引类型" class="headerlink" title="索引类型"></a>索引类型</h2><p>MongoDB 支持多种类型的索引，适用于不同的场景。</p>
+<h3 id="单字段索引"><a href="#单字段索引" class="headerlink" title="单字段索引"></a>单字段索引</h3><p>单个字段索引收集集合内每个文档中单个字段的数据，并对其排序。</p>
+<p>下图显示了单个字段 <code>score</code> 上的一个索引：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503052211281.svg" alt="单字段索引"></p>
+<blockquote>
+<p>要了解详情，请参阅 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-single/#std-label-indexes-single-field">单字段索引</a>。</p>
+</blockquote>
+<h3 id="复合索引"><a href="#复合索引" class="headerlink" title="复合索引"></a>复合索引</h3><p>复合索引从集合中每个文档的两个或多个字段收集数据并对其排序。数据先按索引中的第一个字段分组，再按每个后续字段分组。</p>
+<p>例如，下图显示了一个复合索引，其中文档首先按 <code>userid</code> 分组并以升序（按字母顺序）排序。然后，每个 <code>userid</code> 的 <code>scores</code> 按降序排序：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503052213721.svg" alt="复合索引"></p>
+<blockquote>
+<p>要了解详情，请参阅 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-compound/#std-label-index-type-compound">复合索引</a>。</p>
+</blockquote>
+<h3 id="多键索引"><a href="#多键索引" class="headerlink" title="多键索引"></a>多键索引</h3><p>多键索引收集数组中存储的数据并进行排序。</p>
+<p>无需显式指定多键类型。对包含数组值的字段创建索引时，MongoDB 会自动将该索引设为多键索引。</p>
+<p>下图显示了 <code>addr.zip</code> 字段的多键索引：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503052214522.svg" alt="多键索引"></p>
+<blockquote>
+<p>要了解详情，请参阅 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-multikey/#std-label-index-type-multikey">多键索引</a>。</p>
+</blockquote>
+<h3 id="文本索引"><a href="#文本索引" class="headerlink" title="文本索引"></a>文本索引</h3><p>文本索引支持对包含字符串内容的字段进行文本搜索查询。</p>
+<blockquote>
+<p>要了解详情，请参阅 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-text/#std-label-index-type-text">自管理部署上的文本索引。</a></p>
+</blockquote>
+<h3 id="地理空间索引"><a href="#地理空间索引" class="headerlink" title="地理空间索引"></a>地理空间索引</h3><p>地理空间索引可提高对地理空间坐标数据进行查询的性能。</p>
+<p>MongoDB 提供两种类型的地理空间索引：</p>
+<ul>
+<li>使用平面几何返回结果的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/geospatial/2d/#std-label-2d-index">2d 索引</a>。</li>
+<li>使用球面几何返回结果的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/geospatial/2dsphere/#std-label-2dsphere-index">2dsphere 索引</a>。</li>
+</ul>
+<blockquote>
+<p>要了解详情，请参阅 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-geospatial/#std-label-geospatial-index">地理空间索引</a>。</p>
+</blockquote>
+<h3 id="哈希索引"><a href="#哈希索引" class="headerlink" title="哈希索引"></a>哈希索引</h3><p>哈希索引支持 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/hashed-sharding/#std-label-sharding-hashed-sharding">哈希分片</a>。哈希索引对字段值的哈希值进行索引。</p>
+<blockquote>
+<p>要了解详情，请参阅 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-hashed/#std-label-index-type-hashed">哈希索引</a>。</p>
+</blockquote>
+<h2 id="索引策略"><a href="#索引策略" class="headerlink" title="索引策略"></a>索引策略</h2><p>索引通常能够极大的提高查询的效率，但如果索引设置不合理，可能无法提升查询效率。创建索引时，需要考虑以下因素：</p>
+<ul>
+<li><strong>查询频率</strong> - 优先考虑那些经常用于查询的字段。</li>
+<li><strong>选择性</strong> - 选择性是指查询使用索引缩小结果范围的能力。为确保选择性，编写查询时应限制索引字段或字段可能包含的文档数。根据索引数据编写具有适当选择性的查询。</li>
+<li><strong>索引大小</strong> - 索引的大小会影响数据库的内存占用和查询性能。</li>
+</ul>
+<p>引用多个字段的索引是 <a target="_blank" rel="noopener" href="https://www.mongodb.com/docs/manual/core/indexes/index-types/index-compound/#std-label-index-type-compound">复合索引</a>。复合索引可以显著缩短查询响应时间。索引键与文档字段相对应。大多数情况下，**应用 ESR（相等、排序、范围）规则来排列索引键有助于创建更有效的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/indexes/index-types/index-compound/#std-label-index-type-compound">复合索引</a>**。</p>
+<h3 id="相等"><a href="#相等" class="headerlink" title="相等"></a>相等</h3><p>“<strong>相等</strong>”指单个值的精确匹配。索引搜索可高效利用精确匹配来限制完成某一查询而需检查的文档数。相等匹配的索引键可以按任何顺序显示。但是，为了满足与索引的相等匹配，完全匹配的所有索引键必须位于任何其他索引字段之前。<strong>MongoDB 无需按特定顺序排列完全匹配字段</strong>。</p>
+<p>【示例】相等匹配查询</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">cars</span>.<span class="title function_">find</span>(&#123; <span class="attr">model</span>: <span class="string">&#x27;Cordoba&#x27;</span> &#125;)</span><br><span class="line">db.<span class="property">cars</span>.<span class="title function_">find</span>(&#123; <span class="attr">model</span>: &#123; <span class="attr">$eq</span>: <span class="string">&#x27;Cordoba&#x27;</span> &#125; &#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><p>当查询字段是索引键的子集时，索引可以支持排序操作。仅当查询包含排序键之前的所有前缀键的相等条件时，才支持对索引键子集进行排序操作。</p>
+<p>【示例】利用索引优化排序查询</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 按 model 进行排序</span></span><br><span class="line">db.<span class="property">cars</span>.<span class="title function_">find</span>(&#123; <span class="attr">manufacturer</span>: <span class="string">&#x27;GM&#x27;</span> &#125;).<span class="title function_">sort</span>(&#123; <span class="attr">model</span>: <span class="number">1</span> &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 为提高查询性能，可以创建如下索引</span></span><br><span class="line">db.<span class="property">cars</span>.<span class="title function_">createIndex</span>(&#123; <span class="attr">manufacturer</span>: <span class="number">1</span>, <span class="attr">model</span>: <span class="number">1</span> &#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>排序键的排列顺序必须与其在索引中出现的顺序相同</strong>。例如，索引键模式 <code>&#123; a: 1, b: 1 &#125;</code> 可以支持对 <code>&#123; a: 1, b: 1 &#125;</code> 排序，但不支持对 <code>&#123; b: 1, a: 1 &#125;</code> 排序。</p>
+<h3 id="范围"><a href="#范围" class="headerlink" title="范围"></a>范围</h3><p>“范围”过滤器会扫描字段。此扫描不要求精确匹配，因此范围过滤器会松散绑定到索引键。为提高查询效率，应尽可能缩小范围边界，并使用等值匹配来限制必须扫描的文档数。MongoDB 无法对范围过滤器的结果进行索引排序。将范围过滤器置于排序谓词之后，以便 MongoDB 可使用非阻塞索引排序。</p>
+<p>【示例】范围查询</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">cars</span>.<span class="title function_">find</span>(&#123; <span class="attr">price</span>: &#123; <span class="attr">$gte</span>: <span class="number">15000</span> &#125; &#125;)</span><br><span class="line">db.<span class="property">cars</span>.<span class="title function_">find</span>(&#123; <span class="attr">age</span>: &#123; <span class="attr">$lt</span>: <span class="number">10</span> &#125; &#125;)</span><br><span class="line">db.<span class="property">cars</span>.<span class="title function_">find</span>(&#123; <span class="attr">priorAccidents</span>: &#123; <span class="attr">$ne</span>: <span class="literal">null</span> &#125; &#125;)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/applications/indexes/">MongoDB 官方文档之索引策略</a></p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/indexes/">MongoDB 官方文档之索引</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/77971681">你真的会用索引么？[Mongo]</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/76234dab/" title="MongoDB 索引">https://dunwu.github.io/blog/pages/76234dab/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 文档数据库</a>
+              <a href="/blog/tags/mongodb/" rel="tag"># mongodb</a>
+              <a href="/blog/tags/%E7%B4%A2%E5%BC%95/" rel="tag"># 索引</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/9770eefe/" rel="prev" title="MongoDB 聚合">
+                  <i class="fa fa-angle-left"></i> MongoDB 聚合
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/c43cd7f3/" rel="next" title="MongoDB CRUD">
+                  MongoDB CRUD <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"cb2b39a199a4336ea5944b6555e3cf29"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

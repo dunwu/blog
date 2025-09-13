@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="链路追踪链路追踪简介什么是链路追踪链路追踪系统广义的概念是：由数据采集、数据处理和数据展示三个相对独立的模块所构成的分布式追踪系统；链路追踪系统狭义的概念是：特指链路追踪的数据采集。譬如 Spring Cloud Sleuth 就属于狭义的链路追踪系统，通常会搭配 Zipkin 作为数据展示，搭配 Elasticsearch 作为数据存储来组合使用；而 Zipkin、Pinpoint、SkyWal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="链路追踪">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/3da6a371/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="链路追踪链路追踪简介什么是链路追踪链路追踪系统广义的概念是：由数据采集、数据处理和数据展示三个相对独立的模块所构成的分布式追踪系统；链路追踪系统狭义的概念是：特指链路追踪的数据采集。譬如 Spring Cloud Sleuth 就属于狭义的链路追踪系统，通常会搭配 Zipkin 作为数据展示，搭配 Elasticsearch 作为数据存储来组合使用；而 Zipkin、Pinpoint、SkyWal">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20230413161335.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220420092134.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20230414173703.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220420103316.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220420103528.png">
+<meta property="article:published_time" content="2022-04-20T01:08:29.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.728Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="DevOps">
+<meta property="article:tag" content="监控">
+<meta property="article:tag" content="APM">
+<meta property="article:tag" content="链路追踪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20230413161335.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/3da6a371/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/3da6a371/","path":"/pages/3da6a371/","title":"链路追踪"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>链路追踪 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.</span> <span class="nav-text">链路追踪</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">链路追踪简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是链路追踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.1.2.</span> <span class="nav-text">为什么需要链路追踪</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">链路追踪原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.1.</span> <span class="nav-text">链路追踪核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%9F%8B%E7%82%B9%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.2.</span> <span class="nav-text">数据埋点阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.</span> <span class="nav-text">链路追踪实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据采集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%97%A5%E5%BF%97%E7%9A%84%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">基于日志的追踪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">基于服务的追踪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%BE%B9%E8%BD%A6%E4%BB%A3%E7%90%86%E7%9A%84%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">基于边车代理的追踪</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%95%E7%A4%BA"><span class="nav-number">1.3.3.</span> <span class="nav-text">数据展示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E9%93%BE%E8%B7%AF%E5%9B%BE"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">调用链路图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%8B%93%E6%89%91%E5%9B%BE"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">调用拓扑图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E4%B8%BB%E6%B5%81%E6%8A%80%E6%9C%AF"><span class="nav-number">1.4.</span> <span class="nav-text">链路追踪主流技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/3da6a371/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="链路追踪 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          链路追踪<a href="https://github.com/dunwu/blog/blob/master/source/_posts/04.DevOps/03.%E7%9B%91%E6%8E%A7/02.%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-20 09:08:29" itemprop="dateCreated datePublished" datetime="2022-04-20T09:08:29+08:00">2022-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/DevOps/%E7%9B%91%E6%8E%A7/" itemprop="url" rel="index"><span itemprop="name">监控</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="链路追踪"><a href="#链路追踪" class="headerlink" title="链路追踪"></a>链路追踪</h1><h2 id="链路追踪简介"><a href="#链路追踪简介" class="headerlink" title="链路追踪简介"></a>链路追踪简介</h2><h3 id="什么是链路追踪"><a href="#什么是链路追踪" class="headerlink" title="什么是链路追踪"></a>什么是链路追踪</h3><p>链路追踪系统<strong>广义</strong>的概念是：由<strong>数据采集</strong>、<strong>数据处理</strong>和<strong>数据展示</strong>三个相对独立的模块所构成的分布式追踪系统；链路追踪系统<strong>狭义</strong>的概念是：特指链路追踪的数据采集。譬如 <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a> 就属于狭义的链路追踪系统，通常会搭配 <a target="_blank" rel="noopener" href="https://github.com/openzipkin/zipkin">Zipkin</a> 作为数据展示，搭配 Elasticsearch 作为数据存储来组合使用；而 <a target="_blank" rel="noopener" href="https://github.com/openzipkin/zipkin">Zipkin</a>、<a target="_blank" rel="noopener" href="https://github.com/pinpoint-apm/pinpoint">Pinpoint</a>、<a target="_blank" rel="noopener" href="https://github.com/apache/skywalking">SkyWalking</a>、<a target="_blank" rel="noopener" href="https://github.com/dianping/cat">CAT</a> 都属于广义的链路追踪系统。</p>
+<p>个人理解，链路追踪的<strong>本质</strong>就是，通过全局唯一的 ID，将分布在各个服务节点上的同一次请求产生的数据串联起来，从而梳理出调用关系，进而辅助分析系统问题、分析调用数据并统计各种系统指标。</p>
+<h3 id="为什么需要链路追踪"><a href="#为什么需要链路追踪" class="headerlink" title="为什么需要链路追踪"></a>为什么需要链路追踪</h3><p>链路追踪主要有以下作用</p>
+<ul>
+<li><strong>分析系统瓶颈</strong>：通过记录调用经过的每一条链路上的耗时，我们能快速定位整个系统的瓶颈点在哪里。比如你访问微博首页发现很慢，肯定是由于某种原因造成的，有可能是运营商网络延迟，有可能是网关系统异常，有可能是某个服务异常，还有可能是缓存或者数据库异常。通过链路追踪，可以从全局视角上去观察，找出整个系统的瓶颈点所在，然后做出针对性的优化。</li>
+<li><strong>分析链路调用</strong>：通过链路追踪可以分析调用所经过的路径，然后评估是否合理。比如一个服务调用下游依赖了多个服务，通过调用链分析，可以评估是否每个依赖都是必要的，是否可以通过业务优化来减少服务依赖。还有就是，一般业务都会在多个数据中心都部署服务，以实现异地容灾，这个时候经常会出现一种状况就是服务 A 调用了另外一个数据中心的服务 B，而没有调用同处于一个数据中心的服务 B。根据我的经验，跨数据中心的调用视距离远近都会有一定的网络延迟，像北京和广州这种几千公里距离的网络延迟可能达到 30ms 以上，这对于有些业务几乎是不可接受的。通过对调用链路进行分析，可以找出跨数据中心的服务调用，从而进行优化，尽量规避这种情况出现。</li>
+<li><strong>生成网络拓扑</strong>：通过链路追踪中记录的链路信息，可以生成一张系统的网络调用拓扑图，它可以反映系统都依赖了哪些服务，以及服务之间的调用关系是什么样的，可以一目了然。除此之外，在网络拓扑图上还可以把服务调用的详细信息也标出来，也能起到服务监控的作用。</li>
+<li><strong>透明传输数据</strong>：除了链路追踪，业务上经常有一种需求，期望能把一些用户数据，从调用的开始一直往下传递，以便系统中的各个服务都能获取到这个信息。比如业务想做一些 A&#x2F;B 测试，这时候就想通过链路追踪，把 A&#x2F;B 测试的开关逻辑一直往下传递，经过的每一层服务都能获取到这个开关值，就能够统一进行 A&#x2F;B 测试。</li>
+</ul>
+<h2 id="链路追踪原理"><a href="#链路追踪原理" class="headerlink" title="链路追踪原理"></a>链路追踪原理</h2><p>Google 发布的一篇的论文 <a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation/"><code>Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</code></a>，里面详细讲解了链路追踪的实现原理。Dapper 论文几乎成了现代链路追踪的理论基石，很多主流的链路追踪系统都是基于 Dapper 衍生出来的，比较有名的有 Twitter 的<a target="_blank" rel="noopener" href="http://zipkin.io/">Zipkin</a>、阿里的<a target="_blank" rel="noopener" href="http://www.slideshare.net/terryice/eagleeye-with-taobaojavaone">鹰眼</a>、美团的<a target="_blank" rel="noopener" href="http://tech.meituan.com/mt_mtrace.html">MTrace</a>等。</p>
+<h3 id="链路追踪核心概念"><a href="#链路追踪核心概念" class="headerlink" title="链路追踪核心概念"></a>链路追踪核心概念</h3><p>Dapper 提出了一些很重要的核心概念：Trace、Span、Annonation 等，这是理解链路追踪原理的前提。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20230413161335.png"></p>
+<p><em>Trace 和 Spans（图片来源于<a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/papers/dapper-2010-1.pdf">Dapper 论文</a>）</em></p>
+<ul>
+<li><strong>Trace (追踪)</strong> - 代表一次完整的请求。一次完整的请求是指，从客户端发起请求，记录请求流转的每一个服务，直到客户端收到响应为止。整个过程中，当请求分发到第一层级的服务时，就会生成一个全局唯一的 <strong>Trace ID</strong>，并且会随着请求分发到每一层级。因此，通过 <strong>Trace ID</strong> 就可以把一次用户请求在系统中调用的链路串联起来。</li>
+<li><strong>Span (跨度)</strong> - 代表一次调用，也是链路追踪的基本单元。由于每次 Trace 都可能会调用数量不定、坐标不定的多个服务，为了能够记录具体调用了哪些服务，以及调用的顺序、开始时点、执行时长等信息，每次开始调用服务前都要先埋入一个调用记录，这个记录称为一个 Span。<ul>
+<li>Span 的数据结构应该足够简单，以便于能放在日志或者网络协议的报文头里；也应该足够完备，起码应含有时间戳、起止时间、Trace 的 ID、当前 Span 的 ID、父 Span 的 ID 等能够满足追踪需要的信息。</li>
+<li>Trace 实际上都是由若干个有顺序、有层级关系的 Span 所组成一颗 Trace Tree (追踪树)。</li>
+</ul>
+</li>
+<li><strong>Annotation</strong>：用于业务自定义埋点数据，例如：一次请求的用户 ID，某一个支付订单的订单 ID 等。</li>
+</ul>
+<h3 id="数据埋点阶段"><a href="#数据埋点阶段" class="headerlink" title="数据埋点阶段"></a>数据埋点阶段</h3><p>数据采集的作用就是在系统的各个不同模块中进行埋点，采集数据并上报给数据处理层进行处理。而一次请求可以分为四个阶段：</p>
+<ul>
+<li><strong>CS（Client Send）阶段</strong> - 客户端发起请求时埋点，需要传递一些参数，比如服务的方法名等。</li>
+<li><strong>SR（Server Recieve）阶段</strong> - 服务端接收请求时埋点，需要回填一些参数，比如 traceId，spanId。</li>
+<li><strong>SS（Server Send）阶段</strong> - 服务端返回请求时埋点，这时会将上下文数据传递到异步上传队列中。</li>
+<li><strong>CR（Client Recieve）阶段</strong> - 客户端接收返回结果时埋点，这时会将上下文数据传递到异步上传队列中。</li>
+</ul>
+<p>下图显示了 Span 和 Trace 在系统中的样子。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220420092134.png" alt="img"></p>
+<p>（图片来源于 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-sleuth/docs/current/reference/html/getting-started.html#getting-started-terminology">spring-cloud-sleuth 文档</a>）</p>
+<blockquote>
+<p>图片说明：</p>
+<p><em>每种颜色表示一个跨度（有七个跨度 - 从 A 到 G）</em>。</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Trace</span> <span class="variable">Id</span> <span class="operator">=</span> <span class="variable">X</span></span><br><span class="line"><span class="built_in">Span</span> <span class="variable">Id</span> <span class="operator">=</span> <span class="built_in">D</span></span><br><span class="line"><span class="variable">Client</span> <span class="variable">Sent</span></span><br></pre></td></tr></table></figure>
+
+<p>类似上面的注释，表示当前跨度的跟踪 ID 设置为 X，跨度 ID 设置为 D。此外，从 RPC 的角度来看，发生了客户端发送事件。</p>
+</blockquote>
+<p>下图显示了 span 的父子关系：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20230414173703.png"></p>
+<p>（图片来源于 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-sleuth/docs/current/reference/html/getting-started.html#getting-started-terminology">spring-cloud-sleuth 文档</a>）</p>
+<h2 id="链路追踪实现"><a href="#链路追踪实现" class="headerlink" title="链路追踪实现"></a>链路追踪实现</h2><p>一个完整的数据链路系统大致可以分为三个相对独立的模块：</p>
+<ul>
+<li><strong>数据采集</strong> - 负责数据埋点并上报。</li>
+<li><strong>数据处理</strong> - 负责数据的存储与计算。</li>
+<li><strong>数据展示</strong> - 负责数据的可视化展示。</li>
+</ul>
+<h3 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h3><p><strong>数据采集负责数据埋点并上报</strong>。数据采集有三种主流的实现方式，分别是<strong>基于日志的追踪</strong>（Log-Based Tracing），<strong>基于服务的追踪</strong>（Service-Based Tracing）和<strong>基于边车代理的追踪</strong>（Sidecar-Based Tracing）。</p>
+<h4 id="基于日志的追踪"><a href="#基于日志的追踪" class="headerlink" title="基于日志的追踪"></a>基于日志的追踪</h4><p><strong>基于日志的追踪</strong>的思路是：将 Trace、Span 等信息直接输出到应用日志中，然后随着所有节点的日志采集汇聚到一起，再从全局日志信息中反推出完整的调用链拓扑关系。</p>
+<p>基于日志的追踪有以下特点：</p>
+<ul>
+<li><strong>侵入性小、性能影响低</strong> - 对网络消息完全没有侵入性，对应用程序只有很少量的侵入性，对性能影响也非常低。</li>
+<li><strong>依赖于日志采集过程，导致不够实时、精准</strong> - 直接依赖于日志采集过程，日志本身不追求绝对的连续与一致，这也使得基于日志的追踪往往不如其他两种追踪实现来的精准。另外，业务服务的调用与日志的归集并不是同时完成的，也通常不由同一个进程完成，有可能发生业务调用已经顺利结束了，但由于日志归集不及时或者精度丢失，导致日志出现延迟或缺失记录，进而产生追踪失真。</li>
+</ul>
+<p>日志追踪的代表产品是 <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud-sleuth">Spring Cloud Sleuth</a>，下面是一段由 Sleuth 在调用时自动生成的日志记录，可以从中观察到 TraceID、SpanID、父 SpanID 等追踪信息。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 以下为调用端的日志输出：</span><br><span class="line">Created new Feign span [Trace: cbe97e67ce162943, Span: bb1798f7a7c9c142, Parent: cbe97e67ce162943, exportable:<span class="literal">false</span>]</span><br><span class="line"><span class="number">2019</span><span class="number">-06</span><span class="number">-30</span> <span class="number">09</span>:<span class="number">43</span>:<span class="number">24.022</span> [http-nio<span class="number">-9010</span>-exec<span class="number">-8</span>] DEBUG o.s.c.s.i.web.client.feign.TraceFeignClient - The modified request equals GET http:<span class="comment">//localhost:9001/product/findAll HTTP/1.1</span></span><br><span class="line"></span><br><span class="line">X-B3-ParentSpanId: cbe97e67ce162943</span><br><span class="line">X-B3-Sampled: <span class="number">0</span></span><br><span class="line">X-B3-TraceId: cbe97e67ce162943</span><br><span class="line">X-Span-Name: http:/product/findAll</span><br><span class="line">X-B3-SpanId: bb1798f7a7c9c142</span><br><span class="line"></span><br><span class="line"># 以下为服务端的日志输出：</span><br><span class="line"><span class="string">[findAll]</span> to a span [Trace: cbe97e67ce162943, Span: bb1798f7a7c9c142, Parent: cbe97e67ce162943, exportable:<span class="literal">false</span>]</span><br><span class="line">Adding a <span class="keyword">class</span> <span class="symbol">tag</span> <span class="symbol">with</span> <span class="symbol">value</span> [<span class="symbol">ProductController</span>] <span class="symbol">to</span> <span class="symbol">a</span> <span class="symbol">span</span> [<span class="symbol">Trace: <span class="symbol">cbe97e67ce162943</span>, <span class="symbol">Span</span>: <span class="symbol">bb1798f7a7c9c142</span>, <span class="symbol">Parent</span>: <span class="symbol">cbe97e67ce162943</span>, <span class="symbol">exportable</span>:<span class="symbol">false</span></span>]</span><br></pre></td></tr></table></figure>
+
+<h4 id="基于服务的追踪"><a href="#基于服务的追踪" class="headerlink" title="基于服务的追踪"></a>基于服务的追踪</h4><p>基于服务的追踪是目前最为常见的实现方式，被 <a target="_blank" rel="noopener" href="https://github.com/openzipkin/zipkin">Zipkin</a>、<a target="_blank" rel="noopener" href="https://github.com/pinpoint-apm/pinpoint">Pinpoint</a>、<a target="_blank" rel="noopener" href="https://github.com/apache/skywalking">SkyWalking</a> 等主流链路追踪系统广泛采用。其实现思路是：通过某些手段给目标应用注入追踪探针（Probe），针对 Java 应用一般就是通过 Java Agent 注入的。探针在结构上可视为一个寄生在目标服务身上的小型微服务系统，它一般会有自己专用的服务注册、心跳检测等功能，有专门的数据收集协议，把从目标系统中监控得到的服务调用信息，通过另一次独立的 HTTP 或者 RPC 请求发送给追踪系统。</p>
+<p>基于服务的追踪有以下特点：</p>
+<ul>
+<li>侵入性强，会有性能损耗</li>
+<li>追踪更加精准、稳定</li>
+</ul>
+<p>因此，基于服务的追踪会比基于日志的追踪消耗更多的资源，也有更强的侵入性，换来的收益是追踪的精确性与稳定性都有所保证，不必再依靠日志归集来传输追踪数据。</p>
+<h4 id="基于边车代理的追踪"><a href="#基于边车代理的追踪" class="headerlink" title="基于边车代理的追踪"></a>基于边车代理的追踪</h4><p>基于边车代理的追踪是服务网格的专属方案，也是最理想的分布式追踪模型，它对应用完全透明，无论是日志还是服务本身都不会有任何变化；它与编程语言无关，无论应用采用什么编程语言实现，只要它还是通过网络（HTTP 或者 gRPC）来访问服务就可以被追踪到；它有自己独立的数据通道，追踪数据通过控制平面进行上报，避免了追踪对程序通信或者日志归集的依赖和干扰，保证了最佳的精确性。如果要说这种追踪实现方式还有什么缺点的话，那就是服务网格现在还不够普及，未来随着云原生的发展，相信它会成为追踪系统的主流实现方式之一。还有就是边车代理本身的对应用透明的工作原理决定了它只能实现服务调用层面的追踪，本地方法调用级别的追踪诊断是做不到的。</p>
+<p>现在市场占有率最高的代理 <a target="_blank" rel="noopener" href="https://www.envoyproxy.io/">Envoy</a> 就提供了相对完善的追踪功能，但没有提供自己的界面端和存储端，所以 Envoy 和 Sleuth 一样都属于狭义的追踪系统，需要配合专门的 UI 与存储来使用，现在 <a target="_blank" rel="noopener" href="https://github.com/openzipkin/zipkin">Zipkin</a>、<a target="_blank" rel="noopener" href="https://github.com/apache/skywalking">SkyWalking</a> 、<a target="_blank" rel="noopener" href="https://www.jaegertracing.io/">Jaeger</a>、<a target="_blank" rel="noopener" href="https://lightstep.com/products/">LightStep Tracing</a> 等系统都可以接受来自于 Envoy 的追踪数据，充当它的界面端。</p>
+<h3 id="数据处理"><a href="#数据处理" class="headerlink" title="数据处理"></a>数据处理</h3><p><strong>数据处理负责数据的存储与计算</strong>，就是将数据采集的数据按需计算，然后落地存储供查询使用。</p>
+<p>数据处理的需求一般分为两类，一类是实时计算需求，一类是离线计算需求。</p>
+<p>实时计算需求对计算效率要求比较高，一般要求对收集的链路数据能够在秒级别完成聚合计算，以供实时查询。而离线计算需求对计算效率要求就没那么高了，一般能在小时级别完成链路数据的聚合计算即可，一般用作数据汇总统计。针对这两类不同的数据处理需求，采用的计算方法和存储也不相同。</p>
+<ul>
+<li><strong>实时数据处理</strong>：针对实时数据处理，一般采用 Flink、Storm、Spark Streaming 来对链路数据进行实时聚合加工，存储一般使用 OLTP 数据仓库，比如 HBase，使用 traceId 作为 RowKey，能天然地把一整条调用链聚合在一起，提高查询效率。</li>
+<li><strong>离线数据处理</strong>：针对离线数据处理，一般通过运行 MapReduce 或者 Spark 批处理程序来对链路数据进行离线计算，存储一般使用 Hive。</li>
+</ul>
+<h3 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h3><p>数据展示层的作用就是将处理后的链路信息以图形化的方式展示给用户。</p>
+<p>实际项目中主要用到两种图形展示，一种是调用链路图，一种是调用拓扑图。</p>
+<h4 id="调用链路图"><a href="#调用链路图" class="headerlink" title="调用链路图"></a>调用链路图</h4><p>调用链路图一般展示服务总耗时、服务调用的网络深度、每一层经过的系统，以及多少次调用。调用链路图在实际项目中，主要是被用来做故障定位，比如某一次用户调用失败了，可以通过调用链路图查询这次用户调用经过了哪些环节，到底是哪一层的调用失败所导致。</p>
+<p>下面是 Zipkin 的调用链路图：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220420103316.png" alt="img"></p>
+<h4 id="调用拓扑图"><a href="#调用拓扑图" class="headerlink" title="调用拓扑图"></a>调用拓扑图</h4><p>调用拓扑图一般展示系统内都包含哪些应用，它们之间是什么关系，以及依赖调用的 QPS、平均耗时情况。调用拓扑图是一种全局视野图，在实际项目中，主要用作全局监控，用于发现系统中异常的点，从而快速做出决策。比如，某一个服务突然出现异常，那么在调用链路拓扑图中可以看出对这个服务的调用耗时都变高了，可以用红色的图样标出来，用作监控报警。</p>
+<p>下面是 Pinpoint 的调用链路图：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220420103528.png" alt="img"></p>
+<h2 id="链路追踪主流技术"><a href="#链路追踪主流技术" class="headerlink" title="链路追踪主流技术"></a>链路追踪主流技术</h2><p>链路追踪的主流开源产品比较丰富，主要有：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zipkin.io/"><strong>Zipkin</strong></a> - Zipkin 是 Twitter 开源的调用链分析工具，目前基于 <strong><a target="_blank" rel="noopener" href="https://github.com/spring-cloud/spring-cloud-sleuth">spring-cloud-sleuth</a></strong> 得到了广泛的使用，特点是轻量，使用、部署简单。</li>
+<li><a target="_blank" rel="noopener" href="https://pinpoint-apm.gitbook.io/pinpoint/"><strong>Pinpoint</strong></a> - 是韩国人开源的基于字节码注入的调用链分析，以及应用监控分析工具。特点是支持多种插件，UI 功能强大，接入端无代码侵入。</li>
+<li><a target="_blank" rel="noopener" href="https://skywalking.apache.org/"><strong>SkyWalking</strong></a> - 是本土开源的基于字节码注入的调用链分析，以及应用监控分析工具。特点是支持多种插件，UI 功能较强，接入端无代码侵入。目前已加入 Apache 孵化器。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dianping/cat"><strong>CAT</strong></a> - CAT 是美团点评开源的基于编码和配置的调用链分析，应用监控分析，日志采集，监控报警等一系列的监控平台工具。</li>
+<li><a target="_blank" rel="noopener" href="https://opentelemetry.io/"><strong>OpenTelemetry</strong></a> - OpenCensus 和 OpenTracing 两个项目的合并。OpenTelemetry 是工具、API 和 SDK 的集合。用于检测、生成、收集和导出遥测数据（指标、日志和和追踪），以辅助分析软件的性能和行为。</li>
+<li><a target="_blank" rel="noopener" href="https://opentracing.io/"><strong>OpenTracing</strong></a> - 是一套与平台无关、与厂商无关、与语言无关的追踪协议规范。官方提供多种语言的链路追踪库实现。目前官方已经不再维护。</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><strong>标准化</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://opentelemetry.io/">OpenTelemetry</a> - OpenCensus 和 OpenTracing 两个项目的合并</li>
+<li><a target="_blank" rel="noopener" href="https://opentracing.io/">OpenTracing</a> - OpenTracing 是一套与平台无关、与厂商无关、与语言无关的追踪协议规范</li>
+</ul>
+</li>
+<li><strong>文章</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://research.google/pubs/pub36356/">Dapper 论文</a> - 即：Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</li>
+<li><a target="_blank" rel="noopener" href="http://bigbully.github.io/Dapper-translation/">Dapper 论文翻译</a></li>
+<li><a target="_blank" rel="noopener" href="http://icyfenix.cn/distribution/observability/tracing.html">凤凰架构-链路追踪</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/3da6a371/" title="链路追踪">https://dunwu.github.io/blog/pages/3da6a371/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/DevOps/" rel="tag"># DevOps</a>
+              <a href="/blog/tags/%E7%9B%91%E6%8E%A7/" rel="tag"># 监控</a>
+              <a href="/blog/tags/APM/" rel="tag"># APM</a>
+              <a href="/blog/tags/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/" rel="tag"># 链路追踪</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/783bf95a/" rel="prev" title="如何建设监控体系">
+                  <i class="fa fa-angle-left"></i> 如何建设监控体系
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/2ac56e69/" rel="next" title="服务容错">
+                  服务容错 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"54a80280ddcd7bc2644b84d2656d64ae"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

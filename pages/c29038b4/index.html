@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Redis 事务 Redis 仅支持“非严格”的事务。所谓“非严格”是指：Redis 事务保证“全部执行命令”；但是，Redis 事务“不支持回滚”。 关键词：事务、ACID、MULTI、EXEC、DISCARD、WATCH  Redis 事务简介什么是 ACIDACID 是数据库事务正确执行的四个基本要素。  原子性（Atomicity） 事务被视为不可分割的最小单元，事务中的所有操作要么全部提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 事务">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/c29038b4/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Redis 事务 Redis 仅支持“非严格”的事务。所谓“非严格”是指：Redis 事务保证“全部执行命令”；但是，Redis 事务“不支持回滚”。 关键词：事务、ACID、MULTI、EXEC、DISCARD、WATCH  Redis 事务简介什么是 ACIDACID 是数据库事务正确执行的四个基本要素。  原子性（Atomicity） 事务被视为不可分割的最小单元，事务中的所有操作要么全部提">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/database/RDB/%E6%95%B0%E6%8D%AE%E5%BA%93ACID.png">
+<meta property="article:published_time" content="2020-01-30T13:48:57.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.735Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="KV数据库">
+<meta property="article:tag" content="ACID">
+<meta property="article:tag" content="事务">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/database/RDB/%E6%95%B0%E6%8D%AE%E5%BA%93ACID.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/c29038b4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/c29038b4/","path":"/pages/c29038b4/","title":"Redis 事务"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 事务 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">Redis 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Redis 事务简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-ACID"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是 ACID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E4%BA%8B%E5%8A%A1%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.1.2.</span> <span class="nav-text">Redis 事务的特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">Redis 事务应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MULTI"><span class="nav-number">1.2.1.</span> <span class="nav-text">MULTI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EXEC"><span class="nav-number">1.2.2.</span> <span class="nav-text">EXEC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DISCARD"><span class="nav-number">1.2.3.</span> <span class="nav-text">DISCARD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WATCH"><span class="nav-number">1.2.4.</span> <span class="nav-text">WATCH</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E6%B6%88-WATCH-%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">取消 WATCH 的场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-WATCH-%E5%88%9B%E5%BB%BA%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">使用 WATCH 创建原子操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lua-%E8%84%9A%E6%9C%AC"><span class="nav-number">1.3.</span> <span class="nav-text">Lua 脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-Lua"><span class="nav-number">1.3.1.</span> <span class="nav-text">为什么使用 Lua</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E8%84%9A%E6%9C%AC%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.2.</span> <span class="nav-text">Redis 脚本命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E6%89%A7%E8%A1%8C-Lua-%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text">Redis 执行 Lua 的工作流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-%E6%89%A7%E8%A1%8C-Lua-%E7%9A%84%E8%A6%81%E7%82%B9"><span class="nav-number">1.3.4.</span> <span class="nav-text">Redis 执行 Lua 的要点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-Lua-%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.3.5.</span> <span class="nav-text">Redis + Lua 实现分布式锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/c29038b4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 事务 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 事务<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/05.KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/Redis_%E4%BA%8B%E5%8A%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-30 21:48:57" itemprop="dateCreated datePublished" datetime="2020-01-30T21:48:57+08:00">2020-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">KV数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Redis-事务"><a href="#Redis-事务" class="headerlink" title="Redis 事务"></a>Redis 事务</h1><blockquote>
+<p><strong>Redis 仅支持“非严格”的事务</strong>。所谓“非严格”是指：Redis 事务保证“全部执行命令”；但是，Redis 事务“不支持回滚”。</p>
+<p>关键词：<code>事务</code>、<code>ACID</code>、<code>MULTI</code>、<code>EXEC</code>、<code>DISCARD</code>、<code>WATCH</code></p>
+</blockquote>
+<h2 id="Redis-事务简介"><a href="#Redis-事务简介" class="headerlink" title="Redis 事务简介"></a>Redis 事务简介</h2><h3 id="什么是-ACID"><a href="#什么是-ACID" class="headerlink" title="什么是 ACID"></a>什么是 ACID</h3><p>ACID 是数据库事务正确执行的四个基本要素。</p>
+<ul>
+<li><strong>原子性（Atomicity）</strong><ul>
+<li>事务被视为不可分割的最小单元，事务中的所有操作<strong>要么全部提交成功，要么全部失败回滚</strong>。</li>
+<li>回滚可以用日志来实现，日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。</li>
+</ul>
+</li>
+<li><strong>一致性（Consistency）</strong><ul>
+<li>数据库在事务执行前后都保持一致性状态。</li>
+<li>在一致性状态下，所有事务对一个数据的读取结果都是相同的。</li>
+</ul>
+</li>
+<li><strong>隔离性（Isolation）</strong><ul>
+<li>一个事务所做的修改在最终提交以前，对其它事务是不可见的。</li>
+</ul>
+</li>
+<li><strong>持久性（Durability）</strong><ul>
+<li>一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。</li>
+<li>可以通过数据库备份和恢复来实现，在系统发生奔溃时，使用备份的数据库进行数据恢复。</li>
+</ul>
+</li>
+</ul>
+<p><strong>一个支持事务（Transaction）中的数据库系统，必需要具有这四种特性，否则在事务过程（Transaction processing）当中无法保证数据的正确性。</strong></p>
+<ul>
+<li>只有满足一致性，事务的执行结果才是正确的。</li>
+<li>在无并发的情况下，事务串行执行，隔离性一定能够满足。此时只要能满足原子性，就一定能满足一致性。</li>
+<li>在并发的情况下，多个事务并行执行，事务不仅要满足原子性，还需要满足隔离性，才能满足一致性。</li>
+<li>事务满足持久化是为了能应对系统崩溃的情况。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/database/RDB/%E6%95%B0%E6%8D%AE%E5%BA%93ACID.png" alt="ACID"></p>
+<h3 id="Redis-事务的特性"><a href="#Redis-事务的特性" class="headerlink" title="Redis 事务的特性"></a>Redis 事务的特性</h3><p>Redis 的事务总是支持 ACID 中的原子性、一致性和隔离性， 当服务器运行在 AOF 持久化模式下， 并且 <code>appendfsync</code> 选项的值为 <code>always</code> 时， 事务也具有持久性。</p>
+<p>但需要注意的是：<strong>Redis 仅支持“非严格”的事务</strong>。这里的“非严格”，其实指的是 Redis 事务只能部分保证 ACID 中的原子性。</p>
+<ul>
+<li><strong>Redis 事务保证全部执行命令</strong> - Redis 事务中的多个命令会被打包到事务队列中，然后按先进先出（FIFO）的顺序执行。事务在执行过程中不会被中断，当事务队列中的所有命令都被执行完毕之后，事务才会结束。</li>
+<li><strong>Redis 事务不支持回滚</strong> - 如果命令执行失败不会回滚，而是会继续执行下去。</li>
+</ul>
+<p>Redis 官方的<a target="_blank" rel="noopener" href="https://redis.io/docs/interact/transactions/">事务特性文档</a>给出的不支持回滚的理由是：</p>
+<ul>
+<li>Redis 命令只会因为错误的语法而失败，或是命令用在了错误类型的键上面。</li>
+<li>因为不需要对回滚进行支持，所以 Redis 的内部可以保持简单且快速。</li>
+</ul>
+<h2 id="Redis-事务应用"><a href="#Redis-事务应用" class="headerlink" title="Redis 事务应用"></a>Redis 事务应用</h2><p><a target="_blank" rel="noopener" href="https://redis.io/commands/multi"><code>MULTI</code></a>、<a target="_blank" rel="noopener" href="https://redis.io/commands/exec"><code>EXEC</code></a>、<a target="_blank" rel="noopener" href="https://redis.io/commands/discard"><code>DISCARD</code></a> 和 <a target="_blank" rel="noopener" href="https://redis.io/commands/watch"><code>WATCH</code></a> 是 Redis 事务相关的命令。</p>
+<p>事务可以一次执行多个命令， 并且有以下两个重要的保证：</p>
+<ul>
+<li>事务是一个单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。</li>
+<li>事务是一个原子操作：事务中的命令要么全部被执行，要么全部都不执行。</li>
+</ul>
+<p>Redis 有天然解决这个并发竞争问题的类 CAS 乐观锁方案：每次要<strong>写之前，先判断</strong>一下当前这个 value 的时间戳是否比缓存里的 value 的时间戳要新。如果是的话，那么可以写，否则，就不能用旧的数据覆盖新的数据。</p>
+<h3 id="MULTI"><a href="#MULTI" class="headerlink" title="MULTI"></a>MULTI</h3><p><strong><a target="_blank" rel="noopener" href="https://redis.io/commands/multi"><code>MULTI</code></a> 命令用于开启一个事务，它总是返回 OK 。</strong></p>
+<p><code>MULTI</code> 执行之后， 客户端可以继续向服务器发送任意多条命令， 这些命令不会立即被执行， 而是被放到一个队列中， 当 EXEC 命令被调用时， 所有队列中的命令才会被执行。</p>
+<p>以下是一个事务例子， 它原子地增加了 <code>foo</code> 和 <code>bar</code> 两个键的值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; MULTI</span><br><span class="line">OK</span><br><span class="line">&gt; INCR foo</span><br><span class="line">QUEUED</span><br><span class="line">&gt; INCR bar</span><br><span class="line">QUEUED</span><br><span class="line">&gt; EXEC</span><br><span class="line"><span class="number">1</span>) (integer) <span class="number">1</span></span><br><span class="line"><span class="number">2</span>) (integer) <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="EXEC"><a href="#EXEC" class="headerlink" title="EXEC"></a>EXEC</h3><p><strong><a target="_blank" rel="noopener" href="https://redis.io/commands/exec"><code>EXEC</code></a> 命令负责触发并执行事务中的所有命令。</strong></p>
+<ul>
+<li>如果客户端在使用 <code>MULTI</code> 开启了一个事务之后，却因为断线而没有成功执行 <code>EXEC</code> ，那么事务中的所有命令都不会被执行。</li>
+<li>另一方面，如果客户端成功在开启事务之后执行 <code>EXEC</code> ，那么事务中的所有命令都会被执行。</li>
+</ul>
+<p><code>MULTI</code> 和 <code>EXEC</code> 中的操作将会一次性发送给服务器，而不是一条一条发送，这种方式称为流水线，它可以减少客户端与服务器之间的网络通信次数从而提升性能。</p>
+<h3 id="DISCARD"><a href="#DISCARD" class="headerlink" title="DISCARD"></a>DISCARD</h3><p><strong>当执行 <a target="_blank" rel="noopener" href="https://redis.io/commands/discard"><code>DISCARD</code></a> 命令时， 事务会被放弃， 事务队列会被清空， 并且客户端会从事务状态中退出。</strong></p>
+<p>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; SET foo <span class="number">1</span></span><br><span class="line">OK</span><br><span class="line">&gt; MULTI</span><br><span class="line">OK</span><br><span class="line">&gt; INCR foo</span><br><span class="line">QUEUED</span><br><span class="line">&gt; DISCARD</span><br><span class="line">OK</span><br><span class="line">&gt; GET foo</span><br><span class="line"><span class="string">&quot;1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="WATCH"><a href="#WATCH" class="headerlink" title="WATCH"></a>WATCH</h3><p><strong><a target="_blank" rel="noopener" href="https://redis.io/commands/watch"><code>WATCH</code></a> 命令可以为 Redis 事务提供 check-and-set （CAS）行为。</strong></p>
+<p>被 <code>WATCH</code> 的键会被监视，并会发觉这些键是否被改动过了。 如果有至少一个被监视的键在 <code>EXEC</code> 执行之前被修改了， 那么整个事务都会被取消， <code>EXEC</code> 返回 <code>nil-reply</code> 来表示事务已经失败。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WATCH mykey</span><br><span class="line">val = GET mykey</span><br><span class="line">val = val + <span class="number">1</span></span><br><span class="line">MULTI</span><br><span class="line">SET mykey $val</span><br><span class="line">EXEC</span><br></pre></td></tr></table></figure>
+
+<p>使用上面的代码， 如果在 <code>WATCH</code> 执行之后， <code>EXEC</code> 执行之前， 有其他客户端修改了 <code>mykey</code> 的值， 那么当前客户端的事务就会失败。 程序需要做的， 就是不断重试这个操作， 直到没有发生碰撞为止。</p>
+<p>这种形式的锁被称作乐观锁， 它是一种非常强大的锁机制。 并且因为大多数情况下， 不同的客户端会访问不同的键， 碰撞的情况一般都很少， 所以通常并不需要进行重试。</p>
+<p><code>WATCH</code> 使得 <code>EXEC</code> 命令需要有条件地执行：事务只能在所有被监视键都没有被修改的前提下执行，如果这个前提不能满足的话，事务就不会被执行。</p>
+<p><code>WATCH</code> 命令可以被调用多次。对键的监视从 <code>WATCH</code> 执行之后开始生效，直到调用 <code>EXEC</code> 为止。</p>
+<p>用户还可以在单个 <code>WATCH</code> 命令中监视任意多个键，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; WATCH key1 key2 key3</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<h4 id="取消-WATCH-的场景"><a href="#取消-WATCH-的场景" class="headerlink" title="取消 WATCH 的场景"></a>取消 WATCH 的场景</h4><p>当 <code>EXEC</code> 被调用时， 不管事务是否成功执行， 对所有键的监视都会被取消。另外， 当客户端断开连接时， 该客户端对键的监视也会被取消。</p>
+<p>使用无参数的 <code>UNWATCH</code> 命令可以手动取消对所有键的监视。 对于一些需要改动多个键的事务， 有时候程序需要同时对多个键进行加锁， 然后检查这些键的当前值是否符合程序的要求。 当值达不到要求时， 就可以使用 <code>UNWATCH</code> 命令来取消目前对键的监视， 中途放弃这个事务， 并等待事务的下次尝试。</p>
+<h4 id="使用-WATCH-创建原子操作"><a href="#使用-WATCH-创建原子操作" class="headerlink" title="使用 WATCH 创建原子操作"></a>使用 WATCH 创建原子操作</h4><p><code>WATCH</code> 可以用于创建 Redis 没有内置的原子操作。</p>
+<p>举个例子，以下代码实现了原创的 <code>ZPOP</code> 命令，它可以原子地弹出有序集合中分值（<code>score</code>）最小的元素：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">WATCH zset</span><br><span class="line">element = ZRANGE zset <span class="number">0</span> <span class="number">0</span></span><br><span class="line">MULTI</span><br><span class="line">ZREM zset element</span><br><span class="line">EXEC</span><br></pre></td></tr></table></figure>
+
+<h2 id="Lua-脚本"><a href="#Lua-脚本" class="headerlink" title="Lua 脚本"></a>Lua 脚本</h2><h3 id="为什么使用-Lua"><a href="#为什么使用-Lua" class="headerlink" title="为什么使用 Lua"></a>为什么使用 Lua</h3><p>前面提到了，<strong>Redis 仅支持“非严格”的事务</strong>。</p>
+<p>Lua 是一种轻量小巧的脚本语言，用标准 C 语言编写并以源代码形式开放， 其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。</p>
+<p>Redis 从 2.6 版本开始支持执行 Lua 脚本，它的功能和事务非常类似。我们可以利用 Lua 脚本来批量执行多条 Redis 命令，这些 Redis 命令会被提交到 Redis 服务器一次性执行完成，大幅减小了网络开销。</p>
+<p><strong>Redis 执行 Lua 是原子操作</strong>。因为 Redis 使用串行化的方式来执行 Redis 命令， 所以在任何特定时间里， 最多都只会有一个脚本能够被放进 Lua 环境里面运行， 因此， 整个 Redis 服务器只需要创建一个 Lua 环境即可。由于，Redis 执行 Lua 具有原子性，所以常被用于需要原子性执行多命令的场景。</p>
+<p>不过，如果 Lua 脚本运行时出错并中途结束，出错之后的命令是不会被执行的。并且，出错之前执行的命令是无法被撤销的，无法实现类似关系型数据库执行失败可以回滚的那种原子性效果。因此， <strong>严格来说的话，通过 Lua 脚本来批量执行 Redis 命令实际也是不完全满足原子性的。</strong></p>
+<p>如果想要让 Lua 脚本中的命令全部执行，必须保证语句语法和命令都是对的。</p>
+<p>另外，Redis 7.0 新增了 <a target="_blank" rel="noopener" href="https://redis.io/docs/manual/programmability/functions-intro/">Redis functions</a> 特性，你可以将 Redis functions 看作是比 Lua 更强大的脚本。</p>
+<h3 id="Redis-脚本命令"><a href="#Redis-脚本命令" class="headerlink" title="Redis 脚本命令"></a>Redis 脚本命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EVAL</code></td>
+<td><code>EVAL</code> 命令为客户端输入的脚本在 Lua 环境中定义一个函数， 并通过调用这个函数来执行脚本。</td>
+</tr>
+<tr>
+<td><code>EVALSHA</code></td>
+<td><code>EVALSHA</code> 命令通过直接调用 Lua 环境中已定义的函数来执行脚本。</td>
+</tr>
+<tr>
+<td><code>SCRIPT_FLUSH</code></td>
+<td><code>SCRIPT_FLUSH</code> 命令会清空服务器 <code>lua_scripts</code> 字典中保存的脚本， 并重置 Lua 环境。</td>
+</tr>
+<tr>
+<td><code>SCRIPT_EXISTS</code></td>
+<td><code>SCRIPT_EXISTS</code> 命令接受一个或多个 SHA1 校验和为参数， 并通过检查 <code>lua_scripts</code> 字典来确认校验和对应的脚本是否存在。</td>
+</tr>
+<tr>
+<td><code>SCRIPT_LOAD</code></td>
+<td><code>SCRIPT_LOAD</code> 命令接受一个 Lua 脚本为参数， 为该脚本在 Lua 环境中创建函数， 并将脚本保存到 <code>lua_scripts</code> 字典中。</td>
+</tr>
+<tr>
+<td><code>SCRIPT_KILL</code></td>
+<td><code>SCRIPT_KILL</code> 命令用于停止正在执行的脚本。</td>
+</tr>
+</tbody></table>
+<h3 id="Redis-执行-Lua-的工作流程"><a href="#Redis-执行-Lua-的工作流程" class="headerlink" title="Redis 执行 Lua 的工作流程"></a>Redis 执行 Lua 的工作流程</h3><p>为了在 Redis 服务器中执行 Lua 脚本， Redis 在服务器内嵌了一个 Lua 环境（environment）， 并对这个 Lua 环境进行了一系列修改， 从而确保这个 Lua 环境可以满足 Redis 服务器的需要。</p>
+<p>Redis 服务器创建并修改 Lua 环境的整个过程由以下步骤组成：</p>
+<ol>
+<li>创建一个基础的 Lua 环境， 之后的所有修改都是针对这个环境进行的。</li>
+<li>载入多个函数库到 Lua 环境里面， 让 Lua 脚本可以使用这些函数库来进行数据操作。</li>
+<li>创建全局表格 <code>redis</code> ， 这个表格包含了对 Redis 进行操作的函数， 比如用于在 Lua 脚本中执行 Redis 命令的 <code>redis.call</code> 函数。</li>
+<li>使用 Redis 自制的随机函数来替换 Lua 原有的带有副作用的随机函数， 从而避免在脚本中引入副作用。</li>
+<li>创建排序辅助函数， Lua 环境使用这个辅佐函数来对一部分 Redis 命令的结果进行排序， 从而消除这些命令的不确定性。</li>
+<li>创建 <code>redis.pcall</code> 函数的错误报告辅助函数， 这个函数可以提供更详细的出错信息。</li>
+<li>对 Lua 环境里面的全局环境进行保护， 防止用户在执行 Lua 脚本的过程中， 将额外的全局变量添加到了 Lua 环境里面。</li>
+<li>将完成修改的 Lua 环境保存到服务器状态的 <code>lua</code> 属性里面， 等待执行服务器传来的 Lua 脚本。</li>
+</ol>
+<h3 id="Redis-执行-Lua-的要点"><a href="#Redis-执行-Lua-的要点" class="headerlink" title="Redis 执行 Lua 的要点"></a>Redis 执行 Lua 的要点</h3><ul>
+<li>Redis 服务器专门使用一个伪客户端来执行 Lua 脚本中包含的 Redis 命令。</li>
+<li>Redis 使用脚本字典来保存所有被 <code>EVAL</code> 命令执行过， 或者被 <code>SCRIPT_LOAD</code> 命令载入过的 Lua 脚本， 这些脚本可以用于实现 <code>SCRIPT_EXISTS</code> 命令， 以及实现脚本复制功能。</li>
+<li>服务器在执行脚本之前， 会为 Lua 环境设置一个超时处理钩子， 当脚本出现超时运行情况时， 客户端可以通过向服务器发送 <code>SCRIPT_KILL</code> 命令来让钩子停止正在执行的脚本， 或者发送 <code>SHUTDOWN nosave</code> 命令来让钩子关闭整个服务器。</li>
+<li>主服务器复制 <code>EVAL</code> 、 <code>SCRIPT_FLUSH</code> 、 <code>SCRIPT_LOAD</code> 三个命令的方法和复制普通 Redis 命令一样 —— 只要将相同的命令传播给从服务器就可以了。</li>
+<li>主服务器在复制 <code>EVALSHA</code> 命令时， 必须确保所有从服务器都已经载入了 <code>EVALSHA</code> 命令指定的 SHA1 校验和所对应的 Lua 脚本， 如果不能确保这一点的话， 主服务器会将 <code>EVALSHA</code> 命令转换成等效的 <code>EVAL</code> 命令， 并通过传播 <code>EVAL</code> 命令来获得相同的脚本执行效果。</li>
+</ul>
+<h3 id="Redis-Lua-实现分布式锁"><a href="#Redis-Lua-实现分布式锁" class="headerlink" title="Redis + Lua 实现分布式锁"></a>Redis + Lua 实现分布式锁</h3><p>Redis 应用 Lua 的一个经典使用场景是实现分布式锁。其实现有 3 个重要的考量点：</p>
+<ol>
+<li>互斥（只能有一个客户端获取锁）</li>
+<li>不能死锁</li>
+<li>容错（只要大部分 redis 节点创建了这把锁就可以）</li>
+</ol>
+<p>对应的 Redis 指令如下：</p>
+<ul>
+<li><code>setnx</code> - <code>setnx key val</code>：当且仅当 key 不存在时，set 一个 key 为 val 的字符串，返回 1；若 key 存在，则什么都不做，返回 0。</li>
+<li><code>expire</code> - <code>expire key timeout</code>：为 key 设置一个超时时间，单位为 second，超过这个时间锁会自动释放，避免死锁。</li>
+<li><code>delete</code> - <code>delete key</code>：删除 key</li>
+</ul>
+<blockquote>
+<p>注意：</p>
+<p>不要将 <code>setnx</code> 和 <code>expire</code> 作为两个命令组合实现加锁，这样就<strong>无法保证原子性</strong>。如果客户端在 <code>setnx</code> 之后崩溃，那么将导致锁无法释放。正确的做法应是在 <code>setnx</code> 命令中指定 <code>expire</code> 时间。</p>
+</blockquote>
+<p>（1）申请锁</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET resource_name my_random_value NX PX 30000</span><br></pre></td></tr></table></figure>
+
+<p>执行这个命令就 ok。</p>
+<ul>
+<li><code>NX</code>：表示只有 <code>key</code> 不存在的时候才会设置成功。（如果此时 redis 中存在这个 key，那么设置失败，返回 <code>nil</code>）</li>
+<li><code>PX 30000</code>：意思是 30s 后锁自动释放。别人创建的时候如果发现已经有了就不能加锁了。</li>
+</ul>
+<p>（2）释放锁</p>
+<p>释放锁就是删除 key ，但是一般可以用 <code>lua</code> 脚本删除，判断 value 一样才删除：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 删除锁的时候，找到 key 对应的 value，跟自己传过去的 value 做比较，如果是一样的才删除。</span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&quot;get&quot;</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] then</span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">&quot;del&quot;</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11486101.html">《Redis 设计与实现》</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/c29038b4/" title="Redis 事务">https://dunwu.github.io/blog/pages/c29038b4/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># KV数据库</a>
+              <a href="/blog/tags/ACID/" rel="tag"># ACID</a>
+              <a href="/blog/tags/%E4%BA%8B%E5%8A%A1/" rel="tag"># 事务</a>
+              <a href="/blog/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/e524b647/" rel="prev" title="Redis 脚本">
+                  <i class="fa fa-angle-left"></i> Redis 脚本
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/3a64eb94/" rel="next" title="深入剖析共识性算法 Raft">
+                  深入剖析共识性算法 Raft <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"5965aa7fd68eddac2b188dbede451514"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

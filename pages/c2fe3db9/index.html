@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Redis 实战缓存缓存是 Redis 最常见的应用场景。 Redis 有多种数据类型，以及丰富的操作命令，并且有着高性能、高可用的特性，非常适合用于分布式缓存。  缓存应用的基本原理，请参考 缓存基本原理 第四 ~ 第六节内容。  BitMap 和 BloomFilterRedis 除了 5 种基本数据类型外，还支持 BitMap 和 BloomFilter（即布隆过滤器，可以通过 Redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 实战">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/c2fe3db9/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Redis 实战缓存缓存是 Redis 最常见的应用场景。 Redis 有多种数据类型，以及丰富的操作命令，并且有着高性能、高可用的特性，非常适合用于分布式缓存。  缓存应用的基本原理，请参考 缓存基本原理 第四 ~ 第六节内容。  BitMap 和 BloomFilterRedis 除了 5 种基本数据类型外，还支持 BitMap 和 BloomFilter（即布隆过滤器，可以通过 Redis">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225143038.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225145742.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225150105.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225150138.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225214210.jpg">
+<meta property="article:published_time" content="2020-06-24T02:45:38.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.735Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="KV数据库">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225143038.jpg">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/c2fe3db9/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/c2fe3db9/","path":"/pages/c2fe3db9/","title":"Redis 实战"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 实战 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E5%AE%9E%E6%88%98"><span class="nav-number">1.</span> <span class="nav-text">Redis 实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">1.1.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BitMap-%E5%92%8C-BloomFilter"><span class="nav-number">1.2.</span> <span class="nav-text">BitMap 和 BloomFilter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.3.</span> <span class="nav-text">分布式锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#keys-%E5%92%8C-scan"><span class="nav-number">1.4.</span> <span class="nav-text">keys 和 scan</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7-Key-%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86"><span class="nav-number">1.5.</span> <span class="nav-text">大 Key 如何处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%8F%97%E6%AC%A2%E8%BF%8E%E6%96%87%E7%AB%A0"><span class="nav-number">1.6.</span> <span class="nav-text">最受欢迎文章</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%96%87%E7%AB%A0%E8%BF%9B%E8%A1%8C%E6%8A%95%E7%A5%A8"><span class="nav-number">1.6.1.</span> <span class="nav-text">对文章进行投票</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E5%B9%B6%E8%8E%B7%E5%8F%96%E6%96%87%E7%AB%A0"><span class="nav-number">1.6.2.</span> <span class="nav-text">发布并获取文章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%96%87%E7%AB%A0%E8%BF%9B%E8%A1%8C%E5%88%86%E7%BB%84"><span class="nav-number">1.6.3.</span> <span class="nav-text">对文章进行分组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E4%BB%A4%E7%89%8C"><span class="nav-number">1.7.</span> <span class="nav-text">管理令牌</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BB%A4%E7%89%8C"><span class="nav-number">1.7.1.</span> <span class="nav-text">查询令牌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E4%BB%A4%E7%89%8C"><span class="nav-number">1.7.2.</span> <span class="nav-text">更新令牌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E7%90%86%E4%BB%A4%E7%89%8C"><span class="nav-number">1.7.3.</span> <span class="nav-text">清理令牌</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/c2fe3db9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 实战 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 实战<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/05.KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/Redis_%E5%AE%9E%E6%88%98.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-24 10:45:38" itemprop="dateCreated datePublished" datetime="2020-06-24T10:45:38+08:00">2020-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">KV数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Redis-实战"><a href="#Redis-实战" class="headerlink" title="Redis 实战"></a>Redis 实战</h1><h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>缓存是 Redis 最常见的应用场景。</p>
+<p>Redis 有多种数据类型，以及丰富的操作命令，并且有着高性能、高可用的特性，非常适合用于分布式缓存。</p>
+<blockquote>
+<p>缓存应用的基本原理，请参考 <a href="https://dunwu.github.io/design/distributed/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98.html"><strong>缓存基本原理</strong></a> 第四 ~ 第六节内容。</p>
+</blockquote>
+<h2 id="BitMap-和-BloomFilter"><a href="#BitMap-和-BloomFilter" class="headerlink" title="BitMap 和 BloomFilter"></a>BitMap 和 BloomFilter</h2><p>Redis 除了 5 种基本数据类型外，还支持 BitMap 和 BloomFilter（即布隆过滤器，可以通过 Redis Module 支持）。</p>
+<p>BitMap 和 BloomFilter 都可以用于解决缓存穿透问题。要点在于：过滤一些不可能存在的数据。</p>
+<blockquote>
+<p>什么是缓存穿透，可以参考：<a href="https://dunwu.github.io/design/distributed/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98.html"><strong>缓存基本原理</strong></a></p>
+</blockquote>
+<p>小数据量可以用 BitMap，大数据量可以用布隆过滤器。</p>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><p>使用 Redis 作为分布式锁，基本要点如下：</p>
+<ul>
+<li><strong>互斥性</strong> - 使用 <code>setnx</code> 抢占锁。</li>
+<li><strong>避免永远不释放锁</strong> - 使用 <code>expire</code> 加一个过期时间，避免一直不释放锁，导致阻塞。</li>
+<li><strong>原子性</strong> - setnx 和 expire 必须合并为一个原子指令，避免 setnx 后，机器崩溃，没来得及设置 expire，从而导致锁永不释放。</li>
+</ul>
+<blockquote>
+<p>更多分布式锁的实现方式及细节，请参考：<a href="https://dunwu.github.io/waterdrop/pages/b8f8aeae/">分布式锁基本原理</a></p>
+</blockquote>
+<p>根据 Redis 的特性，在实际应用中，存在一些应用小技巧。</p>
+<h2 id="keys-和-scan"><a href="#keys-和-scan" class="headerlink" title="keys 和 scan"></a>keys 和 scan</h2><p>使用 <code>keys</code> 指令可以扫出指定模式的 key 列表。</p>
+<p>如果这个 redis 正在给线上的业务提供服务，那使用 <code>keys</code> 指令会有什么问题？</p>
+<p>首先，Redis 是单线程的。<code>keys</code> 指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。</p>
+<p>这个时候可以使用 <code>scan</code> 指令，<code>scan</code> 指令可以无阻塞的提取出指定模式的 key 列表，但是会有一定的重复概率，在客户端做一次去重就可以了，但是整体所花费的时间会比直接用 <code>keys</code> 指令长。</p>
+<p>不过，增量式迭代命令也不是没有缺点的： 举个例子， 使用 <code>SMEMBERS</code> 命令可以返回集合键当前包含的所有元素， 但是对于 <code>SCAN</code> 这类增量式迭代命令来说， 因为在对键进行增量式迭代的过程中， 键可能会被修改， 所以增量式迭代命令只能对被返回的元素提供有限的保证 。</p>
+<h2 id="大-Key-如何处理"><a href="#大-Key-如何处理" class="headerlink" title="大 Key 如何处理"></a>大 Key 如何处理</h2><blockquote>
+<p>什么是 Redis Big Key？</p>
+</blockquote>
+<p>Big Key 并不是指 key 的值很大，而是 key 对应的 value 很大。</p>
+<p>一般而言，下面这两种情况被称为Big Key：</p>
+<ul>
+<li>String 类型的值大于 10 KB；</li>
+<li>Hash、List、Set、ZSet 类型的元素的个数超过 5000 个，或总大小超过 10MB</li>
+</ul>
+<blockquote>
+<p>Big Key 会造成什么问题？</p>
+</blockquote>
+<p>Big Key 会带来以下四种影响：</p>
+<ul>
+<li><strong>内存分布不均</strong>：集群模型在 slot 分片均匀情况下，会出现数据和查询倾斜情况，部分有Big Key 的 Redis 节点占用内存多，QPS 也会比较大。</li>
+<li><strong>命令阻塞</strong>：Redis 单线程模型，操作大 Key 耗时，阻塞其他命令。</li>
+<li><strong>网络传输压力</strong>：每次获取Big Key 产生的网络流量较大，如果一个 key 的大小是 1 MB，每秒访问量为 1000，那么每秒会产生 1000MB 的流量，这对于普通千兆网卡的服务器来说是灾难性的。</li>
+<li><strong>客户端超时</strong>：由于 Redis 执行命令是单线程处理，然后在操作Big Key 时会比较耗时，那么就会阻塞 Redis，从客户端这一视角看，就是很久很久都没有响应。</li>
+</ul>
+<blockquote>
+<p>如何找到Big Key ？</p>
+</blockquote>
+<p><strong>（1）使用 <code>redis-cli --bigkeys</code></strong></p>
+<p><strong>命令</strong>：  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 127.0.0.1 -p 6379 -a <span class="string">&quot;password&quot;</span> --bigkeys</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意事项</strong>： </p>
+<ul>
+<li><strong>推荐在从节点执行</strong>（主节点执行可能阻塞业务）</li>
+<li><strong>低峰期执行</strong> 或 <strong>加 <code>-i</code> 参数控制扫描间隔</strong>（如 <code>-i 0.1</code> 表示每 100ms 扫描一次）</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>只能返回<strong>每种数据类型最大的 1 个 Key</strong>（无法获取 Top N）</li>
+<li>对集合类型<strong>只统计元素个数</strong>，而非实际内存占用</li>
+</ul>
+<p><strong>（2）使用 <code>SCAN</code> + 内存分析命令</strong> </p>
+<p><strong>遍历所有 Key</strong>（避免 <code>KEYS *</code> 阻塞 Redis）：  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli --scan --pattern <span class="string">&quot;*&quot;</span> | <span class="keyword">while</span> <span class="built_in">read</span> key; <span class="keyword">do</span> ...; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>分析 Key 大小</strong>：  </p>
+<ul>
+<li><strong>String</strong>：<code>STRLEN $key</code>（字节数） </li>
+<li><strong>集合类型</strong>（List&#x2F;Hash&#x2F;Set&#x2F;ZSet）： <ul>
+<li><strong>方法 1</strong>：<code>LLEN</code>&#x2F;<code>HLEN</code>&#x2F;<code>SCARD</code>&#x2F;<code>ZCARD</code>（元素个数 × 预估元素大小） </li>
+<li><strong>方法 2</strong>（Redis 4.0+）：<code>MEMORY USAGE $key</code>（精确内存占用）</li>
+</ul>
+</li>
+</ul>
+<p><strong>优点</strong>： </p>
+<ul>
+<li>可自定义筛选条件（如大小 Top 10） </li>
+<li>精确计算内存占用</li>
+</ul>
+<p><strong>（3）使用 <code>RdbTools</code> 分析 RDB 文件</strong>  </p>
+<p><strong>命令</strong>：  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rdb dump.rdb -c memory --bytes 10240 -f redis.csv  <span class="comment"># 导出 &gt;10KB 的 Key 到 CSV</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>适用场景</strong>： </p>
+<ul>
+<li>离线分析，不影响线上 Redis</li>
+<li>精准统计<strong>所有 Key 的内存分布</strong></li>
+</ul>
+<p><strong>缺点</strong>：需要 Redis 生成 RDB 快照</p>
+<blockquote>
+<p>如何删除Big Key？</p>
+</blockquote>
+<p>删除操作的本质是要释放键值对占用的内存空间，不要小瞧内存的释放过程。</p>
+<p>释放内存只是第一步，为了更加高效地管理内存空间，在应用程序释放内存时，操作系统需要把释放掉的内存块插入一个空闲内存块的链表，以便后续进行管理和再分配。这个过程本身需要一定时间，而且会阻塞当前释放内存的应用程序。</p>
+<p>所以，如果一下子释放了大量内存，空闲内存块链表操作时间就会增加，相应地就会造成 Redis 主线程的阻塞，如果主线程发生了阻塞，其他所有请求可能都会超时，超时越来越多，会造成 Redis 连接耗尽，产生各种异常。</p>
+<p>因此，删除Big Key 这一个动作，我们要小心。具体要怎么做呢？这里给出两种方法：</p>
+<ul>
+<li>分批次删除</li>
+<li>异步删除（Redis 4.0 版本以上）</li>
+</ul>
+<p><strong><em>1、分批次删除</em></strong></p>
+<p>对于<strong>删除大 Hash</strong>，使用 <code>hscan</code> 命令，每次获取 100 个字段，再用 <code>hdel</code> 命令，每次删除 1 个字段。</p>
+<p>Python 代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">del_large_hash</span>():</span><br><span class="line">  r = redis.StrictRedis(host=<span class="string">&#x27;redis-host1&#x27;</span>, port=<span class="number">6379</span>)</span><br><span class="line">    large_hash_key =<span class="string">&quot;xxx&quot;</span> <span class="comment">#要删除的大hash键名</span></span><br><span class="line">    cursor = <span class="string">&#x27;0&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> cursor != <span class="number">0</span>:</span><br><span class="line">        <span class="comment"># 使用 hscan 命令，每次获取 100 个字段</span></span><br><span class="line">        cursor, data = r.hscan(large_hash_key, cursor=cursor, count=<span class="number">100</span>)</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> data.items():</span><br><span class="line">                <span class="comment"># 再用 hdel 命令，每次删除1个字段</span></span><br><span class="line">                r.hdel(large_hash_key, item[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+
+<p>对于<strong>删除大 List</strong>，通过 <code>ltrim</code> 命令，每次删除少量元素。</p>
+<p>Python 代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">del_large_list</span>():</span><br><span class="line">  r = redis.StrictRedis(host=<span class="string">&#x27;redis-host1&#x27;</span>, port=<span class="number">6379</span>)</span><br><span class="line">  large_list_key = <span class="string">&#x27;xxx&#x27;</span>  <span class="comment">#要删除的大list的键名</span></span><br><span class="line">  <span class="keyword">while</span> r.llen(large_list_key)&gt;<span class="number">0</span>:</span><br><span class="line">      <span class="comment">#每次只删除最右100个元素</span></span><br><span class="line">      r.ltrim(large_list_key, <span class="number">0</span>, -<span class="number">101</span>)</span><br></pre></td></tr></table></figure>
+
+<p>对于<strong>删除大 Set</strong>，使用 <code>sscan</code> 命令，每次扫描集合中 100 个元素，再用 <code>srem</code> 命令每次删除一个键。</p>
+<p>Python 代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">del_large_set</span>():</span><br><span class="line">  r = redis.StrictRedis(host=<span class="string">&#x27;redis-host1&#x27;</span>, port=<span class="number">6379</span>)</span><br><span class="line">  large_set_key = <span class="string">&#x27;xxx&#x27;</span>   <span class="comment"># 要删除的大set的键名</span></span><br><span class="line">  cursor = <span class="string">&#x27;0&#x27;</span></span><br><span class="line">  <span class="keyword">while</span> cursor != <span class="number">0</span>:</span><br><span class="line">    <span class="comment"># 使用 sscan 命令，每次扫描集合中 100 个元素</span></span><br><span class="line">    cursor, data = r.sscan(large_set_key, cursor=cursor, count=<span class="number">100</span>)</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">      <span class="comment"># 再用 srem 命令每次删除一个键</span></span><br><span class="line">      r.srem(large_size_key, item)</span><br></pre></td></tr></table></figure>
+
+<p>对于<strong>删除大 ZSet</strong>，使用 <code>zremrangebyrank</code> 命令，每次删除 top 100 个元素。</p>
+<p>Python 代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">del_large_sortedset</span>():</span><br><span class="line">  r = redis.StrictRedis(host=<span class="string">&#x27;large_sortedset_key&#x27;</span>, port=<span class="number">6379</span>)</span><br><span class="line">  large_sortedset_key=<span class="string">&#x27;xxx&#x27;</span></span><br><span class="line">  <span class="keyword">while</span> r.zcard(large_sortedset_key)&gt;<span class="number">0</span>:</span><br><span class="line">    <span class="comment"># 使用 zremrangebyrank 命令，每次删除 top 100个元素</span></span><br><span class="line">    r.zremrangebyrank(large_sortedset_key,<span class="number">0</span>,<span class="number">99</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong><em>2、异步删除</em></strong></p>
+<p>从 Redis 4.0 版本开始，可以采用<strong>异步删除</strong>法，<strong>用 unlink 命令代替 del 来删除</strong>。</p>
+<p>这样 Redis 会将这个 key 放入到一个异步线程中进行删除，这样不会阻塞主线程。</p>
+<p>除了主动调用 unlink 命令实现异步删除之外，我们还可以通过配置参数，达到某些条件的时候自动进行异步删除。</p>
+<p>主要有 4 种场景，默认都是关闭的：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lazyfree-lazy-eviction no</span><br><span class="line">lazyfree-lazy-expire no</span><br><span class="line">lazyfree-lazy-server-del</span><br><span class="line">noslave-lazy-flush no</span><br></pre></td></tr></table></figure>
+
+<p>它们代表的含义如下：</p>
+<ul>
+<li>lazyfree-lazy-eviction：表示当 Redis 运行内存超过 maxmeory 时，是否开启 lazy free 机制删除；</li>
+<li>lazyfree-lazy-expire：表示设置了过期时间的键值，当过期之后是否开启 lazy free 机制删除；</li>
+<li>lazyfree-lazy-server-del：有些指令在处理已存在的键时，会带有一个隐式的 del 键的操作，比如 rename 命令，当目标键已存在，Redis 会先删除目标键，如果这些目标键是一个 big key，就会造成阻塞删除的问题，此配置表示在这种场景中是否开启 lazy free 机制删除；</li>
+<li>slave-lazy-flush：针对 slave (从节点) 进行全量数据同步，slave 在加载 master 的 RDB 文件前，会运行 flushall 来清理自己的数据，它表示此时是否开启 lazy free 机制删除。</li>
+</ul>
+<p>建议开启其中的 lazyfree-lazy-eviction、lazyfree-lazy-expire、lazyfree-lazy-server-del 等配置，这样就可以有效的提高主线程的执行效率。</p>
+<h2 id="最受欢迎文章"><a href="#最受欢迎文章" class="headerlink" title="最受欢迎文章"></a>最受欢迎文章</h2><p>选出最受欢迎文章，需要支持对文章进行评分。</p>
+<h3 id="对文章进行投票"><a href="#对文章进行投票" class="headerlink" title="对文章进行投票"></a>对文章进行投票</h3><p>（1）使用 HASH 存储文章</p>
+<p>使用 <code>HASH</code> 类型存储文章信息。其中：key 是文章 ID；field 是文章的属性 key；value 是属性对应值。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225143038.jpg" alt="img"></p>
+<p>操作：</p>
+<ul>
+<li>存储文章信息 - 使用 <code>HSET</code> 或 <code>HMGET</code> 命令</li>
+<li>查询文章信息 - 使用 <code>HGETALL</code> 命令</li>
+<li>添加投票 - 使用 <code>HINCRBY</code> 命令</li>
+</ul>
+<p>（2）使用 <code>ZSET</code> 针对不同维度集合排序</p>
+<p>使用 <code>ZSET</code> 类型分别存储按照时间排序和按照评分排序的文章 ID 集合。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225145742.jpg" alt="img"></p>
+<p>操作：</p>
+<ul>
+<li>添加记录 - 使用 <code>ZADD</code> 命令</li>
+<li>添加分数 - 使用 <code>ZINCRBY</code> 命令</li>
+<li>取出多篇文章 - 使用 <code>ZREVRANGE</code> 命令</li>
+</ul>
+<p>（3）为了防止重复投票，使用 <code>SET</code> 类型记录每篇文章 ID 对应的投票集合。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225150105.jpg" alt="img"></p>
+<p>操作：</p>
+<ul>
+<li>添加投票者 - 使用 <code>SADD</code> 命令</li>
+<li>设置有效期 - 使用 <code>EXPIRE</code> 命令</li>
+</ul>
+<p>（4）假设 user:115423 给 article:100408 投票，分别需要高更新评分排序集合以及投票集合。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225150138.jpg" alt="img"></p>
+<p>当需要对一篇文章投票时，程序需要用 ZSCORE 命令检查记录文章发布时间的有序集合，判断文章的发布时间是否超过投票有效期（比如：一星期）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">articleVote</span><span class="params">(Jedis conn, String user, String article)</span> &#123;</span><br><span class="line">    <span class="comment">// 计算文章的投票截止时间。</span></span><br><span class="line">    <span class="type">long</span> <span class="variable">cutoff</span> <span class="operator">=</span> (System.currentTimeMillis() / <span class="number">1000</span>) - ONE_WEEK_IN_SECONDS;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查是否还可以对文章进行投票</span></span><br><span class="line">    <span class="comment">// （虽然使用散列也可以获取文章的发布时间，</span></span><br><span class="line">    <span class="comment">// 但有序集合返回的文章发布时间为浮点数，</span></span><br><span class="line">    <span class="comment">// 可以不进行转换直接使用）。</span></span><br><span class="line">    <span class="keyword">if</span> (conn.zscore(<span class="string">&quot;time:&quot;</span>, article) &lt; cutoff) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从article:id标识符（identifier）里面取出文章的ID。</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">articleId</span> <span class="operator">=</span> article.substring(article.indexOf(<span class="string">&#x27;:&#x27;</span>) + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果用户是第一次为这篇文章投票，那么增加这篇文章的投票数量和评分。</span></span><br><span class="line">    <span class="keyword">if</span> (conn.sadd(<span class="string">&quot;voted:&quot;</span> + articleId, user) == <span class="number">1</span>) &#123;</span><br><span class="line">        conn.zincrby(<span class="string">&quot;score:&quot;</span>, VOTE_SCORE, article);</span><br><span class="line">        conn.hincrBy(article, <span class="string">&quot;votes&quot;</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="发布并获取文章"><a href="#发布并获取文章" class="headerlink" title="发布并获取文章"></a>发布并获取文章</h3><p>发布文章：</p>
+<ul>
+<li>添加文章 - 使用 <code>INCR</code> 命令计算新的文章 ID，填充文章信息，然后用 <code>HSET</code> 命令或 <code>HMSET</code> 命令写入到 <code>HASH</code> 结构中。</li>
+<li>将文章作者 ID 添加到投票名单 - 使用 <code>SADD</code> 命令添加到代表投票名单的 <code>SET</code> 结构中。</li>
+<li>设置投票有效期 - 使用 <code>EXPIRE</code> 命令设置投票有效期。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">postArticle</span><span class="params">(Jedis conn, String user, String title, String link)</span> &#123;</span><br><span class="line">    <span class="comment">// 生成一个新的文章ID。</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">articleId</span> <span class="operator">=</span> String.valueOf(conn.incr(<span class="string">&quot;article:&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">voted</span> <span class="operator">=</span> <span class="string">&quot;voted:&quot;</span> + articleId;</span><br><span class="line">    <span class="comment">// 将发布文章的用户添加到文章的已投票用户名单里面，</span></span><br><span class="line">    conn.sadd(voted, user);</span><br><span class="line">    <span class="comment">// 然后将这个名单的过期时间设置为一周（第3章将对过期时间作更详细的介绍）。</span></span><br><span class="line">    conn.expire(voted, ONE_WEEK_IN_SECONDS);</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> <span class="variable">now</span> <span class="operator">=</span> System.currentTimeMillis() / <span class="number">1000</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">article</span> <span class="operator">=</span> <span class="string">&quot;article:&quot;</span> + articleId;</span><br><span class="line">    <span class="comment">// 将文章信息存储到一个散列里面。</span></span><br><span class="line">    HashMap&lt;String, String&gt; articleData = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;String, String&gt;();</span><br><span class="line">    articleData.put(<span class="string">&quot;title&quot;</span>, title);</span><br><span class="line">    articleData.put(<span class="string">&quot;link&quot;</span>, link);</span><br><span class="line">    articleData.put(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">    articleData.put(<span class="string">&quot;now&quot;</span>, String.valueOf(now));</span><br><span class="line">    articleData.put(<span class="string">&quot;votes&quot;</span>, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">    conn.hmset(article, articleData);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将文章添加到根据发布时间排序的有序集合和根据评分排序的有序集合里面。</span></span><br><span class="line">    conn.zadd(<span class="string">&quot;score:&quot;</span>, now + VOTE_SCORE, article);</span><br><span class="line">    conn.zadd(<span class="string">&quot;time:&quot;</span>, now, article);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> articleId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分页查询最受欢迎文章：</p>
+<p>使用 <code>ZINTERSTORE</code> 命令根据页码、每页记录数、排序号，根据评分值从大到小分页查出文章 ID 列表。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;Map&lt;String, String&gt;&gt; <span class="title function_">getArticles</span><span class="params">(Jedis conn, <span class="type">int</span> page, String order)</span> &#123;</span><br><span class="line">    <span class="comment">// 设置获取文章的起始索引和结束索引。</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">start</span> <span class="operator">=</span> (page - <span class="number">1</span>) * ARTICLES_PER_PAGE;</span><br><span class="line">    <span class="type">int</span> <span class="variable">end</span> <span class="operator">=</span> start + ARTICLES_PER_PAGE - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取多个文章ID。</span></span><br><span class="line">    Set&lt;String&gt; ids = conn.zrevrange(order, start, end);</span><br><span class="line">    List&lt;Map&lt;String, String&gt;&gt; articles = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="comment">// 根据文章ID获取文章的详细信息。</span></span><br><span class="line">    <span class="keyword">for</span> (String id : ids) &#123;</span><br><span class="line">        Map&lt;String, String&gt; articleData = conn.hgetAll(id);</span><br><span class="line">        articleData.put(<span class="string">&quot;id&quot;</span>, id);</span><br><span class="line">        articles.add(articleData);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> articles;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="对文章进行分组"><a href="#对文章进行分组" class="headerlink" title="对文章进行分组"></a>对文章进行分组</h3><p>如果文章需要分组，功能需要分为两块：</p>
+<ul>
+<li>记录文章属于哪个群组</li>
+<li>负责取出群组里的文章</li>
+</ul>
+<p>将文章添加、删除群组：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addRemoveGroups</span><span class="params">(Jedis conn, String articleId, String[] toAdd, String[] toRemove)</span> &#123;</span><br><span class="line">    <span class="comment">// 构建存储文章信息的键名。</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">article</span> <span class="operator">=</span> <span class="string">&quot;article:&quot;</span> + articleId;</span><br><span class="line">    <span class="comment">// 将文章添加到它所属的群组里面。</span></span><br><span class="line">    <span class="keyword">for</span> (String group : toAdd) &#123;</span><br><span class="line">        conn.sadd(<span class="string">&quot;group:&quot;</span> + group, article);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 从群组里面移除文章。</span></span><br><span class="line">    <span class="keyword">for</span> (String group : toRemove) &#123;</span><br><span class="line">        conn.srem(<span class="string">&quot;group:&quot;</span> + group, article);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>取出群组里的文章：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200225214210.jpg" alt="img"></p>
+<ul>
+<li>通过对存储群组文章的集合和存储文章评分的有序集合执行 <code>ZINTERSTORE</code> 命令，可以得到按照文章评分排序的群组文章。</li>
+<li>通过对存储群组文章的集合和存储文章发布时间的有序集合执行 <code>ZINTERSTORE</code> 命令，可以得到按照文章发布时间排序的群组文章。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;Map&lt;String, String&gt;&gt; <span class="title function_">getGroupArticles</span><span class="params">(Jedis conn, String group, <span class="type">int</span> page, String order)</span> &#123;</span><br><span class="line">    <span class="comment">// 为每个群组的每种排列顺序都创建一个键。</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> order + group;</span><br><span class="line">    <span class="comment">// 检查是否有已缓存的排序结果，如果没有的话就现在进行排序。</span></span><br><span class="line">    <span class="keyword">if</span> (!conn.exists(key)) &#123;</span><br><span class="line">        <span class="comment">// 根据评分或者发布时间，对群组文章进行排序。</span></span><br><span class="line">        <span class="type">ZParams</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ZParams</span>().aggregate(ZParams.Aggregate.MAX);</span><br><span class="line">        conn.zinterstore(key, params, <span class="string">&quot;group:&quot;</span> + group, order);</span><br><span class="line">        <span class="comment">// 让Redis在60秒钟之后自动删除这个有序集合。</span></span><br><span class="line">        conn.expire(key, <span class="number">60</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 调用之前定义的getArticles函数来进行分页并获取文章数据。</span></span><br><span class="line">    <span class="keyword">return</span> getArticles(conn, page, key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="管理令牌"><a href="#管理令牌" class="headerlink" title="管理令牌"></a>管理令牌</h2><p>网站一般会以 Cookie、Session、令牌这类信息存储用户身份信息。</p>
+<p>可以将 Cookie&#x2F;Session&#x2F;令牌 和用户的映射关系存储在 <code>HASH</code> 结构。</p>
+<p>下面以令牌来举例。</p>
+<h3 id="查询令牌"><a href="#查询令牌" class="headerlink" title="查询令牌"></a>查询令牌</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">checkToken</span><span class="params">(Jedis conn, String token)</span> &#123;</span><br><span class="line">    <span class="comment">// 尝试获取并返回令牌对应的用户。</span></span><br><span class="line">    <span class="keyword">return</span> conn.hget(<span class="string">&quot;login:&quot;</span>, token);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="更新令牌"><a href="#更新令牌" class="headerlink" title="更新令牌"></a>更新令牌</h3><ul>
+<li>用户每次访问页面，可以记录下令牌和当前时间戳的映射关系，存入一个 <code>ZSET</code> 结构中，以便分析用户是否活跃，继而可以周期性清理最老的令牌，统计当前在线用户数等行为。</li>
+<li>用户如果正在浏览商品，可以记录到用户最近浏览过的商品有序集合中（集合可以限定数量，超过数量进行裁剪），存入到一个 <code>ZSET</code> 结构中，以便分析用户最近可能感兴趣的商品，以便推荐商品。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateToken</span><span class="params">(Jedis conn, String token, String user, String item)</span> &#123;</span><br><span class="line">    <span class="comment">// 获取当前时间戳。</span></span><br><span class="line">    <span class="type">long</span> <span class="variable">timestamp</span> <span class="operator">=</span> System.currentTimeMillis() / <span class="number">1000</span>;</span><br><span class="line">    <span class="comment">// 维持令牌与已登录用户之间的映射。</span></span><br><span class="line">    conn.hset(<span class="string">&quot;login:&quot;</span>, token, user);</span><br><span class="line">    <span class="comment">// 记录令牌最后一次出现的时间。</span></span><br><span class="line">    conn.zadd(<span class="string">&quot;recent:&quot;</span>, timestamp, token);</span><br><span class="line">    <span class="keyword">if</span> (item != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 记录用户浏览过的商品。</span></span><br><span class="line">        conn.zadd(<span class="string">&quot;viewed:&quot;</span> + token, timestamp, item);</span><br><span class="line">        <span class="comment">// 移除旧的记录，只保留用户最近浏览过的25个商品。</span></span><br><span class="line">        conn.zremrangeByRank(<span class="string">&quot;viewed:&quot;</span> + token, <span class="number">0</span>, -<span class="number">26</span>);</span><br><span class="line">        conn.zincrby(<span class="string">&quot;viewed:&quot;</span>, -<span class="number">1</span>, item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="清理令牌"><a href="#清理令牌" class="headerlink" title="清理令牌"></a>清理令牌</h3><p>上一节提到，更新令牌时，将令牌和当前时间戳的映射关系，存入一个 <code>ZSET</code> 结构中。所以可以通过排序得知哪些令牌最老。如果没有清理操作，更新令牌占用的内存会不断膨胀，直到导致机器宕机。</p>
+<p>比如：最多允许存储 1000 万条令牌信息，周期性检查，一旦发现记录数超出 1000 万条，将 ZSET 从新到老排序，将超出 1000 万条的记录清除。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">CleanSessionsThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Jedis conn;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> limit;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="type">boolean</span> quit;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">CleanSessionsThread</span><span class="params">(<span class="type">int</span> limit)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.conn = <span class="keyword">new</span> <span class="title class_">Jedis</span>(<span class="string">&quot;localhost&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.conn.select(<span class="number">15</span>);</span><br><span class="line">        <span class="built_in">this</span>.limit = limit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">quit</span><span class="params">()</span> &#123;</span><br><span class="line">        quit = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (!quit) &#123;</span><br><span class="line">            <span class="comment">// 找出目前已有令牌的数量。</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">size</span> <span class="operator">=</span> conn.zcard(<span class="string">&quot;recent:&quot;</span>);</span><br><span class="line">            <span class="comment">// 令牌数量未超过限制，休眠并在之后重新检查。</span></span><br><span class="line">            <span class="keyword">if</span> (size &lt;= limit) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException ie) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 获取需要移除的令牌ID。</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">endIndex</span> <span class="operator">=</span> Math.min(size - limit, <span class="number">100</span>);</span><br><span class="line">            Set&lt;String&gt; tokenSet = conn.zrange(<span class="string">&quot;recent:&quot;</span>, <span class="number">0</span>, endIndex - <span class="number">1</span>);</span><br><span class="line">            String[] tokens = tokenSet.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[tokenSet.size()]);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 为那些将要被删除的令牌构建键名。</span></span><br><span class="line">            ArrayList&lt;String&gt; sessionKeys = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;();</span><br><span class="line">            <span class="keyword">for</span> (String token : tokens) &#123;</span><br><span class="line">                sessionKeys.add(<span class="string">&quot;viewed:&quot;</span> + token);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 移除最旧的那些令牌。</span></span><br><span class="line">            conn.del(sessionKeys.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[sessionKeys.size()]));</span><br><span class="line">            conn.hdel(<span class="string">&quot;login:&quot;</span>, tokens);</span><br><span class="line">            conn.zrem(<span class="string">&quot;recent:&quot;</span>, tokens);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11791607.html">《Redis 实战》</a></li>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11486101.html">《Redis 设计与实现》</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/c2fe3db9/" title="Redis 实战">https://dunwu.github.io/blog/pages/c2fe3db9/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># KV数据库</a>
+              <a href="/blog/tags/redis/" rel="tag"># redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/a57cb309/" rel="prev" title="Redis 持久化">
+                  <i class="fa fa-angle-left"></i> Redis 持久化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/20a5fe12/" rel="next" title="Redis 复制">
+                  Redis 复制 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"4a0958272261d140a51b8fbf4b641ba5"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

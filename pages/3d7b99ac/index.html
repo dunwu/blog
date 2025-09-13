@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Elasticsearch 优化Elasticsearch 是当前流行的企业级搜索引擎，设计用于云计算中，能够达到实时搜索，稳定，可靠，快速，安装使用方便。作为一个开箱即用的产品，在生产环境上线之后，我们其实不一定能确保其的性能和稳定性。如何根据实际情况提高服务的性能，其实有很多技巧。这章我们分享从实战经验中总结出来的 elasticsearch 性能优化，主要从硬件配置优化、索引优化设置、查询方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch 优化">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/3d7b99ac/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Elasticsearch 优化Elasticsearch 是当前流行的企业级搜索引擎，设计用于云计算中，能够达到实时搜索，稳定，可靠，快速，安装使用方便。作为一个开箱即用的产品，在生产环境上线之后，我们其实不一定能确保其的性能和稳定性。如何根据实际情况提高服务的性能，其实有很多技巧。这章我们分享从实战经验中总结出来的 elasticsearch 性能优化，主要从硬件配置优化、索引优化设置、查询方">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-21T11:54:43.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.739Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="搜索引擎数据库">
+<meta property="article:tag" content="elasticsearch">
+<meta property="article:tag" content="性能">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/3d7b99ac/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/3d7b99ac/","path":"/pages/3d7b99ac/","title":"Elasticsearch 优化"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Elasticsearch 优化 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Elasticsearch-%E4%BC%98%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">Elasticsearch 优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">硬件配置优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.1.</span> <span class="nav-text">CPU 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">内存配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">内存分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2-swap"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">禁止 swap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC-%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">GC 设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98"><span class="nav-number">1.1.3.</span> <span class="nav-text">磁盘</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">索引优化设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E6%8F%90%E4%BA%A4"><span class="nav-number">1.2.1.</span> <span class="nav-text">批量提交</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0-Refresh-%E6%97%B6%E9%97%B4%E9%97%B4%E9%9A%94"><span class="nav-number">1.2.2.</span> <span class="nav-text">增加 Refresh 时间间隔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-index-buffer-size-%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.2.3.</span> <span class="nav-text">修改 index_buffer_size 的设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-translog-%E7%9B%B8%E5%85%B3%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.2.4.</span> <span class="nav-text">修改 translog 相关的设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F-id-%E5%AD%97%E6%AE%B5%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.5.</span> <span class="nav-text">注意 _id 字段的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F-all-%E5%AD%97%E6%AE%B5%E5%8F%8A-source-%E5%AD%97%E6%AE%B5%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.6.</span> <span class="nav-text">注意 _all 字段及 _source 字段的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E7%90%86%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8-index-%E5%B1%9E%E6%80%A7"><span class="nav-number">1.2.7.</span> <span class="nav-text">合理的配置使用 index 属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E5%89%AF%E6%9C%AC%E6%95%B0%E9%87%8F"><span class="nav-number">1.2.8.</span> <span class="nav-text">减少副本数量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%96%B9%E9%9D%A2%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">查询方面优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">路由优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%B8%A6-routing-%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">不带 routing 查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%A6-routing-%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">带 routing 查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Filter-VS-Query"><span class="nav-number">1.3.2.</span> <span class="nav-text">Filter VS Query</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E7%BF%BB%E9%A1%B5"><span class="nav-number">1.3.3.</span> <span class="nav-text">深度翻页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%EF%BC%88script%EF%BC%89%E5%90%88%E7%90%86%E4%BD%BF%E7%94%A8"><span class="nav-number">1.3.4.</span> <span class="nav-text">脚本（script）合理使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">数据结构优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%BD%E9%87%8F%E5%87%8F%E5%B0%91%E4%B8%8D%E9%9C%80%E8%A6%81%E7%9A%84%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.</span> <span class="nav-text">尽量减少不需要的字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nested-Object-vs-Parent-Child"><span class="nav-number">1.4.2.</span> <span class="nav-text">Nested Object vs Parent&#x2F;Child</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E9%9D%99%E6%80%81%E6%98%A0%E5%B0%84%EF%BC%8C%E9%9D%9E%E5%BF%85%E9%9C%80%E6%97%B6%EF%BC%8C%E7%A6%81%E6%AD%A2%E5%8A%A8%E6%80%81%E6%98%A0%E5%B0%84"><span class="nav-number">1.4.3.</span> <span class="nav-text">选择静态映射，非必需时，禁止动态映射</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.5.</span> <span class="nav-text">集群架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9%E3%80%81%E6%95%B0%E6%8D%AE%E8%8A%82%E7%82%B9%E5%92%8C%E5%8D%8F%E8%B0%83%E8%8A%82%E7%82%B9%E5%88%86%E7%A6%BB"><span class="nav-number">1.5.1.</span> <span class="nav-text">主节点、数据节点和协调节点分离</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%EF%BC%88master%EF%BC%89%E8%8A%82%E7%82%B9"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">主（master）节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%EF%BC%88data%EF%BC%89%E8%8A%82%E7%82%B9"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">数据（data）节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E8%B0%83%EF%BC%88coordinating%EF%BC%89%E8%8A%82%E7%82%B9"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">协调（coordinating）节点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%AD-data-%E8%8A%82%E7%82%B9%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%AD%E7%9A%84-http-%E5%8A%9F%E8%83%BD"><span class="nav-number">1.5.2.</span> <span class="nav-text">关闭 data 节点服务器中的 http 功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E6%9C%80%E5%A5%BD%E5%8F%AA%E9%83%A8%E7%BD%B2%E4%B8%80%E4%B8%AA-node"><span class="nav-number">1.5.3.</span> <span class="nav-text">一台服务器上最好只部署一个 node</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%88%86%E7%89%87%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.5.4.</span> <span class="nav-text">集群分片设置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/3d7b99ac/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Elasticsearch 优化 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Elasticsearch 优化<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/07.%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/elasticsearch/Elasticsearch_%E4%BC%98%E5%8C%96.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-21 19:54:43" itemprop="dateCreated datePublished" datetime="2022-01-21T19:54:43+08:00">2022-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">搜索引擎数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/elasticsearch/" itemprop="url" rel="index"><span itemprop="name">elasticsearch</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Elasticsearch-优化"><a href="#Elasticsearch-优化" class="headerlink" title="Elasticsearch 优化"></a>Elasticsearch 优化</h1><p>Elasticsearch 是当前流行的企业级搜索引擎，设计用于云计算中，能够达到实时搜索，稳定，可靠，快速，安装使用方便。作为一个开箱即用的产品，在生产环境上线之后，我们其实不一定能确保其的性能和稳定性。如何根据实际情况提高服务的性能，其实有很多技巧。这章我们分享从实战经验中总结出来的 elasticsearch 性能优化，主要从硬件配置优化、索引优化设置、查询方面优化、数据结构优化、集群架构优化等方面讲解。</p>
+<h2 id="硬件配置优化"><a href="#硬件配置优化" class="headerlink" title="硬件配置优化"></a>硬件配置优化</h2><p>升级硬件设备配置一直都是提高服务能力最快速有效的手段，在系统层面能够影响应用性能的一般包括三个因素：CPU、内存和 IO，可以从这三方面进行 ES 的性能优化工作。</p>
+<h3 id="CPU-配置"><a href="#CPU-配置" class="headerlink" title="CPU 配置"></a>CPU 配置</h3><p>一般说来，CPU 繁忙的原因有以下几个：</p>
+<ol>
+<li>线程中有无限空循环、无阻塞、正则匹配或者单纯的计算；</li>
+<li>发生了频繁的 GC；</li>
+<li>多线程的上下文切换；</li>
+</ol>
+<p>大多数 Elasticsearch 部署往往对 CPU 要求不高。因此，相对其它资源，具体配置多少个（CPU）不是那么关键。你应该选择具有多个内核的现代处理器，常见的集群使用 2 到 8 个核的机器。<strong>如果你要在更快的 CPUs 和更多的核数之间选择，选择更多的核数更好</strong>。多个内核提供的额外并发远胜过稍微快一点点的时钟频率。</p>
+<h3 id="内存配置"><a href="#内存配置" class="headerlink" title="内存配置"></a>内存配置</h3><p>如果有一种资源是最先被耗尽的，它可能是内存。排序和聚合都很耗内存，所以有足够的堆空间来应付它们是很重要的。即使堆空间是比较小的时候，也能为操作系统文件缓存提供额外的内存。因为 Lucene 使用的许多数据结构是基于磁盘的格式，Elasticsearch 利用操作系统缓存能产生很大效果。</p>
+<p><strong>64 GB 内存的机器是非常理想的</strong>，但是 32 GB 和 16 GB 机器也是很常见的。少于 8 GB 会适得其反（你最终需要很多很多的小机器），大于 64 GB 的机器也会有问题。</p>
+<p>由于 ES 构建基于 lucene，而 lucene 设计强大之处在于 lucene 能够很好的利用操作系统内存来缓存索引数据，以提供快速的查询性能。lucene 的索引文件 segements 是存储在单文件中的，并且不可变，对于 OS 来说，能够很友好地将索引文件保持在 cache 中，以便快速访问；因此，我们很有必要将一半的物理内存留给 lucene；另一半的物理内存留给 ES（JVM heap）。</p>
+<h4 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h4><p>当机器内存小于 64G 时，遵循通用的原则，50% 给 ES，50% 留给 lucene。</p>
+<p>当机器内存大于 64G 时，遵循以下原则：</p>
+<ul>
+<li>如果主要的使用场景是全文检索，那么建议给 ES Heap 分配 4~32G 的内存即可；其它内存留给操作系统，供 lucene 使用（segments cache），以提供更快的查询性能。</li>
+<li>如果主要的使用场景是聚合或排序，并且大多数是 numerics，dates，geo_points 以及 not_analyzed 的字符类型，建议分配给 ES Heap 分配 4~32G 的内存即可，其它内存留给操作系统，供 lucene 使用，提供快速的基于文档的聚类、排序性能。</li>
+<li>如果使用场景是聚合或排序，并且都是基于 analyzed 字符数据，这时需要更多的 heap size，建议机器上运行多 ES 实例，每个实例保持不超过 50% 的 ES heap 设置（但不超过 32 G，堆内存设置 32 G 以下时，JVM 使用对象指标压缩技巧节省空间），50% 以上留给 lucene。</li>
+</ul>
+<h4 id="禁止-swap"><a href="#禁止-swap" class="headerlink" title="禁止 swap"></a>禁止 swap</h4><p>禁止 swap，一旦允许内存与磁盘的交换，会引起致命的性能问题。可以通过在 elasticsearch.yml 中 <code>bootstrap.memory_lock: true</code>，以保持 JVM 锁定内存，保证 ES 的性能。</p>
+<h4 id="GC-设置"><a href="#GC-设置" class="headerlink" title="GC 设置"></a>GC 设置</h4><p>保持 GC 的现有设置，默认设置为：Concurrent-Mark and Sweep（CMS），别换成 G1 GC，因为目前 G1 还有很多 BUG。</p>
+<p>保持线程池的现有设置，目前 ES 的线程池较 1.X 有了较多优化设置，保持现状即可；默认线程池大小等于 CPU 核心数。如果一定要改，按公式 ( ( CPU 核心数 * 3 ) &#x2F; 2 ) + 1 设置；不能超过 CPU 核心数的 2 倍；但是不建议修改默认配置，否则会对 CPU 造成硬伤。</p>
+<h3 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h3><p>硬盘对所有的集群都很重要，对大量写入的集群更是加倍重要（例如那些存储日志数据的）。硬盘是服务器上最慢的子系统，这意味着那些写入量很大的集群很容易让硬盘饱和，使得它成为集群的瓶颈。</p>
+<p><strong>在经济压力能承受的范围下，尽量使用固态硬盘（SSD）</strong>。固态硬盘相比于任何旋转介质（机械硬盘，磁带等），无论随机写还是顺序写，都会对 IO 有较大的提升。</p>
+<blockquote>
+<p>如果你正在使用 SSDs，确保你的系统 I&#x2F;O 调度程序是配置正确的。当你向硬盘写数据，I&#x2F;O 调度程序决定何时把数据实际发送到硬盘。大多数默认 *nix 发行版下的调度程序都叫做 cfq（完全公平队列）。</p>
+<p>调度程序分配时间片到每个进程。并且优化这些到硬盘的众多队列的传递。但它是为旋转介质优化的：机械硬盘的固有特性意味着它写入数据到基于物理布局的硬盘会更高效。</p>
+<p>这对 SSD 来说是低效的，尽管这里没有涉及到机械硬盘。但是，deadline 或者 noop 应该被使用。deadline 调度程序基于写入等待时间进行优化，noop 只是一个简单的 FIFO 队列。</p>
+<p>这个简单的更改可以带来显著的影响。仅仅是使用正确的调度程序，我们看到了 500 倍的写入能力提升。</p>
+</blockquote>
+<p><strong>如果你使用旋转介质（如机械硬盘），尝试获取尽可能快的硬盘（高性能服务器硬盘，15k RPM 驱动器）</strong>。</p>
+<p><strong>使用 RAID0 是提高硬盘速度的有效途径，对机械硬盘和 SSD 来说都是如此</strong>。没有必要使用镜像或其它 RAID 变体，因为 Elasticsearch 在自身层面通过副本，已经提供了备份的功能，所以不需要利用磁盘的备份功能，同时如果使用磁盘备份功能的话，对写入速度有较大的影响。</p>
+<p><strong>最后，避免使用网络附加存储（NAS）</strong>。人们常声称他们的 NAS 解决方案比本地驱动器更快更可靠。除却这些声称，我们从没看到 NAS 能配得上它的大肆宣传。NAS 常常很慢，显露出更大的延时和更宽的平均延时方差，而且它是单点故障的。</p>
+<h2 id="索引优化设置"><a href="#索引优化设置" class="headerlink" title="索引优化设置"></a>索引优化设置</h2><p>索引优化主要是在 Elasticsearch 的插入层面优化，Elasticsearch 本身索引速度其实还是蛮快的，具体数据，我们可以参考官方的 benchmark 数据。我们可以根据不同的需求，针对索引优化。</p>
+<h3 id="批量提交"><a href="#批量提交" class="headerlink" title="批量提交"></a>批量提交</h3><p>当有大量数据提交的时候，建议采用批量提交（Bulk 操作）；此外使用 bulk 请求时，每个请求不超过几十 M，因为太大会导致内存使用过大。</p>
+<p>比如在做 ELK 过程中，Logstash indexer 提交数据到 Elasticsearch 中，batch size 就可以作为一个优化功能点。但是优化 size 大小需要根据文档大小和服务器性能而定。</p>
+<p>像 Logstash 中提交文档大小超过 20MB，Logstash 会将一个批量请求切分为多个批量请求。</p>
+<p>如果在提交过程中，遇到 EsRejectedExecutionException 异常的话，则说明集群的索引性能已经达到极限了。这种情况，要么提高服务器集群的资源，要么根据业务规则，减少数据收集速度，比如只收集 Warn、Error 级别以上的日志。</p>
+<h3 id="增加-Refresh-时间间隔"><a href="#增加-Refresh-时间间隔" class="headerlink" title="增加 Refresh 时间间隔"></a>增加 Refresh 时间间隔</h3><p>为了提高索引性能，Elasticsearch 在写入数据的时候，采用延迟写入的策略，即数据先写到内存中，当超过默认 1 秒（index.refresh_interval）会进行一次写入操作，就是将内存中 segment 数据刷新到磁盘中，此时我们才能将数据搜索出来，所以这就是为什么 Elasticsearch 提供的是近实时搜索功能，而不是实时搜索功能。</p>
+<p>如果我们的系统对数据延迟要求不高的话，我们<strong>可以通过延长 refresh 时间间隔，可以有效地减少 segment 合并压力，提高索引速度</strong>。比如在做全链路跟踪的过程中，我们就将 <code>index.refresh_interval</code> 设置为 30s，减少 refresh 次数。再如，在进行全量索引时，可以将 refresh 次数临时关闭，即 <code>index.refresh_interval</code> 设置为-1，数据导入成功后再打开到正常模式，比如 30s。</p>
+<blockquote>
+<p>在加载大量数据时候可以暂时不用 refresh 和 repliccas，index.refresh_interval 设置为-1，index.number_of_replicas 设置为 0。</p>
+</blockquote>
+<h3 id="修改-index-buffer-size-的设置"><a href="#修改-index-buffer-size-的设置" class="headerlink" title="修改 index_buffer_size 的设置"></a>修改 index_buffer_size 的设置</h3><p>索引缓冲的设置可以控制多少内存分配给索引进程。这是一个全局配置，会应用于一个节点上所有不同的分片上。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">indices.memory.index_buffer_size:</span> <span class="number">10</span><span class="string">%</span></span><br><span class="line"><span class="attr">indices.memory.min_index_buffer_size:</span> <span class="string">48mb</span></span><br></pre></td></tr></table></figure>
+
+<p><code>indices.memory.index_buffer_size</code> 接受一个百分比或者一个表示字节大小的值。默认是 10%，意味着分配给节点的总内存的 10%用来做索引缓冲的大小。这个数值被分到不同的分片（shards）上。如果设置的是百分比，还可以设置 <code>min_index_buffer_size</code> （默认 48mb）和 <code>max_index_buffer_size</code>（默认没有上限）。</p>
+<h3 id="修改-translog-相关的设置"><a href="#修改-translog-相关的设置" class="headerlink" title="修改 translog 相关的设置"></a>修改 translog 相关的设置</h3><p>一是控制数据从内存到硬盘的操作频率，以减少硬盘 IO。可将 sync_interval 的时间设置大一些。默认为 5s。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">index.translog.sync_interval:</span> <span class="string">5s</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以控制 tranlog 数据块的大小，达到 threshold 大小时，才会 flush 到 lucene 索引文件。默认为 512m。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">index.translog.flush_threshold_size:</span> <span class="string">512mb</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="注意-id-字段的使用"><a href="#注意-id-字段的使用" class="headerlink" title="注意 _id 字段的使用"></a>注意 <code>_id</code> 字段的使用</h3><p><code>_id</code> 字段的使用，应尽可能避免自定义 <code>_id</code>，以避免针对 ID 的版本管理；建议使用 ES 的默认 ID 生成策略或使用数字类型 ID 做为主键。</p>
+<h3 id="注意-all-字段及-source-字段的使用"><a href="#注意-all-字段及-source-字段的使用" class="headerlink" title="注意 _all 字段及 _source 字段的使用"></a>注意 _all 字段及 _source 字段的使用</h3><p>**_**all 字段及 _source 字段的使用，应该注意场景和需要，_all 字段包含了所有的索引字段，方便做全文检索，如果无此需求，可以禁用；_source 存储了原始的 document 内容，如果没有获取原始文档数据的需求，可通过设置 includes、excludes 属性来定义放入 _source 的字段。</p>
+<h3 id="合理的配置使用-index-属性"><a href="#合理的配置使用-index-属性" class="headerlink" title="合理的配置使用 index 属性"></a>合理的配置使用 index 属性</h3><p>合理的配置使用 index 属性，analyzed 和 not_analyzed，根据业务需求来控制字段是否分词或不分词。只有 groupby 需求的字段，配置时就设置成 not_analyzed，以提高查询或聚类的效率。</p>
+<h3 id="减少副本数量"><a href="#减少副本数量" class="headerlink" title="减少副本数量"></a>减少副本数量</h3><p>Elasticsearch 默认副本数量为 3 个，虽然这样会提高集群的可用性，增加搜索的并发数，但是同时也会影响写入索引的效率。</p>
+<p>在索引过程中，需要把更新的文档发到副本节点上，等副本节点生效后在进行返回结束。使用 Elasticsearch 做业务搜索的时候，建议副本数目还是设置为 3 个，但是像内部 ELK 日志系统、分布式跟踪系统中，完全可以将副本数目设置为 1 个。</p>
+<h2 id="查询方面优化"><a href="#查询方面优化" class="headerlink" title="查询方面优化"></a>查询方面优化</h2><p>Elasticsearch 作为业务搜索的近实时查询时，查询效率的优化显得尤为重要。</p>
+<h3 id="路由优化"><a href="#路由优化" class="headerlink" title="路由优化"></a>路由优化</h3><p>当我们查询文档的时候，Elasticsearch 如何知道一个文档应该存放到哪个分片中呢？它其实是通过下面这个公式来计算出来的。</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">shard</span> <span class="operator">=</span> hash(routing) % number_of_primary_shards</span><br></pre></td></tr></table></figure>
+
+<p>routing 默认值是文档的 id，也可以采用自定义值，比如用户 ID。</p>
+<h4 id="不带-routing-查询"><a href="#不带-routing-查询" class="headerlink" title="不带 routing 查询"></a>不带 routing 查询</h4><p>在查询的时候因为不知道要查询的数据具体在哪个分片上，所以整个过程分为 2 个步骤：</p>
+<ol>
+<li>分发：请求到达协调节点后，协调节点将查询请求分发到每个分片上。</li>
+<li>聚合：协调节点搜集到每个分片上查询结果，再将查询的结果进行排序，之后给用户返回结果。</li>
+</ol>
+<h4 id="带-routing-查询"><a href="#带-routing-查询" class="headerlink" title="带 routing 查询"></a>带 routing 查询</h4><p>查询的时候，可以直接根据 routing 信息定位到某个分配查询，不需要查询所有的分配，经过协调节点排序。</p>
+<p>向上面自定义的用户查询，如果 routing 设置为 userid 的话，就可以直接查询出数据来，效率提升很多。</p>
+<h3 id="Filter-VS-Query"><a href="#Filter-VS-Query" class="headerlink" title="Filter VS Query"></a>Filter VS Query</h3><p>尽可能使用过滤器上下文（Filter）替代查询上下文（Query）</p>
+<ul>
+<li>Query：此文档与此查询子句的匹配程度如何？</li>
+<li>Filter：此文档和查询子句匹配吗？</li>
+</ul>
+<p>Elasticsearch 针对 Filter 查询只需要回答“是”或者“否”，不需要像 Query 查询一样计算相关性分数，同时 Filter 结果可以缓存。</p>
+<h3 id="深度翻页"><a href="#深度翻页" class="headerlink" title="深度翻页"></a>深度翻页</h3><p>在使用 Elasticsearch 过程中，应尽量避免大翻页的出现。</p>
+<p>正常翻页查询都是从 from 开始 size 条数据，这样就需要在每个分片中查询打分排名在前面的 from+size 条数据。协同节点收集每个分配的前 from+size 条数据。协同节点一共会受到 N*(from+size) 条数据，然后进行排序，再将其中 from 到 from+size 条数据返回出去。如果 from 或者 size 很大的话，导致参加排序的数量会同步扩大很多，最终会导致 CPU 资源消耗增大。</p>
+<p>可以通过使用 Elasticsearch scroll 和 scroll-scan 高效滚动的方式来解决这样的问题。</p>
+<p>也可以结合实际业务特点，文档 id 大小如果和文档创建时间是一致有序的，可以以文档 id 作为分页的偏移量，并将其作为分页查询的一个条件。</p>
+<h3 id="脚本（script）合理使用"><a href="#脚本（script）合理使用" class="headerlink" title="脚本（script）合理使用"></a>脚本（script）合理使用</h3><p>我们知道脚本使用主要有 3 种形式，内联动态编译方式、_script 索引库中存储和文件脚本存储的形式；一般脚本的使用场景是粗排，尽量用第二种方式先将脚本存储在 _script 索引库中，起到提前编译，然后通过引用脚本 id，并结合 params 参数使用，即可以达到模型（逻辑）和数据进行了分离，同时又便于脚本模块的扩展与维护。具体 ES 脚本的深入内容请参考 <a target="_blank" rel="noopener" href="https://www.knowledgedict.com/tutorial/elasticsearch-script.html">Elasticsearch 脚本模块的详解</a>。</p>
+<h2 id="数据结构优化"><a href="#数据结构优化" class="headerlink" title="数据结构优化"></a>数据结构优化</h2><p>基于 Elasticsearch 的使用场景，文档数据结构尽量和使用场景进行结合，去掉没用及不合理的数据。</p>
+<h3 id="尽量减少不需要的字段"><a href="#尽量减少不需要的字段" class="headerlink" title="尽量减少不需要的字段"></a>尽量减少不需要的字段</h3><p>如果 Elasticsearch 用于业务搜索服务，一些不需要用于搜索的字段最好不存到 ES 中，这样即节省空间，同时在相同的数据量下，也能提高搜索性能。</p>
+<p>避免使用动态值作字段，动态递增的 mapping，会导致集群崩溃；同样，也需要控制字段的数量，业务中不使用的字段，就不要索引。控制索引的字段数量、mapping 深度、索引字段的类型，对于 ES 的性能优化是重中之重。</p>
+<p>以下是 ES 关于字段数、mapping 深度的一些默认设置：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">index.mapping.nested_objects.limit:</span> <span class="number">10000</span></span><br><span class="line"><span class="attr">index.mapping.total_fields.limit:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">index.mapping.depth.limit:</span> <span class="number">20</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Nested-Object-vs-Parent-Child"><a href="#Nested-Object-vs-Parent-Child" class="headerlink" title="Nested Object vs Parent&#x2F;Child"></a>Nested Object vs Parent&#x2F;Child</h3><p>尽量避免使用 nested 或 parent&#x2F;child 的字段，能不用就不用；nested query 慢，parent&#x2F;child query 更慢，比 nested query 慢上百倍；因此能在 mapping 设计阶段搞定的（大宽表设计或采用比较 smart 的数据结构），就不要用父子关系的 mapping。</p>
+<p>如果一定要使用 nested fields，保证 nested fields 字段不能过多，目前 ES 默认限制是 50。因为针对 1 个 document，每一个 nested field，都会生成一个独立的 document，这将使 doc 数量剧增，影响查询效率，尤其是 JOIN 的效率。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">index.mapping.nested_fields.limit:</span> <span class="number">50</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="left">对比</th>
+<th align="left">Nested Object</th>
+<th align="left">Parent&#x2F;Child</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">优点</td>
+<td align="left">文档存储在一起，因此读取性高</td>
+<td align="left">父子文档可以独立更新，互不影响</td>
+</tr>
+<tr>
+<td align="left">缺点</td>
+<td align="left">更新父文档或子文档时需要更新整个文档</td>
+<td align="left">为了维护 join 关系，需要占用部分内存，读取性能较差</td>
+</tr>
+<tr>
+<td align="left">场景</td>
+<td align="left">子文档偶尔更新，查询频繁</td>
+<td align="left">子文档更新频繁</td>
+</tr>
+</tbody></table>
+<h3 id="选择静态映射，非必需时，禁止动态映射"><a href="#选择静态映射，非必需时，禁止动态映射" class="headerlink" title="选择静态映射，非必需时，禁止动态映射"></a>选择静态映射，非必需时，禁止动态映射</h3><p>尽量避免使用动态映射，这样有可能会导致集群崩溃，此外，动态映射有可能会带来不可控制的数据类型，进而有可能导致在查询端出现相关异常，影响业务。</p>
+<p>此外，Elasticsearch 作为搜索引擎时，主要承载 query 的匹配和排序的功能，那数据的存储类型基于这两种功能的用途分为两类，一是需要匹配的字段，用来建立倒排索引对 query 匹配用，另一类字段是用做粗排用到的特征字段，如 ctr、点击数、评论数等等。</p>
+<h2 id="集群架构设计"><a href="#集群架构设计" class="headerlink" title="集群架构设计"></a>集群架构设计</h2><p>合理的部署 Elasticsearch 有助于提高服务的整体可用性。</p>
+<h3 id="主节点、数据节点和协调节点分离"><a href="#主节点、数据节点和协调节点分离" class="headerlink" title="主节点、数据节点和协调节点分离"></a>主节点、数据节点和协调节点分离</h3><p>Elasticsearch 集群在架构拓朴时，采用主节点、数据节点和负载均衡节点分离的架构，在 5.x 版本以后，又可将数据节点再细分为“Hot-Warm”的架构模式。</p>
+<p>Elasticsearch 的配置文件中有 2 个参数，node.master 和 node.data。这两个参数搭配使用时，能够帮助提供服务器性能。</p>
+<h4 id="主（master）节点"><a href="#主（master）节点" class="headerlink" title="主（master）节点"></a>主（master）节点</h4><p>配置 <code>node.master:true</code> 和 <code>node.data:false</code>，该 node 服务器只作为一个主节点，但不存储任何索引数据。我们推荐每个集群运行 3 个专用的 master 节点来提供最好的弹性。使用时，你还需要将 <code>discovery.zen.minimum_master_nodes setting</code> 参数设置为 2，以免出现脑裂（split-brain）的情况。用 3 个专用的 master 节点，专门负责处理集群的管理以及加强状态的整体稳定性。因为这 3 个 master 节点不包含数据也不会实际参与搜索以及索引操作，在 JVM 上它们不用做相同的事，例如繁重的索引或者耗时，资源耗费很大的搜索。因此不太可能会因为垃圾回收而导致停顿。因此，master 节点的 CPU，内存以及磁盘配置可以比 data 节点少很多的。</p>
+<h4 id="数据（data）节点"><a href="#数据（data）节点" class="headerlink" title="数据（data）节点"></a>数据（data）节点</h4><p>配置 <code>node.master:false</code> 和 <code>node.data:true</code>，该 node 服务器只作为一个数据节点，只用于存储索引数据，使该 node 服务器功能单一，只用于数据存储和数据查询，降低其资源消耗率。</p>
+<p>在 Elasticsearch 5.x 版本之后，data 节点又可再细分为“Hot-Warm”架构，即分为热节点（hot node）和暖节点（warm node）。</p>
+<p>hot 节点：</p>
+<p>hot 节点主要是索引节点（写节点），同时会保存近期的一些频繁被查询的索引。由于进行索引非常耗费 CPU 和 IO，即属于 IO 和 CPU 密集型操作，建议使用 SSD 的磁盘类型，保持良好的写性能；我们推荐部署最小化的 3 个 hot 节点来保证高可用性。根据近期需要收集以及查询的数据量，可以增加服务器数量来获得想要的性能。</p>
+<p>将节点设置为 hot 类型需要 elasticsearch.yml 如下配置：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">node</span>.attr.box_<span class="keyword">type</span>: hot</span><br></pre></td></tr></table></figure>
+
+<p>如果是针对指定的 index 操作，可以通过 settings 设置 <code>index.routing.allocation.require.box_type: hot</code> 将索引写入 hot 节点。</p>
+<p>warm 节点：</p>
+<p>这种类型的节点是为了处理大量的，而且不经常访问的只读索引而设计的。由于这些索引是只读的，warm 节点倾向于挂载大量磁盘（普通磁盘）来替代 SSD。内存、CPU 的配置跟 hot 节点保持一致即可；节点数量一般也是大于等于 3 个。</p>
+<p>将节点设置为 warm 类型需要 elasticsearch.yml 如下配置：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">node</span>.attr.box_<span class="keyword">type</span>: warm</span><br></pre></td></tr></table></figure>
+
+<p>同时，也可以在 elasticsearch.yml 中设置 <code>index.codec:best_compression</code> 保证 warm 节点的压缩配置。</p>
+<p>当索引不再被频繁查询时，可通过 <code>index.routing.allocation.require.box_type:warm</code>，将索引标记为 warm，从而保证索引不写入 hot 节点，以便将 SSD 磁盘资源用在刀刃上。一旦设置这个属性，ES 会自动将索引合并到 warm 节点。</p>
+<h4 id="协调（coordinating）节点"><a href="#协调（coordinating）节点" class="headerlink" title="协调（coordinating）节点"></a>协调（coordinating）节点</h4><p>协调节点用于做分布式里的协调，将各分片或节点返回的数据整合后返回。该节点不会被选作主节点，也不会存储任何索引数据。该服务器主要用于查询负载均衡。在查询的时候，通常会涉及到从多个 node 服务器上查询数据，并将请求分发到多个指定的 node 服务器，并对各个 node 服务器返回的结果进行一个汇总处理，最终返回给客户端。在 ES 集群中，所有的节点都有可能是协调节点，但是，可以通过设置 <code>node.master</code>、<code>node.data</code>、<code>node.ingest</code> 都为 <code>false</code> 来设置专门的协调节点。需要较好的 CPU 和较高的内存。</p>
+<ul>
+<li>node.master:false 和 node.data:true，该 node 服务器只作为一个数据节点，只用于存储索引数据，使该 node 服务器功能单一，只用于数据存储和数据查询，降低其资源消耗率。</li>
+<li>node.master:true 和 node.data:false，该 node 服务器只作为一个主节点，但不存储任何索引数据，该 node 服务器将使用自身空闲的资源，来协调各种创建索引请求或者查询请求，并将这些请求合理分发到相关的 node 服务器上。</li>
+<li>node.master:false 和 node.data:false，该 node 服务器即不会被选作主节点，也不会存储任何索引数据。该服务器主要用于查询负载均衡。在查询的时候，通常会涉及到从多个 node 服务器上查询数据，并将请求分发到多个指定的 node 服务器，并对各个 node 服务器返回的结果进行一个汇总处理，最终返回给客户端。</li>
+</ul>
+<h3 id="关闭-data-节点服务器中的-http-功能"><a href="#关闭-data-节点服务器中的-http-功能" class="headerlink" title="关闭 data 节点服务器中的 http 功能"></a>关闭 data 节点服务器中的 http 功能</h3><p>针对 Elasticsearch 集群中的所有数据节点，不用开启 http 服务。将其中的配置参数这样设置，<code>http.enabled:false</code>，同时也不要安装 head, bigdesk, marvel 等监控插件，这样保证 data 节点服务器只需处理创建&#x2F;更新&#x2F;删除&#x2F;查询索引数据等操作。</p>
+<p>http 功能可以在非数据节点服务器上开启，上述相关的监控插件也安装到这些服务器上，用于监控 Elasticsearch 集群状态等数据信息。这样做一来出于数据安全考虑，二来出于服务性能考虑。</p>
+<h3 id="一台服务器上最好只部署一个-node"><a href="#一台服务器上最好只部署一个-node" class="headerlink" title="一台服务器上最好只部署一个 node"></a>一台服务器上最好只部署一个 node</h3><p>一台物理服务器上可以启动多个 node 服务器节点（通过设置不同的启动 port），但一台服务器上的 CPU、内存、硬盘等资源毕竟有限，从服务器性能考虑，不建议一台服务器上启动多个 node 节点。</p>
+<h3 id="集群分片设置"><a href="#集群分片设置" class="headerlink" title="集群分片设置"></a>集群分片设置</h3><p>ES 一旦创建好索引后，就无法调整分片的设置，而在 ES 中，一个分片实际上对应一个 lucene 索引，而 lucene 索引的读写会占用很多的系统资源，因此，分片数不能设置过大；所以，在创建索引时，合理配置分片数是非常重要的。一般来说，我们遵循一些原则：</p>
+<ol>
+<li>控制每个分片占用的硬盘容量不超过 ES 的最大 JVM 的堆空间设置（一般设置不超过 32 G，参考上面的 JVM 内存设置原则），因此，如果索引的总容量在 500 G 左右，那分片大小在 16 个左右即可；当然，最好同时考虑原则 2。</li>
+<li>考虑一下 node 数量，一般一个节点有时候就是一台物理机，如果分片数过多，大大超过了节点数，很可能会导致一个节点上存在多个分片，一旦该节点故障，即使保持了 1 个以上的副本，同样有可能会导致数据丢失，集群无法恢复。所以，<strong>一般都设置分片数不超过节点数的 3 倍</strong>。</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.knowledgedict.com/tutorial/elasticsearch-intro.html">Elasticsearch 教程</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/3d7b99ac/" title="Elasticsearch 优化">https://dunwu.github.io/blog/pages/3d7b99ac/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 搜索引擎数据库</a>
+              <a href="/blog/tags/elasticsearch/" rel="tag"># elasticsearch</a>
+              <a href="/blog/tags/%E6%80%A7%E8%83%BD/" rel="tag"># 性能</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/f8ea2ae7/" rel="prev" title="Elasticsearch 聚合">
+                  <i class="fa fa-angle-left"></i> Elasticsearch 聚合
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/734610a7/" rel="next" title="Java 基础语法特性">
+                  Java 基础语法特性 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"395412908e1c2464ae96944e26a871a1"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

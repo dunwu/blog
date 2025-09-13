@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Java 并发之内存模型Java 内存模型（Java Memory Model），简称 JMM。Java 内存模型的目标是为了解决由可见性和有序性导致的并发安全问题。Java 内存模型通过 屏蔽各种硬件和操作系统的内存访问差异，以实现让 Java 程序在各种平台下都能达到一致的内存访问效果。 物理内存模型物理机遇到的并发问题与虚拟机中的情况有不少相似之处，物理机对并发的处理方案对于虚拟机的实现也有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 并发之内存模型">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/e98ae9d2/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Java 并发之内存模型Java 内存模型（Java Memory Model），简称 JMM。Java 内存模型的目标是为了解决由可见性和有序性导致的并发安全问题。Java 内存模型通过 屏蔽各种硬件和操作系统的内存访问差异，以实现让 Java 程序在各种平台下都能达到一致的内存访问效果。 物理内存模型物理机遇到的并发问题与虚拟机中的情况有不少相似之处，物理机对并发的处理方案对于虚拟机的实现也有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202408290755550.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202408290758072.png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAyMC83LzE1LzE3MzUwODViNjA2M2Q0NGY?x-oss-process=image/format,png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409090719904.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409090720289.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202409060808648.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200629191250.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200604105151.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200604105248.png">
+<meta property="article:published_time" content="2020-12-25T10:43:11.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.702Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="JavaCore">
+<meta property="article:tag" content="JMM">
+<meta property="article:tag" content="Happens-Before">
+<meta property="article:tag" content="内存屏障">
+<meta property="article:tag" content="volatile">
+<meta property="article:tag" content="synchronized">
+<meta property="article:tag" content="final">
+<meta property="article:tag" content="指令重排序">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202408290755550.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/e98ae9d2/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/e98ae9d2/","path":"/pages/e98ae9d2/","title":"Java 并发之内存模型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java 并发之内存模型 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-%E5%B9%B6%E5%8F%91%E4%B9%8B%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">Java 并发之内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">物理内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E5%A4%84%E7%90%86%E6%95%88%E7%8E%87%E5%AD%98%E5%9C%A8%E5%BE%88%E5%A4%A7%E5%B7%AE%E5%BC%82"><span class="nav-number">1.1.1.</span> <span class="nav-text">硬件处理效率存在很大差异</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.1.2.</span> <span class="nav-text">缓存一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">1.1.3.</span> <span class="nav-text">指令重排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">Java 内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%86%85%E5%AD%98%E5%92%8C%E5%B7%A5%E4%BD%9C%E5%86%85%E5%AD%98"><span class="nav-number">1.2.1.</span> <span class="nav-text">主内存和工作内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM-%E5%86%85%E5%AD%98%E6%93%8D%E4%BD%9C%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.2.</span> <span class="nav-text">JMM 内存操作的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%97%B4%E4%BA%A4%E4%BA%92%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.3.</span> <span class="nav-text">内存间交互操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.4.</span> <span class="nav-text">并发安全特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">可见性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E6%80%A7"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">有序性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Happens-Before"><span class="nav-number">1.3.</span> <span class="nav-text">Happens-Before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="nav-number">1.4.</span> <span class="nav-text">内存屏障</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronized-%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89"><span class="nav-number">1.5.</span> <span class="nav-text">Synchronized 内存语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized-%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.5.1.</span> <span class="nav-text">synchronized 的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8-synchronized-%E5%AE%9E%E7%8E%B0%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">用 synchronized 实现线程安全的计数器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81-synchronized-%E6%96%B9%E6%B3%95%E5%92%8C%E9%9D%9E%E9%9D%99%E6%80%81-synchronized-%E6%98%AF%E5%90%A6%E4%BA%92%E6%96%A5"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">静态 synchronized 方法和非静态 synchronized 是否互斥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8-synchronized-%E4%BF%9D%E6%8A%A4%E5%A4%9A%E4%B8%AA%E8%B5%84%E6%BA%90"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">用 synchronized 保护多个资源</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized-%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.2.</span> <span class="nav-text">synchronized 的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized-%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.3.</span> <span class="nav-text">synchronized 的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%8F%E5%90%91%E9%94%81"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">偏向锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%81%E6%B6%88%E9%99%A4-%E9%94%81%E7%B2%97%E5%8C%96"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">锁消除 &#x2F; 锁粗化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%94%81%E6%B6%88%E9%99%A4"><span class="nav-number">1.5.3.3.1.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%94%81%E7%B2%97%E5%8C%96"><span class="nav-number">1.5.3.3.2.</span> <span class="nav-text">锁粗化</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.5.3.4.</span> <span class="nav-text">自旋锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized-%E7%9A%84%E8%AF%AF%E5%8C%BA"><span class="nav-number">1.5.4.</span> <span class="nav-text">synchronized 的误区</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#synchronized-%E4%BD%BF%E7%94%A8%E8%8C%83%E5%9B%B4%E4%B8%8D%E5%BD%93%E5%AF%BC%E8%87%B4%E7%9A%84%E9%94%99%E8%AF%AF"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">synchronized 使用范围不当导致的错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#synchronized-%E4%BF%9D%E6%8A%A4%E5%AF%B9%E8%B1%A1%E4%B8%8D%E5%AF%B9%E5%AF%BC%E8%87%B4%E7%9A%84%E9%94%99%E8%AF%AF"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">synchronized 保护对象不对导致的错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%81%E7%B2%92%E5%BA%A6%E5%AF%BC%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.4.3.</span> <span class="nav-text">锁粒度导致的问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile-%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89"><span class="nav-number">1.6.</span> <span class="nav-text">volatile 内存语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E8%AF%81%E7%BA%BF%E7%A8%8B%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">1.6.1.</span> <span class="nav-text">保证线程可见性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">1.6.2.</span> <span class="nav-text">禁止指令重排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile-%E4%B8%8D%E4%BF%9D%E8%AF%81%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">1.6.3.</span> <span class="nav-text">volatile 不保证原子性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile-%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.6.4.</span> <span class="nav-text">volatile 的应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final-%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89"><span class="nav-number">1.7.</span> <span class="nav-text">final 内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#long-%E5%92%8C-double-%E7%9A%84%E7%89%B9%E6%AE%8A%E8%A7%84%E5%88%99"><span class="nav-number">1.8.</span> <span class="nav-text">long 和 double 的特殊规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/e98ae9d2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java 并发之内存模型 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 并发之内存模型<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/05.%E5%B9%B6%E5%8F%91/Java_%E5%B9%B6%E5%8F%91_%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-25 18:43:11" itemprop="dateCreated datePublished" datetime="2020-12-25T18:43:11+08:00">2020-12-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/%E5%B9%B6%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">并发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>24k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>22 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Java-并发之内存模型"><a href="#Java-并发之内存模型" class="headerlink" title="Java 并发之内存模型"></a>Java 并发之内存模型</h1><p>Java 内存模型（Java Memory Model），简称 <strong>JMM</strong>。Java 内存模型的目标是为了解决由可见性和有序性导致的并发安全问题。Java 内存模型通过 <strong>屏蔽各种硬件和操作系统的内存访问差异，以实现让 Java 程序在各种平台下都能达到一致的内存访问效果</strong>。</p>
+<h2 id="物理内存模型"><a href="#物理内存模型" class="headerlink" title="物理内存模型"></a>物理内存模型</h2><p>物理机遇到的并发问题与虚拟机中的情况有不少相似之处，物理机对并发的处理方案对于虚拟机的实现也有相当大的参考意义。</p>
+<h3 id="硬件处理效率存在很大差异"><a href="#硬件处理效率存在很大差异" class="headerlink" title="硬件处理效率存在很大差异"></a>硬件处理效率存在很大差异</h3><p>技术在进步，CPU、内存、I&#x2F;O 设备的性能也在不断提高。但是，始终存在一个核心矛盾：<strong>CPU、内存、I&#x2F;O 设备存在很大的速度差异</strong> - CPU 远快于内存，内存远快于 I&#x2F;O 设备。木桶短板理论告诉我们：一只木桶能装多少水，取决于最短的那块木板。同理，程序整体性能取决于最慢的操作（即 I&#x2F;O 操作），所以单方面提高 CPU、内存的性能是无效的。</p>
+<p>为了合理利用 CPU 的高性能，平衡这三者的速度差异，计算机体系机构、操作系统、编译程序都做出了贡献，主要体现为：</p>
+<ul>
+<li><strong>CPU 增加了缓存</strong>，以均衡与 CPU 内存的速度差异；</li>
+<li><strong>编译程序优化指令执行次序</strong>，使得缓存能够得到更加合理地利用。</li>
+<li><strong>操作系统增加了进程、线程</strong>，以分时复用 CPU，进而均衡 CPU 与 I&#x2F;O 的速度差异；</li>
+</ul>
+<p><strong>缓存</strong>导致的可见性问题，<strong>编译优化</strong>带来的有序性问题，<strong>线程切换</strong>带来的原子性问题。</p>
+<h3 id="缓存一致性"><a href="#缓存一致性" class="headerlink" title="缓存一致性"></a>缓存一致性</h3><p>高速缓存解决了 <strong>硬件效率问题</strong>，但是引入了一个新的问题：<strong>缓存一致性（Cache Coherence）</strong>。</p>
+<p>在多处理器系统中，每个处理器都有自己的高速缓存，而它们又共享同一主内存。当多个处理器的运算任务都涉及同一块主内存区域时，将可能导致各自的缓存数据不一致。</p>
+<p>为了解决缓存一致性问题，<strong>需要各个处理器访问缓存时都遵循一些协议，在读写时要根据协议来进行操作</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202408290755550.png"></p>
+<h3 id="指令重排序"><a href="#指令重排序" class="headerlink" title="指令重排序"></a>指令重排序</h3><p>为了使缓存得到更加合理地使用，计算机在执行程序代码的时候，会对指令进行重排序。</p>
+<p><strong>什么是指令重排序？</strong> 简单来说就是系统在执行代码的时候并不一定是按照你写的代码的顺序依次执行。</p>
+<p>常见的指令重排序有下面 2 种情况：</p>
+<ul>
+<li><strong>编译器优化重排</strong>：编译器（包括 JVM、JIT 编译器等）在不改变单线程程序语义的前提下，重新安排语句的执行顺序。</li>
+<li><strong>指令并行重排</strong>：现代处理器采用了指令级并行技术 (Instruction-Level Parallelism，ILP) 来将多条指令重叠执行。如果不存在数据依赖性，处理器可以改变语句对应机器指令的执行顺序。</li>
+</ul>
+<p>另外，内存系统也会有“重排序”，但又不是真正意义上的重排序。在 JMM 里表现为主存和本地内存的内容可能不一致，进而导致程序在多线程下执行可能出现问题。</p>
+<p>Java 源代码会经历 <strong>编译器优化重排 —&gt; 指令并行重排 —&gt; 内存系统重排</strong> 的过程，最终才变成操作系统可执行的指令序列。</p>
+<p><strong>指令重排序可以保证串行语义一致，但是没有义务保证多线程间的语义也一致</strong> ，所以在多线程下，指令重排序可能会导致一些问题。</p>
+<p>对于编译器优化重排和处理器的指令重排序（指令并行重排和内存系统重排都属于是处理器级别的指令重排序），处理该问题的方式不一样。</p>
+<ul>
+<li>对于编译器，通过禁止特定类型的编译器重排序的方式来禁止重排序。</li>
+<li>对于处理器，通过插入内存屏障（Memory Barrier，或有时叫做内存栅栏，Memory Fence）的方式来禁止特定类型的处理器重排序。</li>
+</ul>
+<h2 id="Java-内存模型"><a href="#Java-内存模型" class="headerlink" title="Java 内存模型"></a>Java 内存模型</h2><p><strong>内存模型</strong> 这个概念。我们可以理解为：<strong>在特定的操作协议下，对特定的内存或高速缓存进行读写访问的过程抽象</strong>。不同架构的物理计算机可以有不一样的内存模型，JVM 也有自己的内存模型。</p>
+<p>JVM 中试图定义一种 Java 内存模型（Java Memory Model, JMM）来<strong>屏蔽各种硬件和操作系统的内存访问差异</strong>，以实现让 Java 程序 <strong>在各种平台下都能达到一致的内存访问效果</strong>。</p>
+<p>在 <a href="https://dunwu.github.io/waterdrop/pages/d63c0ffb/">Java 并发简介</a> 中已经介绍了，并发安全需要满足可见性、有序性、原子性。其中，导致可见性的原因是缓存，导致有序性的原因是编译优化。那解决可见性、有序性最直接的办法就是<strong>禁用缓存和编译优化</strong> 。但这么做，性能就堪忧了。</p>
+<p>合理的方案应该是<strong>按需禁用缓存以及编译优化</strong>。那么，如何做到呢？，Java 内存模型规范了 JVM 如何提供按需禁用缓存和编译优化的方法。具体来说，这些方法包括 <strong>volatile</strong>、<strong>synchronized</strong> 和 <strong>final</strong> 三个关键字，以及 <strong>Happens-Before 规则</strong>。</p>
+<h3 id="主内存和工作内存"><a href="#主内存和工作内存" class="headerlink" title="主内存和工作内存"></a>主内存和工作内存</h3><p>JMM 的主要目标是 <strong>定义程序中各个变量的访问规则，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节</strong>。此处的变量（Variables）与 Java 编程中所说的变量有所区别，它包括了实例字段、静态字段和构成数值对象的元素，但不包括局部变量与方法参数，因为后者是线程私有的，不会被共享，自然就不会存在竞争问题。为了获得较好的执行效能，JMM 并没有限制执行引擎使用处理器的特定寄存器或缓存来和主存进行交互，也没有限制即使编译器进行调整代码执行顺序这类优化措施。</p>
+<p>JMM 规定了<strong>所有的变量都存储在主内存（Main Memory）中</strong>。</p>
+<p>每条线程还有自己的工作内存（Working Memory），<strong>工作内存中保留了该线程使用到的变量的主内存的副本</strong>。工作内存是 JMM 的一个抽象概念，并不真实存在，它涵盖了缓存，写缓冲区，寄存器以及其他的硬件和编译器优化。</p>
+<p>线程对变量的所有操作都必须在工作内存中进行，而不能直接读写主内存中的变量。不同的线程间也无法直接访问对方工作内存中的变量，<strong>线程间变量值的传递均需要通过主内存来完成</strong>。</p>
+<blockquote>
+<p>说明：</p>
+<p>这里说的主内存、工作内存与 Java 内存区域中的堆、栈、方法区等不是同一个层次的内存划分。</p>
+</blockquote>
+<h3 id="JMM-内存操作的问题"><a href="#JMM-内存操作的问题" class="headerlink" title="JMM 内存操作的问题"></a>JMM 内存操作的问题</h3><p>类似于物理内存模型面临的问题，JMM 存在以下两个问题：</p>
+<ul>
+<li><strong>工作内存数据一致性</strong> - 各个线程操作数据时会保存使用到的主内存中的共享变量副本，当多个线程的运算任务都涉及同一个共享变量时，将导致各自的的共享变量副本不一致。如果真的发生这种情况，数据同步回主内存以谁的副本数据为准？ Java 内存模型主要通过一系列的数据同步协议、规则来保证数据的一致性。</li>
+<li><strong>指令重排序优化</strong> - Java 中重排序通常是编译器或运行时环境为了优化程序性能而采取的对指令进行重新排序执行的一种手段。重排序分为两类：<strong>编译期重排序和运行期重排序</strong>，分别对应编译时和运行时环境。 同样的，指令重排序不是随意重排序，它需要满足以下两个条件：<ul>
+<li>在单线程环境下不能改变程序运行的结果。即时编译器（和处理器）需要保证程序能够遵守 <code>as-if-serial</code> 属性。通俗地说，就是在单线程情况下，要给程序一个顺序执行的假象。即经过重排序的执行结果要与顺序执行的结果保持一致。</li>
+<li>存在数据依赖关系的不允许重排序。</li>
+<li>多线程环境下，如果线程处理逻辑之间存在依赖关系，有可能因为指令重排序导致运行结果与预期不同。</li>
+</ul>
+</li>
+</ul>
+<h3 id="内存间交互操作"><a href="#内存间交互操作" class="headerlink" title="内存间交互操作"></a>内存间交互操作</h3><p>JMM 定义了 8 个操作来完成主内存和工作内存之间的交互操作。JVM 实现时必须保证下面介绍的每种操作都是 <strong>原子的</strong>（对于 double 和 long 型的变量来说，load、store、read、和 write 操作在某些平台上允许有例外 ）。</p>
+<ul>
+<li><code>lock</code> （锁定） - 作用于<strong>主内存</strong>的变量，它把一个变量标识为一条线程独占的状态。</li>
+<li><code>unlock</code> （解锁） - 作用于<strong>主内存</strong>的变量，它把一个处于锁定状态的变量释放出来，释放后的变量才可以被其他线程锁定。</li>
+<li><code>read</code> （读取） - 作用于<strong>主内存</strong>的变量，它把一个变量的值从主内存<strong>传输</strong>到线程的工作内存中，以便随后的 <code>load</code> 动作使用。</li>
+<li><code>write</code> （写入） - 作用于<strong>主内存</strong>的变量，它把 store 操作从工作内存中得到的变量的值放入主内存的变量中。</li>
+<li><code>load</code> （载入） - 作用于<strong>工作内存</strong>的变量，它把 read 操作从主内存中得到的变量值放入工作内存的变量副本中。</li>
+<li><code>use</code> （使用） - 作用于<strong>工作内存</strong>的变量，它把工作内存中一个变量的值传递给执行引擎，每当虚拟机遇到一个需要使用到变量的值得字节码指令时就会执行这个操作。</li>
+<li><code>assign</code> （赋值） - 作用于<strong>工作内存</strong>的变量，它把一个从执行引擎接收到的值赋给工作内存的变量，每当虚拟机遇到一个给变量赋值的字节码指令时执行这个操作。</li>
+<li><code>store</code> （存储） - 作用于<strong>工作内存</strong>的变量，它把工作内存中一个变量的值传送到主内存中，以便随后 <code>write</code> 操作使用。</li>
+</ul>
+<p>如果要把一个变量从主内存中复制到工作内存，就<strong>需要按序执行 <code>read</code> 和 <code>load</code> 操作</strong>；如果把变量从工作内存中同步回主内存中，就<strong>需要按序执行 <code>store</code> 和 <code>write</code> 操作</strong>。但 Java 内存模型只要求上述操作必须按顺序执行，而没有保证必须是连续执行。</p>
+<p>JMM 还规定了上述 8 种基本操作，需要满足以下规则：</p>
+<ul>
+<li><strong>read 和 load 必须成对出现</strong>；<strong>store 和 write 必须成对出现</strong>。即不允许一个变量从主内存读取了但工作内存不接受，或从工作内存发起回写了但主内存不接受的情况出现。</li>
+<li><strong>不允许一个线程丢弃它的最近 assign 的操作</strong>，即变量在工作内存中改变了之后必须把变化同步到主内存中。</li>
+<li><strong>不允许一个线程无原因的（没有发生过任何 assign 操作）把数据从工作内存同步回主内存中</strong>。</li>
+<li>一个新的变量只能在主内存中诞生，不允许在工作内存中直接使用一个未被初始化（load 或 assign ）的变量。换句话说，就是对一个变量实施 use 和 store 操作之前，必须先执行过了 load 或 assign 操作。</li>
+<li>一个变量在同一个时刻只允许一条线程对其进行 lock 操作，但 lock 操作可以被同一条线程重复执行多次，多次执行 lock 后，只有执行相同次数的 unlock 操作，变量才会被解锁。所以 <strong>lock 和 unlock 必须成对出现</strong>。</li>
+<li>如果对一个变量执行 lock 操作，将会清空工作内存中此变量的值，在执行引擎使用这个变量前，需要重新执行 load 或 assign 操作初始化变量的值。</li>
+<li>如果一个变量事先没有被 lock 操作锁定，则不允许对它执行 unlock 操作，也不允许去 unlock 一个被其他线程锁定的变量。</li>
+<li>对一个变量执行 unlock 操作之前，必须先把此变量同步到主内存中（执行 store 和 write 操作）</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202408290758072.png"></p>
+<h3 id="并发安全特性"><a href="#并发安全特性" class="headerlink" title="并发安全特性"></a>并发安全特性</h3><p>并发最重要的问题是并发安全问题。所谓<strong>并发安全</strong>，是指保证程序的正确性，使得并发处理结果符合预期。</p>
+<p>并发安全需要保证几个基本特性：</p>
+<ul>
+<li><strong>可见性</strong> - 是一个线程修改了某个共享变量，其状态能够立即被其他线程知晓，通常被解释为将线程本地状态反映到主内存上，<code>volatile</code> 就是负责保证可见性的。</li>
+<li><strong>有序性</strong> - 是保证线程内串行语义，避免指令重排等。</li>
+<li><strong>原子性</strong> - 简单说就是相关操作不会中途被其他线程干扰，一般通过互斥机制（加锁：<code>sychronized</code>、<code>Lock</code>）实现。</li>
+</ul>
+<p>而这三大特性，归根结底，是为了实现多线程的 <strong>数据一致性</strong>，使得程序在多线程并发，指令重排序优化的环境中能如预期运行。上文介绍了 Java 内存交互的 8 种基本操作，它们都保证可见性、有序性、原子性。</p>
+<h4 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h4><p><strong>原子性即一个操作或者多个操作，要么全部执行（执行的过程不会被任何因素打断），要么就都不执行</strong>。即使在多个线程一起执行的时候，一个操作一旦开始，就不会被其他线程所干扰。</p>
+<p>在 Java 中，为了保证原子性，提供了两个高级的字节码指令 <code>monitorenter</code> 和 <code>monitorexit</code>。这两个字节码，在 Java 中对应的关键字就是 <code>synchronized</code>。</p>
+<p>因此，在 Java 中可以使用 <code>synchronized</code> 来保证方法和代码块内的操作是原子性的。</p>
+<h4 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h4><p><strong>可见性是指当多个线程访问同一个变量时，一个线程修改了这个变量的值，其他线程能够立即看得到修改的值</strong>。</p>
+<p>JMM 是通过 <strong>“变量修改后将新值同步回主内存</strong>， <strong>变量读取前从主内存刷新变量值”</strong> 这种依赖主内存作为传递媒介的方式来实现的。</p>
+<p>Java 实现多线程可见性的方式有：</p>
+<ul>
+<li><code>volatile</code></li>
+<li><code>synchronized</code></li>
+<li><code>final</code></li>
+</ul>
+<h4 id="有序性"><a href="#有序性" class="headerlink" title="有序性"></a>有序性</h4><p>有序性规则表现在以下两种场景：线程内和线程间</p>
+<ul>
+<li>线程内 - 从某个线程的角度看方法的执行，指令会按照一种叫“串行”（<code>as-if-serial</code>）的方式执行，此种方式已经应用于顺序编程语言。</li>
+<li>线程间 - 这个线程“观察”到其他线程并发地执行非同步的代码时，由于指令重排序优化，任何代码都有可能交叉执行。唯一起作用的约束是：对于同步方法，同步块（<code>synchronized</code> 关键字修饰）以及 <code>volatile</code> 字段的操作仍维持相对有序。</li>
+</ul>
+<p>在 Java 中，可以使用 <code>synchronized</code> 和 <code>volatile</code> 来保证多线程之间操作的有序性。实现方式有所区别：</p>
+<ul>
+<li><code>volatile</code> 关键字会禁止指令重排序。</li>
+<li><code>synchronized</code> 关键字通过互斥保证同一时刻只允许一条线程操作。</li>
+</ul>
+<h2 id="Happens-Before"><a href="#Happens-Before" class="headerlink" title="Happens-Before"></a>Happens-Before</h2><p>JMM 为程序中所有的操作定义了一个偏序关系，称之为 <strong><code>先行发生原则（Happens-Before）</code><strong>。</strong>Happens-Before</strong> 是指 <strong>前面一个操作的结果对后续操作是可见的</strong>。</p>
+<blockquote>
+<p>1978 年，Lamport 在论文 <a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf"><strong>Time, Clocks, and the Ordering of Events in a Distributed System</strong></a> （<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1163428"><strong>译文</strong></a>，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56146800"><strong>解读</strong></a> ）中第一次提出了 Happens-Before，阐述了偏序关系（partial ordering）、逻辑时钟（Logical Clocks）概念，提出解决分布式系统中区分事件发生的时序问题的方法。Happens-Before 的语义是一种因果关系：如果 A 事件是导致 B 事件的起因，那么 A 事件一定是先于（Happens-Before）B 事件发生的。</p>
+</blockquote>
+<p><strong>Happens-Before</strong> 非常重要，它是判断数据是否存在竞争、线程是否安全的主要依据，依靠这个原则，我们可以通过几条规则一揽子地解决并发环境下两个操作间是否可能存在冲突的所有问题。</p>
+<ul>
+<li><strong>程序顺序规则</strong> - 在一个线程中，按照程序顺序，前面的操作 Happens-Before 于后续的任意操作。</li>
+<li><strong>锁定规则</strong> - 一个 <code>unLock</code> 操作 Happens-Before 于后面对同一个锁的 <code>lock</code> 操作。</li>
+<li><strong>volatile 变量规则</strong> - 对一个 <code>volatile</code> 变量的写操作 Happens-Before 于后面对这个变量的读操作。</li>
+<li><strong>线程启动规则</strong> - <code>Thread</code> 对象的 <code>start()</code> 方法 Happens-Before 于此线程的每个一个动作。</li>
+<li><strong>线程终止规则</strong> - 线程中所有的操作都 Happens-Before 于线程的终止检测，我们可以通过 <code>Thread.join()</code> 方法是否结束、<code>Thread.isAlive()</code> 的返回值手段检测到线程已经终止执行。</li>
+<li><strong>线程中断规则</strong> - 对线程 <code>interrupt()</code> 方法的调用 Happens-Before 于被中断线程的代码检测到中断事件的发生，可以通过 <code>Thread.interrupted()</code> 方法检测到是否有中断发生。</li>
+<li><strong>对象终结规则</strong> - 一个对象的初始化完成 Happens-Before 于它的 <code>finalize()</code> 方法的开始。</li>
+<li><strong>传递性</strong> - 如果 A Happens-Before B，且 B Happens-Before C，那么 A Happens-Before C。</li>
+</ul>
+<h2 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h2><p>Java 中如何保证底层操作的有序性和可见性？可以通过内存屏障（memory barrier）。</p>
+<p>内存屏障是被插入两个 CPU 指令之间的一种指令，用来禁止处理器指令发生重排序（像屏障一样），从而保障<strong>有序性</strong>的。另外，为了达到屏障的效果，它也会使处理器写入、读取值之前，将主内存的值写入高速缓存，清空无效队列，从而保障<strong>可见性</strong>。</p>
+<p>举个例子：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Store1<span class="comment">;</span></span><br><span class="line">Store2<span class="comment">;</span></span><br><span class="line">Load1<span class="comment">;</span></span><br><span class="line">StoreLoad<span class="comment">;  //内存屏障</span></span><br><span class="line">Store3<span class="comment">;</span></span><br><span class="line">Load2<span class="comment">;</span></span><br><span class="line">Load3<span class="comment">;</span></span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+
+<p>对于上面的一组 CPU 指令（Store 表示写入指令，Load 表示读取指令），StoreLoad 屏障之前的 Store 指令无法与 StoreLoad 屏障之后的 Load 指令进行交换位置，即<strong>重排序</strong>。但是 StoreLoad 屏障之前和之后的指令是可以互换位置的，即 Store1 可以和 Store2 互换，Load2 可以和 Load3 互换。</p>
+<p>常见有 4 种屏障</p>
+<ul>
+<li><code>LoadLoad</code> 屏障 - 对于这样的语句 <code>Load1; LoadLoad; Load2</code>，在 Load2 及后续读取操作要读取的数据被访问前，保证 Load1 要读取的数据被读取完毕。</li>
+<li><code>StoreStore</code> 屏障 - 对于这样的语句 <code>Store1; StoreStore; Store2</code>，在 Store2 及后续写入操作执行前，保证 Store1 的写入操作对其它处理器可见。</li>
+<li><code>LoadStore</code> 屏障 - 对于这样的语句 <code>Load1; LoadStore; Store2</code>，在 Store2 及后续写入操作被执行前，保证 Load1 要读取的数据被读取完毕。</li>
+<li><code>StoreLoad</code> 屏障 - 对于这样的语句 <code>Store1; StoreLoad; Load2</code>，在 Load2 及后续所有读取操作执行前，保证 Store1 的写入对所有处理器可见。它的开销是四种屏障中最大的（冲刷写缓冲器，清空无效化队列）。在大多数处理器的实现中，这个屏障是个万能屏障，兼具其它三种内存屏障的功能。</li>
+</ul>
+<p>Java 中对内存屏障的使用在一般的代码中不太容易见到，常见的有 <code>volatile</code> 和 <code>synchronized</code> 关键字修饰的代码块（后面再展开介绍），还可以通过 <code>Unsafe</code> 这个类来使用内存屏障。</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAyMC83LzE1LzE3MzUwODViNjA2M2Q0NGY?x-oss-process=image/format,png" alt="img"></p>
+<h2 id="Synchronized-内存语义"><a href="#Synchronized-内存语义" class="headerlink" title="Synchronized 内存语义"></a>Synchronized 内存语义</h2><p><code>synchronized</code> 是 Java 中的关键字，是 <strong>利用锁的机制来实现互斥同步的</strong>。</p>
+<p><strong><code>synchronized</code> 可以保证在同一个时刻，只有一个线程可以执行某个方法或者某个代码块</strong>。</p>
+<ul>
+<li><strong>线程释放锁时内存语义：JMM 会把该线程对应的工作内存中的共享变量刷新到主内存中</strong></li>
+<li><strong>线程获取锁时内存语义：JMM 会把该线程对应的工作内存置为无效</strong></li>
+</ul>
+<p>如果不需要 <code>Lock</code> 、<code>ReadWriteLock</code> 所提供的高级同步特性，应该优先考虑使用 <code>synchronized</code> ，理由如下：</p>
+<ul>
+<li>Java 1.6 以后，<code>synchronized</code> 做了大量的优化，其性能已经与 <code>Lock</code> 、<code>ReadWriteLock</code> 基本上持平。从趋势来看，Java 未来仍将继续优化 <code>synchronized</code> ，而不是 <code>ReentrantLock</code> 。</li>
+<li><code>ReentrantLock</code> 是 Oracle JDK 的 API，在其他版本的 JDK 中不一定支持；而 <code>synchronized</code> 是 JVM 的内置特性，所有 JDK 版本都提供支持。</li>
+</ul>
+<h3 id="synchronized-的应用"><a href="#synchronized-的应用" class="headerlink" title="synchronized 的应用"></a>synchronized 的应用</h3><p><code>synchronized</code> 有 3 种应用方式：</p>
+<ul>
+<li><strong>同步实例方法</strong> - 对于普通同步方法，锁是当前实例对象</li>
+<li><strong>同步静态方法</strong> - 对于静态同步方法，锁是当前类的 <code>Class</code> 对象</li>
+<li><strong>同步代码块</strong> - 对于同步方法块，锁是 <code>synchonized</code> 括号里配置的对象</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409090719904.png"></p>
+<p>【示例】<code>synchronized</code> 的使用语法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修饰成员方法</span></span><br><span class="line">    <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">sync1</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 临界区</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修饰静态方法</span></span><br><span class="line">    <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">sync2</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 临界区</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 对象锁</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">    <span class="comment">// 修饰代码块，使用对象锁</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">sync3</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (obj) &#123;</span><br><span class="line">            <span class="comment">// 临界区</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修饰代码块，使用类锁（Class）</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">sync4</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (Test.class) &#123;</span><br><span class="line">            <span class="comment">//临界区</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="用-synchronized-实现线程安全的计数器"><a href="#用-synchronized-实现线程安全的计数器" class="headerlink" title="用 synchronized 实现线程安全的计数器"></a>用 synchronized 实现线程安全的计数器</h4><p>我们先来看一个简单的示例，这段代码维护了一个计数器变量 <code>count</code>，并通过 get() 和 add() 分别实现了读写方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NotThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NotThreadSafeCounter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MAX</span> <span class="operator">=</span> <span class="number">100000</span>;</span><br><span class="line">        <span class="type">NotThreadSafeCounter</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NotThreadSafeCounter</span>();</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">t1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; MAX; i++) &#123;</span><br><span class="line">                instance.add();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">t2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; MAX; i++) &#123;</span><br><span class="line">                instance.add();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        t1.start();</span><br><span class="line">        t2.start();</span><br><span class="line">        t1.join();</span><br><span class="line">        t2.join();</span><br><span class="line">        System.out.println(<span class="string">&quot;count = &quot;</span> + instance.get());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// count = 117626</span></span><br><span class="line"><span class="comment">//</span></span><br></pre></td></tr></table></figure>
+
+<p>启动两个线程并行执行，期望最终值为 200000，但实际值为小于 200000 的随机数字。显然，上面的示例是线程不安全的。究其原因，在于 count++ 不是原子操作，不满足并发安全的原子性要求。</p>
+<p>要解决此问题，可以用 <code>synchronized</code> 修饰方法， <code>synchronized</code> 可以保证同一时刻只有一个线程执行临界区的代码。</p>
+<p>我们针对上面的示例来进行改造，将 <code>add()</code> 方法用 <code>synchronized</code> 修饰，如下所示。这下是不是就可以高枕无忧了呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NotThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NotThreadSafeCounter2</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先，<code>add()</code> 方法本身是线程安全的。但是，这个示例忽略了 <code>get()</code> 方法。因为 <code>get()</code> 方法未加锁，一个线程调用 <code>add()</code> 方法后，无法保证另一个线程调用 <code>get()</code> 时能立刻获取到更新后的结果，不满足并发安全的可见性要求。</p>
+<p>如何彻底解决 get() 并发不安全的问题呢？很简单，就是 <code>get()</code> 方法也用 <code>synchronized</code> 修饰一下。最终的线程安全示例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadSafeCounter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="type">long</span> <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409090720289.png"></p>
+<h4 id="静态-synchronized-方法和非静态-synchronized-是否互斥"><a href="#静态-synchronized-方法和非静态-synchronized-是否互斥" class="headerlink" title="静态 synchronized 方法和非静态 synchronized 是否互斥"></a>静态 <code>synchronized</code> 方法和非静态 <code>synchronized</code> 是否互斥</h4><p>静态方法的同步是指同步在该方法所在的类对象上。因为在 JVM 中一个类只能对应一个类对象，所以同时只允许一个线程执行同一个类中的静态同步方法。</p>
+<p>静态 <code>synchronized</code> 方法和非静态 <code>synchronized</code> 方法之间的调用互斥么？</p>
+<p>答案是：不互斥，但可能存在并发问题！如果一个线程 A 调用一个实例对象的非静态 <code>synchronized</code> 方法；而线程 B 需要调用这个实例对象所属类的静态 <code>synchronized</code> 方法，是允许的，不会发生互斥现象，因为访问静态 <code>synchronized</code> 方法占用的锁是当前类的锁，而访问非静态 <code>synchronized</code> 方法占用的锁是当前实例对象锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadSafeCounter2</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="type">long</span> <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这段代码实际上是用两个锁保护同一个资源。这个受保护的资源就是静态变量 count，两个锁分别是 this 和 ThreadSafeCounter2.class。我们可以用下面这幅图来形象描述这个关系。由于临界区 get() 和 add() 是用两个锁保护的，因此这两个临界区没有互斥关系，临界区 add() 对 value 的修改对临界区 get() 也没有可见性保证，这就导致并发问题了。</p>
+<h4 id="用-synchronized-保护多个资源"><a href="#用-synchronized-保护多个资源" class="headerlink" title="用 synchronized 保护多个资源"></a>用 synchronized 保护多个资源</h4><p>【示例】错误示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Account</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> balance;</span><br><span class="line">  <span class="comment">// 转账</span></span><br><span class="line">  <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(</span></span><br><span class="line"><span class="params">      Account target, <span class="type">int</span> amt)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.balance &gt; amt) &#123;</span><br><span class="line">      <span class="built_in">this</span>.balance -= amt;</span><br><span class="line">      target.balance += amt;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这段代码中，临界区内有两个资源，分别是转出账户的余额 this.balance 和转入账户的余额 target.balance，并且用的是一把锁 this，符合我们前面提到的，多个资源可以用一把锁来保护，这看上去完全正确呀。真的是这样吗？可惜，这个方案仅仅是看似正确，为什么呢？</p>
+<p>问题就出在 this 这把锁上，this 这把锁可以保护自己的余额 this.balance，却保护不了别人的余额 target.balance，就像你不能用自家的锁来保护别人家的资产，也不能用自己的票来保护别人的座位一样。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202409060808648.png"></p>
+<p>应该保证使用的<strong>锁能覆盖所有受保护资源</strong>。</p>
+<p>【示例】正确姿势</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Account</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> Object lock；</span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> balance;</span><br><span class="line">  <span class="keyword">private</span> <span class="title function_">Account</span><span class="params">()</span>;</span><br><span class="line">  <span class="comment">// 创建 Account 时传入同一个 lock 对象</span></span><br><span class="line">  <span class="keyword">public</span> <span class="title function_">Account</span><span class="params">(Object lock)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.lock = lock;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 转账</span></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(Account target, <span class="type">int</span> amt)</span>&#123;</span><br><span class="line">    <span class="comment">// 此处检查所有对象共享的锁</span></span><br><span class="line">    <span class="keyword">synchronized</span>(lock) &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">this</span>.balance &gt; amt) &#123;</span><br><span class="line">        <span class="built_in">this</span>.balance -= amt;</span><br><span class="line">        target.balance += amt;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个办法确实能解决问题，但是有点小瑕疵，它要求在创建 Account 对象的时候必须传入同一个对象，如果创建 Account 对象时，传入的 lock 不是同一个对象，那可就惨了，会出现锁自家门来保护他家资产的荒唐事。在真实的项目场景中，创建 Account 对象的代码很可能分散在多个工程中，传入共享的 lock 真的很难。</p>
+<p>上面的方案缺乏实践的可行性，我们需要更好的方案。还真有，就是<strong>用 Account.class 作为共享的锁</strong>。Account.class 是所有 Account 对象共享的，而且这个对象是 Java 虚拟机在加载 Account 类的时候创建的，所以我们不用担心它的唯一性。使用 Account.class 作为共享的锁，我们就无需在创建 Account 对象时传入了，代码更简单。</p>
+<p>【示例】正确姿势</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Account</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> balance;</span><br><span class="line">  <span class="comment">// 转账</span></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(Account target, <span class="type">int</span> amt)</span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span>(Account.class) &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">this</span>.balance &gt; amt) &#123;</span><br><span class="line">        <span class="built_in">this</span>.balance -= amt;</span><br><span class="line">        target.balance += amt;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="synchronized-的原理"><a href="#synchronized-的原理" class="headerlink" title="synchronized 的原理"></a>synchronized 的原理</h3><p><strong><code>synchronized</code> 代码块是由一对 <code>monitorenter</code> 和 <code>monitorexit</code> 指令实现的，<code>Monitor</code> 对象是同步的基本实现单元</strong>。在 Java 6 之前，<code>Monitor</code> 的实现完全是依靠操作系统内部的互斥锁，因为需要进行用户态到内核态的切换，所以同步操作是一个无差别的重量级操作。</p>
+<p>如果 <code>synchronized</code> 明确制定了对象参数，那就是这个对象的引用；如果没有明确指定，那就根据 <code>synchronized</code> 修饰的是实例方法还是静态方法，去对对应的对象实例或 <code>Class</code> 对象来作为锁对象。</p>
+<p><code>synchronized</code> 同步块对同一线程来说是可重入的，不会出现锁死问题。</p>
+<p><code>synchronized</code> 同步块是互斥的，即已进入的线程执行完成前，会阻塞其他试图进入的线程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">(Object lock)</span> &#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">      lock.hashCode();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 上面的 Java 代码将编译为下面的字节码</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">(java.lang.Object)</span>;</span><br><span class="line">    Code:</span><br><span class="line">       <span class="number">0</span>: aload_1</span><br><span class="line">       <span class="number">1</span>: dup</span><br><span class="line">       <span class="number">2</span>: astore_2</span><br><span class="line">       <span class="number">3</span>: monitorenter</span><br><span class="line">       <span class="number">4</span>: aload_1</span><br><span class="line">       <span class="number">5</span>: invokevirtual java/lang/Object.hashCode:()I</span><br><span class="line">       <span class="number">8</span>: pop</span><br><span class="line">       <span class="number">9</span>: aload_2</span><br><span class="line">      <span class="number">10</span>: monitorexit</span><br><span class="line">      <span class="number">11</span>: <span class="keyword">goto</span>          <span class="number">19</span></span><br><span class="line">      <span class="number">14</span>: astore_3</span><br><span class="line">      <span class="number">15</span>: aload_2</span><br><span class="line">      <span class="number">16</span>: monitorexit</span><br><span class="line">      <span class="number">17</span>: aload_3</span><br><span class="line">      <span class="number">18</span>: athrow</span><br><span class="line">      <span class="number">19</span>: <span class="keyword">return</span></span><br><span class="line">    Exception table:</span><br><span class="line">       from    to  target type</span><br><span class="line">           <span class="number">4</span>    <span class="number">11</span>    <span class="number">14</span>   any</span><br><span class="line">          <span class="number">14</span>    <span class="number">17</span>    <span class="number">14</span>   any</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>synchronized</code> 在修饰同步代码块时，是由 <code>monitorenter</code> 和 <code>monitorexit</code> 指令来实现同步的。进入 <code>monitorenter</code> 指令后，线程将持有 <code>Monitor</code> 对象，退出 <code>monitorenter</code> 指令后，线程将释放该 <code>Monitor</code> 对象。</p>
+<p><code>synchronized</code> 修饰同步方法时，会设置一个 <code>ACC_SYNCHRONIZED</code> 标志。当方法调用时，调用指令将会检查该方法是否被设置 <code>ACC_SYNCHRONIZED</code> 访问标志。如果设置了该标志，执行线程将先持有 <code>Monitor</code> 对象，然后再执行方法。在该方法运行期间，其它线程将无法获取到该 <code>Mointor</code> 对象，当方法执行完成后，再释放该 <code>Monitor</code> 对象。</p>
+<p>每个对象实例都会有一个 <code>Monitor</code>，<code>Monitor</code> 可以和对象一起创建、销毁。<code>Monitor</code> 是由 <code>ObjectMonitor</code> 实现，而 <code>ObjectMonitor</code> 是由 C++ 的 <code>ObjectMonitor.hpp</code> 文件实现。</p>
+<p>当多个线程同时访问一段同步代码时，多个线程会先被存放在 EntryList 集合中，处于 block 状态的线程，都会被加入到该列表。接下来当线程获取到对象的 Monitor 时，Monitor 是依靠底层操作系统的 Mutex Lock 来实现互斥的，线程申请 Mutex 成功，则持有该 Mutex，其它线程将无法获取到该 Mutex。</p>
+<p>如果线程调用 wait() 方法，就会释放当前持有的 Mutex，并且该线程会进入 WaitSet 集合中，等待下一次被唤醒。如果当前线程顺利执行完方法，也将释放 Mutex。</p>
+<h3 id="synchronized-的优化"><a href="#synchronized-的优化" class="headerlink" title="synchronized 的优化"></a>synchronized 的优化</h3><p><strong>Java 1.6 以后，<code>synchronized</code> 做了大量的优化，其性能已经与 <code>Lock</code> 、<code>ReadWriteLock</code> 基本上持平</strong>。</p>
+<p>在 JDK1.6 JVM 中，对象实例在堆内存中被分为了三个部分：对象头、实例数据和对齐填充。其中 Java 对象头由 Mark Word、指向类的指针以及数组长度三部分组成。</p>
+<p>Mark Word 记录了对象和锁有关的信息。Mark Word 在 64 位 JVM 中的长度是 64bit，我们可以一起看下 64 位 JVM 的存储结构是怎么样的。如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200629191250.png" alt="img"></p>
+<p>锁升级功能主要依赖于 Mark Word 中的锁标志位和释放偏向锁标志位，<code>synchronized</code> 同步锁就是从偏向锁开始的，随着竞争越来越激烈，偏向锁升级到轻量级锁，最终升级到重量级锁。</p>
+<p>Java 1.6 引入了偏向锁和轻量级锁，从而让 <code>synchronized</code> 拥有了四个状态：</p>
+<ul>
+<li><strong>无锁状态（unlocked）</strong></li>
+<li><strong>偏向锁状态（biasble）</strong></li>
+<li><strong>轻量级锁状态（lightweight locked）</strong></li>
+<li><strong>重量级锁状态（inflated）</strong></li>
+</ul>
+<p>当 JVM 检测到不同的竞争状况时，会自动切换到适合的锁实现。</p>
+<p>当没有竞争出现时，默认会使用偏向锁。JVM 会利用 CAS 操作（compare and swap），在对象头上的 Mark Word 部分设置线程 ID，以表示这个对象偏向于当前线程，所以并不涉及真正的互斥锁。这样做的假设是基于在很多应用场景中，大部分对象生命周期中最多会被一个线程锁定，使用偏斜锁可以降低无竞争开销。</p>
+<p>如果有另外的线程试图锁定某个已经被偏斜过的对象，JVM 就需要撤销（revoke）偏向锁，并切换到轻量级锁实现。轻量级锁依赖 CAS 操作 Mark Word 来试图获取锁，如果重试成功，就使用普通的轻量级锁；否则，进一步升级为重量级锁。</p>
+<h4 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h4><p>偏向锁的思想是偏向于<strong>第一个获取锁对象的线程，这个线程在之后获取该锁就不再需要进行同步操作，甚至连 CAS 操作也不再需要</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200604105151.png" alt="img"></p>
+<h4 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h4><p><strong>轻量级锁</strong>是相对于传统的重量级锁而言，它 <strong>使用 CAS 操作来避免重量级锁使用互斥量的开销</strong>。对于绝大部分的锁，在整个同步周期内都是不存在竞争的，因此也就不需要都使用互斥量进行同步，可以先采用 CAS 操作进行同步，如果 CAS 失败了再改用互斥量进行同步。</p>
+<p>当尝试获取一个锁对象时，如果锁对象标记为 <code>0|01</code>，说明锁对象的锁未锁定（unlocked）状态。此时虚拟机在当前线程的虚拟机栈中创建 Lock Record，然后使用 CAS 操作将对象的 Mark Word 更新为 Lock Record 指针。如果 CAS 操作成功了，那么线程就获取了该对象上的锁，并且对象的 Mark Word 的锁标记变为 00，表示该对象处于轻量级锁状态。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200604105248.png" alt="img"></p>
+<h4 id="锁消除-锁粗化"><a href="#锁消除-锁粗化" class="headerlink" title="锁消除 &#x2F; 锁粗化"></a>锁消除 &#x2F; 锁粗化</h4><p>除了锁升级优化，Java 还使用了编译器对锁进行优化。</p>
+<h5 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h5><p><strong>锁消除是指对于被检测出不可能存在竞争的共享数据的锁进行消除</strong>。</p>
+<p>JIT 编译器在动态编译同步块的时候，借助了一种被称为逃逸分析的技术，来判断同步块使用的锁对象是否只能够被一个线程访问，而没有被发布到其它线程。</p>
+<p>确认是的话，那么 JIT 编译器在编译这个同步块的时候不会生成 synchronized 所表示的锁的申请与释放的机器码，即消除了锁的使用。在 Java7 之后的版本就不需要手动配置了，该操作可以自动实现。</p>
+<p>对于一些看起来没有加锁的代码，其实隐式的加了很多锁。例如下面的字符串拼接代码就隐式加了锁：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">concatString</span><span class="params">(String s1, String s2, String s3)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s1 + s2 + s3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>String</code> 是一个不可变的类，编译器会对 String 的拼接自动优化。在 Java 1.5 之前，会转化为 <code>StringBuffer</code> 对象的连续 <code>append()</code> 操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">concatString</span><span class="params">(String s1, String s2, String s3)</span> &#123;</span><br><span class="line">    <span class="type">StringBuffer</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuffer</span>();</span><br><span class="line">    sb.append(s1);</span><br><span class="line">    sb.append(s2);</span><br><span class="line">    sb.append(s3);</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个 <code>append()</code> 方法中都有一个同步块。虚拟机观察变量 sb，很快就会发现它的动态作用域被限制在 <code>concatString()</code> 方法内部。也就是说，sb 的所有引用永远不会逃逸到 <code>concatString()</code> 方法之外，其他线程无法访问到它，因此可以进行消除。</p>
+<h5 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h5><p>锁粗化同理，就是在 JIT 编译器动态编译时，如果发现几个相邻的同步块使用的是同一个锁实例，那么 JIT 编译器将会把这几个同步块合并为一个大的同步块，从而避免一个线程“反复申请、释放同一个锁“所带来的性能开销。</p>
+<p>如果<strong>一系列的连续操作都对同一个对象反复加锁和解锁</strong>，频繁的加锁操作就会导致性能损耗。</p>
+<p>上一节的示例代码中连续的 <code>append()</code> 方法就属于这类情况。如果<strong>虚拟机探测到由这样的一串零碎的操作都对同一个对象加锁，将会把加锁的范围扩展（粗化）到整个操作序列的外部</strong>。对于上一节的示例代码就是扩展到第一个 <code>append()</code> 操作之前直至最后一个 <code>append()</code> 操作之后，这样只需要加锁一次就可以了。</p>
+<h4 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h4><p>互斥同步进入阻塞状态的开销都很大，应该尽量避免。在许多应用中，共享数据的锁定状态只会持续很短的一段时间。自旋锁的思想是让一个线程在请求一个共享数据的锁时执行忙循环（自旋）一段时间，如果在这段时间内能获得锁，就可以避免进入阻塞状态。</p>
+<p>自旋锁虽然能避免进入阻塞状态从而减少开销，但是它需要进行忙循环操作占用 CPU 时间，它只适用于共享数据的锁定状态很短的场景。</p>
+<p>在 Java 1.6 中引入了自适应的自旋锁。自适应意味着自旋的次数不再固定了，而是由前一次在同一个锁上的自旋次数及锁的拥有者的状态来决定。</p>
+<h3 id="synchronized-的误区"><a href="#synchronized-的误区" class="headerlink" title="synchronized 的误区"></a>synchronized 的误区</h3><blockquote>
+<p>示例摘自：<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100047701">极客时间教程 - Java 业务开发常见错误 100 例</a></p>
+</blockquote>
+<h4 id="synchronized-使用范围不当导致的错误"><a href="#synchronized-使用范围不当导致的错误" class="headerlink" title="synchronized 使用范围不当导致的错误"></a>synchronized 使用范围不当导致的错误</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Interesting</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">volatile</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="type">int</span> <span class="variable">b</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Interesting</span> <span class="variable">interesting</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Interesting</span>();</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; interesting.add()).start();</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; interesting.compare()).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        log.info(<span class="string">&quot;add start&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            a++;</span><br><span class="line">            b++;</span><br><span class="line">        &#125;</span><br><span class="line">        log.info(<span class="string">&quot;add done&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">compare</span><span class="params">()</span> &#123;</span><br><span class="line">        log.info(<span class="string">&quot;compare start&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            <span class="comment">//a 始终等于 b 吗？</span></span><br><span class="line">            <span class="keyword">if</span> (a &lt; b) &#123;</span><br><span class="line">                log.info(<span class="string">&quot;a:&#123;&#125;,b:&#123;&#125;,&#123;&#125;&quot;</span>, a, b, a &gt; b);</span><br><span class="line">                <span class="comment">//最后的 a&gt;b 应该始终是 false 吗？</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        log.info(<span class="string">&quot;compare done&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>【输出】</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">16</span>:<span class="number">05</span>:<span class="number">25.541</span> <span class="selector-attr">[Thread-0]</span> INFO io<span class="selector-class">.github</span><span class="selector-class">.dunwu</span><span class="selector-class">.javacore</span><span class="selector-class">.concurrent</span><span class="selector-class">.sync</span><span class="selector-class">.synchronized</span> 使用范围不当 - add start</span><br><span class="line"><span class="number">16</span>:<span class="number">05</span>:<span class="number">25.544</span> <span class="selector-attr">[Thread-0]</span> INFO io<span class="selector-class">.github</span><span class="selector-class">.dunwu</span><span class="selector-class">.javacore</span><span class="selector-class">.concurrent</span><span class="selector-class">.sync</span><span class="selector-class">.synchronized</span> 使用范围不当 - add done</span><br><span class="line"><span class="number">16</span>:<span class="number">05</span>:<span class="number">25.544</span> <span class="selector-attr">[Thread-1]</span> INFO io<span class="selector-class">.github</span><span class="selector-class">.dunwu</span><span class="selector-class">.javacore</span><span class="selector-class">.concurrent</span><span class="selector-class">.sync</span><span class="selector-class">.synchronized</span> 使用范围不当 - compare start</span><br><span class="line"><span class="number">16</span>:<span class="number">05</span>:<span class="number">25.544</span> <span class="selector-attr">[Thread-1]</span> INFO io<span class="selector-class">.github</span><span class="selector-class">.dunwu</span><span class="selector-class">.javacore</span><span class="selector-class">.concurrent</span><span class="selector-class">.sync</span><span class="selector-class">.synchronized</span> 使用范围不当 - compare done</span><br></pre></td></tr></table></figure>
+
+<p>之所以出现这种错乱，是因为两个线程是交错执行 add 和 compare 方法中的业务逻辑，而且这些业务逻辑不是原子性的：a++ 和 b++ 操作中可以穿插在 compare 方法的比较代码中；更需要注意的是，a&lt;b 这种比较操作在字节码层面是加载 a、加载 b 和比较三步，代码虽然是一行但也不是原子性的。</p>
+<p>所以，正确的做法应该是，为 add 和 compare 都加上方法锁，确保 add 方法执行时，compare 无法读取 a 和 b：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">compare</span><span class="params">()</span></span><br></pre></td></tr></table></figure>
+
+<p>所以，使用锁解决问题之前一定要理清楚，我们要保护的是什么逻辑，多线程执行的情况又是怎样的。</p>
+<h4 id="synchronized-保护对象不对导致的错误"><a href="#synchronized-保护对象不对导致的错误" class="headerlink" title="synchronized 保护对象不对导致的错误"></a>synchronized 保护对象不对导致的错误</h4><p>加锁前要清楚锁和被保护的对象是不是一个层面的。</p>
+<p>静态字段属于类，类级别的锁才能保护；而非静态字段属于类实例，实例级别的锁就可以保护。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">synchronized</span> 错误使用示例 <span class="number">2</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> 错误使用示例 <span class="number">2</span> demo = <span class="keyword">new</span> <span class="title class_">synchronized</span> 错误使用示例 <span class="number">2</span>();</span><br><span class="line">        System.out.println(demo.wrong(<span class="number">1000000</span>));</span><br><span class="line">        System.out.println(demo.right(<span class="number">1000000</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">wrong</span><span class="params">(<span class="type">int</span> count)</span> &#123;</span><br><span class="line">        Data.reset();</span><br><span class="line">        IntStream.rangeClosed(<span class="number">1</span>, count).parallel().forEach(i -&gt; <span class="keyword">new</span> <span class="title class_">Data</span>().wrong());</span><br><span class="line">        <span class="keyword">return</span> Data.getCounter();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">right</span><span class="params">(<span class="type">int</span> count)</span> &#123;</span><br><span class="line">        Data.reset();</span><br><span class="line">        IntStream.rangeClosed(<span class="number">1</span>, count).parallel().forEach(i -&gt; <span class="keyword">new</span> <span class="title class_">Data</span>().right());</span><br><span class="line">        <span class="keyword">return</span> Data.getCounter();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Data</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Getter</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">counter</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Object</span> <span class="variable">locker</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">reset</span><span class="params">()</span> &#123;</span><br><span class="line">            counter = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">return</span> counter;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">wrong</span><span class="params">()</span> &#123;</span><br><span class="line">            counter++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">right</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (locker) &#123;</span><br><span class="line">                counter++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>wrong 方法中试图对一个静态对象加对象级别的 synchronized 锁，并不能保证线程安全。</p>
+<h4 id="锁粒度导致的问题"><a href="#锁粒度导致的问题" class="headerlink" title="锁粒度导致的问题"></a>锁粒度导致的问题</h4><p>要尽可能的缩小加锁的范围，这可以提高并发吞吐。</p>
+<p>如果精细化考虑了锁应用范围后，性能还无法满足需求的话，我们就要考虑另一个维度的粒度问题了，即：区分读写场景以及资源的访问冲突，考虑使用悲观方式的锁还是乐观方式的锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">synchronized</span> 锁粒度不当 &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Demo</span> <span class="variable">demo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Demo</span>();</span><br><span class="line">        demo.wrong();</span><br><span class="line">        demo.right();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Demo</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> List&lt;Integer&gt; data = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">slow</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.MILLISECONDS.sleep(<span class="number">10</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">wrong</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="type">long</span> <span class="variable">begin</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">            IntStream.rangeClosed(<span class="number">1</span>, <span class="number">1000</span>).parallel().forEach(i -&gt; &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">                    slow();</span><br><span class="line">                    data.add(i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            log.info(<span class="string">&quot;took:&#123;&#125;&quot;</span>, System.currentTimeMillis() - begin);</span><br><span class="line">            <span class="keyword">return</span> data.size();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">right</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="type">long</span> <span class="variable">begin</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">            IntStream.rangeClosed(<span class="number">1</span>, <span class="number">1000</span>).parallel().forEach(i -&gt; &#123;</span><br><span class="line">                slow();</span><br><span class="line">                <span class="keyword">synchronized</span> (data) &#123;</span><br><span class="line">                    data.add(i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            log.info(<span class="string">&quot;took:&#123;&#125;&quot;</span>, System.currentTimeMillis() - begin);</span><br><span class="line">            <span class="keyword">return</span> data.size();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="volatile-内存语义"><a href="#volatile-内存语义" class="headerlink" title="volatile 内存语义"></a>volatile 内存语义</h2><p><code>volatile</code> 是 JVM 提供的 <strong>最轻量级的同步机制</strong>。</p>
+<p>被 <code>volatile</code> 修饰的变量，具备以下特性：</p>
+<ul>
+<li><strong>线程可见性</strong></li>
+<li><strong>禁止指令重排序</strong></li>
+<li><strong>不保证原子性</strong></li>
+</ul>
+<p>线程安全需要具备：可见性、有序性、原子性。然而，<code>volatile</code> 不保证原子性，因此它不能彻底地保证线程安全。这也正如其命名，<code>volatile</code> 的中文意思是不稳定的，易变的。</p>
+<h3 id="保证线程可见性"><a href="#保证线程可见性" class="headerlink" title="保证线程可见性"></a>保证线程可见性</h3><p>这里的<strong>可见性是指当一条线程修改了 volatile 变量的值，新值对于其他线程来说是可以立即得知的</strong>。而普通变量不能做到这一点，普通变量的值在线程间传递均需要通过主内存来完成。</p>
+<p><strong>线程写 volatile 变量的过程：</strong></p>
+<ol>
+<li>改变线程工作内存中 volatile 变量副本的值</li>
+<li>将改变后的副本的值从工作内存刷新到主内存</li>
+</ol>
+<p><strong>线程读 volatile 变量的过程：</strong></p>
+<ol>
+<li>从主内存中读取 volatile 变量的最新值到线程的工作内存中</li>
+<li>从工作内存中读取 volatile 变量的副本</li>
+</ol>
+<blockquote>
+<p>注意：<strong>保证可见性不等同于 volatile 变量保证并发操作的安全性</strong></p>
+<p>在不符合以下两点的场景中，仍然要通过枷锁来保证原子性：</p>
+<ul>
+<li>运算结果并不依赖变量的当前值，或者能够确保只有单一的线程修改变量的值。</li>
+<li>变量不需要与其他状态变量共同参与不变约束。</li>
+</ul>
+</blockquote>
+<p>但是如果多个线程同时把更新后的变量值同时刷新回主内存，可能导致得到的值不是预期结果：</p>
+<p>举个例子： 定义 <code>volatile int count = 0</code>，2 个线程同时执行 count++ 操作，每个线程都执行 500 次，最终结果小于 1000，原因是每个线程执行 count++ 需要以下 3 个步骤：</p>
+<ol>
+<li>线程从主内存读取最新的 count 的值</li>
+<li>执行引擎把 count 值加 1，并赋值给线程工作内存</li>
+<li>线程工作内存把 count 值保存到主内存 有可能某一时刻 2 个线程在步骤 1 读取到的值都是 100，执行完步骤 2 得到的值都是 101，最后刷新了 2 次 101 保存到主内存。</li>
+</ol>
+<h3 id="禁止指令重排序"><a href="#禁止指令重排序" class="headerlink" title="禁止指令重排序"></a>禁止指令重排序</h3><p>观察加入 <code>volatile</code> 关键字和没有加入 <code>volatile</code> 关键字时所生成的汇编代码发现，<strong>加入 <code>volatile</code> 关键字时，会多出一个 <code>lock</code> 前缀指令</strong>。</p>
+<p><strong><code>lock</code> 前缀指令实际上相当于一个内存屏障</strong>（也成内存栅栏），内存屏障会提供 3 个功能：</p>
+<ul>
+<li>它确保指令重排序时不会把其后面的指令排到内存屏障之前的位置，也不会把前面的指令排到内存屏障的后面；即在执行到内存屏障这句指令时，在它前面的操作已经全部完成；</li>
+<li>它会强制将对缓存的修改操作立即写入主存；</li>
+<li>如果是写操作，它会导致其他 CPU 中对应的缓存行无效。</li>
+</ul>
+<p>在 Java 中，<code>Unsafe</code> 类提供了三个开箱即用的内存屏障相关的方法，屏蔽了操作系统底层的差异：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">loadFence</span><span class="params">()</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">storeFence</span><span class="params">()</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">fullFence</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+<p>理论上来说，你通过这个三个方法也可以实现和 <code>volatile</code> 禁止重排序一样的效果，只是会麻烦一些。</p>
+<p>下面我以一个常见的面试题为例讲解一下 <code>volatile</code> 关键字禁止指令重排序的效果。</p>
+<p>【示例】双重校验锁实现单例模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">                <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>instance</code> 采用 <code>volatile</code> 关键字修饰也是很有必要的， <code>instance = new Singleton();</code> 这段代码其实是分为三步执行：</p>
+<ol>
+<li>为 <code>instance</code> 分配内存空间</li>
+<li>初始化 <code>instance</code></li>
+<li>将 <code>instance</code> 指向分配的内存地址</li>
+</ol>
+<p>但是由于 JVM 具有指令重排的特性，执行顺序有可能变成 1-&gt;3-&gt;2。指令重排在单线程环境下不会出现问题，但是在多线程环境下会导致一个线程获得还没有初始化的实例。例如，线程 T1 执行了 1 和 3，此时 T2 调用 <code>getInstance</code>() 后发现 <code>instance</code> 不为空，因此返回 <code>instance</code>，但此时 <code>instance</code> 还未被初始化。</p>
+<h3 id="volatile-不保证原子性"><a href="#volatile-不保证原子性" class="headerlink" title="volatile 不保证原子性"></a>volatile 不保证原子性</h3><p>线程安全需要具备：可见性、有序性、原子性。然而，**<code>volatile</code> 不保证原子性，所以决定了它不能彻底地保证线程安全**。</p>
+<p>我们通过下面的代码即可证明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VolatileAtomicityDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">inc</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">increase</span><span class="params">()</span> &#123;</span><br><span class="line">        inc++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">threadPool</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">5</span>);</span><br><span class="line">        <span class="type">VolatileAtomicityDemo</span> <span class="variable">volatileAtomicityDemo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">VolatileAtomicityDemo</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">            threadPool.execute(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; <span class="number">500</span>; j++) &#123;</span><br><span class="line">                    volatileAtomicityDemo.increase();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 等待 1.5 秒，保证上面程序执行完成</span></span><br><span class="line">        Thread.sleep(<span class="number">1500</span>);</span><br><span class="line">        System.out.println(inc);</span><br><span class="line">        threadPool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正常情况下，运行上面的代码理应输出 <code>2500</code>。但你真正运行了上面的代码之后，你会发现每次输出结果都小于 <code>2500</code>。</p>
+<p>为什么会出现这种情况呢？不是说好了，<code>volatile</code> 可以保证变量的可见性嘛！</p>
+<p>也就是说，如果 <code>volatile</code> 能保证 <code>inc++</code> 操作的原子性的话。每个线程中对 <code>inc</code> 变量自增完之后，其他线程可以立即看到修改后的值。5 个线程分别进行了 500 次操作，那么最终 inc 的值应该是 5*500&#x3D;2500。</p>
+<p>很多人会误认为自增操作 <code>inc++</code> 是原子性的，实际上，<code>inc++</code> 其实是一个复合操作，包括三步：</p>
+<ol>
+<li>读取 inc 的值。</li>
+<li>对 inc 加 1。</li>
+<li>将 inc 的值写回内存。</li>
+</ol>
+<p><code>volatile</code> 是无法保证这三个操作是具有原子性的，有可能导致下面这种情况出现：</p>
+<ol>
+<li>线程 1 对 <code>inc</code> 进行读取操作之后，还未对其进行修改。线程 2 又读取了 <code>inc</code> 的值并对其进行修改（+1），再将 <code>inc</code> 的值写回内存。</li>
+<li>线程 2 操作完毕后，线程 1 对 <code>inc</code> 的值进行修改（+1），再将 <code>inc</code> 的值写回内存。</li>
+</ol>
+<p>这也就导致两个线程分别对 <code>inc</code> 进行了一次自增操作后，<code>inc</code> 实际上只增加了 1。</p>
+<p>其实，如果想要保证上面的代码运行正确也非常简单，利用 <code>synchronized</code>、<code>Lock</code> 或者 <code>AtomicInteger</code> 都可以。</p>
+<p>::: tabs#线程安全的计数器</p>
+<p>@tab <code>synchronized</code> 改进</p>
+<p>使用 <code>synchronized</code> 改进：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">increase</span><span class="params">()</span> &#123;</span><br><span class="line">    inc++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>@tab <code>AtomicInteger</code> 改进</p>
+<p>使用 <code>AtomicInteger</code> 改进：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">AtomicInteger</span> <span class="variable">inc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicInteger</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">increase</span><span class="params">()</span> &#123;</span><br><span class="line">    inc.getAndIncrement();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>@tab <code>ReentrantLock</code> 改进</p>
+<p>使用 <code>ReentrantLock</code> 改进：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">increase</span><span class="params">()</span> &#123;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        inc++;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>:::</p>
+<h3 id="volatile-的应用"><a href="#volatile-的应用" class="headerlink" title="volatile 的应用"></a>volatile 的应用</h3><p>如果 <code>volatile</code> 变量修饰符使用恰当的话，它比 <code>synchronized</code> 的使用和执行成本更低，因为它不会引起线程上下文的切换和调度。但是，**<code>volatile</code> 无法替代 <code>synchronized</code> ，因为 <code>volatile</code> 无法保证操作的原子性**。</p>
+<p><code>volatile</code> 和 <code>synchronized</code> 的区别在于：</p>
+<ul>
+<li><code>volatile</code> 本质是在告诉 jvm 当前变量在寄存器（工作内存）中的值是不确定的，需要从主存中读取；<code>synchronized</code> 则是锁定当前变量，只有当前线程可以访问该变量，其他线程被阻塞住。</li>
+<li><code>volatile</code> 仅能修饰变量；<code>synchronized</code> 可以修饰方法和代码块。</li>
+<li><code>volatile</code> 仅能实现变量的修改可见性，不能保证原子性；而 <code>synchronized</code> 则可以保证变量的修改可见性和原子性</li>
+<li><code>volatile</code> 不会造成线程的阻塞；<code>synchronized</code> 可能会造成线程的阻塞。</li>
+<li><code>volatile</code> 标记的变量不会被编译器优化；<code>synchronized</code> 标记的变量可以被编译器优化。</li>
+</ul>
+<p>通常来说，<strong>使用 <code>volatile</code> 必须具备以下 2 个条件</strong>：</p>
+<ul>
+<li><strong>对变量的写操作不依赖于当前值</strong></li>
+<li><strong>该变量没有包含在具有其他变量的表达式中</strong></li>
+</ul>
+<p>::: tabs#volatile 的应用</p>
+<p>@tab 状态标记量</p>
+<p>【示例】状态标记量</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!flag) &#123;</span><br><span class="line">    doSomething();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setFlag</span><span class="params">()</span> &#123;</span><br><span class="line">    flag = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>@tab 双重锁实现线程安全的单例模式</p>
+<p>【示例】双重锁实现线程安全的单例模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> <span class="type">Singleton</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(instance==<span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">                <span class="keyword">if</span>(instance==<span class="literal">null</span>)</span><br><span class="line">                    instance = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>:::</p>
+<h2 id="final-内存语义"><a href="#final-内存语义" class="headerlink" title="final 内存语义"></a>final 内存语义</h2><p>我们知道，<code>final</code> 成员变量必须在声明的时候初始化或者在构造器中初始化，否则就会报编译错误。 <code>final</code> 关键字的可见性是指：<strong>final 字段一旦在声明时或构造器中初始化完成，则其他线程无需同步就能正确看见字段值</strong>。这是因为一旦初始化完成，final 变量的值立刻回写到主内存。</p>
+<h2 id="long-和-double-的特殊规则"><a href="#long-和-double-的特殊规则" class="headerlink" title="long 和 double 的特殊规则"></a>long 和 double 的特殊规则</h2><p>JMM 要求 <code>lock</code>、<code>unlock</code>、<code>read</code>、<code>load</code>、<code>assign</code>、<code>use</code>、<code>store</code>、<code>write</code> 这 8 种操作都具有原子性，但是对于 64 位的数据类型（long 和 double），在模型中特别定义相对宽松的规定：<strong>允许虚拟机将没有被 <code>volatile</code> 修饰的 64 位数据的读写操作分为 2 次 32 位的操作来进行</strong>，即允许虚拟机可选择不保证 64 位数据类型的 <code>load</code>、<code>store</code>、<code>read</code> 和 <code>write</code> 这 4 个操作的原子性。由于这种非原子性，有可能导致其他线程读到同步未完成的“32 位的半个变量”的值。</p>
+<p>不过实际开发中，Java 内存模型强烈建议虚拟机把 64 位数据的读写实现为具有原子性，目前各种平台下的商用虚拟机都选择把 64 位数据的读写操作作为原子操作来对待，因此我们在编写代码时一般不需要把用到的 <code>long</code> 和 <code>double</code> 变量专门声明为 <code>volatile</code>。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/10484692/">《Java 并发编程实战》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/26591326/">《Java 并发编程的艺术》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/34907497/">《深入理解 Java 虚拟机》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100023901">极客时间教程 - Java 并发编程实战</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100047701">极客时间教程 - Java 业务开发常见错误 100 例</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5bf2977751882505d840321d">理解 Java 内存模型</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/dolphin0520/p/3920373.html">Java 并发编程：volatile 关键字解析</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/dolphin0520/p/3923737.html">Java 并发编程：synchronized</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/javazejian/article/details/72828483">深入理解 Java 并发之 synchronized 实现原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://nicky-chen.github.io/2018/05/14/synchronized-principle/">synchronized 实现原理及锁优化</a></li>
+<li><a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf">Time, Clocks, and the Ordering of Events in a Distributed System</a>，<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1163428">译文</a>，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56146800">解读</a> - Lamport 介绍 happened before、偏序关系（partial ordering）、逻辑时钟（Logical Clocks）概念，提出解决分布式系统中区分事件发生的时序问题的方法。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/e98ae9d2/" title="Java 并发之内存模型">https://dunwu.github.io/blog/pages/e98ae9d2/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+              <a href="/blog/tags/JavaCore/" rel="tag"># JavaCore</a>
+              <a href="/blog/tags/JMM/" rel="tag"># JMM</a>
+              <a href="/blog/tags/Happens-Before/" rel="tag"># Happens-Before</a>
+              <a href="/blog/tags/%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C/" rel="tag"># 内存屏障</a>
+              <a href="/blog/tags/volatile/" rel="tag"># volatile</a>
+              <a href="/blog/tags/synchronized/" rel="tag"># synchronized</a>
+              <a href="/blog/tags/final/" rel="tag"># final</a>
+              <a href="/blog/tags/%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92%E5%BA%8F/" rel="tag"># 指令重排序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/c7eb7d7d/" rel="prev" title="Java 容器之 Stream">
+                  <i class="fa fa-angle-left"></i> Java 容器之 Stream
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/6726e7a6/" rel="next" title="Java 正则从入门到精通">
+                  Java 正则从入门到精通 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"595ceac1589849138169a5e7718d822d"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

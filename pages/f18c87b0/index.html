@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Redis 面试之应用篇缓存【中等】如何避免缓存雪崩、缓存击穿、缓存穿透？ 缓存击穿：指某个热点数据在缓存中失效，导致大量请求直接访问数据库。此时，由于瞬间的高并发，可能导致数据库崩溃。 使用互斥锁，确保同一时间只有一个请求可以去数据库查询并更新缓存。 热点数据永不过期。   缓存穿透：指查询一个不存在的数据，缓存中没有相应的记录，每次请求都会去数据库查询，造成数据库负担加重。 使用布隆过滤器，过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 面试之应用篇">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/f18c87b0/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Redis 面试之应用篇缓存【中等】如何避免缓存雪崩、缓存击穿、缓存穿透？ 缓存击穿：指某个热点数据在缓存中失效，导致大量请求直接访问数据库。此时，由于瞬间的高并发，可能导致数据库崩溃。 使用互斥锁，确保同一时间只有一个请求可以去数据库查询并更新缓存。 热点数据永不过期。   缓存穿透：指查询一个不存在的数据，缓存中没有相应的记录，每次请求都会去数据库查询，造成数据库负担加重。 使用布隆过滤器，过">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/202506151115189.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503272225857.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503270823833.png">
+<meta property="article:published_time" content="2020-07-13T09:03:42.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.737Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="KV 数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/202506151115189.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/f18c87b0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/f18c87b0/","path":"/pages/f18c87b0/","title":"Redis 面试之应用篇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 面试之应用篇 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E9%9D%A2%E8%AF%95%E4%B9%8B%E5%BA%94%E7%94%A8%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">Redis 面试之应用篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">1.1.</span> <span class="nav-text">缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E3%80%81%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E3%80%81%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【中等】如何避免缓存雪崩、缓存击穿、缓存穿透？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%BC%93%E5%AD%98%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【中等】如何保证缓存与数据库的数据一致性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【中等】有哪些常见的内存淘汰算法？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.2.</span> <span class="nav-text">分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E9%9C%80%E8%A6%81%E8%A7%A3%E5%86%B3%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【中等】实现分布式锁需要解决哪些问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Redis-%E4%B8%AD%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【中等】Redis 中如何实现分布式锁？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Red-Lock-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.3.</span> <span class="nav-text">【中等】Red Lock 分布式锁的原理是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Redisson-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.2.4.</span> <span class="nav-text">【中等】Redisson 分布式锁的原理是什么？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">1.3.</span> <span class="nav-text">消息队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Redis-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">【中等】Redis 如何实现消息队列？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-List-%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">基于 List 实现消息队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">基于发布订阅功能实现消息队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-Stream-%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">基于 Stream 实现消息队列</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.4.</span> <span class="nav-text">延时任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%A6%82%E4%BD%95%E5%9F%BA%E4%BA%8E-Redis-%E5%AE%9E%E7%8E%B0%E5%BB%B6%E6%97%B6%E4%BB%BB%E5%8A%A1%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">【中等】如何基于 Redis 实现延时任务？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/f18c87b0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 面试之应用篇 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 面试之应用篇<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/05.KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/Redis_%E9%9D%A2%E8%AF%95_%E5%BA%94%E7%94%A8.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-13 17:03:42" itemprop="dateCreated datePublished" datetime="2020-07-13T17:03:42+08:00">2020-07-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">KV数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/KV%E6%95%B0%E6%8D%AE%E5%BA%93/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Redis-面试之应用篇"><a href="#Redis-面试之应用篇" class="headerlink" title="Redis 面试之应用篇"></a>Redis 面试之应用篇</h1><h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><h3 id="【中等】如何避免缓存雪崩、缓存击穿、缓存穿透？"><a href="#【中等】如何避免缓存雪崩、缓存击穿、缓存穿透？" class="headerlink" title="【中等】如何避免缓存雪崩、缓存击穿、缓存穿透？"></a>【中等】如何避免缓存雪崩、缓存击穿、缓存穿透？</h3><ul>
+<li><strong>缓存击穿</strong>：指某个热点数据在缓存中失效，导致大量请求直接访问数据库。此时，由于瞬间的高并发，可能导致数据库崩溃。<ul>
+<li>使用互斥锁，确保同一时间只有一个请求可以去数据库查询并更新缓存。</li>
+<li>热点数据永不过期。</li>
+</ul>
+</li>
+<li><strong>缓存穿透</strong>：指查询一个不存在的数据，缓存中没有相应的记录，每次请求都会去数据库查询，造成数据库负担加重。<ul>
+<li>使用布隆过滤器，过滤掉不存在的请求，避免直接访问数据库。</li>
+<li>对查询结果进行缓存，即使是不存在的数据，也可以缓存一个标识，以减少对数据库的请求。<br><img src="https://raw.githubusercontent.com/dunwu/images/master/202506151115189.png"></li>
+</ul>
+</li>
+<li><strong>缓存雪崩</strong>：指多个缓存数据在同一时间过期，导致大量请求同时访问数据库，从而造成数据库瞬间负载激增。<ul>
+<li>采用随机过期时间策略，避免多个数据同时过期。</li>
+<li>使用双缓存策略，将数据同时存储在两层缓存中，减少数据库直接请求。</li>
+</ul>
+</li>
+</ul>
+<h3 id="【中等】如何保证缓存与数据库的数据一致性？"><a href="#【中等】如何保证缓存与数据库的数据一致性？" class="headerlink" title="【中等】如何保证缓存与数据库的数据一致性？"></a>【中等】如何保证缓存与数据库的数据一致性？</h3><p>一般来说，系统如果不是严格要求缓存和数据库保持一致性的话，尽量不要将<strong>读请求和写请求串行化</strong>。串行化可以保证一定不会出现数据不一致的情况，但是它会导致系统的吞吐量大幅度下降。</p>
+<p>一般来说缓存的更新有两种情况：</p>
+<ul>
+<li>先删除缓存，再更新数据库。</li>
+<li>先更新数据库，再删除缓存。</li>
+</ul>
+<blockquote>
+<p><strong>为什么是删除缓存，而不是更新缓存呢？</strong></p>
+</blockquote>
+<p>你可以想想当有多个并发的请求更新数据，你并不能保证更新数据库的顺序和更新缓存的顺序一致，那就会出现数据库中和缓存中数据不一致的情况。所以一般来说考虑删除缓存。</p>
+<h3 id="【中等】有哪些常见的内存淘汰算法？"><a href="#【中等】有哪些常见的内存淘汰算法？" class="headerlink" title="【中等】有哪些常见的内存淘汰算法？"></a>【中等】有哪些常见的内存淘汰算法？</h3><p>缓存淘汰的类型：</p>
+<ul>
+<li><strong>基于空间</strong> - 设置缓存空间大小。</li>
+<li><strong>基于容量</strong> - 设置缓存存储记录数。</li>
+<li>基于时间<ul>
+<li>TTL（Time To Live，即存活期）缓存数据从创建到过期的时间。</li>
+<li>TTI（Time To Idle，即空闲期）缓存数据多久没被访问的时间。</li>
+</ul>
+</li>
+</ul>
+<p>缓存淘汰算法：</p>
+<ul>
+<li><strong>FIFO</strong> - <strong>先进先出</strong>。在这种淘汰算法中，先进入缓存的会先被淘汰。这种可谓是最简单的了，但是会导致我们命中率很低。试想一下我们如果有个访问频率很高的数据是所有数据第一个访问的，而那些不是很高的是后面再访问的，那这样就会把我们的首个数据但是他的访问频率很高给挤出。</li>
+<li><strong>LRU</strong> - <strong>最近最少使用算法</strong>。在这种算法中避免了上面的问题，每次访问数据都会将其放在我们的队尾，如果需要淘汰数据，就只需要淘汰队首即可。但是这个依然有个问题，如果有个数据在 1 个小时的前 59 分钟访问了 1 万次（可见这是个热点数据）, 再后一分钟没有访问这个数据，但是有其他的数据访问，就导致了我们这个热点数据被淘汰。</li>
+<li><strong>LFU</strong> - <strong>最近最少频率使用</strong>。在这种算法中又对上面进行了优化，利用额外的空间记录每个数据的使用频率，然后选出频率最低进行淘汰。这样就避免了 LRU 不能处理时间段的问题。</li>
+</ul>
+<p>这三种缓存淘汰算法，实现复杂度一个比一个高，同样的命中率也是一个比一个好。而我们一般来说选择的方案居中即可，即实现成本不是太高，而命中率也还行的 LRU。</p>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><h3 id="【中等】实现分布式锁需要解决哪些问题？"><a href="#【中等】实现分布式锁需要解决哪些问题？" class="headerlink" title="【中等】实现分布式锁需要解决哪些问题？"></a>【中等】实现分布式锁需要解决哪些问题？</h3><p>分布式锁的解决方案大致有以下几种：</p>
+<ul>
+<li>基于数据库实现</li>
+<li>基于缓存（Redis，Memcached 等）实现</li>
+<li>基于 Zookeeper 实现</li>
+</ul>
+<p>分布式锁的实现要点大同小异，仅在实现细节上有所不同。</p>
+<p>实现分布式锁需要解决以下目标：</p>
+<ul>
+<li><strong>互斥</strong> - <strong>分布式锁必须是独一无二的</strong>，表现形式为：向数据存储插入一个唯一的 key，一旦有一个线程插入这个 key，其他线程就不能再插入了。</li>
+<li><strong>避免死锁</strong> - 在分布式锁的场景中，部分失败和异步网络这两个问题是同时存在的。如果一个进程获得了锁，但是这个进程与锁服务之间的网络出现了问题，导致无法通信，那么这个情况下，如果锁服务让它一直持有锁，就会导致死锁的发生。<ul>
+<li>常见的解决思路是引入<strong>超时机制</strong>，即成功申请锁后，超过一定时间，锁失效（删除 key）。</li>
+<li>超时机制解锁了死锁问题，但又引入了一个新问题：如果应用加锁时，对于操作共享资源的时长估计不足，可能会出现：操作尚未执行完，但是锁没了的尴尬情况。为了解决这个问题，需要引入<strong>锁续期</strong>机制：当持有锁的线程尚未执行完操作前，不断周期性检测锁的超时时间，一旦发现快要过期，就自动为锁续期。</li>
+<li>ZooKeeper 分布式锁避免死锁采用了另外一种思路—— Watch 机制。</li>
+</ul>
+</li>
+<li><strong>可重入</strong> - <strong>可重入</strong>指的是：<strong>同一个线程在没有释放锁之前，能否再次获得该锁</strong>。其实现方案是：只需在加锁的时候，<strong>记录好当前获取锁的节点 + 线程组合的唯一标识</strong>，然后在后续的加锁请求时，如果当前请求的节点 + 线程的唯一标识和当前持有锁的相同，那么就直接返回加锁成功；如果不相同，则按正常加锁流程处理。</li>
+<li><strong>公平性</strong> - 当多个线程请求同一锁时，它们必须按照请求的顺序来获取锁，即先来先得的原则。锁的公平性的实现也非常简单，对于被阻塞的加锁请求，我们只要先记录好它们的顺序，在锁被释放后，按顺序颁发就可以了。</li>
+<li><strong>重试</strong> - 有时候，加锁失败可能只是由于网络波动、请求超时等原因，稍候就可以成功获取锁。为了应对这种情况，加锁操作需要支持重试机制。常见的做法是，设置一个加锁超时时间，在该时间范围内，不断自旋重试加锁操作，超时后再判定加锁失败。</li>
+<li><strong>容错</strong> - 分布式锁若存储在单一节点，一旦该节点宕机或失联，就会导致锁失效。将分布式锁存储在多数据库实例中，加锁时并发写入 <code>N</code> 个节点，只要 <code>N / 2 + 1</code> 个节点写入成功即视为加锁成功。代表有：Redis 官方提供的 RedLock。</li>
+</ul>
+<h3 id="【中等】Redis-中如何实现分布式锁？"><a href="#【中等】Redis-中如何实现分布式锁？" class="headerlink" title="【中等】Redis 中如何实现分布式锁？"></a>【中等】Redis 中如何实现分布式锁？</h3><p><strong>基础实现</strong></p>
+<ul>
+<li><strong>加锁</strong>：<code>SET key val NX PX 30000</code>（<code>NX</code>：仅当 key 不存在时写入，<code>PX</code>：超时时间，毫秒）。</li>
+<li><strong>解锁</strong>：<code>DEL key</code>（直接删除 key 释放锁）。</li>
+</ul>
+<p><strong>避免死锁</strong></p>
+<ul>
+<li><strong>问题</strong>：节点宕机或异常导致锁无法释放。</li>
+<li><strong>方案</strong>：加锁时设置<strong>超时时间</strong>（<code>PX/EX</code>），到期自动删除。</li>
+<li><strong>原子性</strong>：使用 <code>SET key val NX PX</code> 替代 <code>setnx + expire</code>，避免组合命令非原子性问题。</li>
+</ul>
+<p><strong>超时续期（WatchDog）</strong></p>
+<ul>
+<li><strong>问题</strong>：业务未执行完，锁已过期。</li>
+<li><strong>方案</strong>：启动<strong>定时任务</strong>检测锁剩余时间，自动续期（如 Redisson 的 WatchDog 机制）。</li>
+</ul>
+<p><strong>安全解锁</strong></p>
+<ul>
+<li><strong>问题</strong>：其他节点误删锁。</li>
+<li><strong>方案</strong>：<ul>
+<li>加锁时写入<strong>唯一标识</strong>（如 UUID）。</li>
+<li>解锁时校验标识，<strong>匹配才删除</strong>（使用 Lua 脚本保证原子性）：<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&quot;get&quot;</span>, KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">&quot;del&quot;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p><strong>自旋重试</strong></p>
+<ul>
+<li><strong>问题</strong>：网络波动导致加锁失败。</li>
+<li><strong>方案</strong>：在超时时间内<strong>循环重试</strong>加锁（伪代码示例见原内容）。</li>
+</ul>
+<p><strong>其他问题</strong></p>
+<ul>
+<li><strong>不可重入</strong>：同一线程无法重复获取同一把锁（可通过 Redisson 等客户端支持）。</li>
+<li><strong>单点问题</strong>：主从切换可能导致锁失效（可用 <strong>RedLock 算法</strong>，但存在争议）。</li>
+</ul>
+<h3 id="【中等】Red-Lock-分布式锁的原理是什么？"><a href="#【中等】Red-Lock-分布式锁的原理是什么？" class="headerlink" title="【中等】Red Lock 分布式锁的原理是什么？"></a>【中等】Red Lock 分布式锁的原理是什么？</h3><p><strong>核心机制</strong>：</p>
+<ul>
+<li><strong>多节点写入</strong>：同时向多个 Redis 主节点（≥5 个）加锁</li>
+<li><strong>多数派原则</strong>：半数以上节点加锁成功才算成功</li>
+<li><strong>耗时控制</strong>：总加锁时间必须小于锁的过期时间</li>
+<li><strong>强制清理</strong>：解锁时向所有节点发起请求</li>
+</ul>
+<p><strong>注意事项</strong></p>
+<ul>
+<li><strong>网络延迟</strong>：多节点操作会增加耗时风险</li>
+<li><strong>性能代价</strong>：相比单节点锁性能更低</li>
+<li><strong>实现复杂度</strong>：需要精确控制时间和节点状态</li>
+</ul>
+<h3 id="【中等】Redisson-分布式锁的原理是什么？"><a href="#【中等】Redisson-分布式锁的原理是什么？" class="headerlink" title="【中等】Redisson 分布式锁的原理是什么？"></a>【中等】Redisson 分布式锁的原理是什么？</h3><p><a target="_blank" rel="noopener" href="https://github.com/redisson/redisson">Redisson</a> 是一个流行的 Redis Java 客户端，它基于 Netty 开发，并提供了丰富的扩展功能，如：<a target="_blank" rel="noopener" href="https://redisson.org/docs/data-and-services/counters/">分布式计数器</a>、<a target="_blank" rel="noopener" href="https://redisson.org/docs/data-and-services/collections/">分布式集合</a>、<a target="_blank" rel="noopener" href="https://redisson.org/docs/data-and-services/locks-and-synchronizers/">分布式锁</a> 等。</p>
+<p>Redisson 支持的分布式锁有多种：Lock, FairLock, MultiLock, RedLock, ReadWriteLock, Semaphore, PermitExpirableSemaphore, CountDownLatch，可以根据场景需要去选择，非常方便。一般而言，使用 Redis 分布式锁，推荐直接使用 Redisson 提供的 API，功能全面且较为可靠。</p>
+<p><strong>Redisson 分布式锁的实现要点</strong>：</p>
+<ul>
+<li><strong>锁的获取</strong>：Redisson 使用 Lua 脚本，利用 <code>exists + hexists + hincrby</code> 命令来保证只有一个线程能成功设置键（表示获得锁）。同时，Redisson 会通过 <code>pexpire</code> 命令为锁设置过期时间，防止因宕机等原因导致锁无法释放（即死锁问题）。</li>
+<li><strong>锁的续期</strong>：为了防止锁在持有过程中过期导致其他线程抢占锁，Redisson 实现了一种叫做 <strong>Watch Dog（看门狗）</strong> 的锁自动续期的功能。持有锁的线程会定期续期，即更新锁的过期时间，确保任务没有完成时锁不会失效。</li>
+<li><strong>锁的释放</strong>：锁释放时，Redisson 也是通过 Lua 脚本保证释放操作的原子性。利用 <code>hexists + del</code> 确保只有持有锁的线程才能释放锁，防止误释放锁的情况。Lua 脚本同时利用 publish 命令，广播唤醒其它等待的线程。</li>
+<li><strong>可重入锁</strong>：Redisson 支持可重入锁，持有锁的线程可以多次获取同一把锁而不会被阻塞。具体是利用 Redis 中的哈希结构，哈希中的 key 为线程 ID，如果重入则 value +1，如果释放则 value -1，减到 0 说明锁被释放了，则 del 锁。</li>
+</ul>
+<h2 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h2><h3 id="【中等】Redis-如何实现消息队列？"><a href="#【中等】Redis-如何实现消息队列？" class="headerlink" title="【中等】Redis 如何实现消息队列？"></a>【中等】Redis 如何实现消息队列？</h3><blockquote>
+<p>Redis 可以做消息队列吗？</p>
+<p>Redis 有哪些实现消息队列的方式？</p>
+</blockquote>
+<p>先说结论：<strong>可以是可以，但不建议使用 Redis 来做消息队列。和专业的消息队列相比，还是有很多欠缺的地方。</strong></p>
+<h4 id="基于-List-实现消息队列"><a href="#基于-List-实现消息队列" class="headerlink" title="基于 List 实现消息队列"></a>基于 List 实现消息队列</h4><p><strong>Redis 2.0 之前，如果想要使用 Redis 来做消息队列的话，只能通过 List 来实现。</strong></p>
+<p>通过 <code>RPUSH/LPOP</code> 或者 <code>LPUSH/RPOP</code>即可实现简易版消息队列：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">生产者生产消息</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">RPUSH myList msg1 msg2</span></span><br><span class="line">(integer) 2</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">RPUSH myList msg3</span></span><br><span class="line">(integer) 3</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">消费者消费消息</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">LPOP myList</span></span><br><span class="line">&quot;msg1&quot;</span><br></pre></td></tr></table></figure>
+
+<p>不过，通过 <code>RPUSH/LPOP</code> 或者 <code>LPUSH/RPOP</code>这样的方式存在性能问题，我们需要不断轮询去调用 <code>RPOP</code> 或 <code>LPOP</code> 来消费消息。当 List 为空时，大部分的轮询的请求都是无效请求，这种方式大量浪费了系统资源。</p>
+<p>因此，Redis 还提供了 <code>BLPOP</code>、<code>BRPOP</code> 这种阻塞式读取的命令（带 B-Blocking 的都是阻塞式），并且还支持一个超时参数。如果 List 为空，Redis 服务端不会立刻返回结果，它会等待 List 中有新数据后再返回或者是等待最多一个超时时间后返回空。如果将超时时间设置为 0 时，即可无限等待，直到弹出消息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">超时时间为 10s</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如果有数据立刻返回，否则最多等待 10 秒</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">BRPOP myList 10</span></span><br><span class="line">null</span><br></pre></td></tr></table></figure>
+
+<p><strong>List 实现消息队列功能太简单，像消息确认机制等功能还需要我们自己实现，最要命的是没有广播机制，消息也只能被消费一次。</strong></p>
+<h4 id="基于发布订阅功能实现消息队列"><a href="#基于发布订阅功能实现消息队列" class="headerlink" title="基于发布订阅功能实现消息队列"></a>基于发布订阅功能实现消息队列</h4><p><strong>Redis 2.0 引入了发布订阅 (pub&#x2F;sub) 功能，解决了 List 实现消息队列没有广播机制的问题。</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503272225857.png"></p>
+<p>Redis 发布订阅 (pub&#x2F;sub) 功能</p>
+<p>pub&#x2F;sub 中引入了一个概念叫 <strong>channel（频道）</strong>，发布订阅机制的实现就是基于这个 channel 来做的。</p>
+<p>pub&#x2F;sub 涉及发布者（Publisher）和订阅者（Subscriber，也叫消费者）两个角色：</p>
+<ul>
+<li>发布者通过 <code>PUBLISH</code> 投递消息给指定 channel。</li>
+<li>订阅者通过<code>SUBSCRIBE</code>订阅它关心的 channel。并且，订阅者可以订阅一个或者多个 channel。</li>
+</ul>
+<p>pub&#x2F;sub 既能单播又能广播，还支持 channel 的简单正则匹配。不过，消息丢失（客户端断开连接或者 Redis 宕机都会导致消息丢失）、消息堆积（发布者发布消息的时候不会管消费者的具体消费能力如何）等问题依然没有一个比较好的解决办法。</p>
+<h4 id="基于-Stream-实现消息队列"><a href="#基于-Stream-实现消息队列" class="headerlink" title="基于 Stream 实现消息队列"></a>基于 Stream 实现消息队列</h4><p>为此，Redis 5.0 新增加的一个数据结构 <code>Stream</code> 来做消息队列。<code>Stream</code> 支持：</p>
+<ul>
+<li>发布 &#x2F; 订阅模式</li>
+<li>按照消费者组进行消费（借鉴了 Kafka 消费者组的概念）</li>
+<li>消息持久化（ RDB 和 AOF）</li>
+<li>ACK 机制（通过确认机制来告知已经成功处理了消息）</li>
+<li>阻塞式获取消息</li>
+</ul>
+<p><code>Stream</code> 的结构如下：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503270823833.png"></p>
+<p>这是一个有序的消息链表，每个消息都有一个唯一的 ID 和对应的内容。ID 是一个时间戳和序列号的组合，用来保证消息的唯一性和递增性。内容是一个或多个键值对（类似 Hash 基本数据类型），用来存储消息的数据。</p>
+<p>这里再对图中涉及到的一些概念，进行简单解释：</p>
+<ul>
+<li><code>Consumer Group</code>：消费者组用于组织和管理多个消费者。消费者组本身不处理消息，而是再将消息分发给消费者，由消费者进行真正的消费</li>
+<li><code>last_delivered_id</code>：标识消费者组当前消费位置的游标，消费者组中任意一个消费者读取了消息都会使 last_delivered_id 往前移动。</li>
+<li><code>pending_ids</code>：记录已经被客户端消费但没有 ack 的消息的 ID。</li>
+</ul>
+<p><code>Stream</code> 使用起来相对要麻烦一些，这里就不演示了。</p>
+<p>总的来说，<code>Stream</code> 已经可以满足一个消息队列的基本要求了。不过，<code>Stream</code> 在实际使用中依然会有一些小问题不太好解决比如在 Redis 发生故障恢复后不能保证消息至少被消费一次。</p>
+<p>综上，和专业的消息队列相比，使用 Redis 来实现消息队列还是有很多欠缺的地方比如消息丢失和堆积问题不好解决。因此，我们通常建议不要使用 Redis 来做消息队列，你完全可以选择市面上比较成熟的一些消息队列比如 RocketMQ、Kafka。不过，如果你就是想要用 Redis 来做消息队列的话，那我建议你优先考虑 <code>Stream</code>，这是目前相对最优的 Redis 消息队列实现。</p>
+<p>相关阅读：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/gCUT5TcCQRAxYkTJfTRjJw">Redis 消息队列发展历程 - 阿里开发者 - 2022</a></p>
+<h2 id="延时任务"><a href="#延时任务" class="headerlink" title="延时任务"></a>延时任务</h2><h3 id="【中等】如何基于-Redis-实现延时任务？"><a href="#【中等】如何基于-Redis-实现延时任务？" class="headerlink" title="【中等】如何基于 Redis 实现延时任务？"></a>【中等】如何基于 Redis 实现延时任务？</h3><p>基于 Redis 实现延时任务的功能无非就下面两种方案：</p>
+<ol>
+<li>Redis 过期事件监听</li>
+<li>Redisson 内置的延时队列</li>
+</ol>
+<p>Redis 过期事件监听的存在时效性较差、丢消息、多服务实例下消息重复消费等问题，不被推荐使用。</p>
+<p>Redisson 内置的延时队列具备下面这些优势：</p>
+<ol>
+<li><strong>减少了丢消息的可能</strong>：DelayedQueue 中的消息会被持久化，即使 Redis 宕机了，根据持久化机制，也只可能丢失一点消息，影响不大。当然了，你也可以使用扫描数据库的方法作为补偿机制。</li>
+<li><strong>消息不存在重复消费问题</strong>：每个客户端都是从同一个目标队列中获取任务的，不存在重复消费的问题。</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5ad6e4066fb9a028d82c4b66">面试中关于 Redis 的问题看这篇就够了</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/doocs/advanced-java#%E7%BC%93%E5%AD%98">advanced-java</a></li>
+<li><a target="_blank" rel="noopener" href="https://xiaolincoding.com/redis/base/redis_interview.html">Redis 常见面试题</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/f18c87b0/" title="Redis 面试之应用篇">https://dunwu.github.io/blog/pages/f18c87b0/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/redis/" rel="tag"># redis</a>
+              <a href="/blog/tags/KV-%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># KV 数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/ce594f11/" rel="prev" title="Redis 面试">
+                  <i class="fa fa-angle-left"></i> Redis 面试
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/d7fa17f4/" rel="next" title="Java 并发之分工工具">
+                  Java 并发之分工工具 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"3b98c2def324c0bdd530fd3d5491791d"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

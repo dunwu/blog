@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="微服务基本原理微服务技术架构 第一层：接入层 外部设备访问的统一接入层。 第二层：聚合服务层 对下层的基础服务做一些聚合，剪裁的工作，适配上层不同设备的数据输出。 第三层：基础服务层 比较细粒度的微服务层，提供基础的核心服务，公共服务。  服务通信通过注册中心，服务消费者和服务提供者就可以感知彼此，但是，要实现交互还必须解决通信问题：  通信协议。即服务提供者和服务消费者之间以什么样的 协议 进行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务基本原理">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/214c6d9d/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="微服务基本原理微服务技术架构 第一层：接入层 外部设备访问的统一接入层。 第二层：聚合服务层 对下层的基础服务做一些聚合，剪裁的工作，适配上层不同设备的数据输出。 第三层：基础服务层 比较细粒度的微服务层，提供基础的核心服务，公共服务。  服务通信通过注册中心，服务消费者和服务提供者就可以感知彼此，但是，要实现交互还必须解决通信问题：  通信协议。即服务提供者和服务消费者之间以什么样的 协议 进行">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716195006.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716195117.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716204432.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716203729.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716201640.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716202409.png">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/ELH62gpbFmGdnIjxDT7AOQyZgl2KQnz68zZFSDpHfa80ppne7gbP4ROOLJSuZT7E2uEdf1OTR9zthLNFkIZSLQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716202911.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716204658.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716205052.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200721154106.png">
+<meta property="article:published_time" content="2020-07-21T07:35:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.723Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="设计">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="微服务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716195006.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/214c6d9d/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/214c6d9d/","path":"/pages/214c6d9d/","title":"微服务基本原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>微服务基本原理 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">微服务基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">微服务技术架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E9%80%9A%E4%BF%A1"><span class="nav-number">1.2.</span> <span class="nav-text">服务通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">序列化方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">通信协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7"><span class="nav-number">1.3.</span> <span class="nav-text">服务监控</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.3.1.</span> <span class="nav-text">监控对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.2.</span> <span class="nav-text">系统监控原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">数据采集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">数据传输</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">数据处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%95%E7%A4%BA"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">数据展示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E6%8A%80%E6%9C%AF"><span class="nav-number">1.3.3.</span> <span class="nav-text">监控技术</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">服务治理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-%E7%BD%91%E5%85%B3"><span class="nav-number">1.5.</span> <span class="nav-text">API 网关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Zuul"><span class="nav-number">1.5.1.</span> <span class="nav-text">Zuul</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.6.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1"><span class="nav-number">1.7.</span> <span class="nav-text">服务路由</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.7.1.</span> <span class="nav-text">服务路由的应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%E7%9A%84%E8%A7%84%E5%88%99"><span class="nav-number">1.7.2.</span> <span class="nav-text">服务路由的规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%AF%E7%94%B1"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">条件路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E8%B7%AF%E7%94%B1"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">脚本路由</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%E7%9A%84%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F"><span class="nav-number">1.7.3.</span> <span class="nav-text">服务路由的获取方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8"><span class="nav-number">1.7.4.</span> <span class="nav-text">内部服务调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8"><span class="nav-number">1.7.5.</span> <span class="nav-text">外部服务调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="nav-number">1.8.</span> <span class="nav-text">配置中心</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Apollo"><span class="nav-number">1.8.1.</span> <span class="nav-text">Apollo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Cloud-Git"><span class="nav-number">1.8.2.</span> <span class="nav-text">Spring Cloud Git</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.9.</span> <span class="nav-text">链路追踪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.9.1.</span> <span class="nav-text">链路追踪的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.9.2.</span> <span class="nav-text">链路追踪的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.9.3.</span> <span class="nav-text">链路追踪的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B1%82"><span class="nav-number">1.9.3.1.</span> <span class="nav-text">数据采集层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E5%B1%82"><span class="nav-number">1.9.3.2.</span> <span class="nav-text">数据处理层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%95%E7%A4%BA%E5%B1%82"><span class="nav-number">1.9.3.3.</span> <span class="nav-text">数据展示层</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94"><span class="nav-number">1.9.4.</span> <span class="nav-text">链路追踪方案对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E7%86%94%E6%96%AD"><span class="nav-number">1.10.</span> <span class="nav-text">限流熔断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E6%B5%81"><span class="nav-number">1.10.1.</span> <span class="nav-text">限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E7%BA%A7"><span class="nav-number">1.10.2.</span> <span class="nav-text">降级</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DEVOPS"><span class="nav-number">1.11.</span> <span class="nav-text">DEVOPS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%92%8C%E5%AE%B9%E5%99%A8%E5%B9%B3%E5%8F%B0"><span class="nav-number">1.11.1.</span> <span class="nav-text">容器和容器平台</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC-%E9%80%89%E5%9E%8B"><span class="nav-number">1.12.</span> <span class="nav-text">RPC 选型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E5%AE%9A%E8%AF%AD%E8%A8%80-RPC"><span class="nav-number">1.12.1.</span> <span class="nav-text">限定语言 RPC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%A8%E8%AF%AD%E8%A8%80-RPC"><span class="nav-number">1.12.2.</span> <span class="nav-text">跨语言 RPC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service-Mesh"><span class="nav-number">1.13.</span> <span class="nav-text">Service Mesh</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Mesh-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.13.1.</span> <span class="nav-text">Service Mesh 的实现原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.14.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/214c6d9d/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="微服务基本原理 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微服务基本原理<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/01.%E6%9E%B6%E6%9E%84/01.%E5%BE%AE%E6%9C%8D%E5%8A%A1/10.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-21 15:35:00" itemprop="dateCreated datePublished" datetime="2020-07-21T15:35:00+08:00">2020-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" itemprop="url" rel="index"><span itemprop="name">微服务</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="微服务基本原理"><a href="#微服务基本原理" class="headerlink" title="微服务基本原理"></a>微服务基本原理</h1><h2 id="微服务技术架构"><a href="#微服务技术架构" class="headerlink" title="微服务技术架构"></a>微服务技术架构</h2><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716195006.png" alt="img"></p>
+<p><strong>第一层：接入层</strong></p>
+<p>外部设备访问的统一接入层。</p>
+<p><strong>第二层：聚合服务层</strong></p>
+<p>对下层的基础服务做一些聚合，剪裁的工作，适配上层不同设备的数据输出。</p>
+<p><strong>第三层：基础服务层</strong></p>
+<p>比较细粒度的微服务层，提供基础的核心服务，公共服务。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716195117.png" alt="img"></p>
+<h2 id="服务通信"><a href="#服务通信" class="headerlink" title="服务通信"></a>服务通信</h2><p>通过注册中心，服务消费者和服务提供者就可以感知彼此，但是，要实现交互还必须解决通信问题：</p>
+<ul>
+<li><strong>通信协议</strong>。即服务提供者和服务消费者之间以什么样的 <strong>协议</strong> 进行网络通信，说白了，是要解决客户端和服务端如何建立连接、管理连接以及服务端如何处理请求的问题。是采用四层 TCP、UDP 协议，还是采用七层 HTTP 协议，还是采用其他协议？例如：Dubbo 基于 TCP 通信；而 Spring Cloud 基于 HTTP REST 通信。TCP 通信方式，传输效率更高；但是 HTTP 方式天然可以提供对外服务。</li>
+<li><strong>传输方式</strong>。即服务提供者和服务消费者之间的数据传输采用哪种方式。是同步还是异步？是在单连接上传输，还是多路复用。</li>
+<li><strong>序列化和反序列化</strong>。它主要解决客户端和服务端采用哪种数据编解码的问题。常见的序列化方式包括：XML、JSON；二进制类如：<a target="_blank" rel="noopener" href="https://github.com/apache/thrift">thrift</a>、<a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf">protobuf</a>、<a target="_blank" rel="noopener" href="http://hessian.caucho.com/doc/hessian-overview.xtp">hessian</a>、JDK。</li>
+</ul>
+<h3 id="序列化方式"><a href="#序列化方式" class="headerlink" title="序列化方式"></a>序列化方式</h3><p>序列化方式的选型，一般基于以下考虑：</p>
+<ul>
+<li>支持数据结构类型的丰富度</li>
+<li>跨语言支持</li>
+<li>性能</li>
+</ul>
+<blockquote>
+<p>👉 参考：<a href="https://dunwu.github.io/waterdrop/pages/737e5233/">Java 序列化</a></p>
+</blockquote>
+<h3 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h3><p>微服务框架对比：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RPC</th>
+<th>REST</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>耦合性</td>
+<td>强耦合</td>
+<td>松散耦合</td>
+</tr>
+<tr>
+<td>协议</td>
+<td>Tcp</td>
+<td>Http、Http2</td>
+</tr>
+<tr>
+<td>序列化</td>
+<td>二进制（Thrift、Protobuf、Hessian、Avro、JDK 等）</td>
+<td>Xml、Json</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td>客户端</td>
+<td>对编程语言有限制</td>
+<td>跨语言支持更好（支持 Http 即可）</td>
+</tr>
+<tr>
+<td>代表技术</td>
+<td>Dubbo、Motan、Tars、gRpc、Thrift</td>
+<td>Spring Cloud</td>
+</tr>
+</tbody></table>
+<h2 id="服务监控"><a href="#服务监控" class="headerlink" title="服务监控"></a>服务监控</h2><p>当服务消费者与服务提供者之间建立了通信，作为管理者需要通过监控手段来观察服务是否正常，调用是否成功。服务监控是很复杂的，在微服务架构下，一次用户调用会因为服务化拆分后，变成多个不同服务之间的相互调用，这也就需要对拆分后的每个服务都监控起来。</p>
+<h3 id="监控对象"><a href="#监控对象" class="headerlink" title="监控对象"></a>监控对象</h3><p>服务监控一定是通过观察数据来量化分析，所以首先要明确需要监控什么。</p>
+<p>一般来说，服务监控数据有以下分类：</p>
+<ul>
+<li><strong>业务监控</strong>：核心指标、登录、登出、下单、支付等。</li>
+<li><strong>应用监控</strong>：访问接口、访问服务、SQL、内存使用率、响应时间、TPS、QPS 等。</li>
+<li><strong>系统监控</strong>：CPU、内存、网络、磁盘等。</li>
+<li><strong>基础监控</strong>：网络流量、丢包数、错包数、连接数等。</li>
+<li><strong>客户端监控</strong>：性能、返回码、地域、运营商、版本、系统等。</li>
+</ul>
+<h3 id="系统监控原理"><a href="#系统监控原理" class="headerlink" title="系统监控原理"></a>系统监控原理</h3><p>一旦明确了要监控的对象，接下就是考虑如何监控。</p>
+<p><strong>监控系统主要包括四个环节：数据采集、数据传输、数据处理和数据展示</strong></p>
+<h4 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h4><p>通常有两种数据收集方式：</p>
+<ul>
+<li><strong>服务主动上报</strong>：这种处理方式通过在业务代码或者服务框架里加入数据收集代码逻辑，在每一次服务调用完成后，主动上报服务的调用信息。这种方式在链路跟踪中较为常见，主流的技术方案有：Zipkin。</li>
+<li><strong>代理收集</strong>：这种处理方式通过服务调用后把调用的详细信息记录到本地日志文件中，然后再通过代理去解析本地日志文件，然后再上报服务的调用信息。主流的技术方案有：ELK、Flume。</li>
+</ul>
+<h4 id="数据传输"><a href="#数据传输" class="headerlink" title="数据传输"></a>数据传输</h4><p>数据传输最常用的方式有两种：</p>
+<ul>
+<li><strong>UDP 传输</strong>：这种处理方式是数据处理单元提供服务器的请求地址，数据采集后通过 UDP 协议与服务器建立连接，然后把数据发送过去。</li>
+<li><strong>Kafka 传输</strong>：这种处理方式是数据采集后发送到指定的 Topic，然后数据处理单元再订阅对应的 Topic，就可以从 Kafka 消息队列中读取到对应的数据。由于 Kafka 有非常高的吞吐能力，所以很适合作为大数据量的缓冲池。</li>
+</ul>
+<h4 id="数据处理"><a href="#数据处理" class="headerlink" title="数据处理"></a>数据处理</h4><p>数据处理是对收集来的原始数据进行聚合并存储。数据聚合通常有两个维度：</p>
+<ul>
+<li><strong>接口维度聚合</strong>：这个维度是把实时收到的数据按照接口名维度实时聚合在一起，这样就可以得到每个接口的每秒请求量、平均耗时、成功率等信息。</li>
+<li><strong>机器维度聚合</strong>：这个维度是把实时收到的数据按照调用的节点维度聚合在一起，这样就可以从单机维度去查看每个接口的实时请求量、平均耗时等信息。</li>
+</ul>
+<p>聚合后的数据需要持久化到数据库中存储，所选用的数据库一般分为两种：</p>
+<ul>
+<li><strong>全文检索数据库</strong>：比如 Elasticsearch，以倒排索引的数据结构存储，需要查询的时候，根据索引来查询。</li>
+<li><strong>时序数据库</strong>：比如 OpenTSDB，以时序序列数据的方式存储，查询的时候按照时序如 1min、5min 等维度来查询。</li>
+</ul>
+<h4 id="数据展示"><a href="#数据展示" class="headerlink" title="数据展示"></a>数据展示</h4><p>数据展示是把处理后的数据以 Dashboard 的方式展示给用户。数据展示有多种方式，比如曲线图、饼状图、格子图展示等。</p>
+<h3 id="监控技术"><a href="#监控技术" class="headerlink" title="监控技术"></a>监控技术</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716204432.png" alt="img"></p>
+<ul>
+<li>ELK 的技术栈比较成熟，应用范围也比较广，除了可用作监控系统外，还可以用作日志查询和分析。</li>
+<li>Graphite 是基于时间序列数据库存储的监控系统，并且提供了功能强大的各种聚合函数比如 sum、average、top5 等可用于监控分析，而且对外提供了 API 也可以接入其他图形化监控系统如 Grafana。</li>
+<li>TICK 的核心在于其时间序列数据库 InfluxDB 的存储功能强大，且支持类似 SQL 语言的复杂数据处理操作。</li>
+<li>Prometheus 的独特之处在于它采用了拉数据的方式，对业务影响较小，同时也采用了时间序列数据库存储，而且支持独有的 PromQL 查询语言，功能强大而且简洁。</li>
+</ul>
+<h2 id="服务治理"><a href="#服务治理" class="headerlink" title="服务治理"></a>服务治理</h2><p>微服务治理平台就是<strong>与服务打交道的统一入口</strong>，无论是开发人员还是运维人员，都能通过这个平台对服务进行各种操作，比如开发人员可以通过这个平台对服务进行降级操作，运维人员可以通过这个平台对服务进行上下线操作，而不需要关心这个操作背后的具体实现。</p>
+<p>微服务治理平台关键之处就在于它能够封装对微服务架构内的各个基础设施组件的调用，从而对外提供统一的服务操作 API，而且还提供了可视化的界面，以方便开发人员和运维人员操作。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716203729.png" alt="img"></p>
+<p>服务治理的常用手段有：</p>
+<ul>
+<li>节点管理<ul>
+<li>注册中心主动摘除机制</li>
+<li>服务消费者摘除机制</li>
+</ul>
+</li>
+<li>负载均衡<ul>
+<li>轮询</li>
+<li>随机</li>
+<li>最近最少连接</li>
+<li>一致性 Hash</li>
+</ul>
+</li>
+<li>服务路由<ul>
+<li>业务存在灰度发布的需求</li>
+<li>多机房就近访问的需求</li>
+</ul>
+</li>
+<li>服务容错<ul>
+<li>FailOver：失败自动切换</li>
+<li>FailBack：失败通知</li>
+<li>FailCache：失败缓存</li>
+<li>FailFast：快速失败</li>
+</ul>
+</li>
+</ul>
+<h2 id="API-网关"><a href="#API-网关" class="headerlink" title="API 网关"></a>API 网关</h2><p>API 网关是一个服务器，是系统的唯一入口。从面向对象设计的角度看，它与外观模式类似。API 网关封装了系统内部架构，为每个客户端提供一个定制的 API。它可能还具有其它职责，如身份验证、监控、负载均衡、缓存、请求分片与管理、静态响应处理。<br>API 网关方式的核心要点是，所有的客户端和消费端都通过统一的网关接入微服务，在网关层处理所有的非业务功能。通常，网关也是提供 REST&#x2F;HTTP 的访问 API。服务端通过 API-GW 注册和管理服务。</p>
+<h3 id="Zuul"><a href="#Zuul" class="headerlink" title="Zuul"></a>Zuul</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716201640.png" alt="img"></p>
+<p>在 zuul 中， 整个请求的过程是这样的，首先将请求给 zuulservlet 处理，zuulservlet 中有一个 zuulRunner 对象，该对象中初始化了 RequestContext：作为存储整个请求的一些数据，并被所有的 zuulfilter 共享。zuulRunner 中还有 FilterProcessor，FilterProcessor 作为执行所有的 zuulfilter 的管理器。FilterProcessor 从 filterloader 中获取 zuulfilter，而 zuulfilter 是被 filterFileManager 所加载，并支持 groovy 热加载，采用了轮询的方式热加载。有了这些 filter 之后，zuulservelet 首先执行的 Pre 类型的过滤器，再执行 route 类型的过滤器，最后执行的是 post 类型的过滤器，如果在执行这些过滤器有错误的时候则会执行 error 类型的过滤器。执行完这些过滤器，最终将请求的结果返回给客户端。</p>
+<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><blockquote>
+<p>参考：<a href="https://dunwu.github.io/waterdrop/pages/6da58e4b/">负载均衡基本原理</a></p>
+</blockquote>
+<h2 id="服务路由"><a href="#服务路由" class="headerlink" title="服务路由"></a>服务路由</h2><p><strong>服务路由就是服务消费者在发起服务调用时，必须根据特定的规则来选择服务节点，从而满足某些特定的需求</strong>。</p>
+<h3 id="服务路由的应用场景"><a href="#服务路由的应用场景" class="headerlink" title="服务路由的应用场景"></a>服务路由的应用场景</h3><ul>
+<li><strong>分组调用</strong>。一般来讲，为了保证服务的高可用性，实现异地多活的需求，一个服务往往不止部署在一个数据中心，而且出于节省成本等考虑，有些业务可能不仅在私有机房部署，还会采用公有云部署，甚至采用多家公有云部署。服务节点也会按照不同的数据中心分成不同的分组，这时对于服务消费者来说，选择哪一个分组调用，就必须有相应的路由规则。</li>
+<li><strong>灰度发布</strong>。在服务上线发布的过程中，一般需要先在一小部分规模的服务节点上先发布服务，然后验证功能是否正常。如果正常的话就继续扩大发布范围；如果不正常的话，就需要排查问题，解决问题后继续发布。这个过程就叫作灰度发布，也叫金丝雀部署。</li>
+<li><strong>流量切换</strong>。在业务线上运行过程中，经常会遇到一些不可抗力因素导致业务故障，比如某个机房的光缆被挖断，或者发生着火等事故导致整个机房的服务都不可用。这个时候就需要按照某个指令，能够把原来调用这个机房服务的流量切换到其他正常的机房。</li>
+<li><strong>读写分离</strong>。对于大多数互联网业务来说都是读多写少，所以在进行服务部署的时候，可以把读写分开部署，所有写接口可以部署在一起，而读接口部署在另外的节点上。</li>
+</ul>
+<h3 id="服务路由的规则"><a href="#服务路由的规则" class="headerlink" title="服务路由的规则"></a>服务路由的规则</h3><p>服务路由主要有两种规则：一种是条件路由，一种是脚本路由。</p>
+<h4 id="条件路由"><a href="#条件路由" class="headerlink" title="条件路由"></a>条件路由</h4><p>条件路由是基于条件表达式的路由规则。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">condition</span>://<span class="number">0.0.0.0</span>/dubbo.test.interfaces.TestService?category=routers&amp;dynamic=true&amp;priority=<span class="number">2</span>&amp;enabled=true&amp;rule=<span class="string">&quot; + URL.encode(&quot;</span> host = <span class="number">10.20.153.10</span>=&gt; host = <span class="number">10.20.153.11</span><span class="string">&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<p>这里面 <code>condition://</code> 代表了这是一段用条件表达式编写的路由规则，具体的规则是</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> <span class="operator">=</span> <span class="number">10.20</span>.<span class="number">153.10</span> <span class="operator">=</span>&gt; host <span class="operator">=</span> <span class="number">10.20</span>.<span class="number">153.11</span></span><br></pre></td></tr></table></figure>
+
+<p>分隔符“&#x3D;&gt;”前面是服务消费者的匹配条件，后面是服务提供者的过滤条件。当服务消费者节点满足匹配条件时，就对该服务消费者执行后面的过滤规则。那么上面这段表达式表达的意义就是 IP 为“10.20.153.10”的服务消费者都调用 IP 为“10.20.153.11”的服务提供者节点。</p>
+<p>如果服务消费者的匹配条件为空，就表示对所有的服务消费者应用，就像下面的表达式一样。</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=&gt; host ！= <span class="number">10.20</span>.<span class="number">153.11</span></span><br></pre></td></tr></table></figure>
+
+<p>如果服务提供者的过滤条件为空，就表示禁止服务消费者访问，就像下面的表达式一样。</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> <span class="operator">=</span> <span class="number">10.20</span>.<span class="number">153.10</span><span class="operator">=</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>下面我举一些 Dubbo 框架中的条件路由，来给你讲解下条件路由的具体应用场景。</p>
+<ul>
+<li>排除某个服务节点</li>
+</ul>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=&gt; host != <span class="number">172.22</span>.<span class="number">3.91</span></span><br></pre></td></tr></table></figure>
+
+<p>一旦这条路由规则被应用到线上，所有的服务消费者都不会访问 IP 为 172.22.3.91 的服务节点，这种路由规则一般应用在线上流量排除预发布机以及摘除某个故障节点的场景。</p>
+<ul>
+<li>白名单和黑名单功能</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> != <span class="number">10.20.153.10</span>,<span class="number">10.20.153.11</span> =&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这条路由规则意思是除了 IP 为 10.20.153.10 和 10.20.153.11 的服务消费者可以发起服务调用以外，其他服务消费者都不可以，主要用于白名单访问逻辑，比如某个后台服务只允许特定的几台机器才可以访问，这样的话可以机器控制访问权限。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> = <span class="number">10.20.153.10</span>,<span class="number">10.20.153.11</span> =&gt;</span><br></pre></td></tr></table></figure>
+
+<p>同理，这条路由规则意思是除了 IP 为 10.20.153.10 和 10.20.153.11 的服务消费者不能发起服务调用以外，其他服务消费者都可以，也就是实现了黑名单功能，比如线上经常会遇到某些调用方不管是出于有意还是无意的不合理调用，影响了服务的稳定性，这时候可以通过黑名单功能暂时予以封杀。</p>
+<ul>
+<li>机房隔离</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">host</span> = <span class="number">172</span>.<span class="number">22</span>.<span class="number">3</span>.* =&gt; host = <span class="number">172</span>.<span class="number">22</span>.<span class="number">3</span>.*</span><br></pre></td></tr></table></figure>
+
+<p>这条路由规则意思是 IP 网段为 172.22.3.* 的服务消费者，才可以访问同网段的服务节点，这种规则一般应用于服务部署在多个 IDC，理论上同一个 IDC 内的调用性能要比跨 IDC 调用性能要好，应用这个规则是为了实现同 IDC 就近访问。</p>
+<ul>
+<li>读写分离</li>
+</ul>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">method</span> = <span class="title function_">find</span>*,<span class="title function_">list</span>*,<span class="title function_">get</span>*,<span class="title function_">is</span>* =&gt; <span class="title function_">host</span> =172.22.3.94,172.22.3.95</span><br><span class="line"><span class="title function_">method</span> != <span class="title function_">find</span>*,<span class="title function_">list</span>*,<span class="title function_">get</span>*,<span class="title function_">is</span>* =&gt; <span class="title function_">host</span> = 172.22.3.97,172.22.3.98</span><br></pre></td></tr></table></figure>
+
+<p>这条路由规则意思是 find<em>、get</em>、is* 等读方法调用 IP 为 172.22.3.94 和 172.22.3.95 的节点，除此以外的写方法调用 IP 为 172.22.3.97 和 172.22.3.98 的节点。对于大部分互联网业务来说，往往读请求要远远大于写请求，而写请求的重要性往往要远远高于读请求，所以需要把读写请求进行分离，以避免读请求异常影响到写请求，这时候就可以应用这种规则。</p>
+<h4 id="脚本路由"><a href="#脚本路由" class="headerlink" title="脚本路由"></a>脚本路由</h4><p>脚本路由是基于脚本语言的路由规则，常用的脚本语言比如 JavaScript、Groovy、JRuby 等。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;script://<span class="number">0.0</span>.<span class="number">0.0</span>/com.foo.BarService?category=routers&amp;dynamic=false&amp;rule=<span class="string">&quot; + URL.encode(&quot;</span>（function <span class="built_in">route</span>(invokers) &#123; ... &#125; (invokers)）&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>这里面“script:&#x2F;&#x2F;”就代表了这是一段脚本语言编写的路由规则，具体规则定义在脚本语言的 route 方法实现里，比如下面这段用 JavaScript 编写的 route() 方法表达的意思是，只有 IP 为 10.20.153.10 的服务消费者可以发起服务调用。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">function <span class="title">route</span>(<span class="params">invokers</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> result = <span class="keyword">new</span> java.util.ArrayList(invokers.size());</span><br><span class="line">  <span class="keyword">for</span>(i =<span class="number">0</span>; i &lt; invokers.size(); i ++)&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="string">&quot;10.20.153.10&quot;</span>.<span class="keyword">equals</span>(invokers.<span class="keyword">get</span>(i).getUrl().getHost()))&#123;</span><br><span class="line">       result.<span class="keyword">add</span>(invokers.<span class="keyword">get</span>(i));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line"> &#125; (invokers)）;</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务路由的获取方式"><a href="#服务路由的获取方式" class="headerlink" title="服务路由的获取方式"></a>服务路由的获取方式</h3><p>服务路由的获取方式主要有三种：</p>
+<ul>
+<li>本地配置</li>
+</ul>
+<p>顾名思义就是路由规则存储在服务消费者本地上。服务消费者发起调用时，从本地固定位置读取路由规则，然后按照路由规则选取一个服务节点发起调用。</p>
+<ul>
+<li>配置中心管理</li>
+</ul>
+<p>这种方式下，所有的服务消费者都从配置中心获取路由规则，由配置中心来统一管理。</p>
+<ul>
+<li>动态下发</li>
+</ul>
+<p>这种方式下，一般是运维人员或者开发人员，通过服务治理平台修改路由规则，服务治理平台调用配置中心接口，把修改后的路由规则持久化到配置中心。因为服务消费者订阅了路由规则的变更，于是就会从配置中心获取最新的路由规则，按照最新的路由规则来执行。</p>
+<h3 id="内部服务调用"><a href="#内部服务调用" class="headerlink" title="内部服务调用"></a>内部服务调用</h3><p>基础服务之间的调用：结合服务注册中心以及专属的具有负载均衡功能的客户端，如 Eureka+（restTemplate+Ribbon）或者 Eureka+Feign<br>聚合服务调用：结合服务注册中心以及专属的具有负载均衡功能的客户端，如 Eureka+（restTemplate+Ribbon）或者 Eureka+Feign</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716202409.png" alt="img"></p>
+<h3 id="外部服务调用"><a href="#外部服务调用" class="headerlink" title="外部服务调用"></a>外部服务调用</h3><p>基于 Netflix 的 zuul，做了简单了解，SpringCloud 与 zuul 集成的方式。这里先对核心流程做个简单了解，后续会有深入的应用、分析。</p>
+<p>Spring Cloud 很好的集成了 zuul，并且可以通过注解的形式来进行请求的反向路由以及 API 网关功能<br>Spring Cloud 集成 zuul，对与 url 映射的处理方式与 SpringMVC 对 url 的请求方式类似，都是通过 RequestMapping 来进行请求绑定的。核心类：ZuulHandlerMapping<br>zuul 的核心是 ZuulServlet，一个请求核心流程：HttpServletRequest –&gt;ZuulHandlerMapping –&gt;ZuulController –&gt; ZuulServlet –&gt; ZuulFilter –&gt; HttpServletResponse</p>
+<h2 id="配置中心"><a href="#配置中心" class="headerlink" title="配置中心"></a>配置中心</h2><p>配置中心的思路就是把服务的各种配置，如代码里配置的各种参数、服务降级的开关甚至依赖的资源等都在一个地方统一进行管理。服务启动时，可以自动从配置中心中拉取所需的配置，并且如果有配置变更的情况，同样可以自动从配置中心拉取最新的配置信息，服务无须重新发布。</p>
+<p>配置中心一般包含下面几个功能：</p>
+<ul>
+<li>配置注册功能</li>
+<li>配置反注册功能</li>
+<li>配置查看功能</li>
+<li>配置变更订阅功能</li>
+</ul>
+<h3 id="Apollo"><a href="#Apollo" class="headerlink" title="Apollo"></a>Apollo</h3><p>携程开源的分布式配置中心，支持 Java 和.Net 语言，客户端和配置中心通过 HTTP 长连接实现实时推送，并且有统一的管理界面来实现配置管理。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/ELH62gpbFmGdnIjxDT7AOQyZgl2KQnz68zZFSDpHfa80ppne7gbP4ROOLJSuZT7E2uEdf1OTR9zthLNFkIZSLQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="img"></p>
+<h3 id="Spring-Cloud-Git"><a href="#Spring-Cloud-Git" class="headerlink" title="Spring Cloud Git"></a>Spring Cloud Git</h3><p>Spring Cloud 中使用的配置中心组件，只支持 Java 语言，配置存储在 git 中，变更配置也需要通过 git 操作，如果配置中心有配置变更，需要手动刷新。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716202911.png" alt="img"></p>
+<h2 id="链路追踪"><a href="#链路追踪" class="headerlink" title="链路追踪"></a>链路追踪</h2><h3 id="链路追踪的作用"><a href="#链路追踪的作用" class="headerlink" title="链路追踪的作用"></a>链路追踪的作用</h3><ul>
+<li>优化系统瓶颈</li>
+<li>优化链路调用</li>
+<li>生成网络拓扑</li>
+<li>透明传输数据</li>
+</ul>
+<h3 id="链路追踪的原理"><a href="#链路追踪的原理" class="headerlink" title="链路追踪的原理"></a>链路追踪的原理</h3><p>理解链路追踪必须先了解以下概念：</p>
+<ul>
+<li><strong>traceId</strong>，用于标识某一次具体的请求 ID。当用户的请求进入系统后，会在 RPC 调用网络的第一层生成一个全局唯一的 traceId，并且会随着每一层的 RPC 调用，不断往后传递，这样的话通过 traceId 就可以把一次用户请求在系统中调用的路径串联起来。</li>
+<li><strong>spanId</strong>，用于标识一次 RPC 调用在分布式请求中的位置。当用户的请求进入系统后，处在 RPC 调用网络的第一层 A 时 spanId 初始值是 0，进入下一层 RPC 调用 B 的时候 spanId 是 0.1，继续进入下一层 RPC 调用 C 时 spanId 是 0.1.1，而与 B 处在同一层的 RPC 调用 E 的 spanId 是 0.2，这样的话通过 spanId 就可以定位某一次 RPC 请求在系统调用中所处的位置，以及它的上下游依赖分别是谁。</li>
+<li><strong>annotation</strong>，用于业务自定义埋点数据，可以是业务感兴趣的想上传到后端的数据，比如一次请求的用户 UID。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716204658.png" alt="img"></p>
+<h3 id="链路追踪的实现"><a href="#链路追踪的实现" class="headerlink" title="链路追踪的实现"></a>链路追踪的实现</h3><p>一个服务追踪系统一般可以分为三层：</p>
+<ul>
+<li><strong>数据采集</strong>层，负责数据埋点并上报。</li>
+<li><strong>数据处理</strong>层，负责数据的存储与计算。</li>
+<li><strong>数据展示</strong>层，负责数据的图形化展示。</li>
+</ul>
+<h4 id="数据采集层"><a href="#数据采集层" class="headerlink" title="数据采集层"></a>数据采集层</h4><p>一次 RPC 请求可以分为四个阶段。</p>
+<ul>
+<li>CS（Client Send）阶段 : 客户端发起请求，并生成调用的上下文。</li>
+<li>SR（Server Recieve）阶段 : 服务端接收请求，并生成上下文。</li>
+<li>SS（Server Send）阶段 : 服务端返回请求，这个阶段会将服务端上下文数据上报，下面这张图可以说明上报的数据有：traceId&#x3D;123456，spanId&#x3D;0.1，appKey&#x3D;B，method&#x3D;B.method，start&#x3D;103，duration&#x3D;38。</li>
+<li>CR（Client Recieve）阶段 : 客户端接收返回结果，这个阶段会将客户端上下文数据上报，上报的数据有：traceid&#x3D;123456，spanId&#x3D;0.1，appKey&#x3D;A，method&#x3D;B.method，start&#x3D;103，duration&#x3D;38。</li>
+</ul>
+<h4 id="数据处理层"><a href="#数据处理层" class="headerlink" title="数据处理层"></a>数据处理层</h4><p>数据处理层的作用就是把数据采集层上报的数据按需计算，然后落地存储供查询使用。</p>
+<ul>
+<li>实时数据处理</li>
+</ul>
+<p>针对实时数据处理，一般采用 Storm 或者 Spark Streaming 来对链路数据进行实时聚合加工，存储一般使用 OLTP 数据仓库，比如 HBase，使用 traceId 作为 RowKey，能天然地把一整条调用链聚合在一起，提高查询效率。</p>
+<ul>
+<li>离线数据处理</li>
+</ul>
+<p>针对离线数据处理，一般通过运行 MapReduce 或者 Spark 批处理程序来对链路数据进行离线计算，存储一般使用 Hive。</p>
+<h4 id="数据展示层"><a href="#数据展示层" class="headerlink" title="数据展示层"></a>数据展示层</h4><p>数据展示层的作用就是将处理后的链路信息以图形化的方式展示给用户。</p>
+<p>实际项目中主要用到两种图形展示，一种是调用链路图，一种是调用拓扑图。</p>
+<h3 id="链路追踪方案对比"><a href="#链路追踪方案对比" class="headerlink" title="链路追踪方案对比"></a>链路追踪方案对比</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200716205052.png" alt="img"></p>
+<h2 id="限流熔断"><a href="#限流熔断" class="headerlink" title="限流熔断"></a>限流熔断</h2><p>一般而言，集群故障的产生原因不外乎有两种：</p>
+<p>一种是代码 bug 所导致，比如说某一段 Java 代码不断地分配大对象，但没有及时回收导致 JVM OOM 退出；</p>
+<p>另一种是突发的流量冲击，超出了系统的最大承载能力，比如“双 11”这种购物活动，电商系统会在零点一瞬间涌入大量流量，超出系统的最大承载能力，一下子就把整个系统给压垮了。</p>
+<p>应付集群故障的思路，主要有两种：<strong>限流</strong>和<strong>降级</strong>。</p>
+<h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>限流就是限制流量。通常情况下，系统能够承载的流量根据集群规模的大小是固定的，可以称之为系统的最大容量。当真实流量超过了系统的最大容量后，就会导致系统响应变慢，服务调用出现大量超时，反映给用户的感觉就是卡顿、无响应。所以，应该根据系统的最大容量，给系统设置一个阈值，超过这个阈值的请求会被自动抛弃，这样的话可以最大限度地保证系统提供的服务正常。</p>
+<p>除此之外，通常一个微服务系统会同时提供多个服务，每个服务在同一时刻的请求量也是不同的，很可能出现的一种情况就是，系统中某个服务的请求量突增，占用了系统中大部分资源，导致其他服务没有资源可用。因此，还要针对系统中每个服务的请求量也设置一个阈值，超过这个阈值的请求也要被自动抛弃，这样的话不至于因为一个服务影响了其他所有服务。</p>
+<p>在实际项目中，可以用两个指标来衡量服务的请求量，一个是 QPS 即每秒请求量，一个是工作线程数。不过 QPS 因为不同服务的响应快慢不同，所以系统能够承载的 QPS 相差很大，因此一般选择工作线程数来作为限流的指标，给系统设置一个总的最大工作线程数以及单个服务的最大工作线程数，这样的话无论是系统的总请求量过大导致整体工作线程数量达到最大工作线程数，还是某个服务的请求量超过单个服务的最大工作线程数，都会被限流，以起到保护整个系统的作用。</p>
+<h3 id="降级"><a href="#降级" class="headerlink" title="降级"></a>降级</h3><p>什么是降级呢？在我看来，降级就是通过停止系统中的某些功能，来保证系统整体的可用性。降级可以说是一种被动防御的措施，为什么这么说呢？因为它一般是系统已经出现故障后所采取的一种止损措施。</p>
+<p>那么降级一般是如何实现的呢？根据我的实践来看， 一种可行的方案是通过开关来实现。</p>
+<p>具体来讲，就是在系统运行的内存中开辟一块区域，专门用于存储开关的状态，也就是开启还是关闭。并且需要监听某个端口，通过这个端口可以向系统下发命令，来改变内存中开关的状态。当开关开启时，业务的某一段逻辑就不再执行，而正常情况下，开关是关闭的状态。</p>
+<p>开关一般用在两种地方，一种是新增的业务逻辑，因为新增的业务逻辑相对来说不成熟，往往具备一定的风险，所以需要加开关来控制新业务逻辑是否执行；另一种是依赖的服务或资源，因为依赖的服务或者资源不总是可靠的，所以最好是有开关能够控制是否对依赖服务或资源发起调用，来保证即使依赖出现问题，也能通过降级来避免影响。</p>
+<p>在实际业务应用的时候，降级要按照对业务的影响程度进行分级，一般分为三级：一级降级是对业务影响最小的降级，在故障的情况下，首先执行一级降级，所以一级降级也可以设置成自动降级，不需要人为干预；二级降级是对业务有一定影响的降级，在故障的情况下，如果一级降级起不到多大作用的时候，可以人为采取措施，执行二级降级；三级降级是对业务有较大影响的降级，这种降级要么是对商业收入有重大影响，要么是对用户体验有重大影响，所以操作起来要非常谨慎，不在最后时刻一般不予采用。</p>
+<h2 id="DEVOPS"><a href="#DEVOPS" class="headerlink" title="DEVOPS"></a>DEVOPS</h2><h3 id="容器和容器平台"><a href="#容器和容器平台" class="headerlink" title="容器和容器平台"></a>容器和容器平台</h3><p>Mesos、Marathon、Kubernetes</p>
+<h2 id="RPC-选型"><a href="#RPC-选型" class="headerlink" title="RPC 选型"></a>RPC 选型</h2><h3 id="限定语言-RPC"><a href="#限定语言-RPC" class="headerlink" title="限定语言 RPC"></a>限定语言 RPC</h3><p>跟语言平台绑定的开源 RPC 框架主要有下面几种。</p>
+<ul>
+<li>Dubbo：国内最早开源的 RPC 框架，由阿里巴巴公司开发并于 2011 年末对外开源，仅支持 Java 语言。</li>
+<li>Motan：微博内部使用的 RPC 框架，于 2016 年对外开源，仅支持 Java 语言。</li>
+<li>Tars：腾讯内部使用的 RPC 框架，于 2017 年对外开源，仅支持 C++ 语言。</li>
+<li>Spring Cloud：国外 Pivotal 公司 2014 年对外开源的 RPC 框架，仅支持 Java 语言，最近几年生态发展得比较好，是比较火的 RPC 框架。</li>
+</ul>
+<p>所以很明显，如果你的业务场景仅仅局限于一种语言的话，可以选择跟语言绑定的 RPC 框架中的一种；如果涉及多个语言平台之间的相互调用，就应该选择跨语言平台的 RPC 框架。</p>
+<p>仔细分析，可以看出 Spring Cloud 不仅提供了基本的 RPC 框架功能，还提供了服务注册组件、配置中心组件、负载均衡组件、断路器组件、分布式消息追踪组件等一系列组件，也难怪被技术圈的人称之为“Spring Cloud 全家桶”。如果你不想自己实现以上这些功能，那么 Spring Cloud 基本可以满足你的全部需求。而 Dubbo、Motan 基本上只提供了最基础的 RPC 框架的功能，其他微服务组件都需要自己去实现。不过由于 Spring Cloud 的 RPC 通信采用了 HTTP 协议，相比 Dubbo 和 Motan 所采用的私有协议来说，在高并发的通信场景下，性能相对要差一些，所以对性能有苛刻要求的情况下，可以考虑 Dubbo 和 Motan。</p>
+<h3 id="跨语言-RPC"><a href="#跨语言-RPC" class="headerlink" title="跨语言 RPC"></a>跨语言 RPC</h3><p>而跨语言平台的开源 RPC 框架主要有以下几种。</p>
+<ul>
+<li>gRPC：Google 于 2015 年对外开源的跨语言 RPC 框架，支持常用的 C++、Java、Python、Go、Ruby、PHP、Android Java、Objective-C 等多种语言。</li>
+<li>Thrift：最初是由 Facebook 开发的内部系统跨语言的 RPC 框架，2007 年贡献给了 Apache 基金，成为 Apache 开源项目之一，支持常用的 C++、Java、PHP、Python、Ruby、Erlang 等多种语言。</li>
+</ul>
+<p>从成熟度上来讲，Thrift 因为诞生的时间要早于 gRPC，所以使用的范围要高于 gRPC，在 HBase、Hadoop、Scribe、Cassandra 等许多开源组件中都得到了广泛地应用。而且 Thrift 支持多达 25 种语言，这要比 gRPC 支持的语言更多，所以如果遇到 gRPC 不支持的语言场景下，选择 Thrift 更合适。</p>
+<p>但 gRPC 作为后起之秀，因为采用了 HTTP&#x2F;2 作为通信协议、ProtoBuf 作为数据序列化格式，在移动端设备的应用以及对传输带宽比较敏感的场景下具有很大的优势，而且开发文档丰富，根据 ProtoBuf 文件生成的代码要比 Thrift 更简洁一些，从使用难易程度上更占优势，所以如果使用的语言平台 gRPC 支持的话，建议还是采用 gRPC 比较好。</p>
+<h2 id="Service-Mesh"><a href="#Service-Mesh" class="headerlink" title="Service Mesh"></a>Service Mesh</h2><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200721154106.png" alt="img"></p>
+<h3 id="Service-Mesh-的实现原理"><a href="#Service-Mesh-的实现原理" class="headerlink" title="Service Mesh 的实现原理"></a>Service Mesh 的实现原理</h3><p>Service Mesh 实现的关键就在于两点：</p>
+<p>一个是上面提到的轻量级的网络代理也叫 SideCar，它的作用就是转发服务之间的调用；</p>
+<p>一个是基于 SideCar 的服务治理也被叫作 Control Plane，它的作用是向 SideCar 发送各种指令，以完成各种服务治理功能。下面我就来详细讲解这两点是如何实现的。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100014401">从 0 开始学微服务</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100046201">RPC 实战与核心原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/course/intro/100003901">微服务架构核心 20 讲</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/savorboard/p/api-gateway.html">谈谈微服务中的 API 网关（API Gateway）</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/214c6d9d/" title="微服务基本原理">https://dunwu.github.io/blog/pages/214c6d9d/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E8%AE%BE%E8%AE%A1/" rel="tag"># 设计</a>
+              <a href="/blog/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/blog/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag"># 微服务</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/32f9da1f/" rel="prev" title="MySQL 架构">
+                  <i class="fa fa-angle-left"></i> MySQL 架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/557dd5c5/" rel="next" title="Kafka 流式处理">
+                  Kafka 流式处理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"30ec38fc28d8659a49127d855d436325"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Hive 数据查询详解数据准备为了演示查询操作，这里需要预先创建三张表，并加载测试数据。  数据文件 emp.txt 和 dept.txt 可以从本仓库的resources 目录下载。  员工表1234567891011121314 -- 建表语句 CREATE TABLE emp(     empno INT,     -- 员工表编号     ename STRING,  -- 员工姓名">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hive 数据查询详解">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/5473f9d5/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Hive 数据查询详解数据准备为了演示查询操作，这里需要预先创建三张表，并加载测试数据。  数据文件 emp.txt 和 dept.txt 可以从本仓库的resources 目录下载。  员工表1234567891011121314 -- 建表语句 CREATE TABLE emp(     empno INT,     -- 员工表编号     ename STRING,  -- 员工姓名">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200224195733.png">
+<meta property="og:image" content="https://github.com/heibaiying/BigData-Notes/raw/master/pictures/hive-right-join.png">
+<meta property="article:published_time" content="2020-02-24T13:14:47.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.754Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="大数据">
+<meta property="article:tag" content="hive">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200224195733.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/5473f9d5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/5473f9d5/","path":"/pages/5473f9d5/","title":"Hive 数据查询详解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hive 数据查询详解 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hive-%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Hive 数据查询详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="nav-number">1.1.</span> <span class="nav-text">数据准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%98%E5%B7%A5%E8%A1%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">员工表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E9%97%A8%E8%A1%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">部门表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%8C%BA%E8%A1%A8"><span class="nav-number">1.1.3.</span> <span class="nav-text">分区表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.</span> <span class="nav-text">单表查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SELECT"><span class="nav-number">1.2.1.</span> <span class="nav-text">SELECT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WHERE"><span class="nav-number">1.2.2.</span> <span class="nav-text">WHERE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DISTINCT"><span class="nav-number">1.2.3.</span> <span class="nav-text">DISTINCT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%8C%BA%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.4.</span> <span class="nav-text">分区查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LIMIT"><span class="nav-number">1.2.5.</span> <span class="nav-text">LIMIT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GROUP-BY"><span class="nav-number">1.2.6.</span> <span class="nav-text">GROUP BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ORDER-AND-SORT"><span class="nav-number">1.2.7.</span> <span class="nav-text">ORDER AND SORT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HAVING"><span class="nav-number">1.2.8.</span> <span class="nav-text">HAVING</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DISTRIBUTE-BY"><span class="nav-number">1.2.9.</span> <span class="nav-text">DISTRIBUTE BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLUSTER-BY"><span class="nav-number">1.2.10.</span> <span class="nav-text">CLUSTER BY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E8%A1%A8%E8%81%94%E7%BB%93%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.3.</span> <span class="nav-text">多表联结查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#INNER-JOIN"><span class="nav-number">1.3.1.</span> <span class="nav-text">INNER JOIN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LEFT-OUTER-JOIN"><span class="nav-number">1.3.2.</span> <span class="nav-text">LEFT OUTER JOIN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RIGHT-OUTER-JOIN"><span class="nav-number">1.3.3.</span> <span class="nav-text">RIGHT OUTER JOIN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FULL-OUTER-JOIN"><span class="nav-number">1.3.4.</span> <span class="nav-text">FULL OUTER JOIN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LEFT-SEMI-JOIN"><span class="nav-number">1.3.5.</span> <span class="nav-text">LEFT SEMI JOIN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JOIN"><span class="nav-number">1.3.6.</span> <span class="nav-text">JOIN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JOIN-%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">JOIN 优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#STREAMTABLE"><span class="nav-number">1.4.1.</span> <span class="nav-text">STREAMTABLE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MAPJOIN"><span class="nav-number">1.4.2.</span> <span class="nav-text">MAPJOIN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SELECT-%E7%9A%84%E5%85%B6%E4%BB%96%E7%94%A8%E9%80%94"><span class="nav-number">1.5.</span> <span class="nav-text">SELECT 的其他用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.6.</span> <span class="nav-text">本地模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/5473f9d5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Hive 数据查询详解 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hive 数据查询详解<a href="https://github.com/dunwu/blog/blob/master/source/_posts/16.%E5%A4%A7%E6%95%B0%E6%8D%AE/hive/Hive%E6%9F%A5%E8%AF%A2.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-24 21:14:47" itemprop="dateCreated datePublished" datetime="2020-02-24T21:14:47+08:00">2020-02-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">大数据</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/hive/" itemprop="url" rel="index"><span itemprop="name">hive</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Hive-数据查询详解"><a href="#Hive-数据查询详解" class="headerlink" title="Hive 数据查询详解"></a>Hive 数据查询详解</h1><h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h2><p>为了演示查询操作，这里需要预先创建三张表，并加载测试数据。</p>
+<blockquote>
+<p>数据文件 emp.txt 和 dept.txt 可以从本仓库的<a target="_blank" rel="noopener" href="https://github.com/heibaiying/BigData-Notes/tree/master/resources">resources</a> 目录下载。</p>
+</blockquote>
+<h3 id="员工表"><a href="#员工表" class="headerlink" title="员工表"></a>员工表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">-- 建表语句</span></span><br><span class="line"> <span class="keyword">CREATE TABLE</span> emp(</span><br><span class="line">     empno <span class="type">INT</span>,     <span class="comment">-- 员工表编号</span></span><br><span class="line">     ename STRING,  <span class="comment">-- 员工姓名</span></span><br><span class="line">     job STRING,    <span class="comment">-- 职位类型</span></span><br><span class="line">     mgr <span class="type">INT</span>,</span><br><span class="line">     hiredate <span class="type">TIMESTAMP</span>,  <span class="comment">--雇佣日期</span></span><br><span class="line">     sal <span class="type">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>),  <span class="comment">--工资</span></span><br><span class="line">     comm <span class="type">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">     deptno <span class="type">INT</span>)   <span class="comment">--部门编号</span></span><br><span class="line">    <span class="type">ROW</span> FORMAT DELIMITED FIELDS TERMINATED <span class="keyword">BY</span> &quot;\t&quot;;</span><br><span class="line"></span><br><span class="line">  <span class="comment">--加载数据</span></span><br><span class="line">LOAD DATA <span class="keyword">LOCAL</span> INPATH &quot;/usr/file/emp.txt&quot; OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="部门表"><a href="#部门表" class="headerlink" title="部门表"></a>部门表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 建表语句</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> dept(</span><br><span class="line">    deptno <span class="type">INT</span>,   <span class="comment">--部门编号</span></span><br><span class="line">    dname STRING,  <span class="comment">--部门名称</span></span><br><span class="line">    loc STRING    <span class="comment">--部门所在的城市</span></span><br><span class="line">)</span><br><span class="line"><span class="type">ROW</span> FORMAT DELIMITED FIELDS TERMINATED <span class="keyword">BY</span> &quot;\t&quot;;</span><br><span class="line"></span><br><span class="line"><span class="comment">--加载数据</span></span><br><span class="line">LOAD DATA <span class="keyword">LOCAL</span> INPATH &quot;/usr/file/dept.txt&quot; OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> dept;</span><br></pre></td></tr></table></figure>
+
+<h3 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h3><p>这里需要额外创建一张分区表，主要是为了演示分区查询：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> emp_ptn(</span><br><span class="line">      empno <span class="type">INT</span>,</span><br><span class="line">      ename STRING,</span><br><span class="line">      job STRING,</span><br><span class="line">      mgr <span class="type">INT</span>,</span><br><span class="line">      hiredate <span class="type">TIMESTAMP</span>,</span><br><span class="line">      sal <span class="type">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>),</span><br><span class="line">      comm <span class="type">DECIMAL</span>(<span class="number">7</span>,<span class="number">2</span>)</span><br><span class="line">  )</span><br><span class="line"> PARTITIONED <span class="keyword">BY</span> (deptno <span class="type">INT</span>)   <span class="comment">-- 按照部门编号进行分区</span></span><br><span class="line"> <span class="type">ROW</span> FORMAT DELIMITED FIELDS TERMINATED <span class="keyword">BY</span> &quot;\t&quot;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">--加载数据</span></span><br><span class="line">LOAD DATA <span class="keyword">LOCAL</span> INPATH &quot;/usr/file/emp.txt&quot; OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp_ptn <span class="keyword">PARTITION</span> (deptno<span class="operator">=</span><span class="number">20</span>)</span><br><span class="line">LOAD DATA <span class="keyword">LOCAL</span> INPATH &quot;/usr/file/emp.txt&quot; OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp_ptn <span class="keyword">PARTITION</span> (deptno<span class="operator">=</span><span class="number">30</span>)</span><br><span class="line">LOAD DATA <span class="keyword">LOCAL</span> INPATH &quot;/usr/file/emp.txt&quot; OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp_ptn <span class="keyword">PARTITION</span> (deptno<span class="operator">=</span><span class="number">40</span>)</span><br><span class="line">LOAD DATA <span class="keyword">LOCAL</span> INPATH &quot;/usr/file/emp.txt&quot; OVERWRITE <span class="keyword">INTO</span> <span class="keyword">TABLE</span> emp_ptn <span class="keyword">PARTITION</span> (deptno<span class="operator">=</span><span class="number">50</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="单表查询"><a href="#单表查询" class="headerlink" title="单表查询"></a>单表查询</h2><h3 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询表中全部数据</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> emp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="WHERE"><a href="#WHERE" class="headerlink" title="WHERE"></a>WHERE</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询 10 号部门中员工编号大于 7782 的员工信息</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> emp <span class="keyword">WHERE</span> empno <span class="operator">&gt;</span> <span class="number">7782</span> <span class="keyword">AND</span> deptno <span class="operator">=</span> <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="DISTINCT"><a href="#DISTINCT" class="headerlink" title="DISTINCT"></a>DISTINCT</h3><p>Hive 支持使用 DISTINCT 关键字去重。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询所有工作类型</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> job <span class="keyword">FROM</span> emp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="分区查询"><a href="#分区查询" class="headerlink" title="分区查询"></a>分区查询</h3><p>分区查询 (Partition Based Queries)，可以指定某个分区或者分区范围。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询分区表中部门编号在[20,40]之间的员工</span></span><br><span class="line"><span class="keyword">SELECT</span> emp_ptn.<span class="operator">*</span> <span class="keyword">FROM</span> emp_ptn</span><br><span class="line"><span class="keyword">WHERE</span> emp_ptn.deptno <span class="operator">&gt;=</span> <span class="number">20</span> <span class="keyword">AND</span> emp_ptn.deptno <span class="operator">&lt;=</span> <span class="number">40</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="LIMIT"><a href="#LIMIT" class="headerlink" title="LIMIT"></a>LIMIT</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询薪资最高的 5 名员工</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> emp <span class="keyword">ORDER</span> <span class="keyword">BY</span> sal <span class="keyword">DESC</span> LIMIT <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="GROUP-BY"><a href="#GROUP-BY" class="headerlink" title="GROUP BY"></a>GROUP BY</h3><p>Hive 支持使用 GROUP BY 进行分组聚合操作。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> hive.map.aggr<span class="operator">=</span><span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查询各个部门薪酬综合</span></span><br><span class="line"><span class="keyword">SELECT</span> deptno,<span class="built_in">SUM</span>(sal) <span class="keyword">FROM</span> emp <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno;</span><br></pre></td></tr></table></figure>
+
+<p><code>hive.map.aggr</code> 控制程序如何进行聚合。默认值为 false。如果设置为 true，Hive 会在 map 阶段就执行一次聚合。这可以提高聚合效率，但需要消耗更多内存。</p>
+<h3 id="ORDER-AND-SORT"><a href="#ORDER-AND-SORT" class="headerlink" title="ORDER AND SORT"></a>ORDER AND SORT</h3><p>可以使用 ORDER BY 或者 Sort BY 对查询结果进行排序，排序字段可以是整型也可以是字符串：如果是整型，则按照大小排序；如果是字符串，则按照字典序排序。ORDER BY 和 SORT BY 的区别如下：</p>
+<ul>
+<li>使用 ORDER BY 时会有一个 Reducer 对全部查询结果进行排序，可以保证数据的全局有序性；</li>
+<li>使用 SORT BY 时只会在每个 Reducer 中进行排序，这可以保证每个 Reducer 的输出数据是有序的，但不能保证全局有序。</li>
+</ul>
+<p>由于 ORDER BY 的时间可能很长，如果你设置了严格模式 (hive.mapred.mode &#x3D; strict)，则其后面必须再跟一个 <code>limit</code> 子句。</p>
+<blockquote>
+<p>注 ：hive.mapred.mode 默认值是 nonstrict ，也就是非严格模式。</p>
+</blockquote>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询员工工资，结果按照部门升序，按照工资降序排列</span></span><br><span class="line"><span class="keyword">SELECT</span> empno, deptno, sal <span class="keyword">FROM</span> emp <span class="keyword">ORDER</span> <span class="keyword">BY</span> deptno <span class="keyword">ASC</span>, sal <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="HAVING"><a href="#HAVING" class="headerlink" title="HAVING"></a>HAVING</h3><p>可以使用 HAVING 对分组数据进行过滤。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询工资总和大于 9000 的所有部门</span></span><br><span class="line"><span class="keyword">SELECT</span> deptno,<span class="built_in">SUM</span>(sal) <span class="keyword">FROM</span> emp <span class="keyword">GROUP</span> <span class="keyword">BY</span> deptno <span class="keyword">HAVING</span> <span class="built_in">SUM</span>(sal)<span class="operator">&gt;</span><span class="number">9000</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="DISTRIBUTE-BY"><a href="#DISTRIBUTE-BY" class="headerlink" title="DISTRIBUTE BY"></a>DISTRIBUTE BY</h3><p>默认情况下，MapReduce 程序会对 Map 输出结果的 Key 值进行散列，并均匀分发到所有 Reducer 上。如果想要把具有相同 Key 值的数据分发到同一个 Reducer 进行处理，这就需要使用 DISTRIBUTE BY 字句。</p>
+<p>需要注意的是，DISTRIBUTE BY 虽然能保证具有相同 Key 值的数据分发到同一个 Reducer，但是不能保证数据在 Reducer 上是有序的。情况如下：</p>
+<p>把以下 5 个数据发送到两个 Reducer 上进行处理：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">k1</span></span><br><span class="line"><span class="attr">k2</span></span><br><span class="line"><span class="attr">k4</span></span><br><span class="line"><span class="attr">k3</span></span><br><span class="line"><span class="attr">k1</span></span><br></pre></td></tr></table></figure>
+
+<p>Reducer1 得到如下乱序数据：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">k1</span></span><br><span class="line"><span class="attr">k2</span></span><br><span class="line"><span class="attr">k1</span></span><br></pre></td></tr></table></figure>
+
+<p>Reducer2 得到数据如下：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">k4</span></span><br><span class="line"><span class="attr">k3</span></span><br></pre></td></tr></table></figure>
+
+<p>如果想让 Reducer 上的数据时有序的，可以结合 <code>SORT BY</code> 使用 (示例如下)，或者使用下面我们将要介绍的 CLUSTER BY。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 将数据按照部门分发到对应的 Reducer 上处理</span></span><br><span class="line"><span class="keyword">SELECT</span> empno, deptno, sal <span class="keyword">FROM</span> emp DISTRIBUTE <span class="keyword">BY</span> deptno SORT <span class="keyword">BY</span> deptno <span class="keyword">ASC</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="CLUSTER-BY"><a href="#CLUSTER-BY" class="headerlink" title="CLUSTER BY"></a>CLUSTER BY</h3><p>如果 <code>SORT BY</code> 和 <code>DISTRIBUTE BY</code> 指定的是相同字段，且 SORT BY 排序规则是 ASC，此时可以使用 <code>CLUSTER BY</code> 进行替换，同时 <code>CLUSTER BY</code> 可以保证数据在全局是有序的。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> empno, deptno, sal <span class="keyword">FROM</span> emp CLUSTER  <span class="keyword">BY</span> deptno ;</span><br></pre></td></tr></table></figure>
+
+<h2 id="多表联结查询"><a href="#多表联结查询" class="headerlink" title="多表联结查询"></a>多表联结查询</h2><p>Hive 支持内连接，外连接，左外连接，右外连接，笛卡尔连接，这和传统数据库中的概念是一致的，可以参见下图。</p>
+<p>需要特别强调：JOIN 语句的关联条件必须用 ON 指定，不能用 WHERE 指定，否则就会先做笛卡尔积，再过滤，这会导致你得不到预期的结果 (下面的演示会有说明)。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200224195733.png" alt="img"></p>
+<h3 id="INNER-JOIN"><a href="#INNER-JOIN" class="headerlink" title="INNER JOIN"></a>INNER JOIN</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询员工编号为 7369 的员工的详细信息</span></span><br><span class="line"><span class="keyword">SELECT</span> e.<span class="operator">*</span>,d.<span class="operator">*</span> <span class="keyword">FROM</span></span><br><span class="line">emp e <span class="keyword">JOIN</span> dept d</span><br><span class="line"><span class="keyword">ON</span> e.deptno <span class="operator">=</span> d.deptno</span><br><span class="line"><span class="keyword">WHERE</span> empno<span class="operator">=</span><span class="number">7369</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">--如果是三表或者更多表连接，语法如下</span></span><br><span class="line"><span class="keyword">SELECT</span> a.val, b.val, c.val <span class="keyword">FROM</span> a <span class="keyword">JOIN</span> b <span class="keyword">ON</span> (a.key <span class="operator">=</span> b.key1) <span class="keyword">JOIN</span> c <span class="keyword">ON</span> (c.key <span class="operator">=</span> b.key1)</span><br></pre></td></tr></table></figure>
+
+<h3 id="LEFT-OUTER-JOIN"><a href="#LEFT-OUTER-JOIN" class="headerlink" title="LEFT OUTER JOIN"></a>LEFT OUTER JOIN</h3><p>LEFT OUTER JOIN 和 LEFT JOIN 是等价的。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 左连接</span></span><br><span class="line"><span class="keyword">SELECT</span> e.<span class="operator">*</span>,d.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> emp e <span class="keyword">LEFT</span> <span class="keyword">OUTER</span>  <span class="keyword">JOIN</span>  dept d</span><br><span class="line"><span class="keyword">ON</span> e.deptno <span class="operator">=</span> d.deptno;</span><br></pre></td></tr></table></figure>
+
+<h3 id="RIGHT-OUTER-JOIN"><a href="#RIGHT-OUTER-JOIN" class="headerlink" title="RIGHT OUTER JOIN"></a>RIGHT OUTER JOIN</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--右连接</span></span><br><span class="line"><span class="keyword">SELECT</span> e.<span class="operator">*</span>,d.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> emp e <span class="keyword">RIGHT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span>  dept d</span><br><span class="line"><span class="keyword">ON</span> e.deptno <span class="operator">=</span> d.deptno;</span><br></pre></td></tr></table></figure>
+
+<p>执行右连接后，由于 40 号部门下没有任何员工，所以此时员工信息为 NULL。这个查询可以很好的复述上面提到的——JOIN 语句的关联条件必须用 ON 指定，不能用 WHERE 指定。你可以把 ON 改成 WHERE，你会发现无论如何都查不出 40 号部门这条数据，因为笛卡尔运算不会有 (NULL, 40) 这种情况。</p>
+<p><img src="https://github.com/heibaiying/BigData-Notes/raw/master/pictures/hive-right-join.png" alt="img"></p>
+<h3 id="FULL-OUTER-JOIN"><a href="#FULL-OUTER-JOIN" class="headerlink" title="FULL OUTER JOIN"></a>FULL OUTER JOIN</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> e.<span class="operator">*</span>,d.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> emp e <span class="keyword">FULL</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span>  dept d</span><br><span class="line"><span class="keyword">ON</span> e.deptno <span class="operator">=</span> d.deptno;</span><br></pre></td></tr></table></figure>
+
+<h3 id="LEFT-SEMI-JOIN"><a href="#LEFT-SEMI-JOIN" class="headerlink" title="LEFT SEMI JOIN"></a>LEFT SEMI JOIN</h3><p>LEFT SEMI JOIN （左半连接）是 IN&#x2F;EXISTS 子查询的一种更高效的实现。</p>
+<ul>
+<li>JOIN 子句中右边的表只能在 ON 子句中设置过滤条件;</li>
+<li>查询结果只包含左边表的数据，所以只能 SELECT 左表中的列。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询在纽约办公的所有员工信息</span></span><br><span class="line"><span class="keyword">SELECT</span> emp.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> emp <span class="keyword">LEFT</span> SEMI <span class="keyword">JOIN</span> dept</span><br><span class="line"><span class="keyword">ON</span> emp.deptno <span class="operator">=</span> dept.deptno <span class="keyword">AND</span> dept.loc<span class="operator">=</span>&quot;NEW YORK&quot;;</span><br><span class="line"></span><br><span class="line"><span class="comment">--上面的语句就等价于</span></span><br><span class="line"><span class="keyword">SELECT</span> emp.<span class="operator">*</span> <span class="keyword">FROM</span> emp</span><br><span class="line"><span class="keyword">WHERE</span> emp.deptno <span class="keyword">IN</span> (<span class="keyword">SELECT</span> deptno <span class="keyword">FROM</span> dept <span class="keyword">WHERE</span> loc<span class="operator">=</span>&quot;NEW YORK&quot;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="JOIN"><a href="#JOIN" class="headerlink" title="JOIN"></a>JOIN</h3><p>笛卡尔积连接，这个连接日常的开发中可能很少遇到，且性能消耗比较大，基于这个原因，如果在严格模式下 (hive.mapred.mode &#x3D; strict)，Hive 会阻止用户执行此操作。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> emp <span class="keyword">JOIN</span> dept;</span><br></pre></td></tr></table></figure>
+
+<h2 id="JOIN-优化"><a href="#JOIN-优化" class="headerlink" title="JOIN 优化"></a>JOIN 优化</h2><h3 id="STREAMTABLE"><a href="#STREAMTABLE" class="headerlink" title="STREAMTABLE"></a>STREAMTABLE</h3><p>在多表进行联结的时候，如果每个 ON 字句都使用到共同的列（如下面的 <code>b.key</code>），此时 Hive 会进行优化，将多表 JOIN 在同一个 map &#x2F; reduce 作业上进行。同时假定查询的最后一个表（如下面的 c 表）是最大的一个表，在对每行记录进行 JOIN 操作时，它将尝试将其他的表缓存起来，然后扫描最后那个表进行计算。因此用户需要保证查询的表的大小从左到右是依次增加的。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`<span class="keyword">SELECT</span> a.val, b.val, c.val <span class="keyword">FROM</span> a <span class="keyword">JOIN</span> b <span class="keyword">ON</span> (a.key <span class="operator">=</span> b.key) <span class="keyword">JOIN</span> c <span class="keyword">ON</span> (c.key <span class="operator">=</span> b.key)`</span><br></pre></td></tr></table></figure>
+
+<p>然后，用户并非需要总是把最大的表放在查询语句的最后面，Hive 提供了 <code>/*+ STREAMTABLE() */</code> 标志，用于标识最大的表，示例如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="comment">/*+ STREAMTABLE(d) */</span>  e.<span class="operator">*</span>,d.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> emp e <span class="keyword">JOIN</span> dept d</span><br><span class="line"><span class="keyword">ON</span> e.deptno <span class="operator">=</span> d.deptno</span><br><span class="line"><span class="keyword">WHERE</span> job<span class="operator">=</span><span class="string">&#x27;CLERK&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="MAPJOIN"><a href="#MAPJOIN" class="headerlink" title="MAPJOIN"></a>MAPJOIN</h3><p>如果所有表中只有一张表是小表，那么 Hive 把这张小表加载到内存中。这时候程序会在 map 阶段直接拿另外一个表的数据和内存中表数据做匹配，由于在 map 就进行了 JOIN 操作，从而可以省略 reduce 过程，这样效率可以提升很多。Hive 中提供了 <code>/*+ MAPJOIN() */</code> 来标记小表，示例如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="comment">/*+ MAPJOIN(d) */</span> e.<span class="operator">*</span>,d.<span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> emp e <span class="keyword">JOIN</span> dept d</span><br><span class="line"><span class="keyword">ON</span> e.deptno <span class="operator">=</span> d.deptno</span><br><span class="line"><span class="keyword">WHERE</span> job<span class="operator">=</span><span class="string">&#x27;CLERK&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="SELECT-的其他用途"><a href="#SELECT-的其他用途" class="headerlink" title="SELECT 的其他用途"></a>SELECT 的其他用途</h2><p>查看当前数据库：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> current_database()</span><br></pre></td></tr></table></figure>
+
+<h2 id="本地模式"><a href="#本地模式" class="headerlink" title="本地模式"></a>本地模式</h2><p>在上面演示的语句中，大多数都会触发 MapReduce, 少部分不会触发，比如 <code>select * from emp limit 5</code> 就不会触发 MR，此时 Hive 只是简单的读取数据文件中的内容，然后格式化后进行输出。在需要执行 MapReduce 的查询中，你会发现执行时间可能会很长，这时候你可以选择开启本地模式。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--本地模式默认关闭，需要手动开启此功能</span></span><br><span class="line"><span class="keyword">SET</span> hive.exec.mode.local.auto<span class="operator">=</span><span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+
+<p>启用后，Hive 将分析查询中每个 map-reduce 作业的大小，如果满足以下条件，则可以在本地运行它：</p>
+<ul>
+<li>作业的总输入大小低于：hive.exec.mode.local.auto.inputbytes.max（默认为 128MB）；</li>
+<li>map-tasks 的总数小于：hive.exec.mode.local.auto.tasks.max（默认为 4）；</li>
+<li>所需的 reduce 任务总数为 1 或 0。</li>
+</ul>
+<p>因为我们测试的数据集很小，所以你再次去执行上面涉及 MR 操作的查询，你会发现速度会有显著的提升。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Select">LanguageManual Select</a></li>
+<li><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Joins">LanguageManual Joins</a></li>
+<li><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+GroupBy">LanguageManual GroupBy</a></li>
+<li><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/Hive/LanguageManual+SortBy">LanguageManual SortBy</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/5473f9d5/" title="Hive 数据查询详解">https://dunwu.github.io/blog/pages/5473f9d5/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+              <a href="/blog/tags/hive/" rel="tag"># hive</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/b463223a/" rel="prev" title="Hive 简介">
+                  <i class="fa fa-angle-left"></i> Hive 简介
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/f03b2e49/" rel="next" title="Hive 常用 DML 操作">
+                  Hive 常用 DML 操作 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"65dff080405e8e96e9496864131500a4"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

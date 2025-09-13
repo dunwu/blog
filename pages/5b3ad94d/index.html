@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="分布式综合面试逻辑时钟::: info 扩展阅读  Time, Clocks, and the Ordering of Events in a Distributed System，译文，解读 - Lamport 介绍 happened before、偏序关系（partial ordering）、逻辑时钟（Logical Clocks）概念，提出解决分布式系统中区分事件发生的时序问题的方法。 Vi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式综合面试">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/5b3ad94d/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="分布式综合面试逻辑时钟::: info 扩展阅读  Time, Clocks, and the Ordering of Events in a Distributed System，译文，解读 - Lamport 介绍 happened before、偏序关系（partial ordering）、逻辑时钟（Logical Clocks）概念，提出解决分布式系统中区分事件发生的时序问题的方法。 Vi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170810350.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170811135.webp">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405160639643.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102192406.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131215742.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131220742.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170817072.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20210708234308.gif">
+<meta property="article:published_time" content="2021-11-08T00:15:33.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.744Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="指标">
+<meta property="article:tag" content="挑战">
+<meta property="article:tag" content="超时检测">
+<meta property="article:tag" content="NTP">
+<meta property="article:tag" content="逻辑时钟">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170810350.webp">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/5b3ad94d/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/5b3ad94d/","path":"/pages/5b3ad94d/","title":"分布式综合面试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式综合面试 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88%E9%9D%A2%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">分布式综合面试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F"><span class="nav-number">1.1.</span> <span class="nav-text">逻辑时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【简单】为什么需要逻辑时钟？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%81%8F%E5%BA%8F%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E5%85%A8%E5%BA%8F%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【中等】什么是偏序？什么是全序？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【困难】什么是逻辑时钟？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%91%E9%87%8F%E6%97%B6%E9%92%9F%EF%BC%9F"><span class="nav-number">1.1.4.</span> <span class="nav-text">【困难】什么是向量时钟？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E7%89%88%E6%9C%AC%E5%90%91%E9%87%8F%E6%97%B6%E9%92%9F%EF%BC%9F"><span class="nav-number">1.1.5.</span> <span class="nav-text">【困难】什么是版本向量时钟？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E5%BC%B1%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【简单】什么是强一致性？什么是弱一致性？什么是最终一致性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-ACID%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【简单】什么是 ACID？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAP-BASE"><span class="nav-number">1.3.</span> <span class="nav-text">CAP &amp; BASE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-CAP-%E5%AE%9A%E7%90%86%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">【中等】什么是 CAP 定理？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E9%80%89%E6%8B%A9-CP-%E8%BF%98%E6%98%AF-AP%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">【中等】选择 CP 还是 AP？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91CAP-%E5%AE%9A%E7%90%86%E7%9C%9F%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%90%97%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">【中等】CAP 定理真的正确吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-BASE-%E5%AE%9A%E7%90%86%EF%BC%9F"><span class="nav-number">1.3.4.</span> <span class="nav-text">【中等】什么是 BASE 定理？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Paxos"><span class="nav-number">1.4.</span> <span class="nav-text">Paxos</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Paxos-%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">【困难】Paxos 是怎样工作的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Basic-Paxos-%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">Basic Paxos 算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Multi-Paxos-%E6%80%9D%E6%83%B3"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">Multi Paxos 思想</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Raft"><span class="nav-number">1.5.</span> <span class="nav-text">Raft</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Raft-%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">【困难】Raft 是怎样工作的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Raft-%E6%A6%82%E5%BF%B5"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">Raft 概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">日志复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">安全性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZAB"><span class="nav-number">1.6.</span> <span class="nav-text">ZAB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91ZAB-%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.6.1.</span> <span class="nav-text">【困难】ZAB 是怎样工作的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%89%E4%B8%BE-Leader"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">选举 Leader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E5%B9%BF%E6%92%AD"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">原子广播</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gossip"><span class="nav-number">1.7.</span> <span class="nav-text">Gossip</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Gossip-%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.7.1.</span> <span class="nav-text">【困难】Gossip 是怎样工作的？</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/5b3ad94d/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式综合面试 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式综合面试<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/00.%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88%E9%9D%A2%E8%AF%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-08 08:15:33" itemprop="dateCreated datePublished" datetime="2021-11-08T08:15:33+08:00">2021-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分布式综合面试"><a href="#分布式综合面试" class="headerlink" title="分布式综合面试"></a>分布式综合面试</h1><h2 id="逻辑时钟"><a href="#逻辑时钟" class="headerlink" title="逻辑时钟"></a>逻辑时钟</h2><p>::: info 扩展阅读</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf"><strong>Time, Clocks, and the Ordering of Events in a Distributed System</strong></a>，<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1163428"><strong>译文</strong></a>，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56146800"><strong>解读</strong></a> - Lamport 介绍 happened before、偏序关系（partial ordering）、逻辑时钟（Logical Clocks）概念，提出解决分布式系统中区分事件发生的时序问题的方法。</li>
+<li><a target="_blank" rel="noopener" href="http://courses.csail.mit.edu/6.852/01/papers/VirtTime_GlobState.pdf"><strong>Virtual Time and Global States of Distributed Systems</strong></a>，<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56886156"><strong>解读</strong></a> - 逻辑时钟无法描述事件的因果关系。本文提出了向量时钟，这种算法利用了向量这种数据结构将全局各个进程的逻辑时间戳广播给各个进程，通过向量时间戳就能够比较任意两个事件的因果关系。</li>
+<li><a target="_blank" rel="noopener" href="https://writings.sh/post/logical-clocks">逻辑时钟 - 如何刻画分布式中的事件顺序</a></li>
+</ul>
+<p>:::</p>
+<h3 id="【简单】为什么需要逻辑时钟？"><a href="#【简单】为什么需要逻辑时钟？" class="headerlink" title="【简单】为什么需要逻辑时钟？"></a>【简单】为什么需要逻辑时钟？</h3><p>::: tip 要点</p>
+<p><strong>不同节点的物理时钟即使校准（NTP）也无法完全保持一致</strong>。</p>
+<p>:::</p>
+<p>为什么需要逻辑时钟？分布式系统中以系统时间来确定事件顺序有什么问题吗？</p>
+<p><strong>不同节点的物理时钟无法完全保持一致</strong>。即使引入一个全局时钟（例如：NTP）来进行校准，由于网络通信延迟的不确定性，以及时钟计时的偏差，无法保证每个节点的时间完全一致。</p>
+<p>在分布式系统中，由于网络通信延迟的不确定性， <strong>仅仅以接收顺序作为整个分布式系统中事件的发生顺序是不可取的</strong>。</p>
+<h3 id="【中等】什么是偏序？什么是全序？"><a href="#【中等】什么是偏序？什么是全序？" class="headerlink" title="【中等】什么是偏序？什么是全序？"></a>【中等】什么是偏序？什么是全序？</h3><p>全序和偏序是数学上的术语，按照数学内容阐述比较晦涩，简单来说：</p>
+<ul>
+<li><strong>偏序</strong>是部分可比较的有序关系。</li>
+<li><strong>全序</strong>是在偏序基础上，要求全部元素必须可比较的有序关系。</li>
+</ul>
+<h3 id="【困难】什么是逻辑时钟？"><a href="#【困难】什么是逻辑时钟？" class="headerlink" title="【困难】什么是逻辑时钟？"></a>【困难】什么是逻辑时钟？</h3><p>::: info 扩展阅读</p>
+<p><a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf"><strong>Time, Clocks, and the Ordering of Events in a Distributed System</strong></a></p>
+<p>:::</p>
+<p>::: tip 要点</p>
+<ul>
+<li><strong>Lamport 逻辑时钟构建了一个全序时钟来描述事件顺序</strong>。</li>
+<li><strong>Lamport 逻辑时钟的缺陷是无法描述同时发生的事件</strong>。</li>
+</ul>
+<p>:::</p>
+<p>1978 年，Lamport 在 <a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf"><strong>Time, Clocks, and the Ordering of Events in a Distributed System</strong></a> 中提出了逻辑时钟的概念，来解决分布式系统中区分事件发生的时序问题。</p>
+<p><strong>逻辑时钟并不度量时间本身，仅区分事件发生的前后顺序</strong>。</p>
+<p>分布式系统中按是否存在节点交互可分为三类事件，一类发生于节点内部，二是发送事件，三是接收事件。Lamport 时间戳原理如下：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170810350.webp" alt="Lamport timestamps space time (图片来源: wikipedia)_"></p>
+<ol>
+<li>每个事件对应一个 Lamport 计数器，初始值为 0</li>
+<li>如果事件在节点内发生，计数器加 1</li>
+<li>如果事件属于发送事件，计数器加 1 并在消息中带上该计数器</li>
+<li>如果事件属于接收事件，计数器 &#x3D; Max(本地计数器，消息中的计数器) + 1</li>
+</ol>
+<p>综上，<strong>Lamport 逻辑时钟构建了一个全序时钟来描述事件顺序</strong>。<strong>Lamport 逻辑时钟的缺陷是无法描述同时发生的事件</strong>。</p>
+<h3 id="【困难】什么是向量时钟？"><a href="#【困难】什么是向量时钟？" class="headerlink" title="【困难】什么是向量时钟？"></a>【困难】什么是向量时钟？</h3><p>::: tip 要点</p>
+<ul>
+<li>向量时钟在逻辑时钟基础上改进：<strong>不仅记录了本节点的时间戳，还记录了其他节点的时间戳</strong>。</li>
+<li>其本质在于<strong>将逻辑时钟的全序计数器改造为向量时钟的偏序大小关系</strong>：向量有序，则事件有序；向量平行，则事件并发。</li>
+<li><strong>向量时钟可以发现数据冲突，但不能解决数据冲突</strong>。</li>
+</ul>
+<p>:::</p>
+<p><strong>向量时钟</strong>其实是在逻辑时钟的基础上进行了演进，算法逻辑类似，只是<strong>不仅记录了本节点的时间戳，还记录了其他节点的时间戳</strong>。其本质在于<strong>将逻辑时钟的全序计数器改造为向量时钟的偏序大小关系</strong>：向量有序，则事件有序；向量平行，则事件并发。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170811135.webp" alt="Vector clock space time (图片来源: wikipedia)"></p>
+<p><strong>向量时钟可以发现数据冲突，但不能解决数据冲突</strong>。</p>
+<h3 id="【困难】什么是版本向量时钟？"><a href="#【困难】什么是版本向量时钟？" class="headerlink" title="【困难】什么是版本向量时钟？"></a>【困难】什么是版本向量时钟？</h3><p>::: tip 要点</p>
+<p><strong>版本向量时钟只有在更新数据的时候做向量自增</strong>。</p>
+<p>:::</p>
+<p>在向量时钟算法中， 消息传播后，发送方的向量一定会小于接收者的向量， 是因为接收者对齐了发送者的原因。</p>
+<p>版本向量在此基础上，做了一点加强：消息传播后，发送方也对齐接收者的向量，也就是双向对齐，在版本向量中，叫做<strong>同步</strong>。</p>
+<p>发送消息和接收消息的时候不再自增向量中的自己的计数器，而是只做双方的向量对齐操作。 也就是，<strong>只有在更新数据的时候做向量自增</strong>。</p>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><h3 id="【简单】什么是强一致性？什么是弱一致性？什么是最终一致性？"><a href="#【简单】什么是强一致性？什么是弱一致性？什么是最终一致性？" class="headerlink" title="【简单】什么是强一致性？什么是弱一致性？什么是最终一致性？"></a>【简单】什么是强一致性？什么是弱一致性？什么是最终一致性？</h3><p><strong>一致性（Consistency）</strong>指的是<strong>多个数据副本是否能保持一致</strong>的特性。</p>
+<p>数据一致性又可以分为以下几点：</p>
+<ul>
+<li><strong>强一致性</strong> - 数据更新操作结果和操作响应总是一致的，即操作响应通知更新失败，那么数据一定没有被更新，而不是处于不确定状态。通俗的说，分布式系统在执行写操作成功后，如果所有用户都能够读取到最新的值，该系统就被认为具有强一致性。</li>
+<li><strong>弱一致性</strong> - 系统在写入数据成功后，不承诺立即能读到最新的值，也不承诺什么时候能读到，但是过一段时间之后用户可以看到更新后的值。那么用户读不到最新数据的这段时间被称为“不一致窗口时间”。</li>
+<li><strong>最终一致性</strong> - 最终一致性作为弱一致性中的特例，强调的是所有数据副本，在经过一段时间的同步后，最终能够到达一致的状态，不需要实时保证系统数据的强一致性。</li>
+</ul>
+<h3 id="【简单】什么是-ACID？"><a href="#【简单】什么是-ACID？" class="headerlink" title="【简单】什么是 ACID？"></a>【简单】什么是 ACID？</h3><p>那么，什么是 ACID 特性呢？ACID 是数据库事务正确执行的四个基本要素的单词缩写：</p>
+<ul>
+<li><strong>原子性（Atomicity）</strong><ul>
+<li>原子是指不可分解为更小粒度的东西。事务的原子性意味着：<strong>事务中的所有操作要么全部成功，要么全部失败</strong>。</li>
+<li>回滚可以用日志来实现，日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。</li>
+<li>ACID 中的原子性并不关乎多个操作的并发性，它并没有描述多个线程试图访问相同的数据会发生什么情况，后者其实是由 ACID 的隔离性所定义。</li>
+</ul>
+</li>
+<li><strong>一致性（Consistency）</strong><ul>
+<li>数据库在事务执行前后都保持一致性状态。</li>
+<li>在一致性状态下，所有事务对一个数据的读取结果都是相同的。</li>
+<li>一致性本质上要求应用层来维护状态一致（或者恒等），应用程序有责任正确地定义事务来保持一致性。这不是数据库可以保证的事情。</li>
+</ul>
+</li>
+<li><strong>隔离性（Isolation）</strong><ul>
+<li><strong>同时运行的事务互不干扰</strong>。换句话说，一个事务所做的修改在最终提交以前，对其它事务是不可见的。</li>
+</ul>
+</li>
+<li><strong>持久性（Durability）</strong><ul>
+<li>一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。</li>
+<li>可以通过数据库备份和恢复来实现，在系统发生奔溃时，使用备份的数据库进行数据恢复。</li>
+</ul>
+</li>
+</ul>
+<p>一个支持事务（Transaction）中的数据库系统，必需要具有这四种特性，否则在事务过程（Transaction processing）当中无法保证数据的正确性。</p>
+<ul>
+<li>只有满足一致性，事务的执行结果才是正确的。</li>
+<li>在无并发的情况下，事务串行执行，隔离性一定能够满足。此时只要能满足原子性，就一定能满足一致性。</li>
+<li>在并发的情况下，多个事务并行执行，事务不仅要满足原子性，还需要满足隔离性，才能满足一致性。</li>
+<li>事务满足持久化是为了能应对系统崩溃的情况。</li>
+</ul>
+<h2 id="CAP-BASE"><a href="#CAP-BASE" class="headerlink" title="CAP &amp; BASE"></a>CAP &amp; BASE</h2><p>::: info 扩展阅读</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf"><strong>Brewer’s Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services</strong></a>，<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903936718012430"><strong>解读</strong></a> - 经典的 CAP 定理，即：在一个分布式系统中，当发生网络分区时，那么强一致性和可用性只能二选一。</li>
+<li><a target="_blank" rel="noopener" href="https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/"><strong>CAP Twelve Years Later: How the “Rules” Have Changed</strong></a>, <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/64778723/answer/224266038"><strong>解读</strong></a> - CAP 定理的新解读，并阐述 CAP 定理的一些常见误区。</li>
+<li><a target="_blank" rel="noopener" href="https://www.semanticscholar.org/paper/BASE%3A-An-Acid-Alternative-Pritchett/2e72e6c022dd33115304ecfcb6dad7ea609534a4"><strong>BASE: An Acid Alternative</strong></a>，<a target="_blank" rel="noopener" href="https://www.cnblogs.com/savorboard/p/base-an-acid-alternative.html"><strong>译文</strong></a> - BASE 定理是对 CAP 中一致性和可用性的权衡，提出采用适当的方式来使系统达到最终一致性。</li>
+</ul>
+<p>:::</p>
+<h3 id="【中等】什么是-CAP-定理？"><a href="#【中等】什么是-CAP-定理？" class="headerlink" title="【中等】什么是 CAP 定理？"></a>【中等】什么是 CAP 定理？</h3><p>::: tip 要点</p>
+<ul>
+<li>CAP 就是取 Consistency、Availability、Partition Tolerance 的首字母而命名。</li>
+<li>CAP 定理提出：Consistency、Availability、Partition Tolerance 三者不可兼得。</li>
+<li>在分布式系统中，分区容错不可避免，因此，<strong>CAP 定理实际上是要在可用性（A）和一致性（C）之间做权衡</strong>。</li>
+</ul>
+<p>:::</p>
+<p>CAP 定理提出：分布式系统有三个指标，这三个指标不能同时做到：</p>
+<ul>
+<li><strong>一致性（Consistency）</strong> - 在任何给定时间，网络中的所有节点都具有完全相同（最近）的值。</li>
+<li><strong>可用性（Availability）</strong> - 对网络的每个请求都会返回响应，但不能保证返回的数据是最新的。</li>
+<li><strong>分区容错性（Partition Tolerance）</strong> - 即使任意数量的节点出现故障，网络仍会继续运行。</li>
+</ul>
+<p>CAP 就是取 Consistency、Availability、Partition Tolerance 的首字母而命名。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405160639643.png"></p>
+<p>在分布式系统中，分区容错性是一个既定的事实：因为分布式系统总会出现各种各样的问题，如由于网络原因而导致节点失联；发生机器故障；机器重启或升级等等。因此，<strong>CAP 定理实际上是要在可用性（A）和一致性（C）之间做权衡</strong>。</p>
+<h3 id="【中等】选择-CP-还是-AP？"><a href="#【中等】选择-CP-还是-AP？" class="headerlink" title="【中等】选择 CP 还是 AP？"></a>【中等】选择 CP 还是 AP？</h3><p>::: tip 要点</p>
+<p>选择 AP 还是 CP，视具体业务场景而定。</p>
+<p>以注册中心而论，可用性比一致性更重要，选 AP 更合适。</p>
+<p>:::</p>
+<p>在分布式系统中，分区容错性是一个既定的事实：因为分布式系统总会出现各种各样的问题，如由于网络原因而导致节点失联；发生机器故障；机器重启或升级等等。因此，<strong>CAP 定理实际上是要在可用性（A）和一致性（C）之间做权衡</strong>。</p>
+<ul>
+<li>选择 <strong>AP 模式</strong>，偏向于保证服务的高可用性。用户访问系统的时候，都能得到响应数据，不会出现响应错误；但是，当出现分区故障时，相同的读操作，访问不同的节点，得到响应数据可能不一样。</li>
+<li>选择 <strong>CP 模式</strong>，一旦因为消息丢失、延迟过高发生了网络分区，就会影响用户的体验和业务的可用性。因为为了防止数据不一致，系统将拒绝新数据的写入。</li>
+</ul>
+<p>一个最具代表性的问题是：服务注册中心应该选择 AP 还是 CP？</p>
+<p>在微服务架构下，服务注册和服务发现机制中主要有三种角色：</p>
+<ul>
+<li><strong>服务提供者</strong>（RPC Server &#x2F; Provider）</li>
+<li><strong>服务消费者</strong>（RPC Client &#x2F; Consumer）</li>
+<li><strong>服务注册中心</strong>（Registry）</li>
+</ul>
+<p><strong>注册中心</strong>负责协调服务注册和服务发现，显然它是核心中的核心。主流的注册中心有很多，如：ZooKeeper、Nacos、Eureka、Consul、etcd 等。在针对注册中心进行技术选型时，其 CAP 设计也是一个比较的维度。</p>
+<ul>
+<li>CP 模型代表：ZooKeeper、etcd。系统强调数据的一致性，当数据一致性无法保证时（如：正在选举主节点），系统拒绝请求。</li>
+<li>AP 模型代表：Nacos、Eureka。系统强调可用性，牺牲一定的一致性（即服务节点上的数据不保证是最新的），来保证整体服务可用。</li>
+</ul>
+<p>对于服务注册中心而言，即使不同节点保存的服务注册信息存在差异，也不会造成灾难性的后果，仅仅是信息滞后而已。但是，如果为了追求数据一致性，使得服务发现短时间内不可用，负面影响更严重。所以，对于服务注册中心而言，可用性比一致性更重要，一般应该选择 AP 模型。</p>
+<h3 id="【中等】CAP-定理真的正确吗？"><a href="#【中等】CAP-定理真的正确吗？" class="headerlink" title="【中等】CAP 定理真的正确吗？"></a>【中等】CAP 定理真的正确吗？</h3><p>::: tip 要点</p>
+<p>CAP 理论模型局限性很大，未考虑网络分区以外的各种故障、异常情况，因此对于复杂的分布式系统场景指导意义不足。</p>
+<p>:::</p>
+<p>CAP 定理在分布式系统领域大名鼎鼎，以至于被很多人视为了真理。然而，CAP 定理真的正确吗？</p>
+<p>网络分区是一种故障，不管喜欢还是不喜欢，它都可能发生，所以无法选择或逃避分区的问题。在网络正常的时候，系统可以同时保证一致性（线性化）和可用性。而一旦发生了网络故障，必须要么选择一致性，要么选择可用性。因此，对 CAP 更准确的理解应该是：<strong>当发生网络分区（P）的情况下，可用性（A）和一致性（C）二者只能选其一</strong>。</p>
+<p>CAP 定理所描述的模型实际上局限性很大，它只考虑了一种一致性模型和一种故障（网络分区故障），而没有考虑网络延迟、节点失效等情况。因此，它对于指导一个具体的分布式系统设计来说，没有太大的实际价值。</p>
+<p>值得一提的是，在 CAP 定理提出十二年之后，其提出者也发表了一篇文章 <a target="_blank" rel="noopener" href="https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/"><strong>CAP Twelve Years Later: How the “Rules” Have Changed</strong></a>，来阐述 CAP 定理的局限性。</p>
+<h3 id="【中等】什么是-BASE-定理？"><a href="#【中等】什么是-BASE-定理？" class="headerlink" title="【中等】什么是 BASE 定理？"></a>【中等】什么是 BASE 定理？</h3><p>::: tip 要点</p>
+<p>BASE 是 <strong><code>基本可用（Basically Available）</code><strong>、</strong><code>软状态（Soft State）</code></strong> 和 <strong><code>最终一致性（Eventually Consistent）</code></strong> 三个短语的缩写。</p>
+<p>BASE 核心思想是：要求最终一致性，通过牺牲强一致性来达到可用性。</p>
+<p>:::</p>
+<p>BASE 是 <strong><code>基本可用（Basically Available）</code><strong>、</strong><code>软状态（Soft State）</code></strong> 和 <strong><code>最终一致性（Eventually Consistent）</code></strong> 三个短语的缩写。BASE 定理是对 CAP 定理中可用性（A）和一致性（C）权衡的结果。</p>
+<p>BASE 定理的<strong>核心思想</strong>是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。</p>
+<p>ACID 要求强一致性，通常运用在传统的数据库系统上。而 BASE 要求最终一致性，通过<strong>牺牲强一致性来达到可用性</strong>，通常运用在大型分布式系统中。</p>
+<img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102192406.png" style="width: 640px" />
+
+<p>在实际的分布式场景中，不同业务单元和组件对一致性的要求是不同的，因此 ACID 和 BASE 往往会结合在一起使用。</p>
+<h2 id="Paxos"><a href="#Paxos" class="headerlink" title="Paxos"></a>Paxos</h2><p>::: info 扩展阅读</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf">Part-time Parliament 论文</a></li>
+<li><a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf">Paxos Made Simple 论文</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/31780743">Paxos 算法详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Paxos%E7%AE%97%E6%B3%95">Wiki - Paxos 算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1TW411M7Fx?from=search&seid=11524608198747599965">一致性算法（Paxos、Raft、Zab）</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av36556594">Raft 作者讲解 Paxos 视频</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=d7nAGI_NZPk">Paxos 算法讲解视频</a></li>
+<li><a href="https://dunwu.github.io/waterdrop/pages/d287e6b0/">深入剖析共识性算法 Paxos</a></li>
+</ul>
+<p>:::</p>
+<h3 id="【困难】Paxos-是怎样工作的？"><a href="#【困难】Paxos-是怎样工作的？" class="headerlink" title="【困难】Paxos 是怎样工作的？"></a>【困难】Paxos 是怎样工作的？</h3><p>::: tip 要点</p>
+<p>Paxos 是一个分布式系统共识性算法。它的核心思想是<strong>【两阶段提交】</strong>和<strong>【多数派决议】</strong>。</p>
+<p>Paxos 将分布式系统中的节点分 Proposer、Acceptor、Learner 三种角色。</p>
+<p>Paxos 算法包含 2 个部分：</p>
+<ul>
+<li><strong>Basic Paxos 算法</strong>：描述的是多节点之间如何就某个值达成共识。<strong>Basic Paxos 是通过二阶段提交的方式来达成共识的</strong>。</li>
+<li><strong>Multi Paxos 思想</strong>：描述的是执行多个 Basic Paxos 实例，就一系列值达成共识。</li>
+</ul>
+<p>:::</p>
+<p><strong>Paxos 是一种基于消息传递且具有容错性的共识性（consensus）算法</strong>。</p>
+<p>Paxos 算法运行在允许宕机故障的异步系统中，不要求可靠的消息传递，可容忍消息丢失、延迟、乱序以及重复。</p>
+<p>Paxos 利用多数派 (Majority) 机制保证了一定的容错能力，即 <code>N</code> 个节点的系统最多允许 <code>N / 2 - 1</code> 个节点同时出现故障。</p>
+<p>Paxos 算法包含 2 个部分：</p>
+<ul>
+<li><strong>Basic Paxos 算法</strong>：描述的是多节点之间如何就某个值达成共识。</li>
+<li><strong>Multi Paxos 思想</strong>：描述的是执行多个 Basic Paxos 实例，就一系列值达成共识。</li>
+</ul>
+<h4 id="Basic-Paxos-算法"><a href="#Basic-Paxos-算法" class="headerlink" title="Basic Paxos 算法"></a>Basic Paxos 算法</h4><p><strong>Basic Paxos 是通过二阶段提交的方式来达成共识的</strong>。</p>
+<p>Paxos 将分布式系统中的节点分 Proposer、Acceptor、Learner 三种角色。</p>
+<ul>
+<li><strong>提议者（Proposer）</strong>：发出提案（Proposal），用于投票表决。Proposal 信息包括提案编号 (Proposal ID) 和提议的值 (Value)。在绝大多数场景中，集群中收到客户端请求的节点，才是提议者。这样做的好处是，对业务代码没有入侵性，也就是说，我们不需要在业务代码中实现算法逻辑。</li>
+<li><strong>接受者（Acceptor）</strong>：对每个 Proposal 进行投票，若 Proposal 获得多数 Acceptor 的接受，则称该 Proposal 被批准。一般来说，集群中的所有节点都在扮演接受者的角色，参与共识协商，并接受和存储数据。</li>
+<li><strong>学习者（Learner）</strong>：不参与接受，从 Proposers&#x2F;Acceptors 学习、记录最新达成共识的提案（Value）。一般来说，学习者是数据备份节点，比如主从架构中的从节点，被动地接受数据，容灾备份。</li>
+</ul>
+<p>Paxos 算法有 3 个阶段，其中，前 2 个阶段负责协商并达成共识：</p>
+<ol>
+<li><strong>准备（Prepare）阶段</strong>：Proposer 向 Acceptors 发出 Prepare 请求，Acceptors 针对收到的 Prepare 请求进行 Promise 承诺。</li>
+<li><strong>接受（Accept）阶段</strong>：Proposer 收到多数 Acceptors 承诺的 Promise 后，向 Acceptors 发出 Propose 请求，Acceptors 针对收到的 Propose 请求进行 Accept 处理。</li>
+<li><strong>学习（Learn）阶段</strong>：Proposer 在收到多数 Acceptors 的 Accept 之后，标志着本次 Accept 成功，决议形成，将形成的决议发送给所有 Learners。</li>
+</ol>
+<h4 id="Multi-Paxos-思想"><a href="#Multi-Paxos-思想" class="headerlink" title="Multi Paxos 思想"></a>Multi Paxos 思想</h4><p>Basic Paxos 有以下问题，导致它不能应用于实际：</p>
+<ul>
+<li><strong>Basic Paxos 算法只能对一个值形成决议</strong>。</li>
+<li><strong>Basic Paxos 算法会消耗大量网络带宽</strong>。Basic Paxos 中，决议的形成至少需要两次网络通信，在高并发情况下可能需要更多的网络通信，极端情况下甚至可能形成活锁。如果想连续确定多个值，Basic Paxos 搞不定了。</li>
+</ul>
+<p>Multi Paxos 基于 Basic Paxos 做了两点改进：</p>
+<ul>
+<li><strong>针对每一个要确定的值，运行一次 Paxos 算法实例（Instance），形成决议</strong>。每一个 Paxos 实例使用唯一的 Instance ID 标识。</li>
+<li><strong>在所有 Proposer 中选举一个 Leader，由 Leader 唯一地提交 Proposal 给 Acceptor 进行表决</strong>。这样没有 Proposer 竞争，解决了活锁问题。在系统中仅有一个 Leader 进行 Value 提交的情况下，Prepare 阶段就可以跳过，从而将两阶段变为一阶段，提高效率。</li>
+</ul>
+<h2 id="Raft"><a href="#Raft" class="headerlink" title="Raft"></a>Raft</h2><p>::: info 扩展阅读</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">Raft 算法论文</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md">Raft 算法论文译文</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=YbZ3zDzDnrw&feature=youtu.be">Raft 作者讲解视频</a></li>
+<li><a target="_blank" rel="noopener" href="http://www2.cs.uh.edu/~paris/6360/PowerPoint/Raft.ppt">Raft 作者讲解视频对应的 PPT</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jdon.com/artichect/raft.html">分布式系统的 Raft 算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32052223">Raft 算法详解</a></li>
+<li><a target="_blank" rel="noopener" href="http://thesecretlivesofdata.com/raft">Raft: Understandable Distributed Consensus</a> - 一个动画教程</li>
+<li><a target="_blank" rel="noopener" href="https://raft.github.io/">The Raft Consensus Algorithm</a> - 一个交互式动画教程</li>
+<li><a href="https://dunwu.github.io/waterdrop/pages/3a64eb94/">深入剖析共识性算法 Raft</a></li>
+</ul>
+<p>:::</p>
+<h3 id="【困难】Raft-是怎样工作的？"><a href="#【困难】Raft-是怎样工作的？" class="headerlink" title="【困难】Raft 是怎样工作的？"></a>【困难】Raft 是怎样工作的？</h3><p>::: tip 要点</p>
+<p><strong><a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">Raft</a> 是一种管理日志复制的分布式共识性算法</strong>。</p>
+<p>Raft 将一致性问题分解成了三个子问题：</p>
+<ul>
+<li><strong>选举 Leader</strong>：<ul>
+<li><strong>Leader 心跳</strong>：Leader 定时向 Follower 发心跳以续活；Follower 超时未收到心跳，视其为下线。</li>
+<li><strong>投票选举</strong>：Follower 判断 Leader 下线后，发起 Leader 选举，成为 Candidate。</li>
+<li><strong>多数派原则</strong>：得到大多数选票的 Candidate 当选为 Leader。</li>
+<li><strong>随机的竞选超时时间</strong>：<ul>
+<li>每个 Follower 都设置一个随机的竞选超时时间，该时间范围内，未收到 Leader 的心跳，就视为当前 Term 无 Leader，再次 Leader 选举。</li>
+<li>之所以是随机时间，是为了避免重复出现相同投票结果，导致始终选不出 Leader 的情况（一种典型的活锁）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>日志复制</strong>：Leader 负责处理所有客户端读写请求；Follower 只负责同步 Leader 的日志，并更新本地的日志状态机（Offset）</li>
+<li><strong>安全性</strong><ul>
+<li><strong>选举限制</strong>：拥有最新的已提交的日志条目的 Follower 才有资格成为 Leader。</li>
+<li><strong>提交旧任期的日志条目</strong>：<strong>Raft 永远不会通过计算副本数目的方式去提交一个之前 Term 内的日志条目</strong>。</li>
+<li><strong>日志压缩</strong>：Raft 采用对整个系统进行快照来解决，快照之前的日志都可以丢弃。以此，避免日志无限膨胀，导致故障恢复过久。</li>
+</ul>
+</li>
+</ul>
+<p>:::</p>
+<p><strong><a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">Raft</a> 是一种管理日志复制的分布式共识性算法</strong>。从本质上说，<strong>Raft 算法是通过一切以领导者为准的方式，实现一系列值的共识和各节点日志的一致</strong>。</p>
+<p><a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">Raft</a> 出现之前，Paxos 一直是分布式共识性算法的标准。Paxos <strong>难以理解，更难以实现</strong>。Raft 的设计目标是简化 Paxos，使得算法<strong>既容易理解，也容易实现</strong>。</p>
+<p>Raft 将一致性问题分解成了三个子问题：</p>
+<ul>
+<li><strong>选举 Leader</strong></li>
+<li><strong>日志复制</strong></li>
+<li><strong>安全性</strong></li>
+</ul>
+<h4 id="Raft-概念"><a href="#Raft-概念" class="headerlink" title="Raft 概念"></a>Raft 概念</h4><p><strong>（1）服务器角色</strong></p>
+<p>在 Raft 中，任何时刻，每个服务器都处于这三个角色之一 ：</p>
+<ul>
+<li><strong><code>Leader</code></strong> - 领导者，通常一个系统中是<strong>一主（Leader）多从（Follower）</strong>。Leader <strong>负责处理所有的客户端请求</strong>。</li>
+<li><strong><code>Follower</code></strong> - 跟随者，<strong>不会发送任何请求</strong>，只是简单的 <strong>响应来自 Leader 或者 Candidate 的请求</strong>。</li>
+<li><strong><code>Candidate</code></strong> - 参选者，选举新 Leader 时的临时角色。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131215742.png"></p>
+<p><strong>（2）任期</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200131220742.png"></p>
+<p>Raft 把时间分割成任意长度的 <strong><em><code>任期（Term）</code></em><strong>，任期用连续的整数标记。每一段任期从一次</strong>选举</strong>开始。<strong>Raft 保证了在一个给定的任期内，最多只有一个领导者</strong>。</p>
+<p><strong>任期在 Raft 算法中充当逻辑时钟的作用，使得服务器节点可以查明一些过期的信息（比如过期的 Leader）。每个服务器节点都会存储一个当前任期号，这一编号在整个时期内单调的增长。当服务器之间通信的时候会交换当前任期号。</strong></p>
+<p><strong>（3）选举 Leader</strong></p>
+<p><strong>领导者心跳消息</strong>：Raft 使用一种心跳机制来触发 Leader 选举。<strong>Leader 需要周期性的向所有 Follower 发送心跳消息</strong>，以此维持 Leader 身份。</p>
+<p><strong>随机的竞选超时时间</strong>：每个 Follower 都设置了一个<strong>随机的竞选超时时间</strong>，一般为 <code>150ms ~ 300ms</code>，如果在竞选超时时间内没有收到 Leader 的心跳消息，就会认为当前 Term 没有可用的 Leader，并发起选举来选出新的 Leader。开始一次选举过程，Follower 先要增加自己的当前 Term 号，并<strong>转换为 Candidate</strong>。</p>
+<p>Candidate 会并行的<strong>向集群中的所有服务器节点发送投票请求（<code>RequestVote RPC</code>）</strong>，它会保持当前状态直到以下三件事情之一发生：</p>
+<ul>
+<li><strong>自己成为 Leader</strong></li>
+<li><strong>其他的服务器成为 Leader</strong></li>
+<li><strong>没有任何服务器成为 Leader</strong></li>
+</ul>
+<p>Raft 算法通过：领导者心跳消息、随机选举超时时间、得到大多数选票才通过原则、任期最新者优先、先来先服务等投票原则，保证了一个任期只有一位领导，也极大地减少了选举失败的情况。</p>
+<h4 id="日志复制"><a href="#日志复制" class="headerlink" title="日志复制"></a>日志复制</h4><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405170817072.png"></p>
+<ol>
+<li>Leader 负责处理所有客户端的请求。</li>
+<li>Leader 把请求作为日志条目加入到它的日志中，然后并行的向其他服务器发送 <code>AppendEntries RPC</code> 请求，要求 Follower 复制日志条目。</li>
+<li>Follower 复制成功后，返回确认消息。</li>
+<li>当这个日志条目被半数以上的服务器复制后，Leader 提交这个日志条目到它的复制状态机，并向客户端返回执行结果。</li>
+</ol>
+<h4 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h4><ul>
+<li><strong>选举限制</strong>：拥有最新的已提交的日志条目的 Follower 才有资格成为 Leader。</li>
+<li><strong>提交旧任期的日志条目</strong>：<strong>Raft 永远不会通过计算副本数目的方式去提交一个之前 Term 内的日志条目</strong>。</li>
+<li><strong>日志压缩</strong>：Raft 采用对整个系统进行快照来解决，快照之前的日志都可以丢弃。以此，避免日志无限膨胀，导致故障恢复过久。</li>
+</ul>
+<h2 id="ZAB"><a href="#ZAB" class="headerlink" title="ZAB"></a>ZAB</h2><p>::: info 扩展阅读</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://diyhpl.us/~bryan/papers2/distributed/distributed-systems/zab.totally-ordered-broadcast-protocol.2008.pdf"><strong>A Simple Totally Ordered Broadcast Protocol</strong></a> - 概述 ZooKeeper 的全序广播协议（Zab）</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/heibaiying/BigData-Notes/blob/master/notes/Zookeeper%E7%AE%80%E4%BB%8B%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5.md">ZooKeeper 简介及核心概念</a></li>
+<li><a target="_blank" rel="noopener" href="https://draveness.me/zookeeper-chubby">详解分布式协调服务 ZooKeeper</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper">Introduction to Apache ZooKeeper</a></li>
+<li><a href="https://dunwu.github.io/waterdrop/pages/da131252/">ZAB 协议</a></li>
+</ul>
+<p>:::</p>
+<h3 id="【困难】ZAB-是怎样工作的？"><a href="#【困难】ZAB-是怎样工作的？" class="headerlink" title="【困难】ZAB 是怎样工作的？"></a>【困难】ZAB 是怎样工作的？</h3><p>::: tip 要点</p>
+<p>ZAB 协议是 Zookeeper 专门设计的一种<strong>支持故障恢复的原子广播协议</strong>。</p>
+<p>ZAB 协议定义了两个可以<strong>无限循环</strong>的流程：</p>
+<ul>
+<li><strong><code>选举 Leader</code><strong>：用于故障恢复，从而保证高可用。采用</strong>多数派原则</strong>选举 Leader。</li>
+<li>**<code>原子广播</code>**：用于主从同步，从而保证数据一致性。<ul>
+<li>Leader 负责所有读写；每次更新事务会有一个唯一标识（<strong>ZXID</strong>）</li>
+<li>Leader 会广播同步数据给 Follower，当半数以上 Follower 更新成功，Leader 才会提交数据。</li>
+</ul>
+</li>
+</ul>
+<p>:::</p>
+<p>ZAB 协议是 Zookeeper 专门设计的一种<strong>支持故障恢复的原子广播协议</strong>。</p>
+<p>ZAB 协议是 ZooKeeper 的数据一致性和高可用解决方案。</p>
+<p>ZAB 协议定义了两个可以<strong>无限循环</strong>的流程：</p>
+<ul>
+<li><strong><code>选举 Leader</code></strong> - 用于故障恢复，从而保证高可用。</li>
+<li><strong><code>原子广播</code></strong> - 用于主从同步，从而保证数据一致性。</li>
+</ul>
+<h4 id="选举-Leader"><a href="#选举-Leader" class="headerlink" title="选举 Leader"></a>选举 Leader</h4><p>ZooKeeper 集群采用一主（称为 Leader）多从（称为 Follower）模式，主从节点通过副本机制保证数据一致。</p>
+<ul>
+<li><strong>如果 Follower 节点挂了</strong> - ZooKeeper 集群中的每个节点都会单独在内存中维护自身的状态，并且各节点之间都保持着通讯，<strong>只要集群中有半数机器能够正常工作，那么整个集群就可以正常提供服务</strong>。</li>
+<li><strong>如果 Leader 节点挂了</strong> - 如果 Leader 节点挂了，系统就不能正常工作了。此时，需要通过 ZAB 协议的选举 Leader 机制来进行故障恢复。</li>
+</ul>
+<p>ZAB 协议的选举 Leader 机制简单来说，就是：基于过半选举机制产生新的 Leader，之后其他机器将从新的 Leader 上同步状态，当有过半机器完成状态同步后，就退出选举 Leader 模式，进入原子广播模式。</p>
+<h4 id="原子广播"><a href="#原子广播" class="headerlink" title="原子广播"></a>原子广播</h4><p><strong>ZooKeeper 通过副本机制来实现高可用</strong>。</p>
+<p>那么，ZooKeeper 是如何实现副本机制的呢？答案是：ZAB 协议的原子广播。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/rpc/zookeeper/zookeeper_3.png"></p>
+<p>ZAB 协议的原子广播要求：</p>
+<p>**<em>所有的写请求都会被转发给 Leader，Leader 会以原子广播的方式通知 Follow。当半数以上的 Follow 已经更新状态持久化后，Leader 才会提交这个更新，然后客户端才会收到一个更新成功的响应</em>**。这有些类似数据库中的两阶段提交协议。</p>
+<p>在整个消息的广播过程中，Leader 服务器会每个事务请求生成对应的 Proposal，并为其分配一个全局唯一的递增的事务 ID(ZXID)，之后再对其进行广播。</p>
+<h2 id="Gossip"><a href="#Gossip" class="headerlink" title="Gossip"></a>Gossip</h2><h3 id="【困难】Gossip-是怎样工作的？"><a href="#【困难】Gossip-是怎样工作的？" class="headerlink" title="【困难】Gossip 是怎样工作的？"></a>【困难】Gossip 是怎样工作的？</h3><p>::: info 扩展阅读</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://bitsavers.trailing-edge.com/pdf/xerox/parc/techReports/CSL-89-1_Epidemic_Algorithms_for_Replicated_Database_Maintenance.pdf">Epidemic Algorithms for Replicated Database Maintenance</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41228196">P2P 网络核心技术：Gossip 协议</a></li>
+<li><a target="_blank" rel="noopener" href="https://managementfromscratch.wordpress.com/2016/04/01/introduction-to-gossip/">INTRODUCTION TO GOSSIP</a></li>
+<li><a target="_blank" rel="noopener" href="https://flopezluis.github.io/gossip-simulator/">Goosip 协议仿真动画</a></li>
+</ul>
+<p>:::</p>
+<p>::: tip 要点</p>
+<p>Gossip 是一种用于分布式系统节点间信息交换的协议。</p>
+<p>Gossip 的设计思想基于<strong>去中心化</strong>和<strong>最终一致性</strong>。</p>
+<p>Gossip 协议的工作原理：</p>
+<ul>
+<li><strong>周期性、成对通信</strong>：每个节点每隔一段时间就<strong>随机</strong>选择集群中的另一个节点（这个节点称为“邻居”）。</li>
+<li><strong>交换信息</strong>：两个节点连接后，会<strong>互相交换</strong>自己拥有的信息（例如，其他节点的状态、存储的数据等）。</li>
+<li><strong>感染式传播</strong>：接收到新信息的节点，会将这些新信息融入到自己的信息库中。在下一次周期中，它又会成为传染源，将（包含新信息的）所有信息再次传播给其他随机节点。</li>
+<li><strong>最终一致性</strong>：不需要中央协调，经过一段时间后，通过这种“八卦”式的传播，集群中的所有节点最终都会拥有完全相同的信息。</li>
+</ul>
+<p>:::</p>
+<p>Gossip 也叫 Epidemic Protocol （流行病协议），这个协议基于<strong>最终一致性</strong>以及<strong>去中心化</strong>设计思想。主要用于<strong>分布式节点之间进行信息交换和数据同步</strong>，这种场景的一个最大特点就是组成的网络的节点都是对等节点，是非结构化网络（去中心化）。</p>
+<p>Gossip 过程是由种子节点发起，当一个种子节点有状态需要更新到网络中的其他节点时，它会随机的选择周围几个节点散播消息，收到消息的节点也会重复该过程，直至最终网络中所有的节点都收到了消息。这个过程可能需要一定的时间，由于不能保证某个时刻所有节点都收到消息，但是理论上最终所有节点都会收到消息，因此它是一个最终一致性协议。</p>
+<p>Gossip 过程是异步的，也就是说发消息的节点不会关注对方是否收到，即不等待响应；不管对方有没有收到，它都会每隔 1 秒向周围节点发消息。<strong>异步是它的优点，而消息冗余则是它的缺点</strong>。</p>
+<p>Goosip 协议的信息传播和扩散通常需要由种子节点发起。整个传播过程可能需要一定的时间，由于不能保证某个时刻所有节点都收到消息，但是理论上最终所有节点都会收到消息，因此它是一个<strong>最终一致性</strong>协议。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20210708234308.gif"></p>
+<p>Gossip 有两种类型：</p>
+<ul>
+<li><strong>Anti-Entropy(反熵)<strong>：</strong>以固定的概率传播所有的数据</strong>。反熵时通讯成本会很高，可以通过引入校验和等机制，降低需要对比的数据量和通讯消息等。反熵不适合动态变化或节点数比较多的分布式环境。</li>
+<li><strong>Rumor-Mongering(谣言传播)<strong>：</strong>仅传播新到达的数据</strong>。谣言传播模型指的是当一个节点有了新数据后，这个节点变成活跃状态，并周期性地联系其他节点向其发送新数据，直到所有的节点都存储了该新数据。在谣言传播模型下，消息可以发送得更频繁，因为消息只包含最新 update，体积更小。而且，一个谣言消息在某个时间点之后会被标记为 removed，并且不再被传播，因此，谣言传播模型下，系统有一定的概率会不一致。而由于，谣言传播模型下某个时间点之后消息不再传播，因此消息是有限的，系统开销小。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/5b3ad94d/" title="分布式综合面试">https://dunwu.github.io/blog/pages/5b3ad94d/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E6%8C%87%E6%A0%87/" rel="tag"># 指标</a>
+              <a href="/blog/tags/%E6%8C%91%E6%88%98/" rel="tag"># 挑战</a>
+              <a href="/blog/tags/%E8%B6%85%E6%97%B6%E6%A3%80%E6%B5%8B/" rel="tag"># 超时检测</a>
+              <a href="/blog/tags/NTP/" rel="tag"># NTP</a>
+              <a href="/blog/tags/%E9%80%BB%E8%BE%91%E6%97%B6%E9%92%9F/" rel="tag"># 逻辑时钟</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/8d17f325/" rel="prev" title="分布式简介">
+                  <i class="fa fa-angle-left"></i> 分布式简介
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/f718828e/" rel="next" title="CAP 和 BASE">
+                  CAP 和 BASE <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"ecee55186489700da505b24d2435a2e9"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

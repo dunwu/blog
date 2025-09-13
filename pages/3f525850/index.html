@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Elasticsearch 架构存储流程ES 存储数据的流程可以从三个角度来阐述：  从集群的角度来看，数据写入会先路由到主分片，在主分片上写入成功后，会并发写副本分片，最后响应给客户端。 从分片的角度来看，数据到达分片后需要对内容进行格式校验、分词处理然后再索引数据。 从节点的角度来看，ES 数据持久化的步骤可归纳为：Refresh、写 Translog、Flush、Merge。  文档分布式存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch 架构">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/3f525850/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Elasticsearch 架构存储流程ES 存储数据的流程可以从三个角度来阐述：  从集群的角度来看，数据写入会先路由到主分片，在主分片上写入成功后，会并发写副本分片，最后响应给客户端。 从分片的角度来看，数据到达分片后需要对内容进行格式校验、分词处理然后再索引数据。 从节点的角度来看，ES 数据持久化的步骤可归纳为：Refresh、写 Translog、Flush、Merge。  文档分布式存">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503110726542.png">
+<meta property="article:published_time" content="2024-11-24T23:42:18.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.740Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="搜索引擎数据库">
+<meta property="article:tag" content="elasticsearch">
+<meta property="article:tag" content="索引">
+<meta property="article:tag" content="存储">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503110726542.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/3f525850/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/3f525850/","path":"/pages/3f525850/","title":"Elasticsearch 架构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Elasticsearch 架构 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Elasticsearch-%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Elasticsearch 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">存储流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">文档分布式存储流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B4%A2%E5%BC%95%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">数据索引流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.3.</span> <span class="nav-text">数据持久化流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Refresh"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">Refresh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99-Translog"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">写 Translog</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Flush"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">Flush</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Merge"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">Merge</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">搜索流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Query-%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.1.</span> <span class="nav-text">Query 阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fetch-%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.2.</span> <span class="nav-text">Fetch 阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%88%86%E9%A1%B5%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.3.</span> <span class="nav-text">深度分页问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%81%8F%E5%B7%AE"><span class="nav-number">1.2.4.</span> <span class="nav-text">计算偏差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%B7%AF%E7%94%B1"><span class="nav-number">1.2.5.</span> <span class="nav-text">数据路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/3f525850/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Elasticsearch 架构 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Elasticsearch 架构<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/07.%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/elasticsearch/Elasticsearch_%E6%9E%B6%E6%9E%84.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-11-25 07:42:18" itemprop="dateCreated datePublished" datetime="2024-11-25T07:42:18+08:00">2024-11-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">搜索引擎数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/elasticsearch/" itemprop="url" rel="index"><span itemprop="name">elasticsearch</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Elasticsearch-架构"><a href="#Elasticsearch-架构" class="headerlink" title="Elasticsearch 架构"></a>Elasticsearch 架构</h1><h2 id="存储流程"><a href="#存储流程" class="headerlink" title="存储流程"></a>存储流程</h2><p>ES 存储数据的流程可以从三个角度来阐述：</p>
+<ul>
+<li>从<strong>集群</strong>的角度来看，数据写入会先路由到主分片，在主分片上写入成功后，会并发写副本分片，最后响应给客户端。</li>
+<li>从<strong>分片</strong>的角度来看，数据到达分片后需要对内容进行格式校验、分词处理然后再索引数据。</li>
+<li>从<strong>节点</strong>的角度来看，ES 数据持久化的步骤可归纳为：<strong>Refresh、写 Translog、Flush、Merge。</strong></li>
+</ul>
+<h3 id="文档分布式存储流程"><a href="#文档分布式存储流程" class="headerlink" title="文档分布式存储流程"></a>文档分布式存储流程</h3><p>ES 的索引有一个或者多个分片，而分片又分为主分片和副本分片两种。将要写入的数据存储在哪个分片是第一个要考虑的问题。</p>
+<p>首先需要找到存储文档的主分片，并在主分片的节点上写入对应数据，<strong>数据在主分片写入成功后再将数据分发到副分片进行存储</strong>。文档的新增、更新、删除等操作都属于写入操作。</p>
+<p>从集群层面来看，存储数据的流程如下：</p>
+<ol>
+<li><strong>请求</strong> - 客户端选择一个 node（示例中是 node1）发送请求过去，这个 node 就是 <code>coordinating node</code>（协调节点）。</li>
+<li><strong>路由转发</strong> - <code>coordinating node</code> 根据文档 ID 或 routing key 计算出文档应该被保存到哪个分片（这里是分片 3），并且从集群状态的路由表信息中获取分片 3 的主分片所在的节点为 node3。<code>coordinating node</code> 将请求转发给 node3。</li>
+<li><strong>复制</strong> - node3 存储数据后，将请求并发转发到 分片 3 的所有副本分片，即数据复制。</li>
+<li><strong>响应</strong> - 当所有副分片都写入成功后，node3 会向 <code>coordinating node</code> 返回写入成功的消息，<code>coordinating node</code> 再将响应返回给客户端。</li>
+</ol>
+<h3 id="数据索引流程"><a href="#数据索引流程" class="headerlink" title="数据索引流程"></a>数据索引流程</h3><p>文档分布式存储流程中的描述，隐藏了一个细节：如果是全文本数据，ES 需要使用 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analyzer-anatomy.html"><strong>analyzer（分析器）</strong></a> 先对内容进行分析（如果数据是精确值，如实体 ID、日期等，则无需处理）。</p>
+<p>在 Elasticsearch 中，分析器是用于对文本进行分词的组件。分析器用于将文本分解为更小的单元，称为分词。然后，这些分词用于索引和搜索文本。分析器的主要目标是将原始文本转换为可以有效搜索和分析的结构化格式 （分词）。</p>
+<p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analyzer-anatomy.html"><strong>analyzer（分析器）</strong></a> 由三个组件组成：零个或多个 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-charfilters.html">Character Filters（字符过滤器）</a>、有且仅有一个 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenizers.html">Tokenizer（分词器）</a>、零个或多个 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenfilters.html">Token Filters（分词过滤器）</a>。分析的执行顺序为：<code>character filters -&gt; tokenizer -&gt; token filters</code>。</p>
+<p>对全文本数据来说，数据索引时会对文本内容进行分析处理，分析器的处理流程如下：</p>
+<ol>
+<li>character flters 先对字符进行过滤，例如：把一些 HTML 元素、转义标签清除；</li>
+<li>tokenizer 会将字符串按不同的策略进行切分，分割得到的单词称为 token（词条）；</li>
+<li>token filters 对 token 再进行过滤，例如：删除停用词（and、is 等），转换近义词等；</li>
+</ol>
+<p>经过以上一系列处理后，ES 会将数据存储到名为倒排索引的结构中。</p>
+<p>当需要全文检索存储数据时，需要先使用搜索分析器对搜索内容进行分析，这个处理过程和存储时使用的分析器相似。通过分析得到的分词列表，再去和倒排索引中的数据去进行匹配，最后返回匹配度最高的数据。</p>
+<h3 id="数据持久化流程"><a href="#数据持久化流程" class="headerlink" title="数据持久化流程"></a>数据持久化流程</h3><p>ES 的数据持久化流程主要有以下几个过程：<strong>Refresh、写 Translog、Flush、Merge。</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503110726542.png"></p>
+<h4 id="Refresh"><a href="#Refresh" class="headerlink" title="Refresh"></a>Refresh</h4><p>在文档写入的时候，ES 会将文档先写入到 <strong>Index Buffer</strong> 中。</p>
+<p>当 Index Buffer 大小达到阈值（默认为 JVM 的 10%），或间隔一段时间（默认每秒执行一次，可以通过 <code>index.refresh_interval</code> 进行设置），ES 会将 Index Buffer 中的数据写入到一个新的 Segment 文件中。此时的 Segment 文件存在于 OS Cache 中。这个过程称为 <strong>Refresh</strong>。</p>
+<p>refresh 写完 segment 后，会更新 shard 的 commit point。commit point 在 shard 中以 <code>segments_xxx</code> 形式名字的文件存在，用来记录每个 shard 中 segment 相关的信息。</p>
+<p>此外，ES 也支持通过 API 手动触发 Refresh 操作。</p>
+<p>Refresh 过程有几点需要注意：</p>
+<ul>
+<li>在 Index Buffer 中的数据是搜索不到的；Refresh 后，数据进入 <strong>OS Cache</strong>，这时数据就可以搜索了。由于，刷新默认间隔一秒，写入的数据需要一秒后才可见，因此，ES 被称为近实时搜索数据库。</li>
+<li>Index Buffer 的设计是为了通过批量写入，提高写入效率。但是，这种设计也带来了新的问题：一旦 ES 节点发生断点，Index Buffer 中的数据就丢失了。为了避免数据丢失，ES 的解决方案就是下文要提到的 <strong>Translog</strong>。</li>
+<li>Index Buffer 每次 Refresh 时，都会创建一个新的 Segment 文件。随着时间推移，Segment 文件会越来越多。这些 Segment 都要消耗文件句柄和内存，每次搜索都要检查每个 Segment 然后再合并结果。因此，Segment 越多、搜索也越慢。为了减少 Segment 文件数，ES 的解决方案就是下文要提到的 <strong>Merge</strong> 操作。</li>
+</ul>
+<h4 id="写-Translog"><a href="#写-Translog" class="headerlink" title="写 Translog"></a>写 Translog</h4><p><strong>ES 通过 Translog（事务日志）来保证数据不丢失</strong>。</p>
+<p>数据写入 Index Buffer 后，ES 会将数据也写入 Translog，写入完毕后即可以返回客户端写入成功。<strong>Translog 只允许追加写入</strong>，并且默认是调用 fsync 进行刷盘的。<strong>每个分片都会有自己的 Translog，在 Refresh 的时候系统会清空 Index Buffer，但不会清空 Translog</strong>。一旦机器宕机，再次重启的时候， ES 会自动读取 Translog 中的数据，恢复到 Index Buffer 和 OS Cache 中。</p>
+<p>Translog 其实也是先写入 OS Cache 的，默认每 5 秒刷一次到磁盘中去（由 <code>index.translog.interval</code> 控制）。所以，如果机器宕机，可能会丢失 5 秒的数据。这样设计的目的，还是基于写入效率的考虑。如果每条数据都直接写入磁盘，开销是比较高的，所以这里设计为延时批量写入。</p>
+<blockquote>
+<p>通过 Refresh 和 写 Translog 两节的内容，我们可以总结为：</p>
+<ul>
+<li>ES 之所以被称为<strong>近实时查询</strong>，是由于数据写入后，需要刷新（默认间隔 1 秒）后，才可以搜索到；</li>
+<li>ES 虽然有 Translog 机制，但依然有丢失数据的风险——有 5 秒的数据，是暂存在 index buffer、translog(os cache)、segment file(os cache) 中，此时尚未保存到磁盘。如果此时发生宕机或断电，会<strong>丢失 5 秒的数据</strong>。</li>
+</ul>
+</blockquote>
+<h4 id="Flush"><a href="#Flush" class="headerlink" title="Flush"></a>Flush</h4><p>Flush 操作本质上就是 commit 操作，即 ES 的数据持久化操作。</p>
+<ol>
+<li>Flush 操作的第一步，就是将 index buffer 中现有数据 <code>refresh</code> 到 <code>OS Cache</code> 中去，清空 buffer。</li>
+<li>然后，将一个 <code>commit point</code> 写入磁盘文件，里面标识着这个 <code>commit point</code> 对应的所有 Segment 文件。同时，强行将 <code>OS Cache</code> 中目前所有的数据都 <code>fsync</code> 到磁盘中去。</li>
+<li>最后，删除当前的 translog，新建一个 translog，此时 commit 操作完成。</li>
+</ol>
+<p>以下两个条件满足任意一个，就会触发 Flush 操作：</p>
+<ul>
+<li>默认每 30 分钟触发执行一次（由 <code>index.translog.flush_threshold_period</code> 控制）</li>
+<li>Translog 写满时触发执行，默认容量为 512M（由 <code>index.translog.flush_threshold_size</code> 控制）。</li>
+</ul>
+<h4 id="Merge"><a href="#Merge" class="headerlink" title="Merge"></a>Merge</h4><p>Elasticsearch 的 document 的物理存储是 Luncene segment，而 segment 不允许变更。那么，如何处理删除和更新呢？</p>
+<ul>
+<li><p>如果是删除操作，commit 的时候会生成一个 <code>.del</code> 文件，里面将某个 doc 标识为 <code>deleted</code> 状态，那么搜索的时候根据 <code>.del</code> 文件就知道这个 doc 是否被删除了。</p>
+</li>
+<li><p>如果是更新操作，就是将原来的 doc 标识为 <code>deleted</code> 状态，然后新写入一条数据。</p>
+</li>
+</ul>
+<p>Index Buffer 每次 Refresh 时，都会创建一个新的 Segment 文件。随着时间推移，Segment 文件会越来越多。这些 Segment 都要消耗文件句柄和内存，每次搜索都要检查每个 Segment 然后再合并结果。因此，Segment 越多、搜索也越慢。</p>
+<p>Elasticsearch 会定期执行 merge 操作，将多个 <code>segment file</code> 合并成一个。合并时会将标识为 <code>deleted</code> 的 doc 给<strong>物理删除掉</strong>，然后将新的 <code>segment file</code> 写入磁盘，这里会写一个 <code>commit point</code>，标识所有新的 <code>segment file</code>，然后打开 <code>segment file</code> 供搜索使用，同时删除旧的 <code>segment file</code>。</p>
+<h2 id="搜索流程"><a href="#搜索流程" class="headerlink" title="搜索流程"></a>搜索流程</h2><p>在 Elasticsearch 中，搜索一般分为两个阶段，query 和 fetch 阶段。可以简单的理解，query 阶段确定要取哪些 doc，fetch 阶段取出具体的 doc。</p>
+<h3 id="Query-阶段"><a href="#Query-阶段" class="headerlink" title="Query 阶段"></a>Query 阶段</h3><p>Query 阶段会根据搜索条件遍历每个分片（主分片或者副分片中的其一）中的数据，返回符合条件的前 N 条数据的 ID 和排序值，然后在协调节点中对所有分片的数据进行排序，获取前 N 条数据的 ID。</p>
+<p>Query 阶段的流程如下：</p>
+<ol>
+<li>客户端选择一个节点发送请求，这个 node 成为 coordinate node（协调节点）。coordinate node 创建一个大小为 from + size 的优先级队列用来存放结果。</li>
+<li>coordinate node 将请求转发到索引的每个主分片或者副分片中。</li>
+<li>每个分片在本地执行搜索请求，并将查询结果打分排序，然后将结果保存到 from + size 大小的有序队列中。</li>
+<li>接着，每个分片将结果返回给 coordinate node，coordinate node 对数据进行汇总处理：合并、排序、分页，将汇总数据存到一个大小为 from + size 的全局有序队列。</li>
+</ol>
+<p>需要注意的是，在协调节点转发搜索请求的时候，如果有 N 个 Shard 位于同一个节点时，并不会合并这些请求，而是发生 N 次请求！</p>
+<h3 id="Fetch-阶段"><a href="#Fetch-阶段" class="headerlink" title="Fetch 阶段"></a>Fetch 阶段</h3><p>在 Fetch 阶段，协调节点会从 Query 阶段产生的全局排序列表中确定需要取回的文档 ID 列表，然后通过路由算法计算出各个文档对应的分片，并且用 multi get 的方式到对应的分片上获取文档数据。</p>
+<p>Fetch 阶段的流程如下：</p>
+<ol>
+<li>coordinate node 确定需要获取哪些文档，然后向相关节点发起 multi get 请求；</li>
+<li>分片所在节点读取文档数据，并且进行 <code>_source</code> 字段过滤、处理高亮参数等，然后把处理后的文档数据返回给协调节点；</li>
+<li>coordinate node 汇总所有数据后，返回给客户端。</li>
+</ol>
+<h3 id="深度分页问题"><a href="#深度分页问题" class="headerlink" title="深度分页问题"></a>深度分页问题</h3><p>在 Elasticsearch 中，支持三种分页查询方式：</p>
+<ul>
+<li>from + size - 可以使用 <code>from</code> 和 <code>size</code> 参数分别指定查询的起始页和每页记录数。</li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#search-after"><code>search_after</code></a> - 不支持指定页数，只能向下翻页；并且需要指定 sort，并保证值是唯一的。然后，可以反复使用上次结果中最后一个文档的 sort 值进行查询。</li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#scroll-search-results">scroll</a> - 类似于 RDBMS 中的游标，只允许向下翻页。每次下一页查询后，使用返回结果的 scroll id 来作为下一次翻页的标记。scroll 查询会在搜索初始化阶段会生成快照，后续数据的变化无法及时体现在查询结果，因此更加适合一次性批量查询或非实时数据的分页查询。</li>
+</ul>
+<p>前文中，我们已经了解了 ES 两阶段搜索流程（Query 和 Fetch）。从中不难发现，这种搜索方式在分页查询时会出现以下情况：</p>
+<ul>
+<li>每个 shard 要扫描 <code>from + size</code> 条数据；</li>
+<li>coordinate node 需要接收并处理 <code>(from + size) * primary_shard_num</code> 条数据。</li>
+</ul>
+<p><strong>如果 from 或 size 很大，需要处理的数据量也会很大，代价很高，这就是深分页产生的原因</strong>。为了避免深分页，ES 默认限制 <code>from + size</code> 不能超过 10000，可以通过 <code>index.max_result_window</code> 设置。</p>
+<p>如何解决 Elasticsearch 深分页问题？</p>
+<p>ES 官方提供了另外两种分页查询方式 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#search-after"><code>search_after</code></a> + PIT 和 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/paginate-search-results.html#scroll-search-results">scroll</a>（注意：官方已不再推荐） 来避免深分页问题。</p>
+<h3 id="计算偏差"><a href="#计算偏差" class="headerlink" title="计算偏差"></a>计算偏差</h3><p>在 ES 中，不仅仅是普通搜索，相关性计算（评分）和聚合计算也是先在每个 shard 的本地进行计算，再由 coordinate node 进行汇总。由于分片的本地计算是独立的，只能基于数据子集来进行计算，所以难免出现数据偏差。</p>
+<p>解决这个问题的方式也有多种：</p>
+<ul>
+<li>当数据量不大的情况下，<strong>设置主分片数为 1</strong>，这意味着在数据全集上进行聚合。 但这种方案不太现实。</li>
+<li><strong>设置 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html#search-aggregations-bucket-terms-aggregation-shard-size"><code>shard_size</code></a> 参数</strong>，将计算数据范围变大，<strong>牺牲整体性能，提高精准度</strong>。shard_size 的默认值是 <code>size * 1.5 + 10</code>。</li>
+<li><strong>使用 DFS Query Then Fetch</strong>， 在 URL 参数中指定：<code>_search?search_type=dfs_query_then_fetch</code>。这样设定之后，系统先会把每个分片的词频和文档频率的数据汇总到协调节点进行处理，然后再进行相关性算分。这样的话会消耗更多的 CPU 和内存资源，效率低下！</li>
+<li>尽量保证数据均匀地分布在各个分片中。</li>
+</ul>
+<h3 id="数据路由"><a href="#数据路由" class="headerlink" title="数据路由"></a>数据路由</h3><p>为了避免出现数据倾斜，系统需要一种高效的方式把数据均匀分散到各个节点上<strong>存储</strong>，并且<strong>在检索的时候可以快速找到</strong>文档所在的节点与分片。这就需要确立路由算法，使得数据可以映射到指定的节点上。</p>
+<p>常见的路由方式如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>算法</strong></th>
+<th align="left"><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">随机算法</td>
+<td align="left">写数据时，随机写入到一个节点中；读数据时，由于不知道查询数据存在于哪个节点，所以需要遍历所有节点。</td>
+</tr>
+<tr>
+<td align="left">路由表</td>
+<td align="left">由中心节点统一维护数据的路由表，以保证唯一性；但是，中心化产生了新的问题：单点故障、数据越大，路由表越大、单点容易称为性能瓶颈、数据迁移复杂等。</td>
+</tr>
+<tr>
+<td align="left">哈希取模</td>
+<td align="left">对 key 值进行哈希计算，然后根据节点数取模，以确定节点。</td>
+</tr>
+</tbody></table>
+<p>ES 的数据路由算法是根据文档 ID 和 routing key 来确定 Shard ID 的过程。<strong>默认的情况下 routing key 为文档 ID</strong>，路由算法一般情况下的计算公式如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">shard_number</span> = hash(_routing) % numer_of_primary_shards</span><br></pre></td></tr></table></figure>
+
+<p>也可以在请求中指定 routing key，下面是新增数据的时候指定 routing 的方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT &lt;index&gt;/_doc/&lt;<span class="built_in">id</span>&gt;?routing=routing_key</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;field1&quot;</span>: <span class="string">&quot;xxx&quot;</span>,</span><br><span class="line">    <span class="string">&quot;field2&quot;</span>: <span class="string">&quot;xxx&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加数据时，如果不指定文档 ID，ES 会自动分片一个随机 ID。这种情况下，结合 Hash 算法，可以保证数据被均匀分布到各个分片中。如果指定文档 ID，或指定 routing key，Hash 计算得出的值可能会不够随机，从而导致数据倾斜。</p>
+<p><strong>index 一旦设置了主分片数就不能修改，如果要修改就需要 reindex（即数据迁移）</strong>。之所以如此，就是因为：一旦修改了主分片数，即等于修改了原 Hash 计算中的变量，无法再通过 Hash 计算正确路由到数据存储的分片。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch 官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.itshujia.com/read/elasticsearch/359.html">Elasticsearch 从入门到实践之分布式文档的存储流程</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/doocs/advanced-java/blob/main/docs/high-concurrency/es-write-query-search.md">https://github.com/doocs/advanced-java/blob/main/docs/high-concurrency/es-write-query-search.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/blog/found-elasticsearch-top-down">https://www.elastic.co/blog/found-elasticsearch-top-down</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/preload-data-to-file-system-cache.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/preload-data-to-file-system-cache.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.devgenius.io/elasticsearch-solution-to-searching-71116220c82f">https://blog.devgenius.io/elasticsearch-solution-to-searching-71116220c82f</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/3f525850/" title="Elasticsearch 架构">https://dunwu.github.io/blog/pages/3f525850/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 搜索引擎数据库</a>
+              <a href="/blog/tags/elasticsearch/" rel="tag"># elasticsearch</a>
+              <a href="/blog/tags/%E7%B4%A2%E5%BC%95/" rel="tag"># 索引</a>
+              <a href="/blog/tags/%E5%AD%98%E5%82%A8/" rel="tag"># 存储</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/731f829b/" rel="prev" title="Elasticsearch 搜索（上）">
+                  <i class="fa fa-angle-left"></i> Elasticsearch 搜索（上）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/62e44ef3/" rel="next" title="Dubbo 面试之架构">
+                  Dubbo 面试之架构 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"2876af6500a0c9886d3faa65a2e80300"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

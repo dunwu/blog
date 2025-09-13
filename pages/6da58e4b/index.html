@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="负载均衡负载均衡简介大型系统面临的挑战大型系统通常要面对高并发、高可用、海量数据等挑战。 为了提升系统整体的性能，可以采用垂直扩展和水平扩展两种方式。  垂直扩展：在网站发展早期，可以从单机的角度通过提升硬件处理能力，比如 CPU 处理能力，内存容量，磁盘等方面，实现机器处理能力的提升。但是，单机是有性能瓶颈的，一旦触及瓶颈，再想提升，付出的成本和代价会极高。通俗来说，就三个字：得加钱！这显然不能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="负载均衡">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/6da58e4b/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="负载均衡负载均衡简介大型系统面临的挑战大型系统通常要面对高并发、高可用、海量数据等挑战。 为了提升系统整体的性能，可以采用垂直扩展和水平扩展两种方式。  垂直扩展：在网站发展早期，可以从单机的角度通过提升硬件处理能力，比如 CPU 处理能力，内存容量，磁盘等方面，实现机器处理能力的提升。但是，单机是有性能瓶颈的，一旦触及瓶颈，再想提升，付出的成本和代价会极高。通俗来说，就三个字：得加钱！这显然不能">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643409.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643410.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643411.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/web/nginx/nginx-load-balance.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643413.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643412.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648178.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648899.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649920.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649943.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650176.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650852.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650334.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250652913.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653034.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653412.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653974.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653207.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654770.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654220.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250658009.png">
+<meta property="article:published_time" content="2018-07-05T07:50:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.748Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="服务治理">
+<meta property="article:tag" content="调度">
+<meta property="article:tag" content="负载均衡">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643409.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/6da58e4b/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/6da58e4b/","path":"/pages/6da58e4b/","title":"负载均衡"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>负载均衡 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.</span> <span class="nav-text">负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">负载均衡简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E5%9E%8B%E7%B3%BB%E7%BB%9F%E9%9D%A2%E4%B8%B4%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">1.1.1.</span> <span class="nav-text">大型系统面临的挑战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.1.2.</span> <span class="nav-text">什么是负载均衡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">负载均衡的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%BD%E4%BD%93%E7%BB%B4%E5%BA%A6%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.1.</span> <span class="nav-text">载体维度分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">硬件负载均衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">软件负载均衡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.2.</span> <span class="nav-text">网络通信分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">DNS 负载均衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">HTTP 负载均衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">反向代理负载均衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">IP 负载均衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">数据链路层负载均衡</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">负载均衡算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.1.</span> <span class="nav-text">轮询算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.2.</span> <span class="nav-text">随机算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2-%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.3.</span> <span class="nav-text">加权轮询&#x2F;随机算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%91%E8%BF%9E%E6%8E%A5%E6%95%B0%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.4.</span> <span class="nav-text">最少连接数算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%91%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.5.</span> <span class="nav-text">最少响应时间算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.6.</span> <span class="nav-text">哈希算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.7.</span> <span class="nav-text">一致性哈希算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.8.</span> <span class="nav-text">虚拟一致性哈希算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.3.9.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/6da58e4b/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="负载均衡 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          负载均衡<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/12.%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-05 15:50:00" itemprop="dateCreated datePublished" datetime="2018-07-05T15:50:00+08:00">2018-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E8%B0%83%E5%BA%A6/" itemprop="url" rel="index"><span itemprop="name">分布式调度</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>21k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><h2 id="负载均衡简介"><a href="#负载均衡简介" class="headerlink" title="负载均衡简介"></a>负载均衡简介</h2><h3 id="大型系统面临的挑战"><a href="#大型系统面临的挑战" class="headerlink" title="大型系统面临的挑战"></a>大型系统面临的挑战</h3><p>大型系统通常要面对高并发、高可用、海量数据等挑战。</p>
+<p>为了提升系统整体的性能，可以采用垂直扩展和水平扩展两种方式。</p>
+<ul>
+<li><strong>垂直扩展</strong>：在网站发展早期，可以从单机的角度通过<strong>提升硬件处理能力</strong>，比如 CPU 处理能力，内存容量，磁盘等方面，实现机器处理能力的提升。但是，单机是有性能瓶颈的，一旦触及瓶颈，再想提升，付出的成本和代价会极高。通俗来说，就三个字：<strong>得加钱</strong>！这显然不能满足大型分布式系统（网站）所有应对的大流量，高并发，海量数据等挑战。</li>
+<li><strong>水平扩展</strong>：通过集群来分担大型网站的流量。集群中的应用机器（节点）通常被设计成无状态，用户可以请求任何一个节点，这些节点共同分担访问压力。水平扩展有两个要点：<ul>
+<li><strong>集群化、分区化</strong>：将一个完整的应用化整为零，如果是无状态应用，可以直接集群化部署；如果是有状态应用，可以将状态数据分区（分片），然后部署到多台机器上。</li>
+<li><strong>负载均衡</strong>：集群化、分区化后，要解决的问题是，请求应该被分发（寻址）到哪台机器上。这就需要通过某种策略来控制分发，这种技术就是负载均衡。</li>
+</ul>
+</li>
+</ul>
+<h3 id="什么是负载均衡"><a href="#什么是负载均衡" class="headerlink" title="什么是负载均衡"></a>什么是负载均衡</h3><p><strong>“负载均衡（Load Balance，简称 LB）”是一种技术，用来在多个计算机、网络连接、CPU、磁盘驱动器或其他资源中分配负载，以达到优化资源利用率、最大化吞吐率、最小化响应时间、同时避免过载的目的</strong>。</p>
+<p>负载均衡的主要作用如下：</p>
+<ul>
+<li><strong>高并发</strong>：负载均衡可以优化资源使用率，通过算法调整负载，尽力均匀的分配资源，以此提高资源利用率、从而提升整体吞吐量。</li>
+<li><strong>伸缩性</strong>：发生增减资源时，负载均衡可以自动调整分发，使得应用集群具备伸缩性。</li>
+<li><strong>高可用</strong>：负载均衡器可以监控候选机器，当某机器不可用时，自动跳过，将请求分发给可用的机器。这使得应用集群具备高可用的特性。</li>
+<li><strong>安全防护</strong>：有些负载均衡软件或硬件提供了安全性功能，如：黑白名单、防火墙，防 DDos 攻击等。</li>
+</ul>
+<h2 id="负载均衡的分类"><a href="#负载均衡的分类" class="headerlink" title="负载均衡的分类"></a>负载均衡的分类</h2><p>支持负载均衡的技术很多，我们可以通过不同维度去进行分类。</p>
+<h3 id="载体维度分类"><a href="#载体维度分类" class="headerlink" title="载体维度分类"></a>载体维度分类</h3><p>从支持负载均衡的载体来看，可以将负载均衡分为两类：</p>
+<ul>
+<li>硬件负载均衡</li>
+<li>软件负载均衡</li>
+</ul>
+<h4 id="硬件负载均衡"><a href="#硬件负载均衡" class="headerlink" title="硬件负载均衡"></a>硬件负载均衡</h4><p>硬件负载均衡，一般是在定制处理器上运行的独立负载均衡服务器，<strong>价格昂贵，土豪专属</strong>。</p>
+<p>硬件负载均衡的<strong>主流产品</strong>有：<a target="_blank" rel="noopener" href="https://f5.com/zh">F5</a> 和 <a target="_blank" rel="noopener" href="https://www.a10networks.com.cn/">A10</a>。</p>
+<p>硬件负载均衡的<strong>优点</strong>：</p>
+<ul>
+<li><strong>功能强大</strong>：支持全局负载均衡并提供较全面的、复杂的负载均衡算法。</li>
+<li><strong>性能强悍</strong>：硬件负载均衡由于是在专用处理器上运行，因此吞吐量大，可支持单机百万以上的并发。</li>
+<li><strong>安全性高</strong>：往往具备防火墙，防 DDos 攻击等安全功能。</li>
+</ul>
+<p>硬件负载均衡的<strong>缺点</strong>：</p>
+<ul>
+<li><strong>成本昂贵</strong>：购买和维护硬件负载均衡的成本都很高。</li>
+<li><strong>扩展性差</strong>：当访问量突增时，超过限度不能动态扩容。</li>
+</ul>
+<h4 id="软件负载均衡"><a href="#软件负载均衡" class="headerlink" title="软件负载均衡"></a>软件负载均衡</h4><p>软件负载均衡，<strong>应用最广泛</strong>，无论大公司还是小公司都会使用。</p>
+<p>软件负载均衡从软件层面实现负载均衡，一般可以在任何标准物理设备上运行。</p>
+<p>软件负载均衡的 <strong>主流产品</strong> 有：<a target="_blank" rel="noopener" href="https://www.nginx.com/">Nginx</a>、<a target="_blank" rel="noopener" href="http://www.haproxy.org/">HAProxy</a>、<a target="_blank" rel="noopener" href="https://github.com/alibaba/LVS">LVS</a>。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/alibaba/LVS">LVS</a> 可以作为四层负载均衡器。其负载均衡的性能要优于 Nginx。</li>
+<li><a target="_blank" rel="noopener" href="http://www.haproxy.org/">HAProxy</a> 可以作为 HTTP 和 TCP 负载均衡器。</li>
+<li><a target="_blank" rel="noopener" href="https://www.nginx.com/">Nginx</a>、<a target="_blank" rel="noopener" href="http://www.haproxy.org/">HAProxy</a> 可以作为四层或七层负载均衡器。</li>
+</ul>
+<p>软件负载均衡的 <strong>优点</strong>：</p>
+<ul>
+<li><strong>扩展性好</strong>：适应动态变化，可以通过添加软件负载均衡实例，动态扩展到超出初始容量的能力。</li>
+<li><strong>成本低廉</strong>：软件负载均衡可以在任何标准物理设备上运行，降低了购买和运维的成本。</li>
+</ul>
+<p>软件负载均衡的 <strong>缺点</strong>：</p>
+<ul>
+<li><strong>性能略差</strong>：相比于硬件负载均衡，软件负载均衡的性能要略低一些。</li>
+</ul>
+<h3 id="网络通信分类"><a href="#网络通信分类" class="headerlink" title="网络通信分类"></a>网络通信分类</h3><p>软件负载均衡从通信层面来看，又可以分为四层和七层负载均衡。</p>
+<ul>
+<li>七层负载均衡：就是可以根据访问用户的 HTTP 请求头、URL 信息将请求转发到特定的主机。<ul>
+<li>DNS 重定向</li>
+<li>HTTP 重定向</li>
+<li>反向代理</li>
+</ul>
+</li>
+<li>四层负载均衡：基于 IP 地址和端口进行请求的转发。<ul>
+<li>修改 IP 地址</li>
+<li>修改 MAC 地址</li>
+</ul>
+</li>
+</ul>
+<h4 id="DNS-负载均衡"><a href="#DNS-负载均衡" class="headerlink" title="DNS 负载均衡"></a>DNS 负载均衡</h4><p>DNS 负载均衡一般用于互联网公司，复杂的业务系统不适合使用。大型网站一般使用 DNS 负载均衡作为 <strong>第一级负载均衡手段</strong>，然后在内部使用其它方式做第二级负载均衡。DNS 负载均衡属于七层负载均衡。</p>
+<p>DNS 即 <strong>域名解析服务</strong>，是 OSI 第七层网络协议。DNS 被设计为一个树形结构的分布式应用，自上而下依次为：根域名服务器，一级域名服务器，二级域名服务器，… ，本地域名服务器。显然，如果所有数据都存储在根域名服务器，那么 DNS 查询的负载和开销会非常庞大。</p>
+<p>因此，DNS 查询相对于 DNS 层级结构，是一个逆向的递归流程，DNS 客户端依次请求本地 DNS 服务器，上一级 DNS 服务器，上上一级 DNS 服务器，… ，根 DNS 服务器（又叫权威 DNS 服务器），一旦命中，立即返回。为了减少查询次数，每一级 DNS 服务器都会设置 DNS 查询缓存。</p>
+<p>DNS 负载均衡的工作原理就是：<strong>基于 DNS 查询缓存，按照负载情况返回不同服务器的 IP 地址</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643409.png" alt="img"></p>
+<p>DNS 重定向的 <strong>优点</strong>：</p>
+<ul>
+<li><strong>使用简单</strong>：负载均衡工作，交给 DNS 服务器处理，省掉了负载均衡服务器维护的麻烦</li>
+<li><strong>提高性能</strong>：可以支持基于地址的域名解析，解析成距离用户最近的服务器地址（类似 CDN 的原理），可以加快访问速度，改善性能；</li>
+</ul>
+<p>DNS 重定向的 <strong>缺点</strong>：</p>
+<ul>
+<li><strong>可用性差</strong>：DNS 解析是多级解析，新增&#x2F;修改 DNS 后，解析时间较长；解析过程中，用户访问网站将失败；</li>
+<li><strong>扩展性差</strong>：DNS 负载均衡的控制权在域名商那里，无法对其做更多的改善和扩展；</li>
+<li><strong>维护性差</strong>：也不能反映服务器的当前运行状态；支持的算法少；不能区分服务器的差异（不能根据系统与服务的状态来判断负载）</li>
+</ul>
+<h4 id="HTTP-负载均衡"><a href="#HTTP-负载均衡" class="headerlink" title="HTTP 负载均衡"></a>HTTP 负载均衡</h4><p><strong>HTTP 负载均衡是基于 HTTP 重定向实现的</strong>。HTTP 负载均衡属于七层负载均衡。</p>
+<p>HTTP 重定向原理是：<strong>根据用户的 HTTP 请求计算出一个真实的服务器地址，将该服务器地址写入 HTTP 重定向响应中，返回给浏览器，由浏览器重新进行访问</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643410.png" alt="img"></p>
+<p>HTTP 重定向的 <strong>优点</strong>：<strong>方案简单</strong>。</p>
+<p>HTTP 重定向的 <strong>缺点</strong>：</p>
+<ul>
+<li><strong>额外的转发开销</strong>：每次访问需要两次请求服务器，增加了访问的延迟。</li>
+<li><strong>降低搜索排名</strong>：使用重定向后，搜索引擎会视为 SEO 作弊。</li>
+<li>如果负载均衡器宕机，就无法访问该站点。</li>
+</ul>
+<p>由于其缺点比较明显，所以这种负载均衡策略实际应用较少。</p>
+<h4 id="反向代理负载均衡"><a href="#反向代理负载均衡" class="headerlink" title="反向代理负载均衡"></a>反向代理负载均衡</h4><p>反向代理（Reverse Proxy）方式是指以 <strong>代理服务器</strong> 来接受网络请求，然后 <strong>将请求转发给内网中的服务器</strong>，并将从内网中的服务器上得到的结果返回给网络请求的客户端。反向代理负载均衡属于七层负载均衡。</p>
+<p>反向代理服务的主流产品：<strong>Nginx</strong>、<strong>Apache</strong>。</p>
+<p>正向代理与反向代理有什么区别？</p>
+<ul>
+<li>正向代理：发生在 <strong>客户端</strong>，是由用户主动发起的。翻墙软件就是典型的正向代理，客户端通过主动访问代理服务器，让代理服务器获得需要的外网数据，然后转发回客户端。</li>
+<li>反向代理：发生在 <strong>服务端</strong>，用户不知道代理的存在。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643411.png" alt="img"></p>
+<p>反向代理是如何实现负载均衡的呢？以 Nginx 为例，如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/web/nginx/nginx-load-balance.png" alt="img"></p>
+<p>首先，在代理服务器上设定好负载均衡规则。然后，当收到客户端请求，反向代理服务器拦截指定的域名或 IP 请求，根据负载均衡算法，将请求分发到候选服务器上。其次，如果某台候选服务器宕机，反向代理服务器会有容错处理，比如分发请求失败 3 次以上，将请求分发到其他候选服务器上。</p>
+<p>反向代理的 <strong>优点</strong>：</p>
+<ul>
+<li><strong>多种负载均衡算法</strong>：支持多种负载均衡算法，以应对不同的场景需求。</li>
+<li><strong>可以监控服务器</strong>：基于 HTTP 协议，可以监控转发服务器的状态，如：系统负载、响应时间、是否可用、连接数、流量等，从而根据这些数据调整负载均衡的策略。</li>
+</ul>
+<p>反向代理的 <strong>缺点</strong>：</p>
+<ul>
+<li><p><strong>额外的转发开销</strong>：反向代理的转发操作本身是有性能开销的，可能会包括创建连接，等待连接响应，分析响应结果等操作。</p>
+</li>
+<li><p><strong>增加系统复杂度</strong>：反向代理常用于做分布式应用的水平扩展，但反向代理服务存在以下问题，为了解决以下问题会给系统整体增加额外的复杂度和运维成本：</p>
+</li>
+<li><p>反向代理服务如果自身宕机，就无法访问站点，所以需要有 <strong>高可用</strong> 方案，常见的方案有：主备模式（一主一备）、双主模式（互为主备）。</p>
+<ul>
+<li>反向代理服务自身也存在性能瓶颈，随着需要转发的请求量不断攀升，需要有 <strong>可扩展</strong> 方案。</li>
+</ul>
+</li>
+</ul>
+<h4 id="IP-负载均衡"><a href="#IP-负载均衡" class="headerlink" title="IP 负载均衡"></a>IP 负载均衡</h4><p>IP 负载均衡是在网络层通过修改请求目的地址进行负载均衡。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643413.png" alt="img"></p>
+<p>如上图所示，IP 均衡处理流程大致为：</p>
+<ol>
+<li>客户端请求 192.168.137.10，由负载均衡服务器接收到报文。</li>
+<li>负载均衡服务器根据算法选出一个服务节点 192.168.0.1，然后将报文请求地址改为该节点的 IP。</li>
+<li>真实服务节点收到请求报文，处理后，返回响应数据到负载均衡服务器。</li>
+<li>负载均衡服务器将响应数据的源地址改负载均衡服务器地址，返回给客户端。</li>
+</ol>
+<p>IP 负载均衡在内核进程完成数据分发，较反向代理负载均衡有更好的处理性能。但是，由于所有请求响应都要经过负载均衡服务器，集群的吞吐量受制于负载均衡服务器的带宽。</p>
+<h4 id="数据链路层负载均衡"><a href="#数据链路层负载均衡" class="headerlink" title="数据链路层负载均衡"></a>数据链路层负载均衡</h4><p>数据链路层负载均衡是指在通信协议的数据链路层修改 mac 地址进行负载均衡。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250643412.png" alt="img"></p>
+<p>在 Linux 平台上最好的链路层负载均衡开源产品是 LVS (Linux Virtual Server)。</p>
+<p>LVS 是基于 Linux 内核中 netfilter 框架实现的负载均衡系统。netfilter 是内核态的 Linux 防火墙机制，可以在数据包流经过程中，根据规则设置若干个关卡（hook 函数）来执行相关的操作。</p>
+<p>LVS 的工作流程大致如下：</p>
+<ul>
+<li>当用户访问 <a target="_blank" rel="noopener" href="http://www.sina.com.cn/">www.sina.com.cn</a> 时，用户数据通过层层网络，最后通过交换机进入 LVS 服务器网卡，并进入内核网络层。</li>
+<li>进入 PREROUTING 后经过路由查找，确定访问的目的 VIP 是本机 IP 地址，所以数据包进入到 INPUT 链上</li>
+<li>IPVS 是工作在 INPUT 链上，会根据访问的 <code>vip+port</code> 判断请求是否 IPVS 服务，如果是则调用注册的 IPVS HOOK 函数，进行 IPVS 相关主流程，强行修改数据包的相关数据，并将数据包发往 POSTROUTING 链上。</li>
+<li>POSTROUTING 上收到数据包后，根据目标 IP 地址（后端服务器），通过路由选路，将数据包最终发往后端的服务器上。</li>
+</ul>
+<p>开源 LVS 版本有 3 种工作模式，每种模式工作原理截然不同，说各种模式都有自己的优缺点，分别适合不同的应用场景，不过最终本质的功能都是能实现均衡的流量调度和良好的扩展性。主要包括三种模式：DR 模式、NAT 模式、Tunnel 模式。</p>
+<h2 id="负载均衡算法"><a href="#负载均衡算法" class="headerlink" title="负载均衡算法"></a>负载均衡算法</h2><p>负载均衡器的实现可以分为两个部分：</p>
+<ul>
+<li>根据负载均衡算法在候选机器列表选出一个机器；</li>
+<li>将请求数据发送到该机器上。</li>
+</ul>
+<p>负载均衡算法是负载均衡服务核心中的核心。负载均衡产品多种多样，但是各种负载均衡算法原理是共性的。</p>
+<p>负载均衡算法有很多种，分别适用于不同的应用场景。本章节将由浅入深的，逐一讲解各种负载均衡算法的策略和特性，并根据算法之间的互补关系将它们串联起来。</p>
+<blockquote>
+<p>注：负载均衡算法的实现，推荐阅读 <a target="_blank" rel="noopener" href="https://dubbo.apache.org/zh/docs/v2.7/dev/source/loadbalance/">Dubbo 官方负载均衡算法说明</a> ，源码讲解非常详细，非常值得借鉴。</p>
+<p>下文中的各种算法的可执行示例已归档在 Github 仓库：<a target="_blank" rel="noopener" href="https://github.com/dunwu/java-tutorial/tree/master/codes/java-distributed/java-load-balance">java-load-balance</a>，可以通过执行 <code>io.github.dunwu.javatech.LoadBalanceDemo</code> 查看各算法执行效果。</p>
+</blockquote>
+<h3 id="轮询算法"><a href="#轮询算法" class="headerlink" title="轮询算法"></a>轮询算法</h3><p><strong>“轮询算法（Round Robin）”的策略是：将请求“依次”分发到候选机器</strong>。</p>
+<p>如下图所示，轮询负载均衡器收到来自客户端的 6 个请求，编号为 1、4 的请求会被发送到服务端 0；编号为 2、5 的请求会被发送到服务端 1；编号为 3、6 的请求会被发送到服务端 2。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648178.png" alt="img"></p>
+<p><strong>轮询算法适合的场景需要满足：各机器处理能力相近，且每个请求工作量差异不大</strong>。</p>
+<p>【示例】轮询负载均衡算法实现示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RoundRobinLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">extends</span> <span class="title class_">BaseLoadBalance</span>&lt;N&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">AtomicInteger</span> <span class="variable">position</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicInteger</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> nodes.size();</span><br><span class="line">        <span class="comment">// 如果位置值已经等于节点数，重置为 0</span></span><br><span class="line">        position.compareAndSet(length, <span class="number">0</span>);</span><br><span class="line">        <span class="type">N</span> <span class="variable">node</span> <span class="operator">=</span> nodes.get(position.get());</span><br><span class="line">        position.getAndIncrement();</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="随机算法"><a href="#随机算法" class="headerlink" title="随机算法"></a>随机算法</h3><p><strong>“随机算法（Random）” 将请求“随机”分发到候选机器</strong>。</p>
+<p>如下图所示，随机负载均衡器收到来自客户端的 6 个请求，会随机分发请求，可能会出现：编号为 1、5 的请求会被发送到服务端 0；编号为 2、4 的请求会被发送到服务端 1；编号为 3、6 的请求会被发送到服务端 2。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250648899.png" alt="img"></p>
+<p><strong>随机算法适合的场景需要满足：各机器处理能力相近，且每个请求工作量差异不大</strong>。</p>
+<p>学习过概率论的都知道，调用量较小的时候，可能负载并不均匀，<strong>调用量越大，负载越均衡</strong>。</p>
+<p>【示例】随机负载均衡算法实现示例</p>
+<p>负载均衡接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">LoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; &#123;</span><br><span class="line"></span><br><span class="line">    N <span class="title function_">select</span><span class="params">(List&lt;N&gt; nodes, String ip)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>负载均衡抽象类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">BaseLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> N <span class="title function_">select</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (CollectionUtil.isEmpty(nodes)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果 nodes 列表中仅有一个 node，直接返回即可，无需进行负载均衡</span></span><br><span class="line">        <span class="keyword">if</span> (nodes.size() == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> nodes.get(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> doSelect(nodes, ip);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">abstract</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>机器节点类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Node</span> <span class="keyword">implements</span> <span class="title class_">Comparable</span>&lt;Node&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> String url;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Integer weight;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Integer active;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>随机算法实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RandomLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">extends</span> <span class="title class_">BaseLoadBalance</span>&lt;N&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line">        <span class="comment">// 在列表中随机选取一个节点</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> random.nextInt(nodes.size());</span><br><span class="line">        <span class="keyword">return</span> nodes.get(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="加权轮询-随机算法"><a href="#加权轮询-随机算法" class="headerlink" title="加权轮询&#x2F;随机算法"></a>加权轮询&#x2F;随机算法</h3><p>轮询&#x2F;随机算法适合的场景都需要满足：各机器处理能力相近，且每个请求工作量差异不大。</p>
+<p>在理想状况下，假设每个机器的硬件条件相同，如：CPU、内存、网络 IO 等配置都相同；并且每个请求的耗时一样（请求传输时间、请求访问数据时间、计算时间等），这时轮询算法才能真正做到负载均衡。显然，要满足以上条件都相同是几乎不可能的，更不要说实际的网络通信中还有更多复杂的情况。</p>
+<p>以上，如果有一点不能满足，都无法做到真正的负载均衡。个体存在较大差异，当请求量较大时，处理较慢的机器可能会逐渐积压请求，从而导致过载甚至宕机。</p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>服务端 1 的处理能力远低于服务端 0 和服务端 2；</li>
+<li>轮询&#x2F;随机算法可以保证将请求尽量均匀的分发给两个机器；</li>
+<li>编号为 1、4 的请求被发送到服务端 0；编号为 3、6 的请求被发送到服务端 2；二者处理能力强，应对游刃有余；</li>
+<li>编号为 2、5 的请求被发送到服务端 1，服务端 1 处理能力弱，应对捉襟见肘，导致过载。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649920.png" alt="img"></p>
+<blockquote>
+<p>《蜘蛛侠》电影中有一句经典台词：<strong>能力越大，责任越大</strong>。显然，以上情况不符合这句话，处理能力强的机器并没有被分发到更多的请求，它的处理能力被闲置了。那么，如何解决这个问题呢？</p>
+</blockquote>
+<p>一种比较容易想到的思路是：引入权重属性，可以根据机器的硬件条件为其设置合理的权重值，负载均衡时，优先将请求分发到权重较高的机器。</p>
+<p>“加权轮询算法（Weighted Round Robbin）” 和“加权随机算法（Weighted Random）” 都采用了加权的思路，在轮询&#x2F;随机算法的基础上，引入了权重属性，优先将请求分发到权重较高的机器。这样，就可以针对性能高、处理速度快的机器设置较高的权重，让其处理更多的请求；而针对性能低、处理速度慢的机器则与之相反。一言以蔽之，加权策略强调了——能力越大，责任越大。</p>
+<p>如下图所示，服务端 0 设置权重为 3，服务端 1 设置权重为 1，服务端 2 设置权重为 2。负载均衡器收到来自客户端的 6 个请求，那么编号为 1、2、5 的请求会被发送到服务端 0，编号为 4 的请求会被发送到服务端 1，编号为 3、6 的请求会被发送到机器 2。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250649943.png" alt="img"></p>
+<p>【示例】加权随机负载均衡算法实现示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeightRandomLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">extends</span> <span class="title class_">BaseLoadBalance</span>&lt;N&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> ThreadLocalRandom.current();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> nodes.size();</span><br><span class="line">        <span class="type">AtomicInteger</span> <span class="variable">totalWeight</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicInteger</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">for</span> (N node : nodes) &#123;</span><br><span class="line">            <span class="type">Integer</span> <span class="variable">weight</span> <span class="operator">=</span> node.getWeight();</span><br><span class="line">            totalWeight.getAndAdd(weight);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (totalWeight.get() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">offset</span> <span class="operator">=</span> random.nextInt(totalWeight.get());</span><br><span class="line">            <span class="keyword">for</span> (N node : nodes) &#123;</span><br><span class="line">                <span class="comment">// 让随机值 offset 减去权重值</span></span><br><span class="line">                offset -= node.getWeight();</span><br><span class="line">                <span class="keyword">if</span> (offset &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="comment">// 返回相应的 Node</span></span><br><span class="line">                    <span class="keyword">return</span> node;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 直接随机返回一个</span></span><br><span class="line">        <span class="keyword">return</span> nodes.get(random.nextInt(length));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>【示例】加权轮询负载均衡算法实现示例</p>
+<p>以下实现基于 Dubbo 加权轮询算法做了一些简化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WeightRoundRobinLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">extends</span> <span class="title class_">BaseLoadBalance</span>&lt;N&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 60 秒</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">RECYCLE_PERIOD</span> <span class="operator">=</span> <span class="number">60000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Node hashcode 到 WeightedRoundRobin 的映射关系</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> ConcurrentMap&lt;Integer, WeightedRoundRobin&gt; weightMap = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 原子更新锁</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">AtomicBoolean</span> <span class="variable">updateLock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicBoolean</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">totalWeight</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">long</span> <span class="variable">maxCurrent</span> <span class="operator">=</span> Long.MIN_VALUE;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取当前时间</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">now</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        <span class="type">N</span> <span class="variable">selectedNode</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="type">WeightedRoundRobin</span> <span class="variable">selectedWRR</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 下面这个循环主要做了这样几件事情：</span></span><br><span class="line">        <span class="comment">//   1. 遍历 Node 列表，检测当前 Node 是否有相应的 WeightedRoundRobin，没有则创建</span></span><br><span class="line">        <span class="comment">//   2. 检测 Node 权重是否发生了变化，若变化了，则更新 WeightedRoundRobin 的 weight 字段</span></span><br><span class="line">        <span class="comment">//   3. 让 current 字段加上自身权重，等价于 current += weight</span></span><br><span class="line">        <span class="comment">//   4. 设置 lastUpdate 字段，即 lastUpdate = now</span></span><br><span class="line">        <span class="comment">//   5. 寻找具有最大 current 的 Node，以及 Node 对应的 WeightedRoundRobin，</span></span><br><span class="line">        <span class="comment">//      暂存起来，留作后用</span></span><br><span class="line">        <span class="comment">//   6. 计算权重总和</span></span><br><span class="line">        <span class="keyword">for</span> (N node : nodes) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">hashCode</span> <span class="operator">=</span> node.hashCode();</span><br><span class="line">            <span class="type">WeightedRoundRobin</span> <span class="variable">weightedRoundRobin</span> <span class="operator">=</span> weightMap.get(hashCode);</span><br><span class="line">            <span class="type">int</span> <span class="variable">weight</span> <span class="operator">=</span> node.getWeight();</span><br><span class="line">            <span class="keyword">if</span> (weight &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                weight = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 检测当前 Node 是否有对应的 WeightedRoundRobin，没有则创建</span></span><br><span class="line">            <span class="keyword">if</span> (weightedRoundRobin == <span class="literal">null</span>) &#123;</span><br><span class="line">                weightedRoundRobin = <span class="keyword">new</span> <span class="title class_">WeightedRoundRobin</span>();</span><br><span class="line">                <span class="comment">// 设置 Node 权重</span></span><br><span class="line">                weightedRoundRobin.setWeight(weight);</span><br><span class="line">                <span class="comment">// 存储 url 唯一标识 identifyString 到 weightedRoundRobin 的映射关系</span></span><br><span class="line">                weightMap.putIfAbsent(hashCode, weightedRoundRobin);</span><br><span class="line">                weightedRoundRobin = weightMap.get(hashCode);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Node 权重不等于 WeightedRoundRobin 中保存的权重，说明权重变化了，此时进行更新</span></span><br><span class="line">            <span class="keyword">if</span> (weight != weightedRoundRobin.getWeight()) &#123;</span><br><span class="line">                weightedRoundRobin.setWeight(weight);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 让 current 加上自身权重，等价于 current += weight</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">current</span> <span class="operator">=</span> weightedRoundRobin.increaseCurrent();</span><br><span class="line">            <span class="comment">// 设置 lastUpdate，表示近期更新过</span></span><br><span class="line">            weightedRoundRobin.setLastUpdate(now);</span><br><span class="line">            <span class="comment">// 找出最大的 current</span></span><br><span class="line">            <span class="keyword">if</span> (current &gt; maxCurrent) &#123;</span><br><span class="line">                maxCurrent = current;</span><br><span class="line">                <span class="comment">// 将具有最大 current 权重的 Node 赋值给 selectedNode</span></span><br><span class="line">                selectedNode = node;</span><br><span class="line">                <span class="comment">// 将 Node 对应的 weightedRoundRobin 赋值给 selectedWRR，留作后用</span></span><br><span class="line">                selectedWRR = weightedRoundRobin;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 计算权重总和</span></span><br><span class="line">            totalWeight += weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 对 weightMap 进行检查，过滤掉长时间未被更新的节点。</span></span><br><span class="line">        <span class="comment">// 该节点可能挂了，nodes 中不包含该节点，所以该节点的 lastUpdate 长时间无法被更新。</span></span><br><span class="line">        <span class="comment">// 若未更新时长超过阈值后，就会被移除掉，默认阈值为 60 秒。</span></span><br><span class="line">        <span class="keyword">if</span> (!updateLock.get() &amp;&amp; nodes.size() != weightMap.size()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (updateLock.compareAndSet(<span class="literal">false</span>, <span class="literal">true</span>)) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">// 遍历修改，即移除过期记录</span></span><br><span class="line">                    weightMap.entrySet().removeIf(item -&gt; now - item.getValue().getLastUpdate() &gt; RECYCLE_PERIOD);</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    updateLock.set(<span class="literal">false</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (selectedNode != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 让 current 减去权重总和，等价于 current -= totalWeight</span></span><br><span class="line">            selectedWRR.decreaseCurrent(totalWeight);</span><br><span class="line">            <span class="comment">// 返回具有最大 current 的 Node</span></span><br><span class="line">            <span class="keyword">return</span> selectedNode;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// should not happen here</span></span><br><span class="line">        <span class="keyword">return</span> nodes.get(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">WeightedRoundRobin</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 服务提供者权重</span></span><br><span class="line">        <span class="keyword">private</span> <span class="type">int</span> weight;</span><br><span class="line">        <span class="comment">// 当前权重</span></span><br><span class="line">        <span class="keyword">private</span> <span class="type">AtomicLong</span> <span class="variable">current</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicLong</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="comment">// 最后一次更新时间</span></span><br><span class="line">        <span class="keyword">private</span> <span class="type">long</span> lastUpdate;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">increaseCurrent</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="comment">// current = current + weight；</span></span><br><span class="line">            <span class="keyword">return</span> current.addAndGet(weight);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">decreaseCurrent</span><span class="params">(<span class="type">int</span> total)</span> &#123;</span><br><span class="line">            <span class="comment">// current = current - total;</span></span><br><span class="line">            <span class="keyword">return</span> current.addAndGet(-<span class="number">1</span> * total);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getWeight</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> weight;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setWeight</span><span class="params">(<span class="type">int</span> weight)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.weight = weight;</span><br><span class="line">            <span class="comment">// 初始情况下，current = 0</span></span><br><span class="line">            current.set(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> AtomicLong <span class="title function_">getCurrent</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> current;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setCurrent</span><span class="params">(AtomicLong current)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.current = current;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getLastUpdate</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> lastUpdate;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setLastUpdate</span><span class="params">(<span class="type">long</span> lastUpdate)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.lastUpdate = lastUpdate;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="最少连接数算法"><a href="#最少连接数算法" class="headerlink" title="最少连接数算法"></a>最少连接数算法</h3><p>加权轮询&#x2F;随机算法虽然一定程度上解决了机器处理能力不同时的负载均衡场景，但它最大的问题在于不能动态应对网络中负载不均的场景。加权的思路是在负载均衡处理的事前，预设好不同机器的权重，然后分发。然而，每个请求的连接时长不同，负载均衡器也不可能准确预估出请求的连接时长。因此，采用加权轮询&#x2F;随机算法算法，都无法动态应对连接时长不均的网络场景，可能会出现<strong>某些机器当前连接数过多，而另一些机器的连接过少</strong>的情况，即并非真正的流量负载均衡。</p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>3 个服务端的处理能力相同；</li>
+<li>编号为 1、4 的请求被发送到服务端 0，但是 1 很快就断开连接，此时只有 4 请求连接服务端 0；</li>
+<li>编号为 2、5 的请求被发送到服务端 1，但是 2 始终保持长连接；该系统继续运行时，服务端 1 发生过载；</li>
+<li>编号为 3、6 的请求被发送到服务端 2，但是 3 很快就断开连接，此时只有 6 请求连接服务端 2；</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650176.png" alt="img"></p>
+<p>既然，请求的连接时长不同，会导致有的服务端处理慢，积压大量连接数；而有的服务端处理快，保持的连接数少。那么，我们不妨想一下，如果负载均衡器监控一下服务端当前所持有的连接数，优先将请求分发给连接数少的服务端，不就能有效提高分发效率了吗？最少连接数算法正是采用这个思路去设计的。</p>
+<p><strong>“最少连接数算法（Least Connections）” 将请求分发到连接数&#x2F;请求数最少的候选机器</strong>。</p>
+<p>要根据机器连接数分发，显然要先维护机器的连接数。因此，<strong>最少连接数算法需要实时追踪每个候选机器的活跃连接数；然后，动态选出连接数最少的机器，优先分发请求</strong>。最少连接数算法会记录当前时刻，每个候选节点正在处理的连接数，然后选择连接数最小的节点。该策略能够动态、实时地反应机器的当前状况，较为合理地将负责分配均匀，适用于对当前系统负载较为敏感的场景。</p>
+<p>由此可见，<strong>最少连接数算法适用于对系统负载较为敏感且请求连接时长相差较大的场景</strong>。</p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>服务端 0 和服务端 1 的处理能力相同；</li>
+<li>编号为 1、3 的请求被发送到服务端 0，但是 1、3 很快就断开连接；</li>
+<li>编号为 2、4 的请求被发送到服务端 1，但是 2、4 保持长连接；</li>
+<li>由于服务端 0 当前连接数最少，编号为 5、6 的请求被分发到服务端 0。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650852.png" alt="img"></p>
+<p>“加权最少连接数算法（Weighted Least Connection）”在最少连接数算法的基础上，根据机器的性能为每台机器分配权重，再根据权重计算出每台机器能处理的连接数。</p>
+<p>【示例】最少连接数算法实现</p>
+<p>最少连接数算法实现要点：活跃调用数越小，表明该服务节点处理能力越高，单位时间内可处理更多的请求，应优先将请求分发给该服务。在具体实现中，每个服务节点对应一个活跃数 active。初始情况下，所有服务提供者活跃数均为 0。每收到一个请求，活跃数加 1，完成请求后则将活跃数减 1。在服务运行一段时间后，性能好的服务提供者处理请求的速度更快，因此活跃数下降的也越快，此时这样的服务提供者能够优先获取到新的服务请求、这就是最少连接数负载均衡算法的基本思想。</p>
+<p>以下实现基于 Dubbo 最少连接数负载均衡算法做了些许改动。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LeastActiveLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">extends</span> <span class="title class_">BaseLoadBalance</span>&lt;N&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Random</span> <span class="variable">random</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> nodes.size();</span><br><span class="line">        <span class="comment">// 最小的活跃数</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">leastActive</span> <span class="operator">=</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 具有相同“最少连接数”的服务者提供者（以下用 Node 代称）数量</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">leastCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// leastIndexs 用于记录具有相同“最少连接数”的 Node 在 nodes 列表中的下标信息</span></span><br><span class="line">        <span class="type">int</span>[] leastIndexs = <span class="keyword">new</span> <span class="title class_">int</span>[length];</span><br><span class="line">        <span class="type">int</span> <span class="variable">totalWeight</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 第一个最少连接数的 Node 权重值，用于与其他具有相同最少连接数的 Node 的权重进行对比，</span></span><br><span class="line">        <span class="comment">// 以检测是否“所有具有相同最少连接数的 Node 的权重”均相等</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">firstWeight</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">sameWeight</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历 nodes 列表</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">            <span class="type">N</span> <span class="variable">node</span> <span class="operator">=</span> nodes.get(i);</span><br><span class="line">            <span class="comment">// 发现更小的活跃数，重新开始</span></span><br><span class="line">            <span class="keyword">if</span> (leastActive == -<span class="number">1</span> || node.getActive() &lt; leastActive) &#123;</span><br><span class="line">                <span class="comment">// 使用当前活跃数更新最少连接数 leastActive</span></span><br><span class="line">                leastActive = node.getActive();</span><br><span class="line">                <span class="comment">// 更新 leastCount 为 1</span></span><br><span class="line">                leastCount = <span class="number">1</span>;</span><br><span class="line">                <span class="comment">// 记录当前下标值到 leastIndexs 中</span></span><br><span class="line">                leastIndexs[<span class="number">0</span>] = i;</span><br><span class="line">                totalWeight = node.getWeight();</span><br><span class="line">                firstWeight = node.getWeight();</span><br><span class="line">                sameWeight = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 当前 Node 的活跃数 node.getActive() 与最少连接数 leastActive 相同</span></span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (node.getActive() == leastActive) &#123;</span><br><span class="line">                <span class="comment">// 在 leastIndexs 中记录下当前 Node 在 nodes 集合中的下标</span></span><br><span class="line">                leastIndexs[leastCount++] = i;</span><br><span class="line">                <span class="comment">// 累加权重</span></span><br><span class="line">                totalWeight += node.getWeight();</span><br><span class="line">                <span class="comment">// 检测当前 Node 的权重与 firstWeight 是否相等，</span></span><br><span class="line">                <span class="comment">// 不相等则将 sameWeight 置为 false</span></span><br><span class="line">                <span class="keyword">if</span> (sameWeight &amp;&amp; i &gt; <span class="number">0</span></span><br><span class="line">                    &amp;&amp; node.getWeight() != firstWeight) &#123;</span><br><span class="line">                    sameWeight = <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 当只有一个 Node 具有最少连接数，此时直接返回该 Node 即可</span></span><br><span class="line">        <span class="keyword">if</span> (leastCount == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> nodes.get(leastIndexs[<span class="number">0</span>]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 有多个 Node 具有相同的最少连接数，但它们之间的权重不同</span></span><br><span class="line">        <span class="keyword">if</span> (!sameWeight &amp;&amp; totalWeight &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 随机生成一个 [0, totalWeight) 之间的数字</span></span><br><span class="line">            <span class="type">int</span> <span class="variable">offsetWeight</span> <span class="operator">=</span> random.nextInt(totalWeight);</span><br><span class="line">            <span class="comment">// 循环让随机数减去具有最少连接数的 Node 的权重值，</span></span><br><span class="line">            <span class="comment">// 当 offset 小于等于 0 时，返回相应的 Node</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; leastCount; i++) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">leastIndex</span> <span class="operator">=</span> leastIndexs[i];</span><br><span class="line">                <span class="comment">// 获取权重值，并让随机数减去权重值</span></span><br><span class="line">                offsetWeight -= nodes.get(leastIndex).getWeight();</span><br><span class="line">                <span class="keyword">if</span> (offsetWeight &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> nodes.get(leastIndex);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 如果权重相同或权重为 0 时，随机返回一个 Node</span></span><br><span class="line">        <span class="keyword">return</span> nodes.get(leastIndexs[random.nextInt(leastCount)]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="最少响应时间算法"><a href="#最少响应时间算法" class="headerlink" title="最少响应时间算法"></a>最少响应时间算法</h3><p><strong>“最少响应时间算法（Least Time）” 将请求分发到响应时间最短的候选机器</strong>。最少响应时间算法和最少连接数算法二者的目标其实是殊途同归，都是动态调整，将请求尽量分发到处理能力强的机器上。不同点在于，最少连接数关注的维度是机器持有的连接数，而最少响应时间关注的维度是机器上一次响应时间哪个最短。理论上来说，持有的连接数少，响应时间短，都可以表明机器潜在的处理能力比较强。</p>
+<p><strong>最少响应时间算法具有高度的敏感性、自适应性</strong>。但是，由于它需要持续监控候选机器的响应时延，相比于监控候选机器的连接数，会显著增加监控的开销。此外，请求的响应时延并不一定能完全反应机器的处理能力，有可能某机器上一次处理的请求恰好是一个开销非常小的请求。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250650334.png" alt="img"></p>
+<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p>前面提到的负载均衡算法，都只适用于无状态应用。所谓无状态应用，意味着：请求无论分发到集群中的任意机器上，得到的响应都是相同的：然而，有状态服务则不然：请求分发到不同的机器上，得到的结果是不一样的。典型的无状态应用是普通的 Web 服务器；典型的有状态应用是各种分布式数据库（如：Redis、ElasticSearch 等），这些数据库存储了大量，乃至海量的数据，无法全部存储在一台机器上，为了提高整体容量以及吞吐量，采用了分区（分片）的设计，将数据化整为零的存储在不同机器上。</p>
+<p>对于有状态应用，不仅仅需要保证负载的均衡，更为重要的是，需要保证针对相同数据的请求始终访问的是相同的机器，否则，就无法获取到正确的数据。</p>
+<p>那么，如何解决有状态应用的负载均衡呢？有一种方案是哈希算法。</p>
+<p><strong>“哈希算法（Hash）” 根据一个 key （可以是唯一 ID、IP、URL 等），通过哈希函数计算得到一个数值，用该数值在候选机器列表的进行取模运算，得到的结果便是选中的机器</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250652913.png" alt="img"></p>
+<p>这种算法可以保证，同一关键字（IP 或 URL 等）的请求，始终会被转发到同一台机器上。哈希负载均衡算法常被用于实现会话粘滞（Sticky Session）。</p>
+<p>但是 ，哈希算法的问题是：当增减节点时，由于哈希取模函数的基数发生变化，会影响大部分的映射关系，从而导致之前的数据不可访问。要解决这个问题，就必须根据新的计算公式迁移数据。显然，如果数据量很大的情况下，迁移成本很高；并且，在迁移过程中，要保证业务平滑过渡，需要使用数据双写等较为复杂的技术手段。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653034.png" alt="img"></p>
+<p>【示例】源地址哈希算法实现示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">IpHashLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">extends</span> <span class="title class_">BaseLoadBalance</span>&lt;N&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (StrUtil.isBlank(ip)) &#123;</span><br><span class="line">            ip = <span class="string">&quot;127.0.0.1&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">length</span> <span class="operator">=</span> nodes.size();</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> hash(ip) % length;</span><br><span class="line">        <span class="keyword">return</span> nodes.get(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hash</span><span class="params">(String text)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> HashUtil.fnvHash(text);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="一致性哈希算法"><a href="#一致性哈希算法" class="headerlink" title="一致性哈希算法"></a>一致性哈希算法</h3><p>哈希算法的缺点是：当集群中出现增减节点时，由于哈希取模函数的基数发生变化，会导致大量集群中的机器不可用；需要通过代价高昂的数据迁移，来解决问题。那么，我们自然会希望有一种更优化的方案，来尽量减少影响的机器数。一致性哈希算法就是为了这个目标而应运而生。</p>
+<p>一致性哈希算法对哈希算法进行了改良。<strong>“一致性哈希算法（Consistent Hash）”，根据哈希算法将对应的 key 哈希到一个具有 2^32 个桶的空间，并且头尾相连（0 到 2^32-1），即一个闭合的环形，这个圆环被称为“哈希环”</strong>。哈希算法是对节点的数量进行取模运算；而一致性哈希算法则是对 2^32 进行取模运算。</p>
+<p><strong>哈希环的空间是按顺时针方向组织的</strong>，需要对指定 key 的数据进行读写时，会执行两步：</p>
+<ol>
+<li>先对节点进行哈希计算，计算的关键字通常是 IP 或其他唯一标识（例：hash(ip)），然后对 2^32 取模，以确定节点在哈希环上的位置。</li>
+<li>先对 key 进行哈希计算（hash(key)），然后对 2^32 取模，以确定 key 在哈希环上的位置。</li>
+<li>然后根据 key 的位置，顺时针找到的第一个节点，就是 key 对应的节点。</li>
+</ol>
+<p>所以，<strong>一致性哈希是将“存储节点”和“数据”都映射到一个顺时针排序的哈希环上</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653412.png" alt="img"></p>
+<p>一致性哈希算法会尽可能保证，相同的请求被分发到相同的机器上。<strong>当出现增减节点时，只影响哈希环中顺时针方向的相邻的节点，对其他节点无影响，不会引起剧烈变动</strong>。</p>
+<ul>
+<li><strong>相同的请求</strong>是指：一般在使用一致性哈希时，需要指定一个 key 用于 hash 计算，可能是：用户 ID、请求方 IP、请求服务名称，参数列表构成的串</li>
+<li><strong>尽可能</strong>是指：哈希环上出现增减节点时，少数机器的变化不应该影响大多数的请求。</li>
+</ul>
+<p>（1）增加节点</p>
+<p>如下图所示，假设，哈希环中新增了一个节点 S4，新增节点经过哈希计算映射到图中位置：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653974.png" alt="img"></p>
+<p>此时，只有 K1 收到影响；而 K0、K2 均不受影响。</p>
+<p>（2）减少节点</p>
+<p>如下图所示，假设，哈希环中减少了一个节点 S0：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250653207.png" alt="img"></p>
+<p>此时，只有 K0 收到影响；而 K1、K2 均不受影响。</p>
+<p><strong>一致性哈希算法并不保证节点能够在哈希环上分布均匀</strong>，由此而产生一个问题，哈希环上可能有大量的请求集中在一个节点上。从概率角度来看，<strong>哈希环上的节点越多，分布就越均匀</strong>。正因为如此，一致性哈希算法不适用于节点数过少的场景。</p>
+<p>如下图所示：极端情况下，可能由于节点在哈希环上分布不均，有大量请求计算得到的 key 会被集中映射到少数节点，甚至某一个节点上。此外，节点分布不均匀的情况下，进行容灾与扩容时，哈希环上的相邻节点容易受到过大影响，从而引发雪崩式的连锁反应。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654770.png" alt="img"></p>
+<p>【示例】一致性哈希算法示例</p>
+<p>以下示例基于 Dubbo 的一致性哈希负载均衡算法做了一些简化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConsistentHashLoadBalance</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; <span class="keyword">extends</span> <span class="title class_">BaseLoadBalance</span>&lt;N&gt; <span class="keyword">implements</span> <span class="title class_">LoadBalance</span>&lt;N&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ConcurrentMap&lt;String, ConsistentHashSelector&lt;?&gt;&gt; selectors = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> N <span class="title function_">doSelect</span><span class="params">(List&lt;N&gt; nodes, String ip)</span> &#123;</span><br><span class="line">        <span class="comment">// 分片数，这里设为节点数的 4 倍</span></span><br><span class="line">        <span class="type">Integer</span> <span class="variable">replicaNum</span> <span class="operator">=</span> nodes.size() * <span class="number">4</span>;</span><br><span class="line">        <span class="comment">// 获取 nodes 原始的 hashcode[11. 分布式协同](..%2F11.%B7%D6%B2%BC%CA%BD%D0%AD%CD%AC)</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">identityHashCode</span> <span class="operator">=</span> System.identityHashCode(nodes);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果 nodes 是一个新的 List 对象，意味着节点数量发生了变化</span></span><br><span class="line">        <span class="comment">// 此时 selector.identityHashCode != identityHashCode 条件成立</span></span><br><span class="line">        ConsistentHashSelector&lt;N&gt; selector = (ConsistentHashSelector&lt;N&gt;) selectors.get(ip);</span><br><span class="line">        <span class="keyword">if</span> (selector == <span class="literal">null</span> || selector.identityHashCode != identityHashCode) &#123;</span><br><span class="line">            <span class="comment">// 创建新的 ConsistentHashSelector</span></span><br><span class="line">            selectors.put(ip, <span class="keyword">new</span> <span class="title class_">ConsistentHashSelector</span>&lt;&gt;(nodes, identityHashCode, replicaNum));</span><br><span class="line">            selector = (ConsistentHashSelector&lt;N&gt;) selectors.get(ip);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 调用 ConsistentHashSelector 的 select 方法选择 Node</span></span><br><span class="line">        <span class="keyword">return</span> selector.select(ip);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 一致性哈希选择器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">ConsistentHashSelector</span>&lt;N <span class="keyword">extends</span> <span class="title class_">Node</span>&gt; &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 存储虚拟节点</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> TreeMap&lt;Long, N&gt; virtualNodes;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> identityHashCode;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 构造器</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> nodes            节点列表</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> identityHashCode hashcode</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> replicaNum       分片数</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        ConsistentHashSelector(List&lt;N&gt; nodes, <span class="type">int</span> identityHashCode, Integer replicaNum) &#123;</span><br><span class="line">            <span class="built_in">this</span>.virtualNodes = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;();</span><br><span class="line">            <span class="built_in">this</span>.identityHashCode = identityHashCode;</span><br><span class="line">            <span class="comment">// 获取虚拟节点数，默认为 100</span></span><br><span class="line">            <span class="keyword">if</span> (replicaNum == <span class="literal">null</span>) &#123;</span><br><span class="line">                replicaNum = <span class="number">100</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (N node : nodes) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; replicaNum / <span class="number">4</span>; i++) &#123;</span><br><span class="line">                    <span class="comment">// 对 url 进行 md5 运算，得到一个长度为 16 的字节数组</span></span><br><span class="line">                    <span class="type">byte</span>[] digest = md5(node.getUrl());</span><br><span class="line">                    <span class="comment">// 对 digest 部分字节进行 4 次 hash 运算，得到四个不同的 long 型正整数</span></span><br><span class="line">                    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; <span class="number">4</span>; j++) &#123;</span><br><span class="line">                        <span class="comment">// h = 0 时，取 digest 中下标为 0 ~ 3 的 4 个字节进行位运算</span></span><br><span class="line">                        <span class="comment">// h = 1 时，取 digest 中下标为 4 ~ 7 的 4 个字节进行位运算</span></span><br><span class="line">                        <span class="comment">// h = 2, h = 3 时过程同上</span></span><br><span class="line">                        <span class="type">long</span> <span class="variable">m</span> <span class="operator">=</span> hash(digest, j);</span><br><span class="line">                        <span class="comment">// 将 hash 到 node 的映射关系存储到 virtualNodes 中，</span></span><br><span class="line">                        <span class="comment">// virtualNodes 需要提供高效的查询操作，因此选用 TreeMap 作为存储结构</span></span><br><span class="line">                        virtualNodes.put(m, node);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> N <span class="title function_">select</span><span class="params">(String key)</span> &#123;</span><br><span class="line">            <span class="comment">// 对参数 key 进行 md5 运算</span></span><br><span class="line">            <span class="type">byte</span>[] digest = md5(key);</span><br><span class="line">            <span class="comment">// 取 digest 数组的前四个字节进行 hash 运算，再将 hash 值传给 selectForKey 方法，</span></span><br><span class="line">            <span class="comment">// 寻找合适的 Node</span></span><br><span class="line">            <span class="keyword">return</span> selectForKey(hash(digest, <span class="number">0</span>));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> N <span class="title function_">selectForKey</span><span class="params">(<span class="type">long</span> hash)</span> &#123;</span><br><span class="line">            <span class="comment">// 查找第一个大于或等于当前 hash 的节点</span></span><br><span class="line">            Map.Entry&lt;Long, N&gt; entry = virtualNodes.ceilingEntry(hash);</span><br><span class="line">            <span class="comment">// 如果 hash 大于 Node 在哈希环上最大的位置，此时 entry = null，</span></span><br><span class="line">            <span class="comment">// 需要将 TreeMap 的头节点赋值给 entry</span></span><br><span class="line">            <span class="keyword">if</span> (entry == <span class="literal">null</span>) &#123;</span><br><span class="line">                entry = virtualNodes.firstEntry();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 返回 Node</span></span><br><span class="line">            <span class="keyword">return</span> entry.getValue();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计算 hash 值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">long</span> <span class="title function_">hash</span><span class="params">(<span class="type">byte</span>[] digest, <span class="type">int</span> number)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (((<span class="type">long</span>) (digest[<span class="number">3</span> + number * <span class="number">4</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">24</span>)</span><br><span class="line">            | ((<span class="type">long</span>) (digest[<span class="number">2</span> + number * <span class="number">4</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">16</span>)</span><br><span class="line">            | ((<span class="type">long</span>) (digest[<span class="number">1</span> + number * <span class="number">4</span>] &amp; <span class="number">0xFF</span>) &lt;&lt; <span class="number">8</span>)</span><br><span class="line">            | (digest[number * <span class="number">4</span>] &amp; <span class="number">0xFF</span>))</span><br><span class="line">            &amp; <span class="number">0xFFFFFFFFL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计算 MD5 值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] md5(String value) &#123;</span><br><span class="line">        MessageDigest md5;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            md5 = MessageDigest.getInstance(<span class="string">&quot;MD5&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchAlgorithmException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(e.getMessage(), e);</span><br><span class="line">        &#125;</span><br><span class="line">        md5.reset();</span><br><span class="line">        <span class="type">byte</span>[] bytes = value.getBytes(StandardCharsets.UTF_8);</span><br><span class="line">        md5.update(bytes);</span><br><span class="line">        <span class="keyword">return</span> md5.digest();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="虚拟一致性哈希算法"><a href="#虚拟一致性哈希算法" class="headerlink" title="虚拟一致性哈希算法"></a>虚拟一致性哈希算法</h3><p>在一致性哈希算法中，如果节点数过少，可能会分布不均，从而导致负载不均衡。在实际生产环境中，一个分布式系统应该具备良好的伸缩性，既能从容的扩展到大规模的集群，也要能支持小规模的集群。为此，又产生了虚拟哈希算法，进一步对一致性哈希算法进行了改良。</p>
+<p>虚拟哈希算法的解决思路是：虽然实际的集群可能节点数较少，但是在哈希环上引入大量的虚拟哈希节点。具体来说，<strong>“虚拟哈希算法”有二次映射：先将虚拟节点映射到哈希环上，再将虚拟节点映射到实际节点上。</strong></p>
+<p>如下图所示，假设存在这样的场景：</p>
+<ul>
+<li>分布式集群中有 4 个真实节点，分别是：S0、S1、S2、S3；</li>
+<li>我们不妨先假定分配给哈希环 12 个虚拟节点，并将虚拟节点映射到真实节点上，映射关系如下：<ul>
+<li>S0 - S0_0、S0_1、S0_2、S0_3</li>
+<li>S1 - S1_0、S1_1、S1_2、S1_3</li>
+<li>S2 - S2_0、S2_1、S2_2、S2_3</li>
+<li>S3 - S3_0、S3_1、S3_2、S3_3</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250654220.png" alt="img"></p>
+<p>通过引入虚拟哈希节点，是的哈希环上的节点分布相对均匀了。举例来说，假如此时，某请求的 key 哈希取模后，先映射到哈希环的 [S3_2, S0_0]、[S3_0, S0_1]、[S3_1, S0_2] 这三个区间的任意一点；接下来的二次映射都会匹配到真实节点 S0。</p>
+<p>在实际应用中，虚拟哈希节点数一般都比较大（例如：Redis 的虚拟哈希槽有 16384 个），较大的数量保证了虚拟哈希环上的节点分布足够均匀。</p>
+<p>虚拟节点除了会提高节点的均衡度，还会提高系统的稳定性。<strong>当节点变化时，会有不同的节点共同分担系统的变化，因此稳定性更高</strong>。例如，当某个节点被移除时，分配给该节点的多个虚拟节点会被一并移除，而这些虚拟节点按顺时针方向的下一个虚拟节点，可能会对应不同的真实节点，即这些不同的真实节点共同分担了节点变化导致的压力。</p>
+<p>此外，有了虚拟节点后，可以通过调整分配给真实节点的虚拟节点数，来达到设置权重一样的效果，使得负载均衡更加灵活。</p>
+<p>综上所述，<strong>虚拟一致性哈希算法不仅适合硬件配置不同的节点的场景，而且适合节点规模会发生变化的场景</strong>。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>下面通过一张思维导图对介绍的负载均衡算法做一个小结：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310250658009.png" alt="img"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?reload=9&app=desktop&v=iqOTT7_7qXY">Comparing Load Balancing Algorithms</a> - YouTube 上介绍常见负载均衡算法的视频</li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=dBmxNsS3BGE">Top 6 Load Balancing Algorithms Every Developer Should Know</a> - YouTube 上介绍 6 种常见负载均衡算法的视频</li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=UF9Iqmg94tk">Consistent Hashing | Algorithms You Should Know</a> - YouTube 上的一致性哈希算法视频</li>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11322972.html">《大型网站技术架构：核心原理与案例分析》</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32841479">什么是负载均衡</a></li>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/core-features/load-balance/">Dubbo 官方文档之负载均衡</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000004492447">负载均衡算法及手段</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002578457">利用 dns 解析来实现网站的负载均衡</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/6da58e4b/" title="负载均衡">https://dunwu.github.io/blog/pages/6da58e4b/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" rel="tag"># 服务治理</a>
+              <a href="/blog/tags/%E8%B0%83%E5%BA%A6/" rel="tag"># 调度</a>
+              <a href="/blog/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="tag"># 负载均衡</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/2c4f8405/" rel="prev" title="系统架构概述">
+                  <i class="fa fa-angle-left"></i> 系统架构概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/53415678/" rel="next" title="大型系统核心技术">
+                  大型系统核心技术 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"0e6045fab7499f75246d0471acf25156"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="翻译自：https:&#x2F;&#x2F;sourcemaking.com&#x2F;refactoring&#x2F;smells&#x2F;couplers 耦合(Couplers)这组坏味道意味着：不同类之间过度耦合。  不完美的库类 不完美的库类(Incomplete Library Class) 当一个类库已经不能满足实际需要时，你就不得不改变这个库（如果这个库是只读的，那就没辙了）。  问题原因许多编程技术都建立在库类的基础上。库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码坏味道之耦合">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/fffe5913/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="翻译自：https:&#x2F;&#x2F;sourcemaking.com&#x2F;refactoring&#x2F;smells&#x2F;couplers 耦合(Couplers)这组坏味道意味着：不同类之间过度耦合。  不完美的库类 不完美的库类(Incomplete Library Class) 当一个类库已经不能满足实际需要时，你就不得不改变这个库（如果这个库是只读的，那就没辙了）。  问题原因许多编程技术都建立在库类的基础上。库">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-local-extension-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-local-extension-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/middle-man-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/middle-man-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/remove-middle-man-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/remove-middle-man-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/feature-envy-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/feature-envy-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/feature-envy-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/inappropriate-intimacy-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/inappropriate-intimacy-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/inappropriate-intimacy-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-field-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-field-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/change-bidirectional-association-to-unidirectional-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/change-bidirectional-association-to-unidirectional-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-delegation-with-inheritance-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-delegation-with-inheritance-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/message-chains-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/message-chains-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/message-chains-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png">
+<meta property="article:published_time" content="2018-10-13T14:48:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.727Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="设计">
+<meta property="article:tag" content="重构">
+<meta property="article:tag" content="代码的坏味道">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-local-extension-before.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/fffe5913/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/fffe5913/","path":"/pages/fffe5913/","title":"代码坏味道之耦合"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>代码坏味道之耦合 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%AE%8C%E7%BE%8E%E7%9A%84%E5%BA%93%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">不完美的库类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A"><span class="nav-number">1.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E5%A4%96%E5%8A%A0%E5%87%BD%E6%95%B0-Introduce-Foreign-Method"><span class="nav-number">1.5.1.</span> <span class="nav-text">引入外加函数(Introduce Foreign Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E6%9C%AC%E5%9C%B0%E6%89%A9%E5%B1%95-Introduce-Local-Extension"><span class="nav-number">1.5.2.</span> <span class="nav-text">引入本地扩展(Introduce Local Extension)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BA%BA"><span class="nav-number">2.</span> <span class="nav-text">中间人</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-1"><span class="nav-number">2.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">2.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-1"><span class="nav-number">2.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5-1"><span class="nav-number">2.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-1"><span class="nav-number">2.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4%E4%B8%AD%E9%97%B4%E4%BA%BA-Remove-Middle-Man"><span class="nav-number">2.5.1.</span> <span class="nav-text">移除中间人(Remove Middle Man)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9D%E6%81%8B%E6%83%85%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">依恋情结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-2"><span class="nav-number">3.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-2"><span class="nav-number">3.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-2"><span class="nav-number">3.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5-2"><span class="nav-number">3.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-2"><span class="nav-number">3.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%AC%E7%A7%BB%E5%87%BD%E6%95%B0-Move-Method"><span class="nav-number">3.5.1.</span> <span class="nav-text">搬移函数(Move Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E5%87%BD%E6%95%B0-Extract-Method"><span class="nav-number">3.5.2.</span> <span class="nav-text">提炼函数(Extract Method)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8B%8E%E6%98%B5%E5%85%B3%E7%B3%BB"><span class="nav-number">4.</span> <span class="nav-text">狎昵关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-3"><span class="nav-number">4.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-3"><span class="nav-number">4.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-3"><span class="nav-number">4.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-3"><span class="nav-number">4.4.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%AC%E7%A7%BB%E5%87%BD%E6%95%B0-Move-Method-1"><span class="nav-number">4.4.1.</span> <span class="nav-text">搬移函数(Move Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%AC%E7%A7%BB%E5%AD%97%E6%AE%B5-Move-Field"><span class="nav-number">4.4.2.</span> <span class="nav-text">搬移字段(Move Field)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E5%8F%8C%E5%90%91%E5%85%B3%E8%81%94%E6%94%B9%E4%B8%BA%E5%8D%95%E5%90%91%E5%85%B3%E8%81%94-Change-Bidirectional-Association-to-Unidirectional"><span class="nav-number">4.4.3.</span> <span class="nav-text">将双向关联改为单向关联(Change Bidirectional Association to Unidirectional)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E7%B1%BB-Extract-Class"><span class="nav-number">4.4.4.</span> <span class="nav-text">提炼类(Extract Class)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E5%A7%94%E6%89%98%E5%85%B3%E7%B3%BB-Hide-Delegate"><span class="nav-number">4.4.5.</span> <span class="nav-text">隐藏委托关系(Hide Delegate)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%A7%94%E6%89%98%E5%8F%96%E4%BB%A3%E7%BB%A7%E6%89%BF-Replace-Inheritance-with-Delegation"><span class="nav-number">4.4.6.</span> <span class="nav-text">以委托取代继承(Replace Inheritance with Delegation)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E5%BA%A6%E8%80%A6%E5%90%88%E7%9A%84%E6%B6%88%E6%81%AF%E9%93%BE"><span class="nav-number">5.</span> <span class="nav-text">过度耦合的消息链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-4"><span class="nav-number">5.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-4"><span class="nav-number">5.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-4"><span class="nav-number">5.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5-3"><span class="nav-number">5.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-4"><span class="nav-number">5.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E5%A7%94%E6%89%98%E5%85%B3%E7%B3%BB-Hide-Delegate-1"><span class="nav-number">5.5.1.</span> <span class="nav-text">隐藏委托关系(Hide Delegate)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E5%87%BD%E6%95%B0-Extract-Method-1"><span class="nav-number">5.5.2.</span> <span class="nav-text">提炼函数(Extract Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%AC%E7%A7%BB%E5%87%BD%E6%95%B0-Move-Method-2"><span class="nav-number">5.5.3.</span> <span class="nav-text">搬移函数(Move Method)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E9%98%85%E8%AF%BB"><span class="nav-number">6.</span> <span class="nav-text">扩展阅读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/fffe5913/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="代码坏味道之耦合 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          代码坏味道之耦合<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/03.%E9%87%8D%E6%9E%84/06.%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E8%80%A6%E5%90%88.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-10-13 22:48:00" itemprop="dateCreated datePublished" datetime="2018-10-13T22:48:00+08:00">2018-10-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E9%87%8D%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">重构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>翻译自：<a target="_blank" rel="noopener" href="https://sourcemaking.com/refactoring/smells/couplers">https://sourcemaking.com/refactoring/smells/couplers</a></p>
+<p><strong>耦合(Couplers)这组坏味道意味着：不同类之间过度耦合。</strong></p>
+</blockquote>
+<h2 id="不完美的库类"><a href="#不完美的库类" class="headerlink" title="不完美的库类"></a>不完美的库类</h2><blockquote>
+<p>不完美的库类(Incomplete Library Class)</p>
+<p>当一个类库已经不能满足实际需要时，你就不得不改变这个库（如果这个库是只读的，那就没辙了）。</p>
+</blockquote>
+<h3 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h3><p>许多编程技术都建立在库类的基础上。库类的作者没用未卜先知的能力，不能因此责怪他们。麻烦的是库往往构造的不够好，而且往往不可能让我们修改其中的类以满足我们的需要。</p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>如果你只想修改类库的一两个函数，可以运用 <code>引入外加函数(Introduce Foreign Method)</code>；</li>
+<li>如果想要添加一大堆额外行为，就得运用 <code>引入本地扩展(Introduce Local Extension)</code> 。</li>
+</ul>
+<h3 id="收益"><a href="#收益" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>减少代码重复（你不用一言不合就自己动手实现一个库的全部功能，代价太高）</li>
+</ul>
+<h3 id="何时忽略"><a href="#何时忽略" class="headerlink" title="何时忽略"></a>何时忽略</h3><ul>
+<li>如果扩展库会带来额外的工作量。</li>
+</ul>
+<h3 id="重构方法说明"><a href="#重构方法说明" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="引入外加函数-Introduce-Foreign-Method"><a href="#引入外加函数-Introduce-Foreign-Method" class="headerlink" title="引入外加函数(Introduce Foreign Method)"></a>引入外加函数(Introduce Foreign Method)</h4><p><strong>问题</strong></p>
+<p>你需要为提供服务的类增加一个函数，但你无法修改这个类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Report</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">sendReport</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Date</span> <span class="variable">nextDay</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>(previousEnd.getYear(),</span><br><span class="line">      previousEnd.getMonth(), previousEnd.getDate() + <span class="number">1</span>);</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>在客户类中建立一个函数，并一个第一个参数形式传入一个服务类实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Report</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">sendReport</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Date</span> <span class="variable">newStart</span> <span class="operator">=</span> nextDay(previousEnd);</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> Date <span class="title function_">nextDay</span><span class="params">(Date arg)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Date</span>(arg.getYear(), arg.getMonth(), arg.getDate() + <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="引入本地扩展-Introduce-Local-Extension"><a href="#引入本地扩展-Introduce-Local-Extension" class="headerlink" title="引入本地扩展(Introduce Local Extension)"></a>引入本地扩展(Introduce Local Extension)</h4><p><strong>问题</strong></p>
+<p>你需要为服务类提供一些额外函数，但你无法修改这个类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-local-extension-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>建立一个新类，使它包含这些额外函数，让这个扩展品成为源类的子类或包装类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-local-extension-after.png" alt="img"></p>
+<h2 id="中间人"><a href="#中间人" class="headerlink" title="中间人"></a>中间人</h2><blockquote>
+<p>中间人(Middle Man)</p>
+<p>如果一个类的作用仅仅是指向另一个类的委托，为什么要存在呢？</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/middle-man-1.png" alt="img"></p>
+<h3 id="问题原因-1"><a href="#问题原因-1" class="headerlink" title="问题原因"></a>问题原因</h3><p>对象的基本特征之一就是封装：对外部世界隐藏其内部细节。封装往往伴随委托。但是人们可能过度运用委托。比如，你也许会看到一个类的大部分有用工作都委托给了其他类，类本身成了一个空壳，除了委托之外不做任何事情。</p>
+<h3 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h3><p>应该运用 <code>移除中间人(Remove Middle Man)</code>，直接和真正负责的对象打交道。</p>
+<h3 id="收益-1"><a href="#收益-1" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>减少笨重的代码。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/middle-man-2.png" alt="img"></p>
+<h3 id="何时忽略-1"><a href="#何时忽略-1" class="headerlink" title="何时忽略"></a>何时忽略</h3><p>如果是以下情况，不要删除已创建的中间人：</p>
+<ul>
+<li>添加中间人是为了避免类之间依赖关系。</li>
+<li>一些设计模式有目的地创建中间人（例如代理模式和装饰器模式）。</li>
+</ul>
+<h3 id="重构方法说明-1"><a href="#重构方法说明-1" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="移除中间人-Remove-Middle-Man"><a href="#移除中间人-Remove-Middle-Man" class="headerlink" title="移除中间人(Remove Middle Man)"></a>移除中间人(Remove Middle Man)</h4><p><strong>问题</strong></p>
+<p>某个类做了过多的简单委托动作。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/remove-middle-man-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>让客户直接调用委托类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/remove-middle-man-after.png" alt="img"></p>
+<h2 id="依恋情结"><a href="#依恋情结" class="headerlink" title="依恋情结"></a>依恋情结</h2><blockquote>
+<p>依恋情结(Feature Envy)</p>
+<p>一个函数访问其它对象的数据比访问自己的数据更多。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/feature-envy-1.png" alt="img"></p>
+<h3 id="问题原因-2"><a href="#问题原因-2" class="headerlink" title="问题原因"></a>问题原因</h3><p>这种气味可能发生在字段移动到数据类之后。如果是这种情况，你可能想将数据类的操作移动到这个类中。</p>
+<h3 id="解决方法-2"><a href="#解决方法-2" class="headerlink" title="解决方法"></a>解决方法</h3><p>As a basic rule, if things change at the same time, you should keep them in the same place. Usually data and functions that use this data are changed together (although exceptions are possible).</p>
+<p>有一个基本原则：同时会发生改变的事情应该被放在同一个地方。通常，数据和使用这些数据的函数是一起改变的。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/feature-envy-2.png" alt="img"></p>
+<ul>
+<li>如果一个函数明显应该被移到另一个地方，可运用 <code>搬移函数(Move Method)</code> 。</li>
+<li>如果仅仅是函数的部分代码访问另一个对象的数据，运用 <code>提炼函数(Extract Method)</code> 将这部分代码移到独立的函数中。</li>
+<li>如果一个方法使用来自其他几个类的函数，首先确定哪个类包含大多数使用的数据。然后，将该方法与其他数据一起放在此类中。或者，使用 <code>提炼函数(Extract Method)</code> 将方法拆分为几个部分，可以放置在不同类中的不同位置。</li>
+</ul>
+<h3 id="收益-2"><a href="#收益-2" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>减少重复代码（如果数据处理的代码放在中心位置）。</li>
+<li>更好的代码组织性（处理数据的函数靠近实际数据）。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/feature-envy-3.png" alt="img"></p>
+<h3 id="何时忽略-2"><a href="#何时忽略-2" class="headerlink" title="何时忽略"></a>何时忽略</h3><ul>
+<li>有时，行为被有意地与保存数据的类分开。这通常的优点是能够动态地改变行为（见策略设计模式，访问者设计模式和其他模式）。</li>
+</ul>
+<h3 id="重构方法说明-2"><a href="#重构方法说明-2" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="搬移函数-Move-Method"><a href="#搬移函数-Move-Method" class="headerlink" title="搬移函数(Move Method)"></a>搬移函数(Move Method)</h4><p><strong>问题</strong></p>
+<p>你的程序中，有个函数与其所驻类之外的另一个类进行更多交流：调用后者，或被后者调用。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在该函数最常引用的类中建立一个有着类似行为的新函数。将旧函数变成一个单纯的委托函数，或是旧函数完全移除。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png" alt="img"></p>
+<h4 id="提炼函数-Extract-Method"><a href="#提炼函数-Extract-Method" class="headerlink" title="提炼函数(Extract Method)"></a>提炼函数(Extract Method)</h4><p><strong>问题</strong></p>
+<p>你有一段代码可以组织在一起。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//print details</span></span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + getOutstanding());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>移动这段代码到一个新的函数中，使用函数的调用来替代老代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line">  printDetails(getOutstanding());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">printDetails</span><span class="params">(<span class="type">double</span> outstanding)</span> &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + outstanding);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="狎昵关系"><a href="#狎昵关系" class="headerlink" title="狎昵关系"></a>狎昵关系</h2><blockquote>
+<p>狎昵关系(Inappropriate Intimacy)</p>
+<p>一个类大量使用另一个类的内部字段和方法。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/inappropriate-intimacy-1.png" alt="img"></p>
+<h3 id="问题原因-3"><a href="#问题原因-3" class="headerlink" title="问题原因"></a>问题原因</h3><p>类和类之间应该尽量少的感知彼此（减少耦合）。这样的类更容易维护和复用。</p>
+<h3 id="解决方法-3"><a href="#解决方法-3" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>最简单的解决方法是运用 <code>搬移函数(Move Method)</code> 和 <code>搬移字段(Move Field)</code> 来让类之间斩断羁绊。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/inappropriate-intimacy-2.png" alt="img"></p>
+<ul>
+<li><p>你也可以看看是否能运用 <code>将双向关联改为单向关联(Change Bidirectional Association to Unidirectional)</code> 让其中一个类对另一个说分手。</p>
+</li>
+<li><p>如果这两个类实在是情比金坚，难分难舍，可以运用 <code>提炼类(Extract Class)</code> 把二者共同点提炼到一个新类中，让它们产生爱的结晶。或者，可以尝试运用 <code>隐藏委托关系(Hide Delegate)</code> 让另一个类来为它们牵线搭桥。</p>
+</li>
+<li><p>继承往往造成类之间过分紧密，因为子类对超类的了解总是超过后者的主观愿望，如果你觉得该让这个子类自己闯荡，请运用 <code>以委托取代继承(Replace Inheritance with Delegation)</code> 来让超类和子类分家。</p>
+</li>
+</ul>
+<h3 id="收益-3"><a href="#收益-3" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>提高代码组织性。</li>
+<li>提高代码复用性。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/inappropriate-intimacy-3.png" alt="img"></p>
+<h3 id="重构方法说明-3"><a href="#重构方法说明-3" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="搬移函数-Move-Method-1"><a href="#搬移函数-Move-Method-1" class="headerlink" title="搬移函数(Move Method)"></a>搬移函数(Move Method)</h4><p><strong>问题</strong></p>
+<p>你的程序中，有个函数与其所驻类之外的另一个类进行更多交流：调用后者，或被后者调用。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在该函数最常引用的类中建立一个有着类似行为的新函数。将旧函数变成一个单纯的委托函数，或是旧函数完全移除。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png" alt="img"></p>
+<h4 id="搬移字段-Move-Field"><a href="#搬移字段-Move-Field" class="headerlink" title="搬移字段(Move Field)"></a>搬移字段(Move Field)</h4><p><strong>问题</strong></p>
+<p>在你的程序中，某个字段被其所驻类之外的另一个类更多地用到。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-field-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在目标类新建一个字段，修改源字段的所有用户，令他们改用新字段。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-field-after.png" alt="img"></p>
+<h4 id="将双向关联改为单向关联-Change-Bidirectional-Association-to-Unidirectional"><a href="#将双向关联改为单向关联-Change-Bidirectional-Association-to-Unidirectional" class="headerlink" title="将双向关联改为单向关联(Change Bidirectional Association to Unidirectional)"></a>将双向关联改为单向关联(Change Bidirectional Association to Unidirectional)</h4><p><strong>问题</strong></p>
+<p>两个类之间有双向关联，但其中一个类如今不再需要另一个类的特性。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/change-bidirectional-association-to-unidirectional-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>去除不必要的关联。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/change-bidirectional-association-to-unidirectional-after.png" alt="img"></p>
+<h4 id="提炼类-Extract-Class"><a href="#提炼类-Extract-Class" class="headerlink" title="提炼类(Extract Class)"></a>提炼类(Extract Class)</h4><p><strong>问题</strong></p>
+<p>某个类做了不止一件事。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>建立一个新类，将相关的字段和函数从旧类搬移到新类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png" alt="img"></p>
+<h4 id="隐藏委托关系-Hide-Delegate"><a href="#隐藏委托关系-Hide-Delegate" class="headerlink" title="隐藏委托关系(Hide Delegate)"></a>隐藏委托关系(Hide Delegate)</h4><p><strong>问题</strong></p>
+<p>客户通过一个委托类来调用另一个对象。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在服务类上建立客户所需的所有函数，用以隐藏委托关系。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-after.png" alt="img"></p>
+<h4 id="以委托取代继承-Replace-Inheritance-with-Delegation"><a href="#以委托取代继承-Replace-Inheritance-with-Delegation" class="headerlink" title="以委托取代继承(Replace Inheritance with Delegation)"></a>以委托取代继承(Replace Inheritance with Delegation)</h4><p><strong>问题</strong></p>
+<p>某个子类只使用超类接口中的一部分，或是根本不需要继承而来的数据。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-delegation-with-inheritance-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在子类中新建一个字段用以保存超类；调整子类函数，令它改而委托超类；然后去掉两者之间的继承关系。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-delegation-with-inheritance-after.png" alt="img"></p>
+<h2 id="过度耦合的消息链"><a href="#过度耦合的消息链" class="headerlink" title="过度耦合的消息链"></a>过度耦合的消息链</h2><blockquote>
+<p>过度耦合的消息链(Message Chains)</p>
+<p>消息链的形式类似于：<code>obj.getA().getB().getC()</code>。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/message-chains-1.png" alt="img"></p>
+<h3 id="问题原因-4"><a href="#问题原因-4" class="headerlink" title="问题原因"></a>问题原因</h3><p>如果你看到用户向一个对象请求另一个对象，然后再向后者请求另一个对象，然后再请求另一个对象……这就是消息链。实际代码中你看到的可能是一长串 getThis()或一长串临时变量。采取这种方式，意味客户代码将与查找过程中的导航紧密耦合。一旦对象间关系发生任何变化，客户端就不得不做出相应的修改。</p>
+<h3 id="解决方法-4"><a href="#解决方法-4" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>可以运用 <code>隐藏委托关系(Hide Delegate)</code> 删除一个消息链。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/message-chains-2.png" alt="img"></p>
+<ul>
+<li>有时更好的选择是：先观察消息链最终得到的对象是用来干什么的。看看能否以 <code>提炼函数(Extract Method)</code>把使用该对象的代码提炼到一个独立函数中，再运用 <code>搬移函数(Move Method)</code> 把这个函数推入消息链。</li>
+</ul>
+<h3 id="收益-4"><a href="#收益-4" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>能减少链中类之间的依赖。</li>
+<li>能减少代码量。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/message-chains-3.png" alt="img"></p>
+<h3 id="何时忽略-3"><a href="#何时忽略-3" class="headerlink" title="何时忽略"></a>何时忽略</h3><ul>
+<li>过于侵略性的委托可能会使程序员难以理解功能是如何触发的。</li>
+</ul>
+<h3 id="重构方法说明-4"><a href="#重构方法说明-4" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="隐藏委托关系-Hide-Delegate-1"><a href="#隐藏委托关系-Hide-Delegate-1" class="headerlink" title="隐藏委托关系(Hide Delegate)"></a>隐藏委托关系(Hide Delegate)</h4><p><strong>问题</strong></p>
+<p>客户通过一个委托类来调用另一个对象。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在服务类上建立客户所需的所有函数，用以隐藏委托关系。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/hide-delegate-after.png" alt="img"></p>
+<h4 id="提炼函数-Extract-Method-1"><a href="#提炼函数-Extract-Method-1" class="headerlink" title="提炼函数(Extract Method)"></a>提炼函数(Extract Method)</h4><p><strong>问题</strong></p>
+<p>你有一段代码可以组织在一起。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//print details</span></span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + getOutstanding());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>移动这段代码到一个新的函数中，使用函数的调用来替代老代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line">  printDetails(getOutstanding());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">printDetails</span><span class="params">(<span class="type">double</span> outstanding)</span> &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + outstanding);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="搬移函数-Move-Method-2"><a href="#搬移函数-Move-Method-2" class="headerlink" title="搬移函数(Move Method)"></a>搬移函数(Move Method)</h4><p><strong>问题</strong></p>
+<p>你的程序中，有个函数与其所驻类之外的另一个类进行更多交流：调用后者，或被后者调用。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在该函数最常引用的类中建立一个有着类似行为的新函数。将旧函数变成一个单纯的委托函数，或是旧函数完全移除。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png" alt="img"></p>
+<h2 id="扩展阅读"><a href="#扩展阅读" class="headerlink" title="扩展阅读"></a>扩展阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/">代码的坏味道和重构</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E4%BB%A3%E7%A0%81%E8%87%83%E8%82%BF.md">代码坏味道之代码臃肿</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E6%BB%A5%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1.md">代码坏味道之滥用面向对象</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E5%8F%98%E9%9D%A9%E7%9A%84%E9%9A%9C%E7%A2%8D.md">代码坏味道之变革的障碍</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E9%9D%9E%E5%BF%85%E8%A6%81%E7%9A%84.md">代码坏味道之非必要的</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E8%80%A6%E5%90%88.md">代码坏味道之耦合</a></li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/4199741/">《代码整洁之道》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/4262627/">《重构 - 改善既有代码的设计》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/1477390/">《代码大全》</a></li>
+<li><a target="_blank" rel="noopener" href="https://sourcemaking.com/refactoring">https://sourcemaking.com/refactoring</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/fffe5913/" title="代码坏味道之耦合">https://dunwu.github.io/blog/pages/fffe5913/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E8%AE%BE%E8%AE%A1/" rel="tag"># 设计</a>
+              <a href="/blog/tags/%E9%87%8D%E6%9E%84/" rel="tag"># 重构</a>
+              <a href="/blog/tags/%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%8F%E5%91%B3%E9%81%93/" rel="tag"># 代码的坏味道</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/589b50af/" rel="prev" title="Linux 典型运维应用">
+                  <i class="fa fa-angle-left"></i> Linux 典型运维应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/af6a80d7/" rel="next" title="代码坏味道之非必要的">
+                  代码坏味道之非必要的 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"83934a702bdc9881fe8b25c15a4b2124"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

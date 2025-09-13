@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="SpringBoot 之属性加载详解加载 property 顺序Spring Boot 加载 property 顺序如下：  Devtools 全局配置 (当 devtools 被激活 ~&#x2F;.spring-boot-devtools.properties). 测试环境中的 @TestPropertySource 注解配置 测试环境中的属性 properties：@SpringBootTest 和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot 之属性加载详解">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/7f4217a7/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="SpringBoot 之属性加载详解加载 property 顺序Spring Boot 加载 property 顺序如下：  Devtools 全局配置 (当 devtools 被激活 ~&#x2F;.spring-boot-devtools.properties). 测试环境中的 @TestPropertySource 注解配置 测试环境中的属性 properties：@SpringBootTest 和">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-10T03:55:54.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.715Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="框架">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="SpringBoot">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/7f4217a7/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/7f4217a7/","path":"/pages/7f4217a7/","title":"SpringBoot 之属性加载详解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SpringBoot 之属性加载详解 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SpringBoot-%E4%B9%8B%E5%B1%9E%E6%80%A7%E5%8A%A0%E8%BD%BD%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">SpringBoot 之属性加载详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD-property-%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.1.</span> <span class="nav-text">加载 property 顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E5%B1%9E%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">随机属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B1%9E%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">命令行属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Application-%E5%B1%9E%E6%80%A7%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.</span> <span class="nav-text">Application 属性文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Profile-%E7%89%B9%E5%AE%9A%E5%B1%9E%E6%80%A7"><span class="nav-number">1.5.</span> <span class="nav-text">Profile 特定属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E4%B8%AD%E7%9A%84%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-number">1.6.</span> <span class="nav-text">属性中的占位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YAML-%E5%B1%9E%E6%80%A7"><span class="nav-number">1.7.</span> <span class="nav-text">YAML 属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%B1%9E%E6%80%A7"><span class="nav-number">1.7.1.</span> <span class="nav-text">访问属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A-profile-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.7.2.</span> <span class="nav-text">多 profile 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#YAML-%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">1.7.3.</span> <span class="nav-text">YAML 的缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E5%89%8D%E7%BC%80"><span class="nav-number">1.8.</span> <span class="nav-text">属性前缀</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E6%9D%BE%E6%95%A3%E7%BB%91%E5%AE%9A%E8%A7%84%E5%88%99"><span class="nav-number">1.9.</span> <span class="nav-text">属性松散绑定规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.10.</span> <span class="nav-text">属性转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%8D%95%E4%BD%8D%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.10.1.</span> <span class="nav-text">时间单位转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.10.2.</span> <span class="nav-text">数据大小转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%B1%9E%E6%80%A7"><span class="nav-number">1.11.</span> <span class="nav-text">校验属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E6%BA%90%E7%A0%81"><span class="nav-number">1.12.</span> <span class="nav-text">示例源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.13.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/7f4217a7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="SpringBoot 之属性加载详解 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringBoot 之属性加载详解<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/13.%E6%A1%86%E6%9E%B6/01.Spring/01.Spring%E6%A0%B8%E5%BF%83/32.SpringBoot%E4%B9%8B%E5%B1%9E%E6%80%A7%E5%8A%A0%E8%BD%BD.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-01-10 11:55:54" itemprop="dateCreated datePublished" datetime="2019-01-10T11:55:54+08:00">2019-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E6%A1%86%E6%9E%B6/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E6%A1%86%E6%9E%B6/Spring/Spring%E6%A0%B8%E5%BF%83/" itemprop="url" rel="index"><span itemprop="name">Spring核心</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="SpringBoot-之属性加载详解"><a href="#SpringBoot-之属性加载详解" class="headerlink" title="SpringBoot 之属性加载详解"></a>SpringBoot 之属性加载详解</h1><h2 id="加载-property-顺序"><a href="#加载-property-顺序" class="headerlink" title="加载 property 顺序"></a>加载 property 顺序</h2><p>Spring Boot 加载 property 顺序如下：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools-globalsettings">Devtools 全局配置</a> (当 devtools 被激活 <code>~/.spring-boot-devtools.properties</code>).</li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/context/TestPropertySource.html">测试环境中的 <code>@TestPropertySource</code> 注解配置</a></li>
+<li>测试环境中的属性 <code>properties</code>：<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html"><code>@SpringBootTest</code></a> 和 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-testing-spring-boot-applications-testing-autoconfigured-tests">测试注解</a>.</li>
+<li>命令行参数</li>
+<li><code>SPRING_APPLICATION_JSON</code> 属性</li>
+<li><code>ServletConfig</code> 初始化参数</li>
+<li><code>ServletContext</code> 初始化参数</li>
+<li>JNDI attributes from 通过 <code>java:comp/env</code> 配置的 JNDI 属性</li>
+<li>Java 系统属性 (<code>System.getProperties()</code>)</li>
+<li>操作系统环境比那里</li>
+<li><code>RandomValuePropertySource</code> 加载 <code>random.*</code> 形式的属性</li>
+<li>jar 包外的 <code>application-&#123;profile&#125;.properties</code> 或 <code>application-&#123;profile&#125;.yml</code> 配置</li>
+<li>jar 包内的 <code>application-&#123;profile&#125;.properties</code> 或 <code>application-&#123;profile&#125;.yml</code> 配置</li>
+<li>jar 包外的 <code>application.properties</code> 或 <code>application.yml</code> 配置</li>
+<li>jar 包内的 <code>application.properties</code> 或 <code>application.yml</code> 配置</li>
+<li><code>@PropertySource</code> 绑定的配置</li>
+<li>默认属性 (通过 <code>SpringApplication.setDefaultProperties</code> 指定)</li>
+</ol>
+<h2 id="随机属性"><a href="#随机属性" class="headerlink" title="随机属性"></a>随机属性</h2><p><code>RandomValuePropertySource</code> 类用于配置随机值。</p>
+<p>示例：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">my.secret</span>=<span class="string">$&#123;random.value&#125;</span></span><br><span class="line"><span class="attr">my.number</span>=<span class="string">$&#123;random.int&#125;</span></span><br><span class="line"><span class="attr">my.bignumber</span>=<span class="string">$&#123;random.long&#125;</span></span><br><span class="line"><span class="attr">my.uuid</span>=<span class="string">$&#123;random.uuid&#125;</span></span><br><span class="line"><span class="attr">my.number.less.than.ten</span>=<span class="string">$&#123;random.int(10)&#125;</span></span><br><span class="line"><span class="attr">my.number.in.range</span>=<span class="string">$&#123;random.int[1024,65536]&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="命令行属性"><a href="#命令行属性" class="headerlink" title="命令行属性"></a>命令行属性</h2><p>默认情况下， <code>SpringApplication</code> 会获取 <code>--</code> 参数（例如 <code>--server.port=9000</code> ），并将这个 <code>property</code> 添加到 Spring 的 <code>Environment</code> 中。</p>
+<p>如果不想加载命令行属性，可以通过 <code>SpringApplication.setAddCommandLineProperties(false)</code> 禁用。</p>
+<h2 id="Application-属性文件"><a href="#Application-属性文件" class="headerlink" title="Application 属性文件"></a>Application 属性文件</h2><p><code>SpringApplication</code> 会自动加载以下路径下的 <code>application.properties</code> 配置文件，将其中的属性读到 Spring 的 <code>Environment</code> 中。</p>
+<ol>
+<li>当前目录的 <code>/config</code> 子目录</li>
+<li>当前目录</li>
+<li>classpath 路径下的 <code>/config</code> package</li>
+<li>classpath 根路径</li>
+</ol>
+<blockquote>
+<p>注：</p>
+<p>以上列表的配置文件会根据顺序，后序的配置会覆盖前序的配置。</p>
+<p>你可以选择 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-external-config-yaml">YAML(yml)</a> 配置文件替换 properties 配置文件。</p>
+</blockquote>
+<p>如果不喜欢 <code>application.properties</code> 作为配置文件名，可以使用 <code>spring.config.name</code> 环境变量替换：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">java </span>-<span class="keyword">jar </span>myproject.<span class="keyword">jar </span>--spring.config.name=myproject</span><br></pre></td></tr></table></figure>
+
+<p>可以使用 <code>spring.config.location</code> 环境变量指定配置文件路径：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">$</span> <span class="string">java -jar myproject.jar --spring.config.location=classpath:/default.properties,classpath:/override.properties</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Profile-特定属性"><a href="#Profile-特定属性" class="headerlink" title="Profile 特定属性"></a>Profile 特定属性</h2><p>如果定义 <code>application-&#123;profile&#125;.properties</code> 形式的配置文件，将被视为 <code>profile</code> 环境下的特定配置。</p>
+<p>可以通过 <code>spring.profiles.active</code> 参数来激活 profile，如果没有激活的 profile,默认会加载 <code>application-default.properties</code> 中的配置。</p>
+<h2 id="属性中的占位符"><a href="#属性中的占位符" class="headerlink" title="属性中的占位符"></a>属性中的占位符</h2><p><code>application.properties</code> 中的值会被 <code>Environment</code> 过滤，所以，可以引用之前定义的属性。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">app.name</span>=MyApp</span><br><span class="line"><span class="attr">app.description</span>=<span class="variable">$&#123;app.name&#125;</span> is a Spring Boot application</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：你可以使用此技术来创建 Spring Boot 属性变量。请参考： <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-use-short-command-line-arguments">Section 77.4, “Use ‘Short’ Command Line Arguments</a></p>
+</blockquote>
+<h2 id="YAML-属性"><a href="#YAML-属性" class="headerlink" title="YAML 属性"></a>YAML 属性</h2><p>Spring 框架有两个类支持加载 YAML 文件。</p>
+<ul>
+<li><code>YamlPropertiesFactoryBean</code> 将 YAML 文件的配置加载为 <code>Properties</code> 。</li>
+<li><code>YamlMapFactoryBean</code> 将 YAML 文件的配置加载为 <code>Map</code> 。</li>
+</ul>
+<p>示例 1</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">environments:</span></span><br><span class="line">	<span class="attr">dev:</span></span><br><span class="line">		<span class="attr">url:</span> <span class="string">http://dev.example.com</span></span><br><span class="line">		<span class="attr">name:</span> <span class="string">Developer</span> <span class="string">Setup</span></span><br><span class="line">	<span class="attr">prod:</span></span><br><span class="line">		<span class="attr">url:</span> <span class="string">http://another.example.com</span></span><br><span class="line">		<span class="attr">name:</span> <span class="string">My</span> <span class="string">Cool</span> <span class="string">App</span></span><br></pre></td></tr></table></figure>
+
+<p>等价于：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">environments.dev.url</span>=<span class="string">http://dev.example.com</span></span><br><span class="line"><span class="attr">environments.dev.name</span>=<span class="string">Developer Setup</span></span><br><span class="line"><span class="attr">environments.prod.url</span>=<span class="string">http://another.example.com</span></span><br><span class="line"><span class="attr">environments.prod.name</span>=<span class="string">My Cool App</span></span><br></pre></td></tr></table></figure>
+
+<p>YAML 支持列表形式，等价于 property 中的 <code>[index]</code> ：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">my:</span></span><br><span class="line"><span class="attr">servers:</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">dev.example.com</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">another.example.com</span></span><br></pre></td></tr></table></figure>
+
+<p>等价于</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">my.servers[0]</span>=<span class="string">dev.example.com</span></span><br><span class="line"><span class="attr">my.servers[1]</span>=<span class="string">another.example.com</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="访问属性"><a href="#访问属性" class="headerlink" title="访问属性"></a>访问属性</h3><p><code>YamlPropertySourceLoader</code> 类会将 YAML 配置转化为 Spring <code>Environment</code> 类中的 <code>PropertySource</code> 。然后，你可以如同 properties 文件中的属性一样，使用 <code>@Value</code> 注解来访问 YAML 中配置的属性。</p>
+<h3 id="多-profile-配置"><a href="#多-profile-配置" class="headerlink" title="多 profile 配置"></a>多 profile 配置</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">address:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.100</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span> <span class="string">development</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">address:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span> <span class="string">production</span> <span class="string">&amp;</span> <span class="string">eu-central</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">address:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.120</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="YAML-的缺点"><a href="#YAML-的缺点" class="headerlink" title="YAML 的缺点"></a>YAML 的缺点</h3><p>注：YAML 注解中的属性不能通过 <code>@PropertySource</code> 注解来访问。所以，如果你的项目中使用了一些自定义属性文件，建议不要用 YAML。</p>
+<h2 id="属性前缀"><a href="#属性前缀" class="headerlink" title="属性前缀"></a>属性前缀</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.net.InetAddress;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.context.properties.ConfigurationProperties;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix=&quot;acme&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AcmeProperties</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="type">boolean</span> enabled;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> InetAddress remoteAddress;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Security</span> <span class="variable">security</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Security</span>();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isEnabled</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setEnabled</span><span class="params">(<span class="type">boolean</span> enabled)</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> InetAddress <span class="title function_">getRemoteAddress</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setRemoteAddress</span><span class="params">(InetAddress remoteAddress)</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> Security <span class="title function_">getSecurity</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Security</span> &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> List&lt;String&gt; roles = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(Collections.singleton(<span class="string">&quot;USER&quot;</span>));</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> String <span class="title function_">getUsername</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUsername</span><span class="params">(String username)</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> String <span class="title function_">getPassword</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setPassword</span><span class="params">(String password)</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> List&lt;String&gt; <span class="title function_">getRoles</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setRoles</span><span class="params">(List&lt;String&gt; roles)</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相当于支持配置以下属性：</p>
+<ul>
+<li><code>acme.enabled</code></li>
+<li><code>acme.remote-address</code></li>
+<li><code>acme.security.username</code></li>
+<li><code>acme.security.password</code></li>
+<li><code>acme.security.roles</code></li>
+</ul>
+<p>然后，你需要使用 <code>@EnableConfigurationProperties</code> 注解将属性类注入配置类中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(AcmeProperties.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfiguration</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="属性松散绑定规则"><a href="#属性松散绑定规则" class="headerlink" title="属性松散绑定规则"></a>属性松散绑定规则</h2><p>Spring Boot 属性名绑定比较松散。</p>
+<p>以下属性 key 都是等价的：</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>acme.my-project.person.first-name</code></td>
+<td><code>-</code> 分隔</td>
+</tr>
+<tr>
+<td><code>acme.myProject.person.firstName</code></td>
+<td>驼峰命名</td>
+</tr>
+<tr>
+<td><code>acme.my_project.person.first_name</code></td>
+<td><code>_</code> 分隔</td>
+</tr>
+<tr>
+<td><code>ACME_MYPROJECT_PERSON_FIRSTNAME</code></td>
+<td>大写字母</td>
+</tr>
+</tbody></table>
+<h2 id="属性转换"><a href="#属性转换" class="headerlink" title="属性转换"></a>属性转换</h2><p>如果需要类型转换，你可以提供一个 <code>ConversionService</code> bean (一个名叫 <code>conversionService</code> 的 bean) 或自定义属性配置 (一个 <code>CustomEditorConfigurer</code> bean) 或自定义的 <code>Converters</code> (被 <code>@ConfigurationPropertiesBinding</code> 注解修饰的 bena)。</p>
+<h3 id="时间单位转换"><a href="#时间单位转换" class="headerlink" title="时间单位转换"></a>时间单位转换</h3><p>Spring 使用 <code>java.time.Duration</code> 类代表时间大小，以下场景适用：</p>
+<ul>
+<li>除非指定 <code>@DurationUnit</code> ，否则一个 long 代表的时间为毫秒。</li>
+<li>ISO-8601 标准格式（ <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api//java/time/Duration.html#parse-java.lang.CharSequence-"><code>java.time.Duration</code></a> 的实现就是参照此标准）</li>
+<li>你也可以使用以下支持的单位：<ul>
+<li><code>ns</code> - 纳秒</li>
+<li><code>us</code> - 微秒</li>
+<li><code>ms</code> - 毫秒</li>
+<li><code>s</code> - 秒</li>
+<li><code>m</code> - 分</li>
+<li><code>h</code> - 时</li>
+<li><code>d</code> - 天</li>
+</ul>
+</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;app.system&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppSystemProperties</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@DurationUnit(ChronoUnit.SECONDS)</span></span><br><span class="line">	<span class="keyword">private</span> <span class="type">Duration</span> <span class="variable">sessionTimeout</span> <span class="operator">=</span> Duration.ofSeconds(<span class="number">30</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="type">Duration</span> <span class="variable">readTimeout</span> <span class="operator">=</span> Duration.ofMillis(<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> Duration <span class="title function_">getSessionTimeout</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">this</span>.sessionTimeout;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setSessionTimeout</span><span class="params">(Duration sessionTimeout)</span> &#123;</span><br><span class="line">		<span class="built_in">this</span>.sessionTimeout = sessionTimeout;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> Duration <span class="title function_">getReadTimeout</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">this</span>.readTimeout;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setReadTimeout</span><span class="params">(Duration readTimeout)</span> &#123;</span><br><span class="line">		<span class="built_in">this</span>.readTimeout = readTimeout;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据大小转换"><a href="#数据大小转换" class="headerlink" title="数据大小转换"></a>数据大小转换</h3><p>Spring 使用 <code>DataSize</code> 类代表数据大小，以下场景适用：</p>
+<ul>
+<li>long 值（默认视为 byte）</li>
+<li>你也可以使用以下支持的单位：<ul>
+<li><code>B</code></li>
+<li><code>KB</code></li>
+<li><code>MB</code></li>
+<li><code>GB</code></li>
+<li><code>TB</code></li>
+</ul>
+</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;app.io&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppIoProperties</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@DataSizeUnit(DataUnit.MEGABYTES)</span></span><br><span class="line">	<span class="keyword">private</span> <span class="type">DataSize</span> <span class="variable">bufferSize</span> <span class="operator">=</span> DataSize.ofMegabytes(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="type">DataSize</span> <span class="variable">sizeThreshold</span> <span class="operator">=</span> DataSize.ofBytes(<span class="number">512</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> DataSize <span class="title function_">getBufferSize</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">this</span>.bufferSize;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setBufferSize</span><span class="params">(DataSize bufferSize)</span> &#123;</span><br><span class="line">		<span class="built_in">this</span>.bufferSize = bufferSize;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> DataSize <span class="title function_">getSizeThreshold</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">this</span>.sizeThreshold;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setSizeThreshold</span><span class="params">(DataSize sizeThreshold)</span> &#123;</span><br><span class="line">		<span class="built_in">this</span>.sizeThreshold = sizeThreshold;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="校验属性"><a href="#校验属性" class="headerlink" title="校验属性"></a>校验属性</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(prefix=&quot;acme&quot;)</span></span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AcmeProperties</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@NotNull</span></span><br><span class="line">	<span class="keyword">private</span> InetAddress remoteAddress;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Valid</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Security</span> <span class="variable">security</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Security</span>();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ... getters and setters</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Security</span> &#123;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@NotEmpty</span></span><br><span class="line">		<span class="keyword">public</span> String username;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// ... getters and setters</span></span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你也可以自定义一个名为 <code>configurationPropertiesValidator</code> 的校验器 Bean。获取这个 <code>@Bean</code> 的方法必须声明为 <code>static</code>。</p>
+<h2 id="示例源码"><a href="#示例源码" class="headerlink" title="示例源码"></a>示例源码</h2><blockquote>
+<p>示例源码：<a target="_blank" rel="noopener" href="https://github.com/dunwu/spring-boot-tutorial/tree/master/codes/spring-boot-property">spring-boot-property</a></p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-external-config">Spring Boot 官方文档之 boot-features-external-config</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/7f4217a7/" title="SpringBoot 之属性加载详解">https://dunwu.github.io/blog/pages/7f4217a7/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E6%A1%86%E6%9E%B6/" rel="tag"># 框架</a>
+              <a href="/blog/tags/Spring/" rel="tag"># Spring</a>
+              <a href="/blog/tags/SpringBoot/" rel="tag"># SpringBoot</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/3e39cd2c/" rel="prev" title="SpringBoot 之应用 EasyUI">
+                  <i class="fa fa-angle-left"></i> SpringBoot 之应用 EasyUI
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/ffe362a4/" rel="next" title="Spring 之 JPA">
+                  Spring 之 JPA <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"c1a02f59c0acf9286f04da57b2e7e86b"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

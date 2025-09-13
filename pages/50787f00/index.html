@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="《数据密集型应用系统设计》笔记一——数据系统基础第一章：可靠、可扩展与可维护的应用系统认识数据系统单一工具难以满足复杂应用系统的需求，因此整体工作被拆解为一系列能被单个工具高效完成的任务，并通过应用代码将它们缝合起来。比如一个缓存、索引、数据库协作的例子：  一个应用被称为数据密集型的，如果数据是其主要挑战（数据量，数据复杂度、数据变化速度）——与之相对的是计算密集型，即处理器速度是其瓶颈。 软件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《数据密集型应用系统设计》笔记一——数据系统基础">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/50787f00/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="《数据密集型应用系统设计》笔记一——数据系统基础第一章：可靠、可扩展与可维护的应用系统认识数据系统单一工具难以满足复杂应用系统的需求，因此整体工作被拆解为一系列能被单个工具高效完成的任务，并通过应用代码将它们缝合起来。比如一个缓存、索引、数据库协作的例子：  一个应用被称为数据密集型的，如果数据是其主要挑战（数据量，数据复杂度、数据变化速度）——与之相对的是计算密集型，即处理器速度是其瓶颈。 软件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630635449781-eccd8717-84aa-4d52-b8d7-98790e2c92c7.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630635645347-1e1e5660-4229-42a2-9bf9-da9850ff944b.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630635669997-5d4951ae-5ec3-426d-9fc4-35a3cf579088.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630635717226-c218a4b8-b6f9-4e35-8f10-549d65cf3e23.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630635787568-a7885c39-997f-4edb-8fb9-79eff18467a2.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630640250504-01ef3f97-39be-4c23-9a9e-ce17c1cde6a9.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630640396753-c7fed755-b19b-4948-9c84-53d232548633.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630641413918-4cee1b5a-9bd2-4375-b86a-8d6d7183ee34.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630641447595-4315fa0f-8338-4596-88d1-e423e040ac62.png">
+<meta property="og:image" content="https://picture-bed-1251805293.file.myqcloud.com/1633665482803-0f0f81b1-9abc-4171-b532-577637eecfe6.png">
+<meta property="article:published_time" content="2021-08-26T15:32:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.695Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://picture-bed-1251805293.file.myqcloud.com/1630635449781-eccd8717-84aa-4d52-b8d7-98790e2c92c7.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/50787f00/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/50787f00/","path":"/pages/50787f00/","title":"《数据密集型应用系统设计》笔记一——数据系统基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《数据密集型应用系统设计》笔记一——数据系统基础 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%80%8A%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%8B%E7%AC%94%E8%AE%B0%E4%B8%80%E2%80%94%E2%80%94%E6%95%B0%E6%8D%AE%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">《数据密集型应用系统设计》笔记一——数据系统基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E4%B8%8E%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E5%BA%94%E7%94%A8%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text">第一章：可靠、可扩展与可维护的应用系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A4%E8%AF%86%E6%95%B0%E6%8D%AE%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">认识数据系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E6%80%A7"><span class="nav-number">1.1.2.</span> <span class="nav-text">可靠性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">1.1.3.</span> <span class="nav-text">可扩展性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E8%B4%9F%E8%BD%BD"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">描述负载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E6%80%A7%E8%83%BD"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">描述性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E8%B4%9F%E8%BD%BD%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">应对负载的方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E7%BB%B4%E6%8A%A4%E6%80%A7"><span class="nav-number">1.1.4.</span> <span class="nav-text">可维护性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="nav-number">1.2.</span> <span class="nav-text">第二章：数据模型与查询语言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">关系模型与文档模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E4%B8%8D%E5%8C%B9%E9%85%8D"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">对象关系不匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E4%B8%80%E5%92%8C%E5%A4%9A%E5%AF%B9%E5%A4%9A%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">多对一和多对多的关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E6%98%AF%E5%90%A6%E5%9C%A8%E9%87%8D%E6%BC%94%E5%8E%86%E5%8F%B2%EF%BC%9F"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">文档数据库是否在重演历史？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.3.1.</span> <span class="nav-text">网络模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.3.2.</span> <span class="nav-text">关系模型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.1.3.3.</span> <span class="nav-text">文档数据库的比较</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E7%8E%B0%E7%8A%B6"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">关系数据库与文档数据库现状</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%93%AA%E7%A7%8D%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8%E4%BB%A3%E7%A0%81%E6%9B%B4%E7%AE%80%E5%8D%95"><span class="nav-number">1.2.1.4.1.</span> <span class="nav-text">哪种数据模型的应用代码更简单</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%BC%8F%E7%81%B5%E6%B4%BB%E6%80%A7"><span class="nav-number">1.2.1.4.2.</span> <span class="nav-text">文档模型中的模式灵活性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.2.1.4.3.</span> <span class="nav-text">查询的数据局部性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%9E%8D%E5%90%88"><span class="nav-number">1.2.1.4.4.</span> <span class="nav-text">文档数据库与关系数据库的融合</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="nav-number">1.2.2.</span> <span class="nav-text">数据查询语言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Web-%E4%B8%8A%E7%9A%84%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%9F%A5%E8%AF%A2%EF%BC%88%E7%95%A5%EF%BC%89"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Web 上的声明式查询（略）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MapReduce-%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">MapReduce 查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%EF%BC%88%E7%95%A5%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">图数据模型（略）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E5%B0%8F%E7%BB%93"><span class="nav-number">1.2.4.</span> <span class="nav-text">本章小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0%EF%BC%9A%E5%AD%98%E5%82%A8%E4%B8%8E%E6%A3%80%E7%B4%A2"><span class="nav-number">1.3.</span> <span class="nav-text">第三章：存储与检索</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A0%B8%E5%BF%83%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据库核心：数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86%E4%B8%8E%E5%88%86%E6%9E%90%E5%A4%84%E7%90%86"><span class="nav-number">1.3.2.</span> <span class="nav-text">事务处理与分析处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8"><span class="nav-number">1.3.3.</span> <span class="nav-text">列式存储</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%BC%96%E7%A0%81%E4%B8%8E%E6%BC%94%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">第四章：数据编码与演化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">数据编码格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">数据流模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">基于数据库的数据流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E4%B8%8D%E5%90%8C%E7%9A%84%E6%97%B6%E9%97%B4%E5%86%99%E5%85%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E5%80%BC"><span class="nav-number">1.4.2.1.1.</span> <span class="nav-text">在不同的时间写入不同的值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BD%92%E6%A1%A3%E6%95%B0%E6%8D%AE"><span class="nav-number">1.4.2.1.2.</span> <span class="nav-text">归档数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B5%81%EF%BC%9AREST-%E5%92%8C-RPC"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">基于服务的数据流：REST 和 RPC</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Web-%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.4.2.2.1.</span> <span class="nav-text">Web 服务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8%EF%BC%88RPC%EF%BC%89%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.2.2.2.</span> <span class="nav-text">远程过程调用（RPC）的问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%B6%88%E6%81%AF%E4%BC%A0%E9%80%92%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">基于消息传递的数据流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86"><span class="nav-number">1.4.2.3.1.</span> <span class="nav-text">消息代理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-Actor-%E6%A1%86%E6%9E%B6"><span class="nav-number">1.4.2.3.2.</span> <span class="nav-text">分布式 Actor 框架</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.4.3.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/50787f00/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="《数据密集型应用系统设计》笔记一——数据系统基础 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《数据密集型应用系统设计》笔记一——数据系统基础<a href="https://github.com/dunwu/blog/blob/master/source/_posts/00.%E7%AC%94%E8%AE%B0/15.%E5%88%86%E5%B8%83%E5%BC%8F/00.%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/%E6%95%B0%E6%8D%AE%E5%AF%86%E9%9B%86%E5%9E%8B%E5%BA%94%E7%94%A8%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0%E4%B8%80.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-26 23:32:00" itemprop="dateCreated datePublished" datetime="2021-08-26T23:32:00+08:00">2021-08-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="《数据密集型应用系统设计》笔记一——数据系统基础"><a href="#《数据密集型应用系统设计》笔记一——数据系统基础" class="headerlink" title="《数据密集型应用系统设计》笔记一——数据系统基础"></a>《数据密集型应用系统设计》笔记一——数据系统基础</h1><h2 id="第一章：可靠、可扩展与可维护的应用系统"><a href="#第一章：可靠、可扩展与可维护的应用系统" class="headerlink" title="第一章：可靠、可扩展与可维护的应用系统"></a>第一章：可靠、可扩展与可维护的应用系统</h2><h3 id="认识数据系统"><a href="#认识数据系统" class="headerlink" title="认识数据系统"></a>认识数据系统</h3><p>单一工具难以满足复杂应用系统的需求，因此整体工作被拆解为一系列能被单个工具高效完成的任务，并通过<strong>应用代码</strong>将它们缝合起来。比如一个缓存、索引、数据库协作的例子： <img src="https://picture-bed-1251805293.file.myqcloud.com/1630635449781-eccd8717-84aa-4d52-b8d7-98790e2c92c7.png" alt="image.png"> 一个应用被称为数据密集型的，如果数据是其主要挑战（数据量，数据复杂度、数据变化速度）——与之相对的是计算密集型，即处理器速度是其瓶颈。 软件系统中很重要的三个问题：</p>
+<ol>
+<li><strong>可靠性</strong>（Reliability）：系统面临各种错误（硬件故障、软件故障、人为错误），仍可正常工作。</li>
+<li><strong>可扩展性</strong>（Scalability）：有合理的办法应对系统的增长（数据量、流量、复杂性）。</li>
+<li><strong>可维护性</strong>（Maintainability）：许多不同的人在不同的生命周期，都能高效地在系统上工作。</li>
+</ol>
+<h3 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h3><p>可靠性意味着：即时发生了某些错误，系统仍然可以继续正常工作。</p>
+<p>可能出错的事情称为错误（fault）或故障，系统可应对错误则称为容错（fault tolerant）或者弹性（resilient）。</p>
+<p>故障与失效（failure）不完全一致。故障通常被定义为组件偏离其正常规格，而失效意味着系统作为一个整体，停止对外提供服务。</p>
+<p>常见的故障分类：</p>
+<ul>
+<li><strong>硬件故障</strong><ul>
+<li>故障场景：硬盘崩溃、内存故障、停电、断网等。</li>
+<li>应对策略：添加冗余硬件以备用；软件容错（如：负载均衡）。</li>
+</ul>
+</li>
+<li><strong>软件故障</strong><ul>
+<li>故障场景：各种难以预料的 Bug。</li>
+<li>应对策略：仔细考虑细节；全面测试；监控、告警；系统&#x2F;数据隔离机制；自动化部署、回滚机制等。</li>
+</ul>
+</li>
+<li><strong>人为失误</strong><ul>
+<li>故障场景：操作不当、配置错误等。</li>
+<li>应对策略：快速恢复机制；监控、告警等。</li>
+</ul>
+</li>
+</ul>
+<h3 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h3><p>可扩展性（Scalability）是用来描述系统应对负载增长能力的术语。</p>
+<h4 id="描述负载"><a href="#描述负载" class="headerlink" title="描述负载"></a>描述负载</h4><p>负载可以用称为负载参数的若干数字来描述。参数的最佳选择取决于系统的体系结构。它可能是 QPS、数据库中写入的比例、日活用户量、缓存命中率等。</p>
+<p>推特发送推文的设计变迁：</p>
+<p>推文放在全局推文集合中，查询的时候做 join</p>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1630635645347-1e1e5660-4229-42a2-9bf9-da9850ff944b.png" alt="image.png"></p>
+<p>推文插入到每个关注者的时间线中，「扇出」比较大，当有千万粉丝的大 V 发推压力大</p>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1630635669997-5d4951ae-5ec3-426d-9fc4-35a3cf579088.png" alt="image.png"></p>
+<p>推特从方案一变成了方案二，然后变成了两者结合的方式</p>
+<h4 id="描述性能"><a href="#描述性能" class="headerlink" title="描述性能"></a>描述性能</h4><p>负责增加将会发生什么：</p>
+<ol>
+<li>负载增加，但系统资源保持不变时，系统性能将受到什么影响？</li>
+<li>负载增加，如果希望性能保持不变时，需要增加多少系统资源？</li>
+</ol>
+<p>批处理系统，通常关心吞吐量（throughput）；在线系统，通常更关心响应时间（response time）。</p>
+<p>度量场景的响应时间，平均响应时间并不是一个合适的指标，因为它无法告诉有多少用户实际经历了多少延迟。最好使用百分位数，比如中位数（P50）、P95、P99、P999 等标识。</p>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1630635717226-c218a4b8-b6f9-4e35-8f10-549d65cf3e23.png" alt="image.png"></p>
+<p>测量客户端的响应时间非常重要（而不是服务端），比如会出现头部阻塞、网络延迟等。</p>
+<p>实践中的百分位点，可以用一个滑动的时间窗口（比如 10 分钟）进行统计。可以对列表进行排序，效率低的话，考虑一下正向衰减，t-digest 等近似计算方法。</p>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1630635787568-a7885c39-997f-4edb-8fb9-79eff18467a2.png" alt="image.png"></p>
+<p>响应时间：中位数指标比平均响应时间更适合描述等待时间。</p>
+<p>如何应对负载：垂直扩展（升级硬件）和水平扩展（集群、分布式）</p>
+<h4 id="应对负载的方法"><a href="#应对负载的方法" class="headerlink" title="应对负载的方法"></a>应对负载的方法</h4><ul>
+<li>垂直扩展：升级硬件</li>
+<li>水平扩展：将负载分布到多台小机器上</li>
+<li>弹性设计：自动检测负载增加，然后自动添加计算资源</li>
+<li>无状态服务可以组成集群进行扩展；有状态服务从单点到分布式，复杂性会大大增加，因此，应该尽量将数据库放在单节点上。</li>
+</ul>
+<h3 id="可维护性"><a href="#可维护性" class="headerlink" title="可维护性"></a>可维护性</h3><p>三个设计原则：</p>
+<ul>
+<li><strong>可运维性</strong>：运维更轻松。应对：监控、链路追踪、CI&#x2F;CD、规范流程等。</li>
+<li><strong>简单性</strong>：简化复杂度。应对：良好的抽象。</li>
+<li><strong>可演化性</strong>：易于改变。应对：DDD、TDD、重构、敏捷。</li>
+</ul>
+<h2 id="第二章：数据模型与查询语言"><a href="#第二章：数据模型与查询语言" class="headerlink" title="第二章：数据模型与查询语言"></a>第二章：数据模型与查询语言</h2><h3 id="关系模型与文档模型"><a href="#关系模型与文档模型" class="headerlink" title="关系模型与文档模型"></a>关系模型与文档模型</h3><p>关系模型 - 数据被组织成<strong>关系</strong>（SQL 中称作<strong>表</strong>），其中每个关系是<strong>元组</strong>（SQL 中称作<strong>行</strong>) 的无序集合。</p>
+<p>NoSql - 不仅是 SQL（Not Only SQL）</p>
+<p>相比于关系型数据库，为什么用 NoSql？</p>
+<ul>
+<li>需要更好的扩展性，以应对非常大的数据集或高并发。</li>
+<li>关系模型不能很好地支持一些特殊的查询。</li>
+<li>关系模型有很多限制，不够灵活。</li>
+</ul>
+<p>当前以及未来很长一段时间，关系型数据库和 NoSql 并存的混合持久化是一种常态。</p>
+<p>复杂的应用程序可能会有更多的中间层，每层都通过提供一个简洁的数据模型来隐藏下层的复杂性。</p>
+<p>如果数据大多是一对多关系（树结构数据）或者记录之间没有关系，那么文档模型是最合适的。</p>
+<p>关系模型能够处理简单的多对多关系，但是随着数据之间的关联越来越复杂，将数据建模转化为图模型会更加自然。</p>
+<h4 id="对象关系不匹配"><a href="#对象关系不匹配" class="headerlink" title="对象关系不匹配"></a>对象关系不匹配</h4><p>使用面向对象语言，需要一个转换层，才能转成 SQL 数据模型。模型之间的脱离有时被称为阻抗失谐。</p>
+<p>Hibernate 这样的 <strong>对象关系映射（ORM）</strong> 框架则减少这个转换层所需的样板代码量，但是它们不能完全隐藏这两个模型之间的差异。</p>
+<p>对于一份简历而言，关系型模型描述一对多的关系需要多张表。</p>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1630640250504-01ef3f97-39be-4c23-9a9e-ce17c1cde6a9.png" alt="image.png"> 对于简历这样的数据结构，主要是一个自包含的文档，用 JSON 表示非常合适。JSON 相比于多表模式，有更好的局部性，可以一次查询出一个用户的所有信息。JSON 其实是树形层级结构。<img src="https://picture-bed-1251805293.file.myqcloud.com/1630640396753-c7fed755-b19b-4948-9c84-53d232548633.png" alt="image.png"></p>
+<h4 id="多对一和多对多的关系"><a href="#多对一和多对多的关系" class="headerlink" title="多对一和多对多的关系"></a>多对一和多对多的关系</h4><p>使用 ID 的好处是，因为它对人类没有任何直接意义，所以永远不需要直接改变：即使 ID 标识的信息发生了变化，它也可以保持不变。</p>
+<p>文档模型不适合表达多对一的关系。对于关系数据库，由于支持联结操作，可以更方便地通过 ID 来引用其他表的行。而在文档数据库中，一对多的树状结构不需要联结，即使支持联结通常也比较弱。</p>
+<p>如果数据库本身不支持联结，则必须通过对数据库进行多次查询来模拟联结。</p>
+<p>考虑以下可能对简历进行的修改或补充：</p>
+<ul>
+<li>组织和学校作为实体：组织、学校有各自的主页。</li>
+<li>推荐：用户可以推荐其他用户在自己的简历上。</li>
+</ul>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1630641413918-4cee1b5a-9bd2-4375-b86a-8d6d7183ee34.png" alt="image.png"></p>
+<h4 id="文档数据库是否在重演历史？"><a href="#文档数据库是否在重演历史？" class="headerlink" title="文档数据库是否在重演历史？"></a>文档数据库是否在重演历史？</h4><p>20 世纪 70 年代，最受欢迎的是<strong>层次模型（hierarchical model）</strong>，它与文档数据库使用的 JSON 模型有很多相似之处。它将所有数据表示为嵌套在记录中的记录树。层次模型能很好地支持一对多的关系，但是很难支持多对多的关系，而且不支持联结。</p>
+<p>为解决层次模型的局限性而提出的方案：</p>
+<ul>
+<li><strong>关系模型（relational model）</strong> - 后来，演变成了 SQL，并被广泛接受</li>
+<li><strong>网络模型（network model）</strong> - 最初很受关注，但最终被淡忘</li>
+</ul>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1630641447595-4315fa0f-8338-4596-88d1-e423e040ac62.png" alt="image.png"></p>
+<h5 id="网络模型"><a href="#网络模型" class="headerlink" title="网络模型"></a>网络模型</h5><p>每个记录可能有多个父节点。</p>
+<p>网络模型中，记录之间的链接不是外键，而更像编程语言中的指针（会存储在磁盘上）。访问记录的唯一方法是选择一条始于根记录的路径，并沿着相关链接一次访问，这条链接链条也被称为<strong>访问路径（access path）</strong>。</p>
+<p>最简单的情况下，访问路径类似遍历链表：从链表头开始，每次查看一条记录，直到找到所需的记录。但在多对多关系的情况中，存在多条不同的路径可以通向相同的记录，网络模型的程序员必须跟踪这些不同的访问路径。</p>
+<p>缺点：查询和更新数据库非常麻烦。</p>
+<h5 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h5><p>关系模型定义了所有数据的格式：<strong>关系（表）</strong> 只是 <strong>元组（行）</strong> 的集合，仅此而已。</p>
+<p>在关系数据库中，查询优化器自动决定以何种顺序执行查询，以及使用哪些索引。</p>
+<h5 id="文档数据库的比较"><a href="#文档数据库的比较" class="headerlink" title="文档数据库的比较"></a>文档数据库的比较</h5><p>文档数据库是某种方式的层次模型：即在其负记录中保存了嵌套记录，而不是存储在单独的表中。</p>
+<p>但是，在表示多对一和多对多的关系时，关系数据库和文档数据库并没有根本的不同：在这两种情况下，相关项目都由唯一的标识符引用，该标识符在关系模型中被称为<strong>外键</strong>，在文档模型中被称为<strong>文档引用。</strong>标识符可以查询时通过联结操作或相关后续查询来解析。</p>
+<h4 id="关系数据库与文档数据库现状"><a href="#关系数据库与文档数据库现状" class="headerlink" title="关系数据库与文档数据库现状"></a>关系数据库与文档数据库现状</h4><p>支持文档数据模型的主要论据是<strong>模式灵活性</strong>，由于局部性而带来较好的性能。关系模型则强在联结操作、多对一和多对多关系更简洁的表达上。</p>
+<h5 id="哪种数据模型的应用代码更简单"><a href="#哪种数据模型的应用代码更简单" class="headerlink" title="哪种数据模型的应用代码更简单"></a>哪种数据模型的应用代码更简单</h5><p>文档模型：</p>
+<ul>
+<li>优点：<ul>
+<li>如果应用程序中的数据具有类似<strong>文档</strong>的结构（即一对多关系树，通常一次性加载整个树），那么使用文档模型更为合适。而关系模型则倾向于数据分解，把文档结构分解为多个表。</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>不能直接引用文档中的嵌套的项目，而是需要说“用户 251 的位置列表中的第二项”（很像分层模型中的访问路径）。但是，只要文件嵌套不太深，这通常不是问题。</li>
+<li>文档数据库对联结的支持不足。这是否是问题取决于应用，如果应用程序使用多对多关系，那么文档模型就没不合适了。</li>
+</ul>
+</li>
+</ul>
+<p>对于高度关联的数据，文档模型不太适合，关系模型更适合。</p>
+<h5 id="文档模型中的模式灵活性"><a href="#文档模型中的模式灵活性" class="headerlink" title="文档模型中的模式灵活性"></a>文档模型中的模式灵活性</h5><p>文档模型是「读时模式」</p>
+<ul>
+<li>文档数据库有时称为<strong>无模式（schemaless）</strong>，但这具有误导性，因为读取数据的代码通常假定某种结构——即存在隐式模式，但不由数据库强制执行。</li>
+<li>一个更精确的术语是<strong>读时模式（schema-on-read）</strong>（数据的结构是隐含的，只有在数据被读取时才被解释），相应的是<strong>写时模式（schema-on-write）</strong>（传统的关系数据库方法中，模式明确，且数据库确保数据写入时都必须遵循）。</li>
+<li>读时模式类似于编程语言中的动态（运行时）类型检查，而写时模式类似于静态（编译时）类型检查。</li>
+</ul>
+<p>模式变更</p>
+<ul>
+<li>读时模式变更字段很容易，只用改应用代码</li>
+<li>写时模式变更字段速度很慢，而且要求停运。它的这种坏名誉并不是完全应得的：大多数关系数据库系统可在几毫秒内执行 ALTER TABLE 语句。MySQL 是一个值得注意的例外，它执行 ALTER TABLE 时会复制整个表，这可能意味着在更改一个大型表时会花费几分钟甚至几个小时的停机时间，尽管存在各种工具来解决这个限制。</li>
+</ul>
+<h5 id="查询的数据局部性"><a href="#查询的数据局部性" class="headerlink" title="查询的数据局部性"></a>查询的数据局部性</h5><p>文档通常存储为编码为 JSON、XML 或其二进制变体（如 MongoDB 的 BSON）的连续字符串。</p>
+<p>读文档：</p>
+<ul>
+<li>如果应用需要频繁访问整个文档，则存储局部性具有性能优势。</li>
+<li>局部性优势仅适用于需要同时访问文档大部分内容的场景。</li>
+</ul>
+<p>写文档：</p>
+<ul>
+<li>更新文档时，通常需要重写整个文档。</li>
+<li>通常建议文档应该尽量小且避免写入时增加文档大小。</li>
+</ul>
+<h5 id="文档数据库与关系数据库的融合"><a href="#文档数据库与关系数据库的融合" class="headerlink" title="文档数据库与关系数据库的融合"></a>文档数据库与关系数据库的融合</h5><ul>
+<li>MySQL 等逐步增加了对 JSON 和 XML 的支持</li>
+<li>融合关系模型与文档模型是未来数据库发展的一条很好的途径。</li>
+</ul>
+<h3 id="数据查询语言"><a href="#数据查询语言" class="headerlink" title="数据查询语言"></a>数据查询语言</h3><ul>
+<li><p>关系模型包含了一种查询数据的新方法：SQL 是一种 <strong>声明式</strong> 查询语言，而 IMS 和 CODASYL 使用 <strong>命令式</strong> 代码来查询数据库。</p>
+</li>
+<li><p><strong>命令式语言</strong>告诉计算机以特定顺序执行某些操作，比如常见的编程语言。</p>
+</li>
+<li><p><strong>声明式查询语言</strong>只需指定所需的数据模式，结果需要满足哪些条件，以及如何转换数据（例如，排序，分组和集合） ，而不需指明如何实现这一目标</p>
+</li>
+</ul>
+<h4 id="Web-上的声明式查询（略）"><a href="#Web-上的声明式查询（略）" class="headerlink" title="Web 上的声明式查询（略）"></a>Web 上的声明式查询（略）</h4><h4 id="MapReduce-查询"><a href="#MapReduce-查询" class="headerlink" title="MapReduce 查询"></a>MapReduce 查询</h4><p>MapReduce 是一种编程模型，用于在许多机器上批量处理海量数据。一些 NoSQL 支持有限的 MapReduce 方式在大量文档上执行只读查询。</p>
+<h3 id="图数据模型（略）"><a href="#图数据模型（略）" class="headerlink" title="图数据模型（略）"></a>图数据模型（略）</h3><h3 id="本章小结"><a href="#本章小结" class="headerlink" title="本章小结"></a>本章小结</h3><p>历史上，数据最初被表示为一棵大树（层次模型），但是这不利于表示多对多的关系，所以发明了关系模型来解决这个问题。 最近，开发人员发现一些应用程序也不适合采用关系模型。新的非关系型“NoSQL”数据存储在两个主要方向上存在分歧：</p>
+<ul>
+<li>文档数据库的应用场景是：数据来自于自包含文档，且文档之间的关联很少。</li>
+<li>图数据库则的应用场景是：所有数据都可能会相互关联。</li>
+</ul>
+<p>文档模型、关系模型和图模型，都应用广泛。不同模型之间可以相互模拟，但是处理起来比较笨拙。</p>
+<p>文档数据库和图数据库有一个共同点，那就是它们通常不会对存储的数据强加某个模式，这样比较灵活。</p>
+<h2 id="第三章：存储与检索"><a href="#第三章：存储与检索" class="headerlink" title="第三章：存储与检索"></a>第三章：存储与检索</h2><p>从最基本的层面看，数据库只需做两件事情：存储和检索。</p>
+<h3 id="数据库核心：数据结构"><a href="#数据库核心：数据结构" class="headerlink" title="数据库核心：数据结构"></a>数据库核心：数据结构</h3><p>为了高效地查找数据库中特定键的值， 需要新的数据结构： 索引。</p>
+<p>存储系统的设计权衡：适当的索引可以加速读取查询，但每个索引都会减慢写速度。数据库通常不会对所有内容进行索引。</p>
+<p>索引类型：</p>
+<ul>
+<li>哈希索引</li>
+<li>B+ 树</li>
+<li>LSM 树</li>
+<li>等等</li>
+</ul>
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100048401">检索技术核心 20 讲</a></p>
+</blockquote>
+<h3 id="事务处理与分析处理"><a href="#事务处理与分析处理" class="headerlink" title="事务处理与分析处理"></a>事务处理与分析处理</h3><h3 id="列式存储"><a href="#列式存储" class="headerlink" title="列式存储"></a>列式存储</h3><p>如果表中有数以万亿行、PB 大小的数据，则适合用于存储在列式存储中。</p>
+<h2 id="第四章：数据编码与演化"><a href="#第四章：数据编码与演化" class="headerlink" title="第四章：数据编码与演化"></a>第四章：数据编码与演化</h2><p>本章节主要介绍各种序列化、反序列化方式。略</p>
+<h3 id="数据编码格式"><a href="#数据编码格式" class="headerlink" title="数据编码格式"></a>数据编码格式</h3><h3 id="数据流模式"><a href="#数据流模式" class="headerlink" title="数据流模式"></a>数据流模式</h3><p>向前和向后的兼容对于可演化性来说非常重要。</p>
+<h4 id="基于数据库的数据流"><a href="#基于数据库的数据流" class="headerlink" title="基于数据库的数据流"></a>基于数据库的数据流</h4><h5 id="在不同的时间写入不同的值"><a href="#在不同的时间写入不同的值" class="headerlink" title="在不同的时间写入不同的值"></a>在不同的时间写入不同的值</h5><p>数据库通常支持在不同的时间写入不同的值。</p>
+<p>在集群中部署新版本是一个逐一的过程，必然存在这样的时间段：集群中部分是新机器，部分是老机器。</p>
+<p>当旧版本的应用视图更新新版本的应用所写入的数据时，可能会丢失数据。</p>
+<p><img src="https://picture-bed-1251805293.file.myqcloud.com/1633665482803-0f0f81b1-9abc-4171-b532-577637eecfe6.png" alt="image.png"></p>
+<h5 id="归档数据"><a href="#归档数据" class="headerlink" title="归档数据"></a>归档数据</h5><p>生成数据库快照时，数据转储通常使用最新的模式进行编码。</p>
+<h4 id="基于服务的数据流：REST-和-RPC"><a href="#基于服务的数据流：REST-和-RPC" class="headerlink" title="基于服务的数据流：REST 和 RPC"></a>基于服务的数据流：REST 和 RPC</h4><ul>
+<li>最常见的网络通信方式：C&#x2F;S 架构（客户端+服务端）。</li>
+<li>Web 服务：收、发 GET 和 POST 请求。</li>
+<li>将大型应用分而治之：微服务架构。</li>
+<li>微服务架构的一个关键设计目标：服务可以独立部署和演化。</li>
+</ul>
+<h5 id="Web-服务"><a href="#Web-服务" class="headerlink" title="Web 服务"></a>Web 服务</h5><ul>
+<li>当 HTTP 被用作与服务通信的底层协议时，它被称为 Web 服务</li>
+<li>有两种流行的 Web 服务方法：REST 和 SOAP。</li>
+</ul>
+<p>REST 不是一种协议，而是一个基于 HTTP 原则的设计理念。它强调简单的数据格式，使用 URL 来标识资源，并使用 HTTP 功能进行缓存控制，身份验证和内容类型协商。与 SOAP 相比，REST 已经越来越受欢迎，至少在跨组织服务集成的背景下，并经常与微服务相关。根据 REST 原则设计的 API 称为 RESTful。</p>
+<p>SOAP 是一种基于 XML 的协议，用于发送网络 API 请求。虽然，它最常用于 HTTP，但其目的是独立于 HTTP，并避免使用大多数 HTTP 功能。SOAP Web 服务的 API 使用 WSDL 语言来描述。 WSDL 支持代码生成，客户端可以使用本地类和方法调用（编码为 XML 消息并由框架再次解码）访问远程服务。尽管 SOAP 及其各种扩展表面上是标准化的，但是不同厂商的实现之间的互操作性往往会造成问题。</p>
+<h5 id="远程过程调用（RPC）的问题"><a href="#远程过程调用（RPC）的问题" class="headerlink" title="远程过程调用（RPC）的问题"></a>远程过程调用（RPC）的问题</h5><p>RPC 模型试图向远程网络服务发出请求，看起来与在同一进程中调用编程语言中的函数或方法相同（这种抽象称为位置透明）。</p>
+<p>RPC 的缺陷：</p>
+<ul>
+<li>本地函数调用是可预测的，并且成功或失败仅取决于控制的参数。而网络请求是不可预知的。</li>
+<li>本地函数调用要么返回结果，要么抛出异常，或者永远不返回（因为进入无限循环或进程崩溃）。网络请求有另一个可能的结果：由于超时，它可能会没有返回结果。这种情况下，无法得知发生了什么。</li>
+<li>如果重试失败的网络请求，可能会发生请求实际上已经完成，只有响应丢失的情况。在这种情况下，重试将导致该操作被执行多次，除非在协议中建立重复数据消除（ <strong>幂等（idempotence）</strong>）机制。本地函数调用没有这个问题。</li>
+<li>每次调用本地功能时，通常需要大致相同的时间来执行。网络请求慢得多，不可预知。</li>
+<li>调用本地函数时，可以高效地将引用（指针）传递给本地内存中的对象。当发出网络请求时，所有这些参数都需要被编码成可以通过网络发送的字节序列。如果参数是像数字或字符串这样的基本类型倒是没关系，但是对于较大的对象很快就会变成问题。</li>
+<li>客户端和服务端可以用不同的编程语言实现。所以，RPC 框架必须将数据类型从一种语言转换成另一种语言。</li>
+</ul>
+<p>RPC 比 REST 性能好。但是，REST 更加方便，不限定特定的语言，有更好的通用性。因此，REST 是公共 API 的主流；RPC 框架则侧重于同一组织内多个服务间的请求，且通常在同一数据中心。</p>
+<h4 id="基于消息传递的数据流"><a href="#基于消息传递的数据流" class="headerlink" title="基于消息传递的数据流"></a>基于消息传递的数据流</h4><h5 id="消息代理"><a href="#消息代理" class="headerlink" title="消息代理"></a>消息代理</h5><p>通常，消息代理的使用方式如下：</p>
+<p>生产者向指定的队列或主题发消息；消息代理确保消息被传递给队列或主题的一个或多个消费者或订阅者。同一主题上，可以有多个生产者和多个消费者。</p>
+<h5 id="分布式-Actor-框架"><a href="#分布式-Actor-框架" class="headerlink" title="分布式 Actor 框架"></a>分布式 Actor 框架</h5><p>Actor 模型是用于单个进程中并发的编程模型。每个 Actor 通常代表一个客户端或实体，它可能具有某些本地状态，并且它通过发送和接受异步消息与其他 Actor 通信。</p>
+<p>分布式的 Actor 框架实质上时将消息代理和 Actor 编程模型集成到单个框架中。</p>
+<p>三种流行的分布式 Actor 框架：</p>
+<ul>
+<li>Akka 使用 Java 的内置序列化，它不提供向前或向后兼容性。但是，可以用类似 Protocol Buffer 替代；</li>
+<li>Orleans 不支持滚动升级部署的自定义数据编码格式；</li>
+<li>Erlang OTP，很难对记录模式进行更改。</li>
+</ul>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>许多服务需要支持滚动升级：向前、向后兼容性。</p>
+<p>我们讨论了几种数据编码格式及其兼容性属性：</p>
+<ul>
+<li>编程语言特定的编码仅限于单一编程语言，往往无法提供前向和后向兼容性。</li>
+<li>JSON，XML 和 CSV 等文本格式非常普遍，其兼容性取决于您如何使用它们。它们有可选的模式语言，这有时是有用的，有时却是一个障碍。这些格式对某些数据类型的支持有些模糊，必须小心数字和二进制字符串等问题。</li>
+<li>像 Thrift，Protocol Buffers 和 Avro 这样的二进制模式驱动格式，支持使用清晰定义的前向和后向兼容性语义进行紧凑，高效的编码。这些模式对于静态类型语言中的文档和非常有用。但是，他们有一个缺点，就是在数据可读之前需要对数据进行解码。</li>
+</ul>
+<p>我们还讨论了数据流的几种模式，说明了数据编码重要性的不同场景：</p>
+<ul>
+<li>数据库，写入数据库的进程对数据进行编码，并从数据库读取进程对其进行解码。</li>
+<li>RPC 和 REST API，客户端对请求进行编码，服务器对请求进行解码并对响应进行编码，客户端最终对响应进行解码。</li>
+<li>异步消息传递（使用消息代理或 Actor），节点之间通过互发消息进行通信，消息由发送者编码并由接收者解码。</li>
+</ul>
+<p>结论：前向兼容性和滚动升级在某种程度上是可以实现的。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/30329536/"><strong>数据密集型应用系统设计</strong></a> - 这可能是目前最好的分布式存储书籍，强力推荐【进阶】</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/50787f00/" title="《数据密集型应用系统设计》笔记一——数据系统基础">https://dunwu.github.io/blog/pages/50787f00/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E5%8E%9F%E7%90%86/" rel="tag"># 原理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/e90e4e73/" rel="prev" title="《数据密集型应用系统设计》笔记二">
+                  <i class="fa fa-angle-left"></i> 《数据密集型应用系统设计》笔记二
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/6ce53be6/" rel="next" title="《极客时间教程 - 架构实战案例解析》笔记">
+                  《极客时间教程 - 架构实战案例解析》笔记 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"dd1709631044fc8d3232c1b95c620802"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

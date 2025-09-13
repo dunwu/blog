@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Kafka 集群 Kafka 是一个分布式的、可水平扩展的、基于发布&#x2F;订阅模式的、支持容错的消息系统。  Kafka 和 ZooKeeperKafka 使用 Zookeeper 来维护集群成员的信息。每个 Broker 都有一个唯一标识符，这个标识符可以在配置文件里指定，也可以自动生成。在 Broker 启动的时候，它通过创建临时节点把自己的 ID 注册到 Zookeeper。Kafka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka 集群">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/44e1d423/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Kafka 集群 Kafka 是一个分布式的、可水平扩展的、基于发布&#x2F;订阅模式的、支持容错的消息系统。  Kafka 和 ZooKeeperKafka 使用 Zookeeper 来维护集群成员的信息。每个 Broker 都有一个唯一标识符，这个标识符可以在配置文件里指定，也可以自动生成。在 Broker 启动的时候，它通过创建临时节点把自己的 ID 注册到 Zookeeper。Kafka">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070741387.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070741426.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070742505.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070743894.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070743006.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/10427194506.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200621123848.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200621124516.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200621124533.png">
+<meta property="article:published_time" content="2021-04-29T00:17:17.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.750Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="mq">
+<meta property="article:tag" content="kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070741387.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/44e1d423/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/44e1d423/","path":"/pages/44e1d423/","title":"Kafka 集群"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Kafka 集群 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka-%E9%9B%86%E7%BE%A4"><span class="nav-number">1.</span> <span class="nav-text">Kafka 集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka-%E5%92%8C-ZooKeeper"><span class="nav-number">1.1.</span> <span class="nav-text">Kafka 和 ZooKeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">控制器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%80%89%E4%B8%BE%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="nav-number">1.2.1.</span> <span class="nav-text">如何选举控制器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">控制器的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Topic-%E7%AE%A1%E7%90%86%EF%BC%88%E5%88%9B%E5%BB%BA%E3%80%81%E5%88%A0%E9%99%A4%E3%80%81%E5%A2%9E%E5%8A%A0%E5%88%86%E5%8C%BA%EF%BC%89"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Topic 管理（创建、删除、增加分区）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%8C%BA%E9%87%8D%E5%88%86%E9%85%8D"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">分区重分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%89%E4%B8%BE-Leader"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">选举 Leader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%88%90%E5%91%98%E7%AE%A1%E7%90%86"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">集群成员管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">数据服务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6"><span class="nav-number">1.3.</span> <span class="nav-text">副本机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-%E5%89%AF%E6%9C%AC%E8%A7%92%E8%89%B2"><span class="nav-number">1.3.1.</span> <span class="nav-text">Kafka 副本角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ISR"><span class="nav-number">1.3.2.</span> <span class="nav-text">ISR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unclean-%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE"><span class="nav-number">1.3.3.</span> <span class="nav-text">Unclean 领导者选举</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82"><span class="nav-number">1.4.</span> <span class="nav-text">处理请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E8%AF%B7%E6%B1%82"><span class="nav-number">1.4.1.</span> <span class="nav-text">元数据请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E8%AF%B7%E6%B1%82"><span class="nav-number">1.4.2.</span> <span class="nav-text">生产请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E8%AF%B7%E6%B1%82"><span class="nav-number">1.4.3.</span> <span class="nav-text">消费请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%AF%B7%E6%B1%82"><span class="nav-number">1.4.4.</span> <span class="nav-text">其他请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6-1"><span class="nav-number">1.5.1.</span> <span class="nav-text">副本机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">选举机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/44e1d423/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Kafka 集群 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kafka 集群<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/21.%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/02.MQ/01.Kafka/Kafka%E9%9B%86%E7%BE%A4.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-29 08:17:17" itemprop="dateCreated datePublished" datetime="2021-04-29T08:17:17+08:00">2021-04-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/" itemprop="url" rel="index"><span itemprop="name">分布式通信</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/MQ/" itemprop="url" rel="index"><span itemprop="name">MQ</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/MQ/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Kafka-集群"><a href="#Kafka-集群" class="headerlink" title="Kafka 集群"></a>Kafka 集群</h1><blockquote>
+<p>Kafka 是一个分布式的、可水平扩展的、基于发布&#x2F;订阅模式的、支持容错的消息系统。</p>
+</blockquote>
+<h2 id="Kafka-和-ZooKeeper"><a href="#Kafka-和-ZooKeeper" class="headerlink" title="Kafka 和 ZooKeeper"></a>Kafka 和 ZooKeeper</h2><p><strong>Kafka 使用 Zookeeper 来维护集群成员的信息</strong>。每个 Broker 都有一个唯一标识符，这个标识符可以在配置文件里指定，也可以自动生成。在 Broker 启动的时候，它通过创建<strong>临时节点</strong>把自己的 ID 注册到 Zookeeper。Kafka 组件订阅 Zookeeper 的 <code>/broker/ids</code> 路径，当有 Broker 加入集群或退出集群时，这些组件就可以获得通知。</p>
+<p>如果要启动另一个具有相同 ID 的 Broker，会得到一个错误——新 Broker 会试着进行注册，但不会成功，因为 ZooKeeper 中已经有一个具有相同 ID 的 Broker。</p>
+<p>在 Broker 停机、出现网络分区或长时间垃圾回收停顿时，Broker 会与 ZooKeeper 断开连接，此时 Broker 在启动时创建的临时节点会自动被 ZooKeeper 移除。监听 Broker 列表的 Kafka 组件会被告知 Broker 已移除。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070741387.png"></p>
+<p>Kafka 在 ZooKeeper 的关键存储信息：</p>
+<ul>
+<li><code>admin</code>：存储管理信息。主要为删除主题事件，分区迁移事件，优先副本选举，信息 (一般为临时节点)</li>
+<li><code>brokers</code>：存储 Broker 相关信息。broker 节点以及节点上的主题相关信息</li>
+<li><code>cluster</code>：存储 kafka 集群信息</li>
+<li><code>config</code>：存储 broker，client，topic，user 以及 changer 相关的配置信息</li>
+<li><code>consumers</code>：存储消费者相关信息</li>
+<li><code>controller</code>：存储控制器节点信息</li>
+<li><code>controller_epoch</code>：存储控制器节点当前的年龄（说明控制器节点变更次数）</li>
+</ul>
+<blockquote>
+<p>ZooKeeper 两个重要特性：</p>
+<ul>
+<li>客户端会话结束时，ZooKeeper 就会删除临时节点。</li>
+<li>客户端注册监听它关心的节点，当节点状态发生变化（数据变化、子节点增减变化）时，ZooKeeper 服务会通知客户端。</li>
+</ul>
+<p>详细内容可以参考：<a target="_blank" rel="noopener" href="https://github.com/dunwu/bigdata-tutorial/blob/master/docs/zookeeper/ZooKeeper%E5%8E%9F%E7%90%86.md">ZooKeeper 原理</a></p>
+</blockquote>
+<h2 id="控制器"><a href="#控制器" class="headerlink" title="控制器"></a>控制器</h2><p>控制器（Controller），是 Apache Kafka 的核心组件。它的主要作用是在 ZooKeeper 的帮助下管理和协调整个 Kafka 集群。控制器其实就是一个 Broker，只不过它除了具有一般 Broker 的功能以外，还负责 Leader 的选举。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070741426.png"></p>
+<h3 id="如何选举控制器"><a href="#如何选举控制器" class="headerlink" title="如何选举控制器"></a>如何选举控制器</h3><p>集群中任意一台 Broker 都能充当控制器的角色，但是，在运行过程中，只能有一个 Broker 成为控制器，行使其管理和协调的职责。实际上，Broker 在启动时，会尝试去 ZooKeeper 中创建 <code>/controller</code> 节点。Kafka 当前选举控制器的规则是：<strong>第一个在 ZooKeeper 成功创建 <code>/controller</code> 临时节点的 Broker 会被指定为控制器</strong>。</p>
+<p>选举控制器的详细流程：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070742505.png"></p>
+<ol>
+<li><p>第一个在 ZooKeeper 中成功创建 <code>/controller</code> 临时节点的 Broker 会被指定为控制器。</p>
+</li>
+<li><p>其他 Broker 在控制器节点上创建 Zookeeper watch 对象。</p>
+</li>
+<li><p>如果控制器被关闭或者与 Zookeeper 断开连接，Zookeeper 临时节点就会消失。集群中的其他 Broker 通过 watch 对象得到状态变化的通知，它们会尝试让自己成为新的控制器。</p>
+</li>
+<li><p>第一个在 Zookeeper 里创建一个临时节点 <code>/controller</code> 的 Broker 成为新控制器。其他 Broker 在新控制器节点上创建 Zookeeper watch 对象。</p>
+</li>
+<li><p>每个新选出的控制器通过 Zookeeper 的条件递增操作获得一个全新的、数值更大的 controller epoch。其他节点会忽略旧的 epoch 的消息。</p>
+</li>
+<li><p>当控制器发现一个 Broker 已离开集群，并且这个 Broker 是某些 Partition 的 Leader。此时，控制器会遍历这些 Partition，并用轮询方式确定谁应该成为新 Leader，随后，新 Leader 开始处理生产者和消费者的请求，而 Follower 开始从 Leader 那里复制消息。</p>
+</li>
+</ol>
+<p>简而言之，<strong>Kafka 使用 Zookeeper 的临时节点来选举控制器，并在节点加入集群或退出集群时通知控制器。控制器负责在节点加入或离开集群时进行 Partition Leader 选举。控制器使用 epoch 来避免“脑裂”，“脑裂”是指两个节点同时被认为自己是当前的控制器</strong>。</p>
+<h3 id="控制器的作用"><a href="#控制器的作用" class="headerlink" title="控制器的作用"></a>控制器的作用</h3><h4 id="Topic-管理（创建、删除、增加分区）"><a href="#Topic-管理（创建、删除、增加分区）" class="headerlink" title="Topic 管理（创建、删除、增加分区）"></a>Topic 管理（创建、删除、增加分区）</h4><p>这里的 Topic 管理，就是指控制器帮助我们完成对 Kafka Topic 的创建、删除以及分区增加的操作。换句话说，当我们执行 <strong>kafka-topics 脚本</strong>时，大部分的后台工作都是控制器来完成的。</p>
+<h4 id="分区重分配"><a href="#分区重分配" class="headerlink" title="分区重分配"></a>分区重分配</h4><p>分区重分配主要是指，<strong>kafka-reassign-partitions 脚本</strong>（关于这个脚本，后面我也会介绍）提供的对已有 Topic 分区进行细粒度的分配功能。这部分功能也是控制器实现的。</p>
+<h4 id="选举-Leader"><a href="#选举-Leader" class="headerlink" title="选举 Leader"></a>选举 Leader</h4><p>Preferred 领导者选举主要是 Kafka 为了避免部分 Broker 负载过重而提供的一种换 Leader 的方案。在专栏后面说到工具的时候，我们再详谈 Preferred 领导者选举，这里你只需要了解这也是控制器的职责范围就可以了。</p>
+<h4 id="集群成员管理"><a href="#集群成员管理" class="headerlink" title="集群成员管理"></a>集群成员管理</h4><p>集群成员管理，包括自动检测新增 Broker、Broker 主动关闭及被动宕机。这种自动检测是依赖于前面提到的 Watch 功能和 ZooKeeper 临时节点组合实现的。</p>
+<p>比如，控制器组件会利用<strong>Watch 机制</strong>检查 ZooKeeper 的 &#x2F;brokers&#x2F;ids 节点下的子节点数量变更。目前，当有新 Broker 启动后，它会在 &#x2F;brokers 下创建专属的 znode 节点。一旦创建完毕，ZooKeeper 会通过 Watch 机制将消息通知推送给控制器，这样，控制器就能自动地感知到这个变化，进而开启后续的新增 Broker 作业。</p>
+<p>侦测 Broker 存活性则是依赖于刚刚提到的另一个机制：<strong>临时节点</strong>。每个 Broker 启动后，会在 &#x2F;brokers&#x2F;ids 下创建一个临时 znode。当 Broker 宕机或主动关闭后，该 Broker 与 ZooKeeper 的会话结束，这个 znode 会被自动删除。同理，ZooKeeper 的 Watch 机制将这一变更推送给控制器，这样控制器就能知道有 Broker 关闭或宕机了，从而进行“善后”。</p>
+<h4 id="数据服务"><a href="#数据服务" class="headerlink" title="数据服务"></a>数据服务</h4><p>控制器的最后一大类工作，就是向其他 Broker 提供数据服务。控制器上保存了最全的集群元数据信息，其他所有 Broker 会定期接收控制器发来的元数据更新请求，从而更新其内存中的缓存数据。</p>
+<p>控制器中保存了多种数据，比较重要的的数据有：</p>
+<ul>
+<li>所有 Topic 信息。包括具体的分区信息，比如领导者副本是谁，ISR 集合中有哪些副本等。</li>
+<li>所有 Broker 信息。包括当前都有哪些运行中的 Broker，哪些正在关闭中的 Broker 等。</li>
+<li>所有涉及运维任务的分区。包括当前正在进行 Preferred 领导者选举以及分区重分配的分区列表。</li>
+</ul>
+<p>值得注意的是，这些数据其实在 ZooKeeper 中也保存了一份。每当控制器初始化时，它都会从 ZooKeeper 上读取对应的元数据并填充到自己的缓存中。有了这些数据，控制器就能对外提供数据服务了。这里的对外主要是指对其他 Broker 而言，控制器通过向这些 Broker 发送请求的方式将这些数据同步到其他 Broker 上。</p>
+<h2 id="副本机制"><a href="#副本机制" class="headerlink" title="副本机制"></a>副本机制</h2><p>副本机制是分布式系统实现高可用的不二法门，Kafka 也不例外。</p>
+<p>副本机制有哪些好处？</p>
+<ol>
+<li><strong>提供可用性</strong>：有句俗语叫：鸡蛋不要放在一个篮子里。副本机制也是一个道理——当部分节点宕机时，系统仍然可以依靠其他正常运转的节点，从整体上对外继续提供服务。</li>
+<li><strong>提供伸缩性</strong>：通过增加、减少机器可以控制系统整体的吞吐量。</li>
+<li><strong>改善数据局部性</strong>：允许将数据放入与用户地理位置相近的地方，从而降低系统延时。</li>
+</ol>
+<p>但是，Kafka 只实现了第一个好处，原因后面会阐述。</p>
+<h3 id="Kafka-副本角色"><a href="#Kafka-副本角色" class="headerlink" title="Kafka 副本角色"></a>Kafka 副本角色</h3><p>Kafka 使用 Topic 来组织数据，每个 Topic 被分为若干个 Partition，每个 Partition 有多个副本。每个 Broker 可以保存成百上千个属于不同 Topic 和 Partition 的副本。<strong>Kafka 副本的本质是一个只能追加写入的提交日志</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070743894.png"></p>
+<p>Kafka 副本有两种角色：</p>
+<ul>
+<li><strong>Leader 副本（主）</strong>：每个 Partition 都有且仅有一个 Leader 副本。为了保证数据一致性，<strong>Leader 处理一切对 Partition （分区）的读写请求</strong>；</li>
+<li><strong>Follower 副本（从）</strong>：Leader 副本以外的副本都是 Follower 副本。<strong>Follower 唯一的任务就是从 Leader 那里复制消息，保持与 Leader 一致的状态</strong>。</li>
+<li>如果 Leader 宕机，其中一个 Follower 会被选举为新的 Leader。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070743006.png"></p>
+<p>为了与 Leader 保持同步，Follower 向 Leader 发起获取数据的请求，这种请求与消费者为了读取消息而发送的请求是一样的。请求消息里包含了 Follower 想要获取消息的偏移量，而这些偏移量总是有序的。</p>
+<p>Leader 另一个任务是搞清楚哪个 Follower 的状态与自己是一致的。通过查看每个 Follower 请求的最新偏移量，Leader 就会知道每个 Follower 复制的进度。如果跟随者在 10s 内没有请求任何消息，或者虽然在请求消息，但是在 10s 内没有请求最新的数据，那么它就会被认为是<strong>不同步</strong>的。<strong>如果一个副本是不同步的，在 Leader 失效时，就不可能成为新的 Leader</strong>——毕竟它没有包含全部的消息。</p>
+<p>除了当前首领之外，每个分区都有一个首选首领——创建 Topic 时选定的首领就是分区的首选首领。之所以叫首选 Leader，是因为在创建分区时，需要在 Broker 之间均衡 Leader。</p>
+<h3 id="ISR"><a href="#ISR" class="headerlink" title="ISR"></a>ISR</h3><p>ISR 即 In-sync Replicas，表示同步副本。Follower 副本不提供服务，只是定期地异步拉取领导者副本中的数据而已。既然是异步的，说明和 Leader 并非数据强一致性的。</p>
+<p><strong>判断 Follower 是否与 Leader 同步的标准</strong>：</p>
+<p>Kafka Broker 端参数 <code>replica.lag.time.max.ms</code> 参数，指定了 Follower 副本能够落后 Leader 副本的最长时间间隔，默认为 10s。这意味着：只要一个 Follower 副本落后 Leader 副本的时间不连续超过 10 秒，那么 Kafka 就认为该 Follower 副本与 Leader 是<strong>同步</strong>的，即使此时 Follower 副本中保存的消息明显少于 Leader 副本中的消息。</p>
+<p>ISR 是一个动态调整的集合，会不断将同步副本加入集合，将不同步副本移除集合。Leader 副本天然就在 ISR 中。</p>
+<h3 id="Unclean-领导者选举"><a href="#Unclean-领导者选举" class="headerlink" title="Unclean 领导者选举"></a>Unclean 领导者选举</h3><p>因为 Leader 副本天然就在 ISR 中，如果 ISR 为空了，就说明 Leader 副本也“挂掉”了，Kafka 需要重新选举一个新的 Leader。</p>
+<p><strong>Kafka 把所有不在 ISR 中的存活副本都称为非同步副本</strong>。通常来说，非同步副本落后 Leader 太多，因此，如果选择这些副本作为新 Leader，就可能出现数据的丢失。毕竟，这些副本中保存的消息远远落后于老 Leader 中的消息。在 Kafka 中，选举这种副本的过程称为 Unclean 领导者选举。<strong>Broker 端参数 <code>unclean.leader.election.enable</code> 控制是否允许 Unclean 领导者选举</strong>。</p>
+<p><strong>开启 Unclean 领导者选举可能会造成数据丢失</strong>，但好处是：它使得 Partition Leader 副本一直存在，不至于停止对外提供服务，因此提升了高可用性。反之，禁止 Unclean 领导者选举的好处在于维护了数据的一致性，避免了消息丢失，但牺牲了高可用性。</p>
+<h2 id="处理请求"><a href="#处理请求" class="headerlink" title="处理请求"></a>处理请求</h2><p>Broker 的大部分工作是处理客户端、Partition 副本和控制器发送给 Partition Leader 的请求。Kafka 提供了一个二进制协议（基于 TCP），指定了请求消息的格式以及 Broker 如何对请求作出响应。</p>
+<p>broker 会在它所监听的每一个端口上运行一个 Acceptor 线程，这个线程会创建一个连接，并把它交给 Processor 线程去处理。Processor 线程的数量是可配置的。Processor 线程负责从客户端获取请求消息，把它们放进请求队列，然后从响应队列获取响应消息，把它们发送给客户端。</p>
+<p>当请求放进请求队列后，IO 线程负责进行处理。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/10427194506.png" alt="img"></p>
+<p>生产请求和获取请求都需要发送给 Partition 的 Leader 副本处理。如果 Broker 收到一个针对特定分区的请求，而该分区的 Leader 在另一个 Broker 上，那么发送请求的客户端会收到一个“非分区 Leader”的错误响应。Kafka 客户端要自己负责把生成请求和获取请求发送到正确的 Broker 上。</p>
+<h3 id="元数据请求"><a href="#元数据请求" class="headerlink" title="元数据请求"></a>元数据请求</h3><p>客户端怎么知道哪个是 Leader 呢？客户端通过使用另一种类型的请求来实现，那就是<strong>元数据请求（metadata request）</strong>。这种请求包含了客户端感兴趣的 Topic 列表。broker 的响应消息指明了这些 Topic 所包含的 Partition、Partition 有哪些副本，以及哪个副本是 Leader。元数据请求可以发给任意一个 broker，因为所有 Broker 都缓存了这些信息。</p>
+<p>客户端会把这些信息缓存起来，并直接往目标 Broker 上发送生产请求和获取请求。它们需要时不时地通过发送元数据请求来刷新这些信息（刷新的时间间隔通过 <code>metadata.max.age.ms</code> 来配置），从而知道元数据是否发生了变化。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200621123848.png" alt="img"></p>
+<h3 id="生产请求"><a href="#生产请求" class="headerlink" title="生产请求"></a>生产请求</h3><p>acks 参数控制多少个副本确认写入成功后生产者才认为消息生产成功。这个参数的取值可以为：</p>
+<ul>
+<li><code>acks=0</code> - 消息发送完毕，生产者认为消息写入成功；</li>
+<li><code>acks=1</code> - Leader 写入成功，生产者认为消息写入成功；</li>
+<li><code>acks=all</code> - 所有同步副本写入成功，生产者才认为消息写入成功。</li>
+</ul>
+<p>如果 Leader 收到生产消息，它会执行一些检查逻辑，包含：</p>
+<ul>
+<li>发送的用户是否有权限写入 Topic？</li>
+<li>请求的 <code>acks</code> 参数取值是否合法（只允许 <code>0</code>，<code>1</code>，<code>all</code>）？</li>
+<li>如果 <code>acks</code> 设置为 <code>all</code>，是否有足够的同步副本已经安全写入消息？（我们可以配置如果同步副本数量不足，Leader 拒绝处理新消息）</li>
+</ul>
+<p>之后，消息被写入到本地磁盘。一旦消息本地持久化后，如果 <code>acks</code> 被设为 <code>0</code> 或 <code>1</code>，那么会返回结果给客户端；如果 <code>acks</code> 被设为 <code>all</code> 那么会将请求放置在一个称为 <code>purgatory</code> 的缓冲区中等待其他的副本写入完成。</p>
+<h3 id="消费请求"><a href="#消费请求" class="headerlink" title="消费请求"></a>消费请求</h3><p>Leader 处理拉取请求和处理生产请求的方式很相似：</p>
+<ol>
+<li>请求需要先到达指定的 Partition Leader 上，然后客户端通过查询元数据来确保请求的路由是正确的。</li>
+<li>Leader 在收到请求时，会先检查请求是否有效。</li>
+<li>如果请求的偏移量存在，Broker 将按照客户端指定的数量上限从 Partition 里读取消息，再把消息返回给客户端。Kafka 使用零拷贝技术向客户端发送消息——也就是说，Kafka 直接把消息从文件（更准确的说，是文件系统缓存）里发送到网络通道，而不需要经过任何中间缓冲区。这避免了内存的字节拷贝和缓冲区维护，极大地提高了性能。</li>
+</ol>
+<p><strong>客户端可以指定 Broker 返回数据量的上限和下限，防止数据量过大造成客户端内存溢出</strong>。同时，<strong>客户端也可以指定返回的最小数据量</strong>，当消息数据量没有达到最小数据量时，请求会一直阻塞直到有足够的数据返回。指定最小的数据量在负载不高的情况下非常有用，通过这种方式<strong>可以减轻网络往返的额外开销</strong>。当然请求也不能永远的阻塞，客户端可以指定最大的阻塞时间，如果到达指定的阻塞时间，即便没有足够的数据也会返回。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200621124516.png" alt="img"></p>
+<p>不是所有 Leader 的数据都能够被读取。<strong>消费者只能读取已提交的消息</strong>。<strong>只有当消息被写入分区的若干同步副本时，才被认为是已提交的</strong>。为什么是若干个 Broker 呢？这取决于你对“已提交”的定义。你可以选择只要 Leader 成功保存该消息就算是已提交，也可以是令所有 Broker 都成功保存该消息才算是已提交。</p>
+<p>因为还没有被足够的副本持久化的消息，被认为是不安全的——如果 Leader 发生故障，另一个副本成为新的 Leader，这些消息就丢失了。如果允许读取这些消息，就可能会破坏数据一致性。</p>
+<p>这也意味着，如果 Broker 间的消息复制因为某些原因变慢了，那么消息到达消费者的时间也会随之变长。延迟时间可以通过 <code>replica.lag.time.max.ms</code> 来配置，它指定了副本在复制消息时可被允许的最大延迟时间。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200621124533.png" alt="img"></p>
+<h3 id="其他请求"><a href="#其他请求" class="headerlink" title="其他请求"></a>其他请求</h3><p>我们讨论了 Kafka 中最常见的三种请求类型：元信息请求，生产请求和拉取请求。这些请求都是使用的是 Kafka 的自定义二进制协议。集群中 Broker 间的通信请求也是使用同样的协议，这些请求是内部使用的，客户端不能发送。比如在选举 Partition Leader 过程中，控制器会发送 LeaderAndIsr 请求给新的 Leader 和其他跟随副本。</p>
+<p>这个协议目前已经支持 20 种请求类型，并且仍然在演进以支持更多的类型。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="副本机制-1"><a href="#副本机制-1" class="headerlink" title="副本机制"></a>副本机制</h3><ul>
+<li>每个 Partition 都有一个 Leader，零个或多个 Follower。</li>
+<li>Leader 处理一切对 Partition （分区）的读写请求；而 Follower 只需被动的同步 Leader 上的数据。</li>
+<li>同一个 Topic 的不同 Partition 会分布在多个 Broker 上，而且一个 Partition 还会在其他的 Broker 上面进行备份。</li>
+</ul>
+<h3 id="选举机制"><a href="#选举机制" class="headerlink" title="选举机制"></a>选举机制</h3><p>Follower 宕机，啥事儿没有；Leader 宕机了，会从 Follower 中重新选举一个新的 Leader。<br>生产者&#x2F;消费者如何知道谁是 Leader</p>
+<ul>
+<li>Kafka 将这种元数据存储在 Zookeeper 服务中。</li>
+<li>生产者和消费者都和 Zookeeper 连接并通信。</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><strong>官方</strong><ul>
+<li><a target="_blank" rel="noopener" href="http://kafka.apache.org/">Kafka 官网</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/kafka">Kafka Github</a></li>
+<li><a target="_blank" rel="noopener" href="https://kafka.apache.org/documentation/">Kafka 官方文档</a></li>
+</ul>
+</li>
+<li><strong>书籍</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/27665114/">《Kafka 权威指南》</a></li>
+</ul>
+</li>
+<li><strong>教程</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/apachecn/kafka-doc-zh">Kafka 中文文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100029201">Kafka 核心技术与实战</a></li>
+</ul>
+</li>
+<li><strong>文章</strong><ul>
+<li><a target="_blank" rel="noopener" href="https://hackernoon.com/thorough-introduction-to-apache-kafka-6fbf2989bbc1">Thorough Introduction to Apache Kafka</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/44e1d423/" title="Kafka 集群">https://dunwu.github.io/blog/pages/44e1d423/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/mq/" rel="tag"># mq</a>
+              <a href="/blog/tags/kafka/" rel="tag"># kafka</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/b97c8100/" rel="prev" title="Git帮助手册">
+                  <i class="fa fa-angle-left"></i> Git帮助手册
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/8349a83d/" rel="next" title="Kafka 存储">
+                  Kafka 存储 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"77066abdb1a6bf77ce6cc74dce29e693"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

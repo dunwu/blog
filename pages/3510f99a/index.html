@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="MQ 面试 消息队列（Message Queue，简称 MQ）技术是应用间交换信息的一种技术。 消息队列主要解决异步处理、应用间耦合，流量削锋等问题，实现高性能，高可用，可伸缩和最终一致性架构。是大型分布式系统不可缺少的中间件。 目前主流的 MQ 有：Kafka、RabbitMQ、RocketMQ、ActiveMQ，而部分数据库如 Redis、MySQL 以及 phxsql 也可实现消息队列的功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MQ 面试">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/3510f99a/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="MQ 面试 消息队列（Message Queue，简称 MQ）技术是应用间交换信息的一种技术。 消息队列主要解决异步处理、应用间耦合，流量削锋等问题，实现高性能，高可用，可伸缩和最终一致性架构。是大型分布式系统不可缺少的中间件。 目前主流的 MQ 有：Kafka、RabbitMQ、RocketMQ、ActiveMQ，而部分数据库如 Redis、MySQL 以及 phxsql 也可实现消息队列的功能">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021707928.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021707517.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021719775.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021719470.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021738906.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021739806.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200930164342.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502031317162.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502022054834.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502022152450.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/mq/kafka/kafka-cluster-roles.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/mq/kafka/kafka-replication.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3101171-2adc66e2367cd2c2.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3101171-12afe9581da889ea.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070727055.webp">
+<meta property="og:image" content="https://rahulvishwakarma.wordpress.com/wp-content/uploads/2016/06/kafka-broker-internals.png?w=634">
+<meta property="article:published_time" content="2022-02-17T14:34:30.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.749Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="中间件">
+<meta property="article:tag" content="MQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021707928.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/3510f99a/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/3510f99a/","path":"/pages/3510f99a/","title":"MQ 面试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MQ 面试 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MQ-%E9%9D%A2%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">MQ 面试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MQ-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">MQ 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-MQ%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【简单】什么是 MQ？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-MQ%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【简单】为什么需要 MQ？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%BC%95%E5%85%A5-MQ-%E5%B8%A6%E6%9D%A5%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【中等】引入 MQ 带来哪些问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91MQ-%E6%9C%89%E5%93%AA%E4%BA%9B%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="nav-number">1.1.4.</span> <span class="nav-text">【中等】MQ 有哪些通信模型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91MQ-%E6%8E%A8%E6%8B%89%E6%A8%A1%E5%BC%8F%E5%90%84%E6%9C%89%E4%BB%80%E4%B9%88%E5%88%A9%E5%BC%8A%EF%BC%8C%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%EF%BC%9F"><span class="nav-number">1.1.5.</span> <span class="nav-text">【中等】MQ 推拉模式各有什么利弊，如何选择？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQ-%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93"><span class="nav-number">1.2.</span> <span class="nav-text">MQ 可靠传输</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81-MQ-%E6%B6%88%E6%81%AF%E4%B8%8D%E4%B8%A2%E5%A4%B1%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【困难】如何保证 MQ 消息不丢失？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81-MQ-%E6%B6%88%E6%81%AF%E4%B8%8D%E9%87%8D%E5%A4%8D%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【困难】如何保证 MQ 消息不重复？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81-MQ-%E6%B6%88%E6%81%AF%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%80%A7%EF%BC%9F"><span class="nav-number">1.2.3.</span> <span class="nav-text">【困难】如何保证 MQ 消息的顺序性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86-MQ-%E6%B6%88%E6%81%AF%E7%A7%AF%E5%8E%8B%EF%BC%9F"><span class="nav-number">1.2.4.</span> <span class="nav-text">【困难】如何处理 MQ 消息积压？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQ-%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">MQ 高可用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81-MQ-%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">【困难】如何保证 MQ 的高可用？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQ-%E6%9E%B6%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text">MQ 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Kafka%E3%80%81ActiveMQ%E3%80%81RabbitMQ%E3%80%81RocketMQ-%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">【困难】Kafka、ActiveMQ、RabbitMQ、RocketMQ 有什么优缺点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-JMS%EF%BC%9F"><span class="nav-number">1.4.2.</span> <span class="nav-text">【困难】什么是 JMS？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-AMQP%EF%BC%9F"><span class="nav-number">1.4.3.</span> <span class="nav-text">【中等】什么是 AMQP？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka"><span class="nav-number">1.5.</span> <span class="nav-text">Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Kafka-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%80%A7%E8%83%BD%E9%AB%98%EF%BC%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">【困难】Kafka 为什么性能高？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91ZooKeeper-%E5%9C%A8-Kafka-%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.5.2.</span> <span class="nav-text">【困难】ZooKeeper 在 Kafka 中的作用是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Kafka-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%BC%83%E7%94%A8-Zookeeper%EF%BC%9F"><span class="nav-number">1.5.3.</span> <span class="nav-text">【中等】Kafka 为什么要弃用 Zookeeper？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Kafka-%E4%B8%AD%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%97%B6%E9%97%B4%E8%BD%AE%EF%BC%9F"><span class="nav-number">1.5.4.</span> <span class="nav-text">【中等】Kafka 中如何实现时间轮？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Kafka-%E7%9A%84%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1%E6%9C%89%E4%BB%80%E4%B9%88%E4%BA%AE%E7%82%B9%EF%BC%9F"><span class="nav-number">1.5.5.</span> <span class="nav-text">【中等】Kafka 的索引设计有什么亮点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Kafka-%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82%E7%9A%84%E5%85%A8%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="nav-number">1.5.6.</span> <span class="nav-text">【困难】Kafka 处理请求的全流程？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Kafka-%E4%B8%AD%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="nav-number">1.5.7.</span> <span class="nav-text">【困难】Kafka 中如何实现事务机制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91Kafka-%E6%8E%A7%E5%88%B6%E5%99%A8%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E4%BA%8B%E4%BB%B6%EF%BC%9F"><span class="nav-number">1.5.8.</span> <span class="nav-text">【困难】Kafka 控制器如何处理事件？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ"><span class="nav-number">1.6.</span> <span class="nav-text">RocketMQ</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RocketMQ-%E7%9A%84%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E6%9C%89%E4%BB%80%E4%B9%88%E7%BC%BA%E7%82%B9%EF%BC%9F%E4%BD%A0%E8%BF%98%E4%BA%86%E8%A7%A3%E8%BF%87%E5%88%AB%E7%9A%84%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E5%AE%9E%E7%8E%B0%E5%90%97%EF%BC%9F"><span class="nav-number">1.6.1.</span> <span class="nav-text">【中等】RocketMQ 的事务消息有什么缺点？你还了解过别的事务消息实现吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%B8%BA%E4%BB%80%E4%B9%88-RocketMQ-%E4%B8%8D%E4%BD%BF%E7%94%A8-Zookeeper-%E4%BD%9C%E4%B8%BA%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%EF%BC%9F"><span class="nav-number">1.6.2.</span> <span class="nav-text">【中等】为什么 RocketMQ 不使用 Zookeeper 作为注册中心？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RocketMQ-%E7%9A%84%E5%BB%B6%E8%BF%9F%E6%B6%88%E6%81%AF%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="nav-number">1.6.3.</span> <span class="nav-text">【中等】RocketMQ 的延迟消息是怎么实现的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RocketMQ-%E5%92%8C-Kafka-%E5%9C%A8%E6%9E%B6%E6%9E%84%E5%92%8C%E5%8A%9F%E8%83%BD%E4%B8%8A%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">1.6.4.</span> <span class="nav-text">【中等】RocketMQ 和 Kafka 在架构和功能上有什么区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91RocketMQ-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%EF%BC%9F"><span class="nav-number">1.6.5.</span> <span class="nav-text">【困难】RocketMQ 如何实现事务消息？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RabbitMQ"><span class="nav-number">1.7.</span> <span class="nav-text">RabbitMQ</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91RabbitMQ-%E7%9A%84-routing-key-%E5%92%8C-binding-key-%E7%9A%84%E6%9C%80%E5%A4%A7%E9%95%BF%E5%BA%A6%E6%98%AF%E5%A4%9A%E5%B0%91%E5%AD%97%E8%8A%82%EF%BC%9F"><span class="nav-number">1.7.1.</span> <span class="nav-text">【简单】RabbitMQ 的 routing key 和 binding key 的最大长度是多少字节？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RabbitMQ-%E4%B8%AD%E6%97%A0%E6%B3%95%E8%B7%AF%E7%94%B1%E7%9A%84%E6%B6%88%E6%81%AF%E4%BC%9A%E5%8E%BB%E5%88%B0%E5%93%AA%E9%87%8C%EF%BC%9F"><span class="nav-number">1.7.2.</span> <span class="nav-text">【中等】RabbitMQ 中无法路由的消息会去到哪里？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RabbitMQ-%E4%B8%AD%E6%B6%88%E6%81%AF%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BC%9A%E8%BF%9B%E5%85%A5%E6%AD%BB%E4%BF%A1%E4%BA%A4%E6%8D%A2%E6%9C%BA%EF%BC%9F"><span class="nav-number">1.7.3.</span> <span class="nav-text">【中等】RabbitMQ 中消息什么时候会进入死信交换机？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RabbitMQ-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="nav-number">1.7.4.</span> <span class="nav-text">【中等】RabbitMQ 如何实现事务机制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RabbitMQ-%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%EF%BC%9F"><span class="nav-number">1.7.5.</span> <span class="nav-text">【中等】RabbitMQ 中有哪些核心概念？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RabbitMQ-%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.7.6.</span> <span class="nav-text">【中等】RabbitMQ 有哪些工作模式？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RabbitMQ-%E6%9C%89%E5%93%AA%E4%BA%9B%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.7.7.</span> <span class="nav-text">【中等】RabbitMQ 有哪些集群模式？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91RabbitMQ-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%EF%BC%9F"><span class="nav-number">1.7.8.</span> <span class="nav-text">【中等】RabbitMQ 如何实现延迟队列？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/3510f99a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MQ 面试 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MQ 面试<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/21.%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/02.MQ/00.MQ%E7%BB%BC%E5%90%88/MQ%E9%9D%A2%E8%AF%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-17 22:34:30" itemprop="dateCreated datePublished" datetime="2022-02-17T22:34:30+08:00">2022-02-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/" itemprop="url" rel="index"><span itemprop="name">分布式通信</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/MQ/" itemprop="url" rel="index"><span itemprop="name">MQ</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/MQ/MQ%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">MQ综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>35k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>32 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="MQ-面试"><a href="#MQ-面试" class="headerlink" title="MQ 面试"></a>MQ 面试</h1><blockquote>
+<p>消息队列（Message Queue，简称 MQ）技术是<strong>应用间交换信息</strong>的一种技术。</p>
+<p>消息队列主要解决异步处理、应用间耦合，流量削锋等问题，实现高性能，高可用，可伸缩和最终一致性架构。是大型分布式系统不可缺少的中间件。</p>
+<p>目前主流的 MQ 有：Kafka、RabbitMQ、RocketMQ、ActiveMQ，而部分数据库如 Redis、MySQL 以及 phxsql 也可实现消息队列的功能。</p>
+<p>注意：_为了简便，下文中除了文章标题，一律使用 MQ 简称_。</p>
+</blockquote>
+<h2 id="MQ-简介"><a href="#MQ-简介" class="headerlink" title="MQ 简介"></a>MQ 简介</h2><h3 id="【简单】什么是-MQ？"><a href="#【简单】什么是-MQ？" class="headerlink" title="【简单】什么是 MQ？"></a>【简单】什么是 MQ？</h3><p><strong>MQ（Message Queue，消息队列）</strong> 是一种<strong>异步通信机制</strong>，用于在不同服务、应用或系统组件之间<strong>可靠地传递消息</strong>。它的核心思想是<strong>解耦生产者和消费者</strong>，通过缓冲消息来提高系统的可靠性、扩展性和可维护性。</p>
+<p><strong>MQ 的核心概念</strong></p>
+<ul>
+<li><strong>生产者（Producer）</strong>：发送消息的应用或服务。</li>
+<li><strong>消费者（Consumer）</strong>：接收并处理消息的应用或服务。</li>
+<li><strong>消息（Message）</strong>：传输的数据单位，可以是文本、JSON、二进制等格式。</li>
+<li><strong>队列（Queue）</strong>：存储消息的缓冲区，遵循 <strong>FIFO（先进先出）</strong> 或优先级策略。</li>
+<li><strong>Broker（消息代理）</strong>：负责接收、存储和转发消息的中间件（如 RabbitMQ、Kafka）。</li>
+</ul>
+<p>消息队列主要解决应用耦合，异步消息，流量削锋等问题，实现高性能，高可用，可伸缩和最终一致性架构。是大型分布式系统不可缺少的中间件。</p>
+<p>MQ 是消费-生产者模型的一个典型的代表，一端往消息队列中不断写入消息，而另一端则可以读取队列中的消息。消息发布者只管把消息发布到 MQ 中而不用管谁来取，消息使用者只管从 MQ 中取消息而不管是谁发布的。这样发布者和使用者都不用知道对方的存在。</p>
+<p>MQ 的数据可驻留在内存或磁盘上，直到它们被应用程序读取。通过 MQ，应用程序可独立地执行，它们不需要知道彼此的位置，不需要等待接收程序接收此消息。在分布式计算环境中，为了集成分布式应用，开发者需要对异构网络环境下的分布式应用提供有效的通信手段。为了管理需要共享的信息，对应用提供公共的信息交换机制是重要的。</p>
+<p>目前主流的 MQ 有：Kafka、RabbitMQ、RocketMQ、ActiveMQ。</p>
+<h3 id="【简单】为什么需要-MQ？"><a href="#【简单】为什么需要-MQ？" class="headerlink" title="【简单】为什么需要 MQ？"></a>【简单】为什么需要 MQ？</h3><p><strong>MQ 的典型应用场景</strong></p>
+<ul>
+<li><strong>异步处理</strong></li>
+<li><strong>系统解耦</strong></li>
+<li><strong>流量削峰</strong></li>
+<li><strong>系统间通信</strong></li>
+<li><strong>传输缓冲</strong></li>
+<li><strong>最终一致性</strong></li>
+</ul>
+<p>::: info 异步处理</p>
+<p>:::</p>
+<p>MQ 可以将系统间的处理流程异步化，减少等待响应的时间，从而提高整体并发吞吐量。一般，MQ 异步处理应用于非核心流程，例如：短信&#x2F;邮件通知、数据推送、上报数据到监控中心、日志中心等。</p>
+<p>假设这样一个场景，用户向系统 A 发起请求，系统 A 处理计算只需要 <code>10ms</code>，然后通知系统 BCD 写库，系统 BCD 写库耗时分别为：<code>100ms</code>、<code>200ms</code>、<code>300ms</code>。最终总耗时为： <code>10ms+100ms+200ms+300ms=610ms</code>。此外，加上请求和响应的网络传输时间，从用户角度看，可能要等待将近 <code>1s</code> 才能得到结果。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021707928.png"></p>
+<p>如果使用 MQ，系统 A 接到请求后，耗时 <code>10ms</code> 处理计算，然后向系统 BCD 连续发送消息，假设耗时 <code>5ms</code>。那么 这一过程的总耗时为 <code>3ms + 5ms = 8ms</code>，这相比于 <code>610 ms</code>，大大缩短了响应时间。至于系统 BCD 的写库操作，只要自行消费 MQ 后处理即可，用户无需关注。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021707517.png"></p>
+<p>::: info 系统解耦</p>
+<p>:::</p>
+<p>通过 MQ，可以消除系统间的强耦合。它的好处在于：</p>
+<ul>
+<li>消息的消费者系统可以随意增加，无需修改生产者系统的代码。</li>
+<li>生产者系统、消费者系统彼此不会影响对方的流程。<ul>
+<li>如果生产者系统宕机，消费者系统收不到消息，就不会有下一步的动作。</li>
+<li>如果消费者系统宕机，生产者系统让然可以正常发送消息，不影响流程。</li>
+</ul>
+</li>
+</ul>
+<p>不同系统如果要建立通信，传统的做法是：调用接口。</p>
+<p>如果需要和新的系统建立通信或删除已建立的通信，都需要修改代码，这种方案显然耦合度很高。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021719775.png"></p>
+<p>如果使用 MQ，系统间的通信只需要通过发布&#x2F;订阅（Pub&#x2F;Sub）模型即可，彼此没有直接联系，也就不需要相互感知，从而达到 <strong>解耦</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021719470.png"></p>
+<p>::: info 流量削峰</p>
+<p>:::</p>
+<p>当 <strong>上下游系统</strong> 处理能力存在差距的时候，利用 MQ 做一个 “<strong>漏斗</strong>” 模型，进行 <strong>流控</strong>。把 MQ 当成可靠的 <strong>消息缓冲池</strong>，进行一定程度的 <strong>消息堆积</strong>；在下游有能力处理的时候，再发送消息。</p>
+<p>MQ 的流量削峰常用于高并发场景（例如：秒杀、团抢等业务场景），它是缓解瞬时暴增流量的核心手段之一。</p>
+<p>如果没有 MQ，两个系统之间通过 <strong>协商</strong>、<strong>滑动窗口</strong>、<strong>限流</strong>&#x2F;<strong>降级</strong>&#x2F;<strong>熔断</strong> 等复杂的方案也能实现 <strong>流控</strong>。但 <strong>系统复杂性</strong> 指数级增长，势必在上游或者下游做存储，并且要处理 <strong>定时</strong>、<strong>拥塞</strong> 等一系列问题。而且每当有 <strong>处理能力有差距</strong> 的时候，都需要 <strong>单独</strong> 开发一套逻辑来维护这套逻辑。</p>
+<p>假设某个系统读写数据库的稳定性能为每秒处理 1000 条数据。平常情况下，远远达不到这么大的处理量。假设，因为因为做活动，系统的瞬时请求量剧增，达到每秒 10000 个并发请求，数据库根本承受不了，可能直接就把数据库给整崩溃了，这样系统服务就不可用了。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021738906.png"></p>
+<p>如果使用 MQ，每秒写入 10000 条请求，但是系统 A 每秒只从 MQ 中消费 1000 条请求，然后写入数据库。这样，就不会超过数据库的承受能力，而是把请求积压在 MQ 中。只要高峰期一过，系统 A 就会很快把积压的消息给处理掉。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502021739806.png"></p>
+<p>::: info 系统间通信</p>
+<p>:::</p>
+<p>消息队列一般都内置了 <strong>高效的通信机制</strong>，因此也可以用于单纯的 <strong>消息通讯</strong>，比如实现 <strong>点对点消息队列</strong> 或者 <strong>聊天室</strong> 等。</p>
+<p><strong>生产者&#x2F;消费者</strong> 模式，只需要关心消息是否 <strong>送达队列</strong>，至于谁希望订阅和需要消费，是 <strong>下游</strong> 的事情，无疑极大地减少了开发和联调的工作量。</p>
+<p>::: info 传输缓冲</p>
+<p>:::</p>
+<p>（1）MQ 常被用于做海量数据的传输缓冲。</p>
+<p>例如，Kafka 常被用于做为各种日志数据、采集数据的数据中转。然后，Kafka 将数据转发给 Logstash、Elasticsearch 中，然后基于 Elasticsearch 来做日志中心，提供检索、聚合、分析日志的能力。开发者可以通过 Kibana 集成 Elasticsearch 数据进行可视化展示，或自行进行定制化开发。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200930164342.png" alt="img"></p>
+<p>（2）MQ 也可以被用于流式处理。</p>
+<p>例如，Kafka 几乎已经是流计算的数据采集端的标准组件。而流计算通过实时数据处理能力，提供了更为快捷的聚合计算能力，被大量应用于链路监控、实时监控、实时数仓、实时大屏、风控、推荐等应用领域。</p>
+<p>::: info 最终一致性</p>
+<p>:::</p>
+<p><strong>最终一致性</strong> 不是 <strong>消息队列</strong> 的必备特性，但确实可以依靠 <strong>消息队列</strong> 来做 <strong>最终一致性</strong> 的事情。</p>
+<ul>
+<li><strong>先写消息再操作</strong>，确保操作完成后再修改消息状态。<strong>定时任务补偿机制</strong> 实现消息 <strong>可靠发送接收</strong>、业务操作的可靠执行，要注意 <strong>消息重复</strong> 与 <strong>幂等设计</strong>。</li>
+<li>所有不保证 <code>100%</code> <strong>不丢消息</strong> 的消息队列，理论上无法实现 <strong>最终一致性</strong>。</li>
+</ul>
+<blockquote>
+<p>像 <code>Kafka</code> 一类的设计，在设计层面上就有 <strong>丢消息</strong> 的可能（比如 <strong>定时刷盘</strong>，如果掉电就会丢消息）。哪怕只丢千分之一的消息，业务也必须用其他的手段来保证结果正确。</p>
+</blockquote>
+<h3 id="【中等】引入-MQ-带来哪些问题？"><a href="#【中等】引入-MQ-带来哪些问题？" class="headerlink" title="【中等】引入 MQ 带来哪些问题？"></a>【中等】引入 MQ 带来哪些问题？</h3><p>任何技术都会有利有弊，MQ 给整体系统架构带来很多好处，但也会付出一定的代价。</p>
+<p>MQ 主要引入了以下问题：</p>
+<ul>
+<li><strong>系统可用性降低</strong>：引入了 MQ 后，通信需要基于 MQ 完成，如果 MQ 宕机，则服务不可用。因此，MQ 要保证是高可用的。</li>
+<li><strong>系统复杂度提高</strong>：使用 MQ，需要关注一些新的问题：<ul>
+<li>如何保证消息没有 <strong>重复消费</strong>？</li>
+<li>如何处理 <strong>消息丢失</strong> 的问题？</li>
+<li>如何保证传递 <strong>消息的顺序性</strong>？</li>
+<li>如何处理大量 <strong>消息积压</strong> 的问题？</li>
+</ul>
+</li>
+<li><strong>一致性问题</strong>：假设系统 A 处理完直接返回成功的结果给用户，用户认为请求成功。但如果此时，系统 BCD 中只要有任意一个写库失败，那么数据就不一致了。这种情况如何处理？</li>
+</ul>
+<h3 id="【中等】MQ-有哪些通信模型？"><a href="#【中等】MQ-有哪些通信模型？" class="headerlink" title="【中等】MQ 有哪些通信模型？"></a>【中等】MQ 有哪些通信模型？</h3><p>MQ（消息队列）常见的通信模型主要有以下几种，适用于不同的业务场景：</p>
+<p><strong>点对点（Point-to-Point &#x2F; Queue）</strong></p>
+<ul>
+<li><strong>特点</strong>：消息由 <strong>一个生产者</strong> 发送到 <strong>一个队列</strong>，<strong>只有一个消费者</strong> 能消费该消息（竞争消费），消息被消费后即从队列删除。</li>
+<li><strong>适用场景</strong>：任务分发（如订单处理、异步任务）。</li>
+<li><strong>示例</strong>：RabbitMQ 的普通队列、ActiveMQ 的 Queue。</li>
+</ul>
+<p><strong>发布&#x2F;订阅（Publish&#x2F;Subscribe &#x2F; Topic）</strong></p>
+<ul>
+<li><strong>特点</strong>：消息由 <strong>一个生产者</strong> 发送到 <strong>Topic（主题）</strong>，<strong>多个消费者</strong>（订阅者）可同时接收同一消息，消息会广播给所有订阅者。</li>
+<li><strong>适用场景</strong>：事件通知（如系统日志广播、实时数据同步）。</li>
+<li><strong>示例</strong>：RabbitMQ 的 Exchange + Fanout 模式、Kafka 的 Topic。</li>
+</ul>
+<p><strong>请求&#x2F;响应（Request&#x2F;Reply）</strong></p>
+<ul>
+<li><strong>特点</strong>：生产者发送消息后，消费者处理并返回响应（类似 RPC），通常需要 <strong>临时队列</strong> 存储响应。</li>
+<li><strong>适用场景</strong>：需要同步结果的异步调用（如支付状态查询）。</li>
+<li><strong>示例</strong>：RabbitMQ 的 RPC 模式、Kafka 的 Request-Reply 扩展。</li>
+</ul>
+<p><strong>扇出（Fanout）</strong></p>
+<ul>
+<li><strong>特点</strong>：消息发送到 Exchange 后，<strong>无条件广播</strong> 给所有绑定的队列（无路由规则），类似发布&#x2F;订阅，但更简单。</li>
+<li><strong>适用场景</strong>：实时通知多个系统（如价格变动、库存更新）。</li>
+<li><strong>示例</strong>：RabbitMQ 的 Fanout Exchange。</li>
+</ul>
+<p><strong>路由（Routing &#x2F; Direct）</strong></p>
+<ul>
+<li><strong>特点</strong>：消息根据 <strong>Routing Key</strong> 被精准投递到匹配的队列，消费者只接收符合规则的消息。</li>
+<li><strong>适用场景</strong>：条件过滤（如错误日志分级处理）。</li>
+<li><strong>示例</strong>：RabbitMQ 的 Direct Exchange。</li>
+</ul>
+<p><strong>主题路由（Topic）</strong></p>
+<ul>
+<li><strong>特点</strong>：基于 <strong>通配符</strong>（如 <code>user.*</code>）匹配 Routing Key，实现灵活订阅，比 Direct 更灵活，比 Fanout 更精准。</li>
+<li><strong>适用场景</strong>：复杂事件分发（如物联网设备消息分类）。</li>
+<li><strong>示例</strong>：RabbitMQ 的 Topic Exchange、MQTT 的 Topic。</li>
+</ul>
+<p><strong>总结</strong></p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>生产者-消费者关系</th>
+<th>典型应用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>点对点</strong></td>
+<td>1:1（竞争消费）</td>
+<td>任务队列、订单处理</td>
+</tr>
+<tr>
+<td><strong>发布&#x2F;订阅</strong></td>
+<td>1:N（广播）</td>
+<td>日志广播、实时通知</td>
+</tr>
+<tr>
+<td><strong>请求&#x2F;响应</strong></td>
+<td>1:1（带响应）</td>
+<td>异步 RPC、结果回调</td>
+</tr>
+<tr>
+<td><strong>扇出</strong></td>
+<td>1:N（无条件广播）</td>
+<td>多系统数据同步</td>
+</tr>
+<tr>
+<td><strong>路由</strong></td>
+<td>1:1（精准匹配）</td>
+<td>条件过滤、优先级队列</td>
+</tr>
+<tr>
+<td><strong>主题路由</strong></td>
+<td>1:N（通配符匹配）</td>
+<td>复杂事件分类（如 IoT）</td>
+</tr>
+</tbody></table>
+<h3 id="【中等】MQ-推拉模式各有什么利弊，如何选择？"><a href="#【中等】MQ-推拉模式各有什么利弊，如何选择？" class="headerlink" title="【中等】MQ 推拉模式各有什么利弊，如何选择？"></a>【中等】MQ 推拉模式各有什么利弊，如何选择？</h3><p>消息引擎（MQ）获取消息的模式主要分为 <strong>Push（推）</strong> 和 <strong>Pull（拉）</strong> 两种，不同消息队列中间件采用不同的策略，部分系统还支持 <strong>混合模式</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502031317162.png"></p>
+<p><strong>Push 模式（服务端推送）</strong></p>
+<ul>
+<li><strong>特点</strong>：<ul>
+<li><strong>消息由 Broker 主动推送给消费者</strong>，消费者被动接收。</li>
+<li>实时性高，减少消费者轮询开销。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：低延迟，适合实时性要求高的场景（如即时通讯）。</li>
+<li><strong>缺点</strong>：可能造成消费者过载（需背压机制控制流速）。</li>
+<li><strong>典型实现</strong>：RabbitMQ、ActiveMQ、RocketMQ（默认长轮询模拟 Push）。</li>
+</ul>
+<p><strong>Pull 模式（客户端拉取）</strong></p>
+<ul>
+<li><strong>特点</strong>：<ul>
+<li><strong>消费者主动从 Broker 拉取消息</strong>，按需获取。</li>
+<li>消费者控制消费速率。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：避免消息堆积冲击消费者，适合高吞吐场景（如日志处理）。</li>
+<li><strong>缺点</strong>：存在空轮询开销（可通过长轮询优化）。</li>
+<li><strong>典型实现</strong>：Kafka、Pulsar（原生 Pull）、RocketMQ（支持显式 Pull）。</li>
+</ul>
+<p><strong>长轮询（Long Polling）</strong></p>
+<ul>
+<li><strong>特点</strong>：<strong>Push 和 Pull 的折中方案</strong>。消费者发起请求后，Broker 若无消息则保持连接，直到有消息或超时才返回。</li>
+<li><strong>优点</strong>：减少无效轮询，平衡实时性与服务端压力。</li>
+<li><strong>典型实现</strong>：RocketMQ（默认模式）、HTTP 长轮询（如 WebSocket）。</li>
+</ul>
+<p><strong>混合模式（Push + Pull）</strong></p>
+<ul>
+<li><strong>特点</strong>：<ul>
+<li>关键消息用 Push 保证实时性，批量数据用 Pull 提高吞吐。</li>
+<li>消费者可动态切换模式。</li>
+</ul>
+</li>
+<li><strong>典型实现</strong>：Pulsar（支持多模式）、部分自研 MQ 系统。</li>
+</ul>
+<p><strong>对比总结</strong></p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>实时性</th>
+<th>服务端压力</th>
+<th>消费者控制力</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Push</strong></td>
+<td>高</td>
+<td>高</td>
+<td>低</td>
+<td>即时通讯、事件通知</td>
+</tr>
+<tr>
+<td><strong>Pull</strong></td>
+<td>低</td>
+<td>低</td>
+<td>高</td>
+<td>大数据处理、日志收集</td>
+</tr>
+<tr>
+<td><strong>长轮询</strong></td>
+<td>中</td>
+<td>中</td>
+<td>中</td>
+<td>平衡实时性与性能（如电商）</td>
+</tr>
+</tbody></table>
+<p><strong>选择建议</strong></p>
+<ul>
+<li>需要低延迟 → <strong>Push</strong>（如 RabbitMQ）。</li>
+<li>需要高吞吐 → <strong>Pull</strong>（如 Kafka）。</li>
+<li>平衡场景 → <strong>长轮询</strong>（如 RocketMQ）。</li>
+</ul>
+<h2 id="MQ-可靠传输"><a href="#MQ-可靠传输" class="headerlink" title="MQ 可靠传输"></a>MQ 可靠传输</h2><h3 id="【困难】如何保证-MQ-消息不丢失？"><a href="#【困难】如何保证-MQ-消息不丢失？" class="headerlink" title="【困难】如何保证 MQ 消息不丢失？"></a>【困难】如何保证 MQ 消息不丢失？</h3><p>要保证 MQ 中的消息不丢失，需从 <strong>生产端、MQ 服务端、消费端</strong> 三个环节进行可靠性设计。一言以蔽之，<strong>生产端确认+服务端持久化+消费端手动 ACK+监控补偿</strong> 是保证消息不丢失的核心逻辑，需根据业务场景权衡性能与可靠性。</p>
+<p>::: info 生产端防丢失</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>发送方式</strong></td>
+<td>支持同步、异步、异步回调发送方式<br/>同步性能低；异步无视成功与否；异步回调比较合适</td>
+<td>支持同步、异步回调发送方式<br/>同步性能低；异步回调比较合适</td>
+</tr>
+<tr>
+<td><strong>生产 ACK</strong></td>
+<td><code>acks</code> 参数确保消息被多少副本写入成功后才返回确认<br/><code>min.insync.replicas</code> 配合 <code>acks</code> 使用，设定最少写入副本数</td>
+<td>（配合刷盘机制）若配置为同步刷盘，消息必须先成功写入磁盘，发送方才能收到写成功的确认</td>
+</tr>
+<tr>
+<td><strong>失败重试</strong></td>
+<td><code>retries</code> 参数控制失败重试次数</td>
+<td><code>retryTimesWhenSendFailed</code> 参数控制失败重试次数</td>
+</tr>
+<tr>
+<td><strong>事务</strong></td>
+<td>通过事务+生产幂等，实现 exactly once 语义，非真正的分布式事务</td>
+<td>可实现分布式事务</td>
+</tr>
+</tbody></table>
+<p>::: info MQ 服务端防丢失</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>持久化</strong></td>
+<td>消息写入页缓存（PageCache），即可返回生产 ACK，由 OS 负责刷盘（<code>fsync</code>）<br/>可设置自动刷盘的间隔时间或消息数阈值<br/>可以通过AdminClient手动刷盘</td>
+<td>默认采用异步刷盘，类似 Kafka，先写入页缓存（PageCache），由 OS 负责刷盘（<code>fsync</code>）<br/>也支持同步刷盘，消息必须先成功写入磁盘，发送方才能收到写成功的确认</td>
+</tr>
+<tr>
+<td><strong>副本机制</strong></td>
+<td>通过副本机制保证冗余，避免单点故障<br/>副本的粒度是针对分区<br/><code>replication.factor</code> 设置分区副本数<br/><code>min.insync.replicas</code> 控制写入到多少个副本才算是“已提交”</td>
+<td>通过副本机制保证冗余，避免单点故障<br/>副本的粒度是针对节点（Broker）</td>
+</tr>
+<tr>
+<td><strong>故障检测</strong></td>
+<td>所有Broker会向zk的<code>/borker</code>路径写临时节点，而Controller会监听该目录<br/>一旦有Broker故障或失联，zk会话中断，zk自动删除临时节点，并通知Controller<br/>Controller将Broker视为下线，并将该Broker上的分区Leader置为无效</td>
+<td>主节点定期向从节点发送心跳以续活<br/>超时未收到消息，从节点视主节点为下线</td>
+</tr>
+<tr>
+<td><strong>故障恢复</strong></td>
+<td>Controller 负责选新的分区 Leader，优先从ISR中选<br/>通过 <code>unclean.leader.election.enable</code> 可设置是否允许从非ISR中选Leader，但丢失数据风险增大</td>
+<td>采用 Raft 来选主</td>
+</tr>
+</tbody></table>
+<p>::: info 消费端防丢失</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Kafka</strong></th>
+<th><strong>RocketMQ</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>消费 ACK</strong></td>
+<td>支持自动、手动提交Offset（<code>enable.auto.commit=false</code>配置）<br/>关闭自动提交，处理完整事务后，再手动提交Offset</td>
+<td>支持自动、手动提交Offset（consumer.setAutoCommit配置）<br/>关闭自动提交，处理完整事务后，再手动提交Offset</td>
+</tr>
+<tr>
+<td><strong>重置 Offset</strong></td>
+<td><code>auto.offset.reset</code> 可以重置消费的 Offset</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>失败重试</strong></td>
+<td>不完善：自动提交不支持重试；手动提交续自行处理重试逻辑</td>
+<td>默认重试16次<br/>多次消费失败后会被投递到<strong>死信队列</strong>，供后续特殊处理</td>
+</tr>
+</tbody></table>
+<p>::: info 监控与补偿</p>
+<p>:::</p>
+<ul>
+<li><strong>消息堆积告警</strong>：监控队列长度，及时发现异常。</li>
+<li><strong>定期对账</strong>：对比生产与消费的记录，修复差异（如定时扫描数据库补发）。</li>
+</ul>
+<h3 id="【困难】如何保证-MQ-消息不重复？"><a href="#【困难】如何保证-MQ-消息不重复？" class="headerlink" title="【困难】如何保证 MQ 消息不重复？"></a>【困难】如何保证 MQ 消息不重复？</h3><p>::: info MQ 为什么会出现重复消息？</p>
+<p>:::</p>
+<ul>
+<li>生产端重试（网络抖动时自动重发）</li>
+<li>消费端超时后 MQ 重新投递（如 RabbitMQ 未及时 ACK）</li>
+<li>消息队列集群脑裂（如 Kafka 副本切换）</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502022054834.png"></p>
+<p>以 Kafka 举例，Kafka 每个 Partition 都是一个有序的、不可变的记录序列，不断追加到结构化的提交日志中。Partition 中为每条记录分配一个连续的 id 号，称为偏移量（Offset），用于唯一标识 Partition 内的记录。</p>
+<p>Kafka 的客户端和 Broker 都会保存 Offset。客户端消费消息后，每隔一段时间，就把已消费的 Offset 提交给 Kafka Broker，表示已消费。</p>
+<p>在这个过程中，如果客户端应用消费消息后，因为宕机、重启等情况而没有提交已消费的 Offset 。当系统恢复后，会继续消费消息，由于 Offset 未提交，就会出现重复消费的问题。</p>
+<p>::: info 重复消息通用解决方案</p>
+<p>:::</p>
+<p>处理重复消息 &#x3D; <strong>“业务幂等为基础，缓存&#x2F;DB 去重为辅助，监控兜底保万一”</strong>。</p>
+<p>处理 MQ 重复消息的核心思路是 <strong>幂等性设计</strong> + <strong>去重机制</strong>，确保即使消息被多次消费，业务结果也不会出错。</p>
+<p>（1）<strong>业务层幂等设计</strong></p>
+<ul>
+<li><p><strong>唯一标识</strong>：每条消息携带唯一业务 ID（如订单号、支付流水号），处理前先查库判断是否已执行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> status <span class="keyword">FROM</span> orders <span class="keyword">WHERE</span> order_id <span class="operator">=</span> <span class="string">&#x27;123&#x27;</span>;</span><br><span class="line"><span class="comment">-- 若已处理则直接跳过</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>状态机控制</strong>：业务状态严格流转（如「已支付」订单不允许重复扣款）。</p>
+</li>
+</ul>
+<p>（2）<strong>去重表&#x2F;缓存</strong></p>
+<ul>
+<li><p><strong>数据库去重表</strong>：消费前先 <code>INSERT</code> 唯一键（消息 ID），利用主键冲突避免重复处理。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> message_processed(id) <span class="keyword">VALUES</span> (<span class="string">&#x27;msg_123&#x27;</span>) <span class="keyword">ON</span> DUPLICATE KEY IGNORE;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Redis 去重</strong>：用 <code>SETNX</code> 设置消息 ID 过期时间（适合高频场景）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETNX msg_123 1 EX 3600  <span class="comment"># 1 小时内不重复处理</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>::: info 主流 MQ 处理</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th>消息队列</th>
+<th>重复触发场景</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Kafka</strong></td>
+<td>消费者重启导致 offset 回滚</td>
+<td>业务幂等 + 本地 offset 持久化</td>
+</tr>
+<tr>
+<td><strong>RabbitMQ</strong></td>
+<td>未 ACK 导致重新入队</td>
+<td>手动 ACK + 死信队列监控</td>
+</tr>
+<tr>
+<td><strong>RocketMQ</strong></td>
+<td>消息重试机制（16 次后进死信）</td>
+<td>消费日志 + 人工干预</td>
+</tr>
+</tbody></table>
+<p>极端情况兜底：</p>
+<ul>
+<li><strong>对账系统</strong>：定时扫描业务数据与消息记录，修复不一致（如定时补发短信）。</li>
+<li><strong>人工告警</strong>：监控重复消息频率（如 1 分钟同消息 ID 出现 3 次以上则报警）。</li>
+</ul>
+<p>::: info 方案选型</p>
+<p>:::</p>
+<ul>
+<li><strong>低频业务</strong>：数据库唯一索引（简单可靠）。</li>
+<li><strong>高频业务</strong>：Redis + 过期时间（高性能）。</li>
+<li><strong>金融级场景</strong>：幂等 + 对账 + 人工审核（强一致）。</li>
+</ul>
+<h3 id="【困难】如何保证-MQ-消息的顺序性？"><a href="#【困难】如何保证-MQ-消息的顺序性？" class="headerlink" title="【困难】如何保证 MQ 消息的顺序性？"></a>【困难】如何保证 MQ 消息的顺序性？</h3><p>要保证 MQ 消息的顺序性，需从 <strong>生产、存储、消费</strong> 三个环节控制。</p>
+<p>核心思路是：<strong>“同一业务 ID 锁定同一队列 + 单线程消费”</strong>，需结合业务需求选择局部顺序或全局顺序方案。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502022152450.png"></p>
+<p>::: info 生产端保序</p>
+<p>:::</p>
+<ul>
+<li><p><strong>单生产者+单线程发送</strong>：同一业务 ID（如订单 ID）的消息由 <strong>同一生产者线程</strong> 顺序发送，避免多线程并发乱序。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例：相同 orderId 的消息由同一线程发送</span></span><br><span class="line">mqProducer.send(msg, orderId); <span class="comment">// 通过 hash 选择分区</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>禁用异步发送重试</strong>：异步发送失败时可能乱序，需同步发送或关闭重试（如 Kafka 配置 <code>max.in.flight.requests.per.connection=1</code>）。</p>
+</li>
+</ul>
+<p>::: info MQ 服务端保序</p>
+<p>:::</p>
+<ul>
+<li><p><strong>单分区&#x2F;队列有序</strong></p>
+<ul>
+<li><p><strong>Kafka&#x2F;RocketMQ</strong>：同一业务 ID 的消息发送到 <strong>同一分区</strong>（Partition）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据 orderId 哈希选择分区</span></span><br><span class="line"><span class="type">int</span> <span class="variable">partition</span> <span class="operator">=</span> orderId.hashCode() % partitionNum;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>RabbitMQ</strong>：使用单队列（或一致性哈希交换器绑定唯一队列）。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>关闭分区&#x2F;队列并行</strong>：避免服务端多分区&#x2F;多副本间的顺序混乱（如 Kafka 的 <code>unclean.leader.election.enable=false</code>）。</p>
+</li>
+</ul>
+<p>::: info 消费端保序</p>
+<p>:::</p>
+<ul>
+<li><strong>单消费者串行消费</strong><ul>
+<li>同一队列&#x2F;分区由 <strong>单消费者线程</strong> 处理（如 Kafka 单线程消费或 <code>max.poll.records=1</code>）。</li>
+<li>多消费者时，相同业务 ID 的消息路由到同一消费者（如 RocketMQ 的 <code>MessageQueueSelector</code>）。</li>
+</ul>
+</li>
+<li><strong>内存队列排序</strong>（复杂场景）：消费者拉取消息后，按业务 ID 分组存入内存队列，由不同线程分别串行处理。</li>
+</ul>
+<p>::: info 特殊场景处理</p>
+<p>:::</p>
+<ul>
+<li><strong>全局严格顺序</strong>：牺牲性能，全链路单线程（生产→MQ→消费），仅适合低吞吐场景（如 Binlog 同步）。</li>
+<li><strong>局部顺序</strong>：仅保证同一业务 ID 的顺序（如订单的创建→支付→退款），允许不同订单并发。</li>
+</ul>
+<p>::: info 主流 MQ 处理</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Kafka</strong></th>
+<th><strong>RocketMQ</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>单分区&#x2F;队列有序</strong></td>
+<td>单分区追加写入，天然有序</td>
+<td>单队列有序</td>
+</tr>
+<tr>
+<td><strong>哈希路由</strong></td>
+<td>采用哈希路由，相同key固定发往同一分区<br/>如果不指定key，则采用轮询方式选择分区</td>
+<td>使用 <code>MessageQueueSelector</code> 指定队列</td>
+</tr>
+<tr>
+<td><strong>单线程生产</strong></td>
+<td><code>max.in.flight.requests.per.connection=1</code> 控制</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>单线程消费</strong></td>
+<td>确保一个分区仅由一个消费者线程处理（Kafka 默认规则）</td>
+<td>使用 <code>MessageListenerOrderly</code></td>
+</tr>
+<tr>
+<td><strong>业务保证</strong></td>
+<td>避免多线程并发消费同一队列<br/>分布式锁（如 Redis）<br/>关键业务操作加锁，防止并发执行乱序</td>
+<td>避免多线程并发消费同一队列<br/>分布式锁（如 Redis）<br/>关键业务操作加锁，防止并发执行乱序</td>
+</tr>
+</tbody></table>
+<p>::: info 注意事项</p>
+<p>:::</p>
+<ul>
+<li><strong>性能权衡</strong>：顺序性越高，并发性能越低（需根据业务容忍度平衡）。</li>
+<li><strong>错误处理</strong>：消费失败时需暂停当前分区消费（如 Kafka 的 <code>pause()</code>），避免跳过消息导致乱序。</li>
+<li><strong>监控</strong>：定期检查消息积压和顺序偏移（如 Kafka 的 <code>consumer.position()</code>）。</li>
+</ul>
+<h3 id="【困难】如何处理-MQ-消息积压？"><a href="#【困难】如何处理-MQ-消息积压？" class="headerlink" title="【困难】如何处理 MQ 消息积压？"></a>【困难】如何处理 MQ 消息积压？</h3><p>处理 MQ 消息积压的核心思路是 <strong>“快速消费存量+优化生产速率”</strong>，需结合监控、扩容、降级等手段综合治理。</p>
+<p>大致可以归纳为：</p>
+<ul>
+<li><strong>短期</strong>：扩容+降级，优先恢复服务。</li>
+<li><strong>长期</strong>：优化消费逻辑+自动化运维，预防再次积压。</li>
+<li><strong>口诀</strong>：<strong>监控早发现，扩容扛流量，消费改批量，生产限流速</strong>。</li>
+</ul>
+<p>::: info 快速消费积压消息</p>
+<p>:::</p>
+<ul>
+<li><strong>增加消费者实例</strong>：横向扩展消费者服务（如 Kubernetes 动态扩容 Pod），注意分区数限制（Kafka 需提前规划足够分区）。</li>
+<li><strong>提升消费并行度</strong>：<ul>
+<li>调整消费者并发参数（如 Kafka 的 <code>max.poll.records</code>、RabbitMQ 的 <code>prefetch_count</code>）。</li>
+<li>多线程消费（需保证无顺序要求的场景）。</li>
+</ul>
+</li>
+<li><strong>临时降级</strong>：非核心业务暂停消费（如日志处理），集中资源处理核心业务消息。</li>
+</ul>
+<p>::: info 优化消费能力</p>
+<p>:::</p>
+<ul>
+<li><strong>批量处理</strong>：合并多条消息一次处理（如数据库批量插入）。</li>
+<li><strong>异步化+削峰</strong>：消费者将消息存入内存队列，后台线程异步处理，避免同步阻塞。</li>
+<li><strong>跳过非关键逻辑</strong>：临时关闭日志记录、数据校验等非必要操作。</li>
+</ul>
+<p>::: info 控制生产端流量</p>
+<p>:::</p>
+<ul>
+<li><strong>限流</strong>：生产端启用速率限制（如 Kafka 的 <code>quota</code>、Redis 令牌桶）。</li>
+<li><strong>削峰填谷</strong>：消息先写入缓存层（如 Redis List），再匀速写入 MQ。</li>
+<li><strong>业务降级</strong>：高峰期关闭非核心功能的消息生产（如暂停推荐系统更新）。</li>
+</ul>
+<p>::: info 监控与告警</p>
+<p>:::</p>
+<ul>
+<li><strong>实时监控指标</strong>：<ul>
+<li>队列堆积量（如 Kafka 的 <code>lag</code>）、消费速率（TPS）、消费者状态。</li>
+<li>设置阈值告警（如积压超过 10W 条触发短信通知）。</li>
+</ul>
+</li>
+<li><strong>根因分析工具</strong>：<ul>
+<li>日志分析（消费者卡顿、GC 问题）。</li>
+<li>链路追踪（如 SkyWalking 定位慢消费）。</li>
+</ul>
+</li>
+</ul>
+<p>::: info 长期预防措施</p>
+<p>:::</p>
+<ul>
+<li><strong>容量规划</strong>：根据业务峰值预先扩容分区&#x2F;队列（如 Kafka 分区数 &#x3D; 消费者数 × 1.5）。</li>
+<li><strong>死信队列+重试机制</strong>：处理失败的消息转入死信队列，避免阻塞正常消费。</li>
+<li><strong>自动化扩缩容</strong>：基于积压指标动态调整消费者数量（如 K8s HPA）。</li>
+</ul>
+<p>::: info 主流 MQ 处理</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th>消息队列</th>
+<th>关键操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Kafka</strong></td>
+<td>增加分区+消费者，调整 <code>fetch.max.bytes</code></td>
+</tr>
+<tr>
+<td><strong>RabbitMQ</strong></td>
+<td>镜像队列扩容，提高 <code>prefetch_count</code></td>
+</tr>
+<tr>
+<td><strong>RocketMQ</strong></td>
+<td>消费组扩容，启用定时消息延迟消费</td>
+</tr>
+</tbody></table>
+<h2 id="MQ-高可用"><a href="#MQ-高可用" class="headerlink" title="MQ 高可用"></a>MQ 高可用</h2><h3 id="【困难】如何保证-MQ-的高可用？"><a href="#【困难】如何保证-MQ-的高可用？" class="headerlink" title="【困难】如何保证 MQ 的高可用？"></a>【困难】如何保证 MQ 的高可用？</h3><p>不同 MQ 实现高可用的原理各不相同。因为 Kafka 比较具有代表性，所以这里以 Kafka 为例。</p>
+<p>::: info Kafka 的核心概念</p>
+<p>:::</p>
+<p>了解 Kafka，必须先了解 Kafka 的核心概念：</p>
+<ul>
+<li><p><strong>Broker</strong> - Kafka 集群包含一个或多个节点，这种节点被称为 Broker。</p>
+</li>
+<li><p><strong>Topic</strong> - 每条发布到 Kafka 集群的消息都有一个类别，这个类别被称为 Topic。（不同 Topic 的消息是物理隔离的；同一个 Topic 的消息保存在一个或多个 Broker 上，但用户只需指定消息的 Topic 即可生产或消费数据而不必关心数据存于何处）。对于每一个 Topic， Kafka 集群都会维持一个分区日志。</p>
+</li>
+<li><p><strong>Partition</strong> - 了提高 Kafka 的吞吐率，每个 Topic 包含一个或多个 Partition，每个 Partition 在物理上对应一个文件夹，该文件夹下存储这个 Partition 的所有消息和索引文件。</p>
+<ul>
+<li>Kafka 日志的分区（Partition）分布在 Kafka 集群的节点上。每个节点在处理数据和请求时，共享这些分区。每一个分区都会在已配置的节点上进行备份，确保容错性。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/mq/kafka/kafka-cluster-roles.png" alt="img"></p>
+<p>::: info Kafka 的副本机制</p>
+<p>:::</p>
+<p>Kafka 是如何实现高可用的呢？</p>
+<p>Kafka 在 0.8 以前的版本中，如果一个 Broker 宕机了，其上面的 Partition 都不能用了，这自然不是高可用的。</p>
+<p>为了实现高可用，Kafka 引入了复制功能，简单来说，就是副本机制（ Replicate ）：</p>
+<p><strong>每个 Partition 都有一个 Leader，零个或多个 Follower</strong>。Leader 和 Follower 都是 Broker，每个 Broker 都会成为某些分区的 Leader 和某些分区的 Follower，因此集群的负载是平衡的。</p>
+<ul>
+<li><strong>Leader 处理一切对 Partition （分区）的读写请求</strong>；</li>
+<li><strong>而 Follower 只需被动的同步 Leader 上的数据</strong>。</li>
+</ul>
+<p><strong>同一个 Topic 的不同 Partition 会分布在多个 Broker 上，而且一个 Partition 还会在其他的 Broker 上面进行备份</strong>，Producer 在发布消息到某个 Partition 时，先找到该 Partition 的 Leader，然后向这个 Leader 推送消息；每个 Follower 都从 Leader 拉取消息，拉取消息成功之后，向 Leader 发送一个 ACK 确认。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javaweb/distributed/mq/kafka/kafka-replication.png" alt="img"></p>
+<blockquote>
+<p>FAQ</p>
+<p>问：为什么让 Leader 处理一切对对 Partition （分区）的读写请求？</p>
+<p>答：因为如果允许所有 Broker 都可以处理读写请求，就可能产生数据一致性问题。</p>
+</blockquote>
+<p>::: info Kafka 选举 Leader</p>
+<p>:::</p>
+<p>由上文可知，Partition 在多个 Broker 上存在副本。</p>
+<p>如果某个 Follower 宕机，啥事儿没有，正常工作。</p>
+<p>如果 Leader 宕机了，会从 Follower 中<strong>重新选举</strong>一个新的 Leader。</p>
+<h2 id="MQ-架构"><a href="#MQ-架构" class="headerlink" title="MQ 架构"></a>MQ 架构</h2><h3 id="【困难】Kafka、ActiveMQ、RabbitMQ、RocketMQ-有什么优缺点？"><a href="#【困难】Kafka、ActiveMQ、RabbitMQ、RocketMQ-有什么优缺点？" class="headerlink" title="【困难】Kafka、ActiveMQ、RabbitMQ、RocketMQ 有什么优缺点？"></a>【困难】Kafka、ActiveMQ、RabbitMQ、RocketMQ 有什么优缺点？</h3><p>::: info ActiveMQ</p>
+<p>:::</p>
+<p><code>ActiveMQ</code> 是由 <code>Apache</code> 出品，<code>ActiveMQ</code> 是一个完全支持<code>JMS1.1</code> 和 <code>J2EE 1.4</code> 规范的 <code>JMS Provider</code> 实现。它非常快速，支持 <strong>多种语言的客户端</strong> 和 <strong>协议</strong>，而且可以非常容易的嵌入到企业的应用环境中，并有许多高级功能。</p>
+<p><strong>(a) 主要特性</strong></p>
+<ol>
+<li><strong>服从 JMS 规范</strong>：<code>JMS</code> 规范提供了良好的标准和保证，包括：<strong>同步</strong> 或 <strong>异步</strong> 的消息分发，一次和仅一次的消息分发，<strong>消息接收</strong> 和 <strong>订阅</strong> 等等。遵从 <code>JMS</code> 规范的好处在于，不论使用什么 <code>JMS</code> 实现提供者，这些基础特性都是可用的；</li>
+<li><strong>连接灵活性</strong>：<code>ActiveMQ</code> 提供了广泛的 <strong>连接协议</strong>，支持的协议有：<code>HTTP/S</code>，<code>IP</code> <strong>多播</strong>，<code>SSL</code>，<code>TCP</code>，<code>UDP</code> 等等。对众多协议的支持让 <code>ActiveMQ</code> 拥有了很好的灵活性；</li>
+<li><strong>支持的协议种类多</strong>：<code>OpenWire</code>、<code>STOMP</code>、<code>REST</code>、<code>XMPP</code>、<code>AMQP</code>；</li>
+<li><strong>持久化插件和安全插件</strong>：<code>ActiveMQ</code> 提供了 <strong>多种持久化</strong> 选择。而且，<code>ActiveMQ</code> 的安全性也可以完全依据用户需求进行 <strong>自定义鉴权</strong> 和 <strong>授权</strong>；</li>
+<li><strong>支持的客户端语言种类多</strong>：除了 <code>Java</code> 之外，还有：<code>C/C++</code>，<code>.NET</code>，<code>Perl</code>，<code>PHP</code>，<code>Python</code>，<code>Ruby</code>；</li>
+<li><strong>代理集群</strong>：多个 <code>ActiveMQ</code> <strong>代理</strong> 可以组成一个 <strong>集群</strong> 来提供服务；</li>
+<li><strong>异常简单的管理</strong>：<code>ActiveMQ</code> 是以开发者思维被设计的。所以，它并不需要专门的管理员，因为它提供了简单又使用的管理特性。有很多中方法可以 <strong>监控</strong> <code>ActiveMQ</code> 不同层面的数据，包括使用在 <code>JConsole</code> 或者在 <code>ActiveMQ</code> 的 <code>Web Console</code> 中使用 <code>JMX</code>。通过处理 <code>JMX</code> 的告警消息，通过使用 <strong>命令行脚本</strong>，甚至可以通过监控各种类型的 <strong>日志</strong>。</li>
+</ol>
+<p><strong>(b) 部署环境</strong></p>
+<p><code>ActiveMQ</code> 可以运行在 <code>Java</code> 语言所支持的平台之上。使用 <code>ActiveMQ</code> 需要：</p>
+<ul>
+<li><code>Java JDK</code></li>
+<li><code>ActiveMQ</code> 安装包</li>
+</ul>
+<p><strong>(c) 优点</strong></p>
+<ol>
+<li><strong>跨平台</strong> (<code>JAVA</code> 编写与平台无关，<code>ActiveMQ</code> 几乎可以运行在任何的 <code>JVM</code> 上）；</li>
+<li>可以用 <code>JDBC</code>：可以将 <strong>数据持久化</strong> 到数据库。虽然使用 <code>JDBC</code> 会降低 <code>ActiveMQ</code> 的性能，但是数据库一直都是开发人员最熟悉的存储介质；</li>
+<li>支持 <code>JMS</code> 规范：支持 <code>JMS</code> 规范提供的 <strong>统一接口</strong>;</li>
+<li>支持 <strong>自动重连</strong> 和 <strong>错误重试机制</strong>；</li>
+<li>有安全机制：支持基于 <code>shiro</code>，<code>jaas</code> 等多种 <strong>安全配置机制</strong>，可以对 <code>Queue/Topic</code> 进行 <strong>认证和授权</strong>；</li>
+<li>监控完善：拥有完善的 <strong>监控</strong>，包括 <code>Web Console</code>，<code>JMX</code>，<code>Shell</code> 命令行，<code>Jolokia</code> 的 <code>RESTful API</code>；</li>
+<li>界面友善：提供的 <code>Web Console</code> 可以满足大部分情况，还有很多 <strong>第三方的组件</strong> 可以使用，比如 <code>hawtio</code>；</li>
+</ol>
+<p><strong>(d) 缺点</strong></p>
+<ol>
+<li>社区活跃度不及 <code>RabbitMQ</code> 高；</li>
+<li>根据其他用户反馈，会出莫名其妙的问题，会 <strong>丢失消息</strong>；</li>
+<li>目前重心放到 <code>activemq 6.0</code> 产品 <code>Apollo</code>，对 <code>5.x</code> 的维护较少；</li>
+<li>不适合用于 <strong>上千个队列</strong> 的应用场景；</li>
+</ol>
+<p>::: info RabbitMQ</p>
+<p>:::</p>
+<p><code>RabbitMQ</code> 于 <code>2007</code> 年发布，是一个在 <code>AMQP</code> (<strong>高级消息队列协议</strong>) 基础上完成的，可复用的企业消息系统，是当前最主流的消息中间件之一。</p>
+<p><strong>(a) 主要特性</strong></p>
+<ol>
+<li><strong>可靠性</strong>：提供了多种技术可以让你在 <strong>性能</strong> 和 <strong>可靠性</strong> 之间进行 <strong>权衡</strong>。这些技术包括 <strong>持久性机制</strong>、<strong>投递确认</strong>、<strong>发布者证实</strong> 和 <strong>高可用性机制</strong>；</li>
+<li><strong>灵活的路由</strong>：消息在到达队列前是通过 <strong>交换机</strong> 进行 <strong>路由</strong> 的。<code>RabbitMQ</code> 为典型的路由逻辑提供了 <strong>多种内置交换机</strong> 类型。如果你有更复杂的路由需求，可以将这些交换机组合起来使用，你甚至可以实现自己的交换机类型，并且当做 <code>RabbitMQ</code> 的 <strong>插件</strong> 来使用；</li>
+<li><strong>消息集群</strong>：在相同局域网中的多个 <code>RabbitMQ</code> 服务器可以 <strong>聚合</strong> 在一起，作为一个独立的逻辑代理来使用；</li>
+<li><strong>队列高可用</strong>：队列可以在集群中的机器上 <strong>进行镜像</strong>，以确保在硬件问题下还保证 <strong>消息安全</strong>；</li>
+<li><strong>支持多种协议</strong>：支持 <strong>多种消息队列协议</strong>；</li>
+<li><strong>支持多种语言</strong>：用 <code>Erlang</code> 语言编写，支持只要是你能想到的 <strong>所有编程语言</strong>；</li>
+<li><strong>管理界面</strong>： <code>RabbitMQ</code> 有一个易用的 <strong>用户界面</strong>，使得用户可以 <strong>监控</strong> 和 <strong>管理</strong> 消息 <code>Broker</code> 的许多方面；</li>
+<li><strong>跟踪机制</strong>：如果 <strong>消息异常</strong>，<code>RabbitMQ</code> 提供消息跟踪机制，使用者可以找出发生了什么；</li>
+<li><strong>插件机制</strong>：提供了许多 <strong>插件</strong>，来从多方面进行扩展，也可以编写自己的插件。</li>
+</ol>
+<p><strong>(b) 部署环境</strong></p>
+<p><code>RabbitMQ</code> 可以运行在 <code>Erlang</code> 语言所支持的平台之上，包括 <code>Solaris</code>，<code>BSD</code>，<code>Linux</code>，<code>MacOSX</code>，<code>TRU64</code>，<code>Windows</code> 等。使用 <code>RabbitMQ</code> 需要：</p>
+<ul>
+<li><code>ErLang</code> 语言包</li>
+<li><code>RabbitMQ</code> 安装包</li>
+</ul>
+<p><strong>(c) 优点</strong></p>
+<ol>
+<li>由于 <code>Erlang</code> 语言的特性，消息队列性能较好，支持 <strong>高并发</strong>；</li>
+<li>健壮、稳定、易用、<strong>跨平台</strong>、支持 <strong>多种语言</strong>、文档齐全；</li>
+<li>有消息 <strong>确认机制</strong> 和 <strong>持久化机制</strong>，可靠性高；</li>
+<li>高度可定制的 <strong>路由</strong>；</li>
+<li><strong>管理界面</strong> 较丰富，在互联网公司也有较大规模的应用，社区活跃度高。</li>
+</ol>
+<p><strong>(d) 缺点</strong></p>
+<ol>
+<li>尽管结合 <code>Erlang</code> 语言本身的并发优势，性能较好，但是不利于做 <strong>二次开发和维护</strong>；</li>
+<li>实现了 <strong>代理架构</strong>，意味着消息在发送到客户端之前可以在 <strong>中央节点</strong> 上排队。此特性使得 <code>RabbitMQ</code> 易于使用和部署，但是使得其 <strong>运行速度较慢</strong>，因为中央节点 <strong>增加了延迟</strong>，<strong>消息封装后</strong> 也比较大；</li>
+<li>需要学习 <strong>比较复杂</strong> 的 <strong>接口和协议</strong>，学习和维护成本较高。</li>
+</ol>
+<p>::: info RocketMQ</p>
+<p>:::</p>
+<p><code>RocketMQ</code> 出自 <strong>阿里</strong> 的开源产品，用 <code>Java</code> 语言实现，在设计时参考了 <code>Kafka</code>，并做出了自己的一些改进，<strong>消息可靠性上</strong> 比 <code>Kafka</code> 更好。<code>RocketMQ</code> 在阿里内部  被广泛应用在 <strong>订单</strong>，<strong>交易</strong>，<strong>充值</strong>，<strong>流计算</strong>，<strong>消息推送</strong>，<strong>日志流式处理</strong>，<code>binglog</code> <strong>分发</strong> 等场景。</p>
+<p><strong>(a) 主要特性</strong></p>
+<ol>
+<li>基于 <strong>队列模型</strong>：具有 <strong>高性能</strong>、<strong>高可靠</strong>、<strong>高实时</strong>、<strong>分布式</strong> 等特点；</li>
+<li><code>Producer</code>、<code>Consumer</code>、<strong>队列</strong> 都支持 <strong>分布式</strong>；</li>
+<li><code>Producer</code> 向一些队列轮流发送消息，<strong>队列集合</strong> 称为 <code>Topic</code>。<code>Consumer</code> 如果做 <strong>广播消费</strong>，则一个 <code>Consumer</code> 实例消费这个 <code>Topic</code> 对应的 <strong>所有队列</strong>；如果做 <strong>集群消费</strong>，则 <strong>多个</strong> <code>Consumer</code> 实例 <strong>平均消费</strong> 这个 <code>Topic</code> 对应的队列集合；</li>
+<li>能够保证 <strong>严格的消息顺序</strong>；</li>
+<li>提供丰富的 <strong>消息拉取模式</strong>；</li>
+<li>高效的订阅者 <strong>水平扩展</strong>能力；</li>
+<li><strong>实时</strong> 的 <strong>消息订阅机制</strong>；</li>
+<li>亿级 <strong>消息堆积</strong> 能力；</li>
+<li>较少的外部依赖。</li>
+</ol>
+<p><strong>(b) 部署环境</strong></p>
+<p><code>RocketMQ</code> 可以运行在 <code>Java</code> 语言所支持的平台之上。使用 <code>RocketMQ</code> 需要：</p>
+<ul>
+<li><code>Java JDK</code></li>
+<li>安装 <code>git</code>、<code>Maven</code></li>
+<li><code>RocketMQ</code> 安装包</li>
+</ul>
+<p><strong>(c) 优点</strong></p>
+<ol>
+<li><strong>单机</strong> 支持 <code>1</code> 万以上 <strong>持久化队列</strong>；</li>
+<li><code>RocketMQ</code> 的所有消息都是 <strong>持久化的</strong>，先写入系统 <code>PAGECACHE</code>，然后 <strong>刷盘</strong>，可以保证 <strong>内存</strong> 与 <strong>磁盘</strong> 都有一份数据，而 <strong>访问</strong> 时，直接 <strong>从内存读取</strong>。</li>
+<li>模型简单，接口易用（<code>JMS</code> 的接口很多场合并不太实用）；</li>
+<li><strong>性能非常好</strong>，可以允许 <strong>大量堆积消息</strong> 在 <code>Broker</code> 中；</li>
+<li>支持 <strong>多种消费模式</strong>，包括 <strong>集群消费</strong>、<strong>广播消费</strong>等；</li>
+<li>各个环节 <strong>分布式扩展设计</strong>，支持 <strong>主从</strong> 和 <strong>高可用</strong>；</li>
+<li>开发度较活跃，版本更新很快。</li>
+</ol>
+<p><strong>(d) 缺点</strong></p>
+<ol>
+<li>支持的 <strong>客户端语言</strong> 不多，目前是 <code>Java</code> 及 <code>C++</code>，其中 <code>C++</code> 还不成熟；</li>
+<li><code>RocketMQ</code> 社区关注度及成熟度也不及前两者；</li>
+<li>没有 <code>Web</code> 管理界面，提供了一个 <code>CLI</code> （命令行界面） 管理工具带来 <strong>查询</strong>、<strong>管理</strong> 和 <strong>诊断各种问题</strong>；</li>
+<li>没有在 <code>MQ</code> 核心里实现 <code>JMS</code> 等接口；</li>
+</ol>
+<p>::: info Kafka</p>
+<p>:::</p>
+<p><code>Apache Kafka</code> 是一个 <strong>分布式消息发布订阅</strong> 系统。它最初由 <code>LinkedIn</code> 公司基于独特的设计实现为一个 <strong>分布式的日志提交系统</strong> (<code>a distributed commit log</code>)，之后成为 <code>Apache</code> 项目的一部分。<code>Kafka</code> <strong>性能高效</strong>、<strong>可扩展良好</strong> 并且 <strong>可持久化</strong>。它的 <strong>分区特性</strong>，<strong>可复制</strong> 和 <strong>可容错</strong> 都是其不错的特性。</p>
+<p><strong>(a) 主要特性</strong></p>
+<ol>
+<li><strong>快速持久化</strong>：可以在 <code>O(1)</code> 的系统开销下进行 <strong>消息持久化</strong>；</li>
+<li><strong>高吞吐</strong>：在一台普通的服务器上既可以达到 <code>10W/s</code> 的 <strong>吞吐速率</strong>；</li>
+<li><strong>完全的分布式系统</strong>：<code>Broker</code>、<code>Producer</code> 和 <code>Consumer</code> 都原生自动支持 <strong>分布式</strong>，自动实现 <strong>负载均衡</strong>；</li>
+<li>支持 <strong>同步</strong> 和 <strong>异步</strong> 复制两种 <strong>高可用机制</strong>；</li>
+<li>支持 <strong>数据批量发送</strong> 和 <strong>拉取</strong>；</li>
+<li>**零拷贝技术 (zero-copy)**：减少 <code>IO</code> 操作步骤，提高 <strong>系统吞吐量</strong>；</li>
+<li><strong>数据迁移</strong>、<strong>扩容</strong> 对用户透明；</li>
+<li><strong>无需停机</strong> 即可扩展机器；</li>
+<li><strong>其他特性</strong>：丰富的 <strong>消息拉取模型</strong>、高效 <strong>订阅者水平扩展</strong>、实时的 <strong>消息订阅</strong>、亿级的 <strong>消息堆积能力</strong>、定期删除机制；</li>
+</ol>
+<p><strong>(b) 部署环境</strong></p>
+<p>使用 <code>Kafka</code> 需要：</p>
+<ul>
+<li><code>Java JDK</code></li>
+<li><code>Kafka</code> 安装包</li>
+</ul>
+<p><strong>(c) 优点</strong></p>
+<ol>
+<li><strong>客户端语言丰富</strong>：支持 <code>Java</code>、<code>.Net</code>、<code>PHP</code>、<code>Ruby</code>、<code>Python</code>、<code>Go</code> 等多种语言；</li>
+<li><strong>高性能</strong>：单机写入 <code>TPS</code> 约在 <code>100</code> 万条&#x2F;秒，消息大小 <code>10</code> 个字节；</li>
+<li>提供 <strong>完全分布式架构</strong>，并有 <code>replica</code> 机制，拥有较高的 <strong>可用性</strong> 和 <strong>可靠性</strong>，理论上支持 <strong>消息无限堆积</strong>；</li>
+<li>支持批量操作；</li>
+<li><strong>消费者</strong> 采用 <code>Pull</code> 方式获取消息。<strong>消息有序</strong>，<strong>通过控制</strong> 能够保证所有消息被消费且仅被消费 <strong>一次</strong>；</li>
+<li>有优秀的第三方 <code>Kafka Web</code> 管理界面 <code>Kafka-Manager</code>；</li>
+<li>在 <strong>日志领域</strong> 比较成熟，被多家公司和多个开源项目使用。</li>
+</ol>
+<p><strong>(d) 缺点</strong></p>
+<ol>
+<li><code>Kafka</code> 单机超过 <code>64</code> 个 <strong>队列&#x2F;分区</strong> 时，<code>Load</code> 时会发生明显的飙高现象。<strong>队列</strong> 越多，<strong>负载</strong> 越高，发送消息 <strong>响应时间变长</strong>；</li>
+<li>使用 <strong>短轮询方式</strong>，<strong>实时性</strong> 取决于 <strong>轮询间隔时间</strong>；</li>
+<li>消费失败 <strong>不支持重试</strong>；</li>
+<li>支持 <strong>消息顺序</strong>，但是 <strong>一台代理宕机</strong> 后，就会产生 <strong>消息乱序</strong>；</li>
+<li>社区更新较慢。</li>
+</ol>
+<p>::: info 技术选型</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>RocketMQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单机吞吐量</td>
+<td>万级，比 RocketMQ、Kafka 低一个数量级</td>
+<td>同 ActiveMQ</td>
+<td>10 万级，支撑高吞吐</td>
+<td>10 万级，高吞吐，一般配合大数据类的系统来进行实时数据计算、日志采集等场景</td>
+</tr>
+<tr>
+<td>topic 数量对吞吐量的影响</td>
+<td></td>
+<td></td>
+<td>topic 可以达到几百&#x2F;几千的级别，吞吐量会有较小幅度的下降，这是 RocketMQ 的一大优势，在同等机器下，可以支撑大量的 topic</td>
+<td>topic 从几十到几百个时候，吞吐量会大幅度下降，在同等机器下，Kafka 尽量保证 topic 数量不要过多，如果要支撑大规模的 topic，需要增加更多的机器资源</td>
+</tr>
+<tr>
+<td>时效性</td>
+<td>ms 级</td>
+<td>微秒级，这是 RabbitMQ 的一大特点，延迟最低</td>
+<td>ms 级</td>
+<td>延迟在 ms 级以内</td>
+</tr>
+<tr>
+<td>可用性</td>
+<td>高，基于主从架构实现高可用</td>
+<td>同 ActiveMQ</td>
+<td>非常高，分布式架构</td>
+<td>非常高，分布式，一个数据多个副本，少数机器宕机，不会丢失数据，不会导致不可用</td>
+</tr>
+<tr>
+<td>消息可靠性</td>
+<td>有较低的概率丢失数据</td>
+<td>基本不丢</td>
+<td>经过参数优化配置，可以做到 0 丢失</td>
+<td>同 RocketMQ</td>
+</tr>
+<tr>
+<td>功能支持</td>
+<td>MQ 领域的功能极其完备</td>
+<td>基于 erlang 开发，并发能力很强，性能极好，延时很低</td>
+<td>MQ 功能较为完善，还是分布式的，扩展性好</td>
+<td>功能较为简单，主要支持简单的 MQ 功能，在大数据领域的实时计算以及日志采集被大规模使用</td>
+</tr>
+</tbody></table>
+<p>综上，各种对比之后，有如下建议：</p>
+<ul>
+<li>一般的业务系统要引入 MQ，最早大家都用 ActiveMQ，但是现在确实大家用的不多了，没经过大规模吞吐量场景的验证，社区也不是很活跃，所以大家还是算了吧，我个人不推荐用这个了；</li>
+<li>后来大家开始用 RabbitMQ，但是确实 erlang 语言阻止了大量的 Java 工程师去深入研究和掌控它，对公司而言，几乎处于不可控的状态，但是确实人家是开源的，比较稳定的支持，活跃度也高；</li>
+<li>不过现在确实越来越多的公司会去用 RocketMQ，确实很不错，毕竟是阿里出品，但社区可能有突然黄掉的风险（目前 RocketMQ 已捐给 <a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq">Apache</a>，但 GitHub 上的活跃度其实不算高）对自己公司技术实力有绝对自信的，推荐用 RocketMQ，否则回去老老实实用 RabbitMQ 吧，人家有活跃的开源社区，绝对不会黄。</li>
+<li>所以<strong>中小型公司</strong>，技术实力较为一般，技术挑战不是特别高，用 RabbitMQ 是不错的选择；<strong>大型公司</strong>，基础架构研发实力较强，用 RocketMQ 是很好的选择。</li>
+<li>如果是<strong>大数据领域</strong>的实时计算、日志采集等场景，用 Kafka 是业内标准的，绝对没问题，社区活跃度很高，绝对不会黄，何况几乎是全世界这个领域的事实性规范。</li>
+</ul>
+<h3 id="【困难】什么是-JMS？"><a href="#【困难】什么是-JMS？" class="headerlink" title="【困难】什么是 JMS？"></a>【困难】什么是 JMS？</h3><p>提到 MQ，就顺便提一下 JMS 。</p>
+<p><strong>JMS（JAVA Message Service，java 消息服务）API 是一个消息服务的标准&#x2F;规范，允许应用程序组件基于 JavaEE 平台创建、发送、接收和读取消息</strong>。它使分布式通信耦合度更低，消息服务更加可靠以及异步性。</p>
+<p>在 EJB 架构中，有消息 bean 可以无缝的与 JMS 消息服务集成。在 J2EE 架构模式中，有消息服务者模式，用于实现消息与应用直接的解耦。</p>
+<p>::: info JMS 消息模型</p>
+<p>:::</p>
+<p>在 JMS 标准中，有两种消息模型：</p>
+<ul>
+<li>P2P(Point to Point)</li>
+<li>Pub&#x2F;Sub(Publish&#x2F;Subscribe)</li>
+</ul>
+<p><strong>P2P 模式</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3101171-2adc66e2367cd2c2.png"></p>
+<p>P2P 模式包含三个角色：MQ（Queue），发送者 (Sender)，接收者 (Receiver)。每个消息都被发送到一个特定的队列，接收者从队列中获取消息。队列保留着消息，直到他们被消费或超时。</p>
+<p>P2P 的特点</p>
+<ul>
+<li>每个消息只有一个消费者（Consumer）（即一旦被消费，消息就不再在 MQ 中）</li>
+<li>发送者和接收者之间在时间上没有依赖性，也就是说当发送者发送了消息之后，不管接收者有没有正在运行，它不会影响到消息被发送到队列</li>
+<li>接收者在成功接收消息之后需向队列应答成功</li>
+</ul>
+<p>如果希望发送的每个消息都会被成功处理的话，那么需要 P2P 模式。</p>
+<p><strong>Pub&#x2F;sub 模式</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3101171-12afe9581da889ea.png"></p>
+<p>包含三个角色主题（Topic），发布者（Publisher），订阅者（Subscriber） 。多个发布者将消息发送到 Topic, 系统将这些消息传递给多个订阅者。</p>
+<p>Pub&#x2F;Sub 的特点</p>
+<ul>
+<li>每个消息可以有多个消费者</li>
+<li>发布者和订阅者之间有时间上的依赖性。针对某个主题（Topic）的订阅者，它必须创建一个订阅者之后，才能消费发布者的消息。</li>
+<li>为了消费消息，订阅者必须保持运行的状态。</li>
+</ul>
+<p>为了缓和这样严格的时间相关性，JMS 允许订阅者创建一个可持久化的订阅。这样，即使订阅者没有被激活（运行），它也能接收到发布者的消息。</p>
+<p>如果希望发送的消息可以不被做任何处理、或者只被一个消息者处理、或者可以被多个消费者处理的话，那么可以采用 Pub&#x2F;Sub 模型。</p>
+<p>::: info JMS 消息消费</p>
+<p>:::</p>
+<p>在 JMS 中，消息的产生和消费都是异步的。对于消费来说，JMS 的消息者可以通过两种方式来消费消息。</p>
+<ul>
+<li><strong>同步</strong> - 订阅者或接收者通过 <code>receive</code> 方法来接收消息，<code>receive</code> 方法在接收到消息之前（或超时之前）将一直阻塞；</li>
+<li><strong>异步</strong> - 订阅者或接收者可以注册为一个消息监听器。当消息到达之后，系统自动调用监听器的 <code>onMessage</code> 方法。</li>
+</ul>
+<p><code>JNDI</code> - Java 命名和目录接口，是一种标准的 Java 命名系统接口。可以在网络上查找和访问服务。通过指定一个资源名称，该名称对应于数据库或命名服务中的一个记录，同时返回资源连接建立所必须的信息。</p>
+<p>JNDI 在 JMS 中起到查找和访问发送目标或消息来源的作用。</p>
+<h3 id="【中等】什么是-AMQP？"><a href="#【中等】什么是-AMQP？" class="headerlink" title="【中等】什么是 AMQP？"></a>【中等】什么是 AMQP？</h3><p>AMQP（Advanced Message Queuing Protocol）是一种应用层协议，<strong>用于在消息队列系统中定义消息的格式、传输方式和处理机制</strong>。</p>
+<p>AMQP 是一个<strong>面向消息的</strong>、<strong>异步传输</strong>的协议，具有高可靠性、可拓展性、跨平台的特性，适合在分布式系统中传输重要数据。它是 RabbitMQ、ActiveMQ 等消息中间件的底层协议。</p>
+<p><strong>核心组件</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>组件</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Connection</strong></td>
+<td>客户端与消息代理（如 RabbitMQ）的物理连接</td>
+</tr>
+<tr>
+<td><strong>Channel</strong></td>
+<td>逻辑通信链路（多路复用连接，减少开销）</td>
+</tr>
+<tr>
+<td><strong>Exchange</strong></td>
+<td>消息路由枢纽（支持多种路由策略）</td>
+</tr>
+<tr>
+<td><strong>Queue</strong></td>
+<td>存储消息的容器，消费者从中拉取数据</td>
+</tr>
+<tr>
+<td><strong>Binding</strong></td>
+<td>定义 Exchange 与 Queue 的映射关系（含路由规则）</td>
+</tr>
+</tbody></table>
+<p><strong>路由模型</strong></p>
+<ul>
+<li><strong>Direct</strong>：精确匹配路由键（如 <code>order.create</code>）</li>
+<li><strong>Fanout</strong>：广播到所有绑定队列（无视路由键）</li>
+<li><strong>Topic</strong>：通配符匹配（如 <code>order.*</code>）</li>
+<li><strong>Headers</strong>：基于消息头键值匹配（非路由键）</li>
+</ul>
+<p><strong>可靠性保障</strong></p>
+<ul>
+<li><strong>消息确认</strong>：消费者手动确认，失败则重入队列</li>
+<li><strong>持久化</strong>：队列&#x2F;消息持久化防丢失</li>
+<li><strong>事务</strong>：支持原子性提交&#x2F;回滚（批量操作）</li>
+</ul>
+<p><strong>协议对比</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>协议</strong></th>
+<th><strong>优势场景</strong></th>
+<th><strong>局限性</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AMQP</strong></td>
+<td>企业级应用（强事务、高可靠）</td>
+<td>略重（不适合 IoT 轻量场景）</td>
+</tr>
+<tr>
+<td><strong>MQTT</strong></td>
+<td>物联网（低功耗、低带宽）</td>
+<td>功能简单（无复杂路由）</td>
+</tr>
+<tr>
+<td><strong>JMS</strong></td>
+<td>Java 生态集成</td>
+<td>仅限 Java，跨平台性弱</td>
+</tr>
+</tbody></table>
+<h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><h3 id="【困难】Kafka-为什么性能高？"><a href="#【困难】Kafka-为什么性能高？" class="headerlink" title="【困难】Kafka 为什么性能高？"></a>【困难】Kafka 为什么性能高？</h3><p>Kafka 的数据存储在磁盘上，为什么还能这么快？</p>
+<p>说 Kafka 很快时，他们通常指的是 Kafka 高效移动大量数据的能力。Kafka 为了提高传输效率，做了很多精妙的设计。</p>
+<p>::: info 顺序 I&#x2F;O（追加写入）</p>
+<p>:::</p>
+<p>磁盘读写有两种方式：顺序读写或者随机读写。在顺序读写的情况下，磁盘的顺序读写速度和内存接近。因为磁盘是机械结构，每次读写都会寻址写入，其中寻址是一个“机械动作”。Kafka 利用了一种分段式的、只追加 (Append-Only) 的日志，基本上把自身的读写操作限制为<strong>顺序 I&#x2F;O</strong>，也就使得它在各种存储介质上能有很快的速度。</p>
+<p>::: info 零拷贝</p>
+<p>:::</p>
+<p>Kafka 数据传输是一个从网络到磁盘，再由磁盘到网络的过程。在网络和磁盘之间传输数据时，消除多余的复制是提高效率的关键。<strong>Kafka 利用零拷贝技术来消除传输过程中的多余复制</strong>。</p>
+<p>如果不采用零拷贝，Kafka 将数据同步给消费者的大致流程是：</p>
+<ol>
+<li>从磁盘加载数据到 os buffer</li>
+<li>拷贝数据到 app buffer</li>
+<li>再拷贝数据到 socket buffer</li>
+<li>接下来，将数据拷贝到网卡 buffer</li>
+<li>最后，通过网络传输，将数据发送到消费者</li>
+</ol>
+<p>采用零拷贝技术，Kafka 使用 <code>sendfile()</code> 系统方法，将数据从 os buffer 直接复制到网卡 buffer。这个过程中，唯一一次复制数据是从 os buffer 到网卡 buffer。这个复制过程是通过 DMA（Direct Memory Access，直接内存访问） 完成的。使用 DMA 时，CPU 不参与，这使得它非常高效。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502070727055.webp"></p>
+<p>::: info 其他性能设计</p>
+<p>:::</p>
+<ul>
+<li><strong>页缓存</strong> - Kafka 的数据并不是实时的写入磁盘，它充分利用了现代操作系统分页存储来利用内存提高 I&#x2F;O 效率。具体来说，就是把磁盘中的数据缓存到内存中，把对磁盘的访问变为对内存的访问。Kafka 接收来自 socket buffer 的网络数据，应用进程不需要中间处理、直接进行持久化时。可以使用 mmap 内存文件映射。</li>
+<li><strong>压缩</strong> - Kafka 内置了几种压缩算法，并允许定制化压缩算法。通过压缩算法，可以有效减少传输数据的大小，从而提升传输效率。</li>
+<li><strong>批处理</strong> - Kafka 的 Clients 和 Brokers 会把多条读写的日志记录合并成一个批次，然后才通过网络发送出去。日志记录的批处理通过使用更大的包以及提高带宽效率来摊薄网络往返的开销。</li>
+<li><strong>分区</strong> - Kafka 将 Topic 分区，每个分区对应一个名为的 Log 的磁盘目录，而 Log 又根据大小，可以分为多个 Log Segment 文件。这种分而治之的策略，使得 Kafka 可以<strong>并发</strong>读，以支撑非常高的吞吐量。此外，Kafka 支持负载均衡机制，将数据分区近似均匀地分配给消费者群组的各个消费者。</li>
+</ul>
+<h3 id="【困难】ZooKeeper-在-Kafka-中的作用是什么？"><a href="#【困难】ZooKeeper-在-Kafka-中的作用是什么？" class="headerlink" title="【困难】ZooKeeper 在 Kafka 中的作用是什么？"></a>【困难】ZooKeeper 在 Kafka 中的作用是什么？</h3><p>ZooKeeper 在 Kafka 中扮演着<strong>核心的协调者角色</strong>，主要负责集群的元数据管理、Broker 协调和状态维护。这些管理机制可以确保集群一致性、高可用性和协调能力。</p>
+<p><strong>Broker 管理</strong></p>
+<ul>
+<li><strong>节点注册与存活监控</strong>：每个 Kafka Broker 启动时会在 ZooKeeper 中注册临时节点（<code>/brokers/ids</code>）。ZooKeeper 通过心跳机制监控 Broker 存活状态，若 Broker 宕机，临时节点消失，集群会触发重新选举或分区重新分配。</li>
+<li><strong>Leader 选举</strong>：Kafka 分区的 Leader 副本选举由 ZooKeeper 协调完成（旧版本依赖 ZooKeeper，新版本已逐步迁移至 Kafka 自身协议）。</li>
+</ul>
+<p><strong>Topic 与分区元数据</strong></p>
+<ul>
+<li><strong>存储拓扑信息</strong>：Topic 的分区数量、副本分布（<code>/brokers/topics/[topic]</code>）等元数据由 ZooKeeper 维护，供所有 Broker 和客户端查询。</li>
+<li><strong>分区状态同步</strong>：分区 Leader 变更、ISR（In-Sync Replicas）列表更新等操作通过 ZooKeeper 通知其他 Broker。</li>
+</ul>
+<p><strong>控制器（Controller）选举</strong></p>
+<p>Kafka 集群中的某个 Broker 会被选举为 Controller（通过 ZooKeeper 的临时节点竞争），负责分区 Leader 选举、副本分配等关键任务。Controller 故障时，ZooKeeper 会触发重新选举。</p>
+<p><strong>客户端服务发现</strong></p>
+<p>生产者和消费者通过 ZooKeeper（旧版本）或直接通过 Broker（新版本）获取集群的 Broker 列表和 Topic 元数据，以确定数据的读写位置。</p>
+<p><strong>ACL 与配额管理</strong>（可选）</p>
+<p>ZooKeeper 存储访问控制列表（ACL）和客户端配额配置，用于权限控制和流量限制。</p>
+<p><strong>KRaft 将替代 ZooKeeper</strong></p>
+<p><strong>Kafka 2.8+ 版本</strong>开始支持** KRaft 模式**（基于 Raft 协议），逐步弃用 ZooKeeper，将元数据管理和选举逻辑内置于 Kafka 自身，以简化架构并提升性能。但在大多数生产环境中，ZooKeeper 仍广泛使用。</p>
+<h3 id="【中等】Kafka-为什么要弃用-Zookeeper？"><a href="#【中等】Kafka-为什么要弃用-Zookeeper？" class="headerlink" title="【中等】Kafka 为什么要弃用 Zookeeper？"></a>【中等】Kafka 为什么要弃用 Zookeeper？</h3><p>Kafka 弃用 ZooKeeper 主要是为了<strong>简化架构、提升性能、降低运维复杂度</strong>。</p>
+<p><strong>减少外部依赖</strong></p>
+<ul>
+<li><strong>架构简化</strong>：ZooKeeper 是独立的外部系统，需额外部署和维护。移除后，Kafka 成为完全自包含的系统，降低部署和运维成本。</li>
+<li><strong>避免单点风险</strong>：ZooKeeper 本身需要集群化，若出现故障会影响 Kafka 的元数据管理，内嵌治理逻辑可减少此类风险。</li>
+</ul>
+<p><strong>提升扩展性与性能</strong></p>
+<ul>
+<li><strong>元数据效率</strong>：ZooKeeper 的写操作（如 Leader 选举）是串行的，可能成为瓶颈。Kafka 内置的 <strong>KRaft 协议</strong>（基于 Raft）支持并行日志写入，显著提升元数据处理速度（如分区扩容、Leader 切换）。</li>
+<li><strong>降低延迟</strong>：省去与 ZooKeeper 的网络通信，元数据操作（如 Broker 注册、Topic 变更）延迟更低。</li>
+</ul>
+<p><strong>统一元数据管理</strong></p>
+<ul>
+<li><strong>一致性模型统一</strong>：ZooKeeper 使用 ZAB 协议，而 Kafka 使用自身的日志复制机制，两者不一致可能导致协调问题。KRaft 模式通过单一协议（Raft）管理所有元数据，逻辑更清晰。</li>
+<li><strong>简化客户端访问</strong>：旧版客户端需同时连接 Kafka 和 ZooKeeper，新版只需直连 Kafka Broker。</li>
+</ul>
+<p><strong>支持更大规模集群</strong></p>
+<p><strong>ZooKeeper 的局限性</strong>：ZooKeeper 对节点数量（通常≤7）和 Watcher 数量有限制，影响 Kafka 集群的扩展性。KRaft 模式通过分片和流式元数据传递，支持超大规模集群（如数十万分区）。</p>
+<p><strong>补充说明</strong></p>
+<ul>
+<li>Kafka 2.8+ 开始实验性支持 KRaft 模式，3.0+ 逐步稳定，但仍兼容 ZooKeeper 模式。</li>
+<li>完全移除 ZooKeeper 需确保 KRaft 在生产环境中的成熟度（如故障恢复、监控工具链完善）。</li>
+</ul>
+<h3 id="【中等】Kafka-中如何实现时间轮？"><a href="#【中等】Kafka-中如何实现时间轮？" class="headerlink" title="【中等】Kafka 中如何实现时间轮？"></a>【中等】Kafka 中如何实现时间轮？</h3><p>时间轮是用于高效管理和调度大量定时任务的<strong>环形数据结构</strong>，通过时间分片（槽）管理任务，优化调度效率。</p>
+<p><strong>数据结构</strong></p>
+<ul>
+<li><strong>环形数组</strong>：每个槽代表一个时间片（如 1 秒），存储双向链表管理的任务。</li>
+<li><strong>指针移动</strong>：以固定时间步长推进，触发当前槽的任务执行。</li>
+</ul>
+<p><strong>工作原理</strong></p>
+<ul>
+<li><strong>任务插入</strong>：根据延迟时间计算槽位（如 <code>延迟 % 槽数</code>），插入链表尾部（<code>O(1)</code> 复杂度）。</li>
+<li><strong>任务触发</strong>：指针每移动一格，执行对应槽中所有任务。</li>
+</ul>
+<p><strong>处理长延迟任务</strong></p>
+<ul>
+<li><strong>方案 1：轮次（Netty）</strong>：计算轮数（如 <code>（延迟-1)/槽数</code>），轮数归零时触发。</li>
+<li><strong>方案 2：多层次时间轮（Kafka）</strong><ul>
+<li><strong>层级递进</strong>：高层槽覆盖更大时间范围（如秒→分→时）。</li>
+<li><strong>降级机制</strong>：任务随时间推移从高层移至底层，保证精度。</li>
+</ul>
+</li>
+</ul>
+<p><strong>优点</strong></p>
+<ul>
+<li><strong>高效性</strong>：插入&#x2F;删除任务 O(1) 复杂度。</li>
+<li><strong>低内存开销</strong>：固定槽数，内存占用稳定。</li>
+</ul>
+<p><strong>应用场景</strong></p>
+<ul>
+<li>高并发定时任务（如 Netty 的超时检测）。</li>
+<li>网络服务器（连接&#x2F;请求超时管理）。</li>
+<li>分布式系统（节点间任务协调）。</li>
+</ul>
+<p><strong>实际应用</strong></p>
+<ul>
+<li><strong>Netty</strong>：<code>HashedWheelTimer</code>（单层+轮次）。</li>
+<li><strong>Kafka</strong>：多层次时间轮+降级。</li>
+<li><strong>Caffeine Cache</strong>：本地缓存的任务调度。</li>
+</ul>
+<h3 id="【中等】Kafka-的索引设计有什么亮点？"><a href="#【中等】Kafka-的索引设计有什么亮点？" class="headerlink" title="【中等】Kafka 的索引设计有什么亮点？"></a>【中等】Kafka 的索引设计有什么亮点？</h3><p>Kafka 的索引设计通过<strong>稀疏索引 + 二分查找 + 分段存储</strong>，在<strong>查询效率、存储成本、扩展性</strong>之间取得平衡，适合高吞吐、低延迟的消息系统需求。</p>
+<p>Kafka 的索引设计（主要涉及<strong>偏移量索引（.index）和时间戳索引（.timeindex）</strong>）具有以下核心优势：</p>
+<p><strong>高效查询（O(1) ~ O(logN) 复杂度）</strong></p>
+<ul>
+<li><strong>稀疏索引</strong>：不存储每条消息的索引，而是按一定间隔（如每 4KB 数据）建立索引项，大幅减少索引文件大小。</li>
+<li><strong>二分查找</strong>：通过索引快速定位消息所在的<strong>物理位置（磁盘文件+偏移量）</strong>，减少全量扫描。</li>
+</ul>
+<p><strong>低存储开销</strong></p>
+<ul>
+<li><strong>紧凑结构</strong>：索引文件仅存储<strong>偏移量 + 物理位置</strong>（固定 8 字节&#x2F;项），占用空间极小。</li>
+<li><strong>分段存储</strong>：每个日志段（Segment）独立维护索引，避免单一大文件索引的性能瓶颈。</li>
+</ul>
+<p><strong>快速故障恢复</strong></p>
+<ul>
+<li><strong>内存映射（MMAP）</strong>：索引文件通过内存映射加速读取，重启时无需全量加载。</li>
+<li><strong>懒加载</strong>：仅加载活跃分片的索引，减少启动时间。</li>
+</ul>
+<p><strong>支持时间范围查询</strong>：<strong>时间戳索引（.timeindex）</strong>允许按时间戳快速定位消息，适用于日志回溯、监控等场景。</p>
+<p><strong>索引自动更新</strong>：日志压缩（Compaction）或删除（Retention）时，索引同步清理，避免无效查询。</p>
+<h3 id="【困难】Kafka-处理请求的全流程？"><a href="#【困难】Kafka-处理请求的全流程？" class="headerlink" title="【困难】Kafka 处理请求的全流程？"></a>【困难】Kafka 处理请求的全流程？</h3><p>Kafka 采用 <strong>多线程池 + 事件驱动</strong> 模型，核心线程组分工如下：</p>
+<p><strong>网络通信层（1 个 Acceptor + N 个 Processor）</strong></p>
+<ul>
+<li><strong>Acceptor 线程</strong>（1 个）：监听 <code>ServerSocket</code>，接收客户端连接，轮询分发给 <code>Processor</code> 线程。</li>
+<li><strong>Processor 线程</strong>（默认 3 个，可配置）：每个 <code>Processor</code> 维护一个 <code>Selector</code>（NIO），负责：<ul>
+<li><strong>读请求</strong>：解析请求数据，放入<strong>共享请求队列</strong>（<code>RequestChannel</code>）。</li>
+<li><strong>写响应</strong>：从 <code>ResponseQueue</code> 获取结果，通过 <code>Socket</code> 返回客户端。</li>
+</ul>
+</li>
+</ul>
+<p><strong>请求处理层（KafkaRequestHandlerPool）</strong></p>
+<p><strong>IO 线程池</strong>（默认 8 个，可配置）从 <code>RequestChannel</code> 拉取请求，根据类型调用对应 <code>API 层</code> 处理（如 <code>handleProduceRequest</code>）。</p>
+<p>关键操作：</p>
+<ul>
+<li><strong>生产请求</strong>：写入 Leader 副本的 <code>LogSegment</code>（内存→PageCache→磁盘）。</li>
+<li><strong>消费请求</strong>：从 <code>PageCache</code> 或磁盘读取数据（零拷贝优化）。</li>
+</ul>
+<p><strong>后台线程</strong></p>
+<ul>
+<li><strong>Log Cleaner</strong>：日志压缩（Compaction）和删除（Retention）。</li>
+<li><strong>Replica Manager</strong>：副本同步（ISR）、Leader 选举。</li>
+<li><strong>Delayed Operation</strong>：处理延迟操作（如 <code>Produce</code> 的 ACK 等待）。</li>
+</ul>
+<p><img src="https://rahulvishwakarma.wordpress.com/wp-content/uploads/2016/06/kafka-broker-internals.png?w=634" alt="kafka broker internals"></p>
+<p><strong>核心设计优势</strong></p>
+<ul>
+<li><strong>解耦网络 I&#x2F;O 与业务处理</strong>：<code>Processor</code> 仅负责通信，<code>Handler</code> 专注逻辑。</li>
+<li><strong>无锁队列</strong>：<code>RequestChannel</code> 使用 <code>ConcurrentLinkedQueue</code>，减少竞争。</li>
+<li><strong>动态扩展</strong>：可调整 <code>Processor</code> 和 <code>Handler</code> 线程数适配负载。</li>
+</ul>
+<h3 id="【困难】Kafka-中如何实现事务机制？"><a href="#【困难】Kafka-中如何实现事务机制？" class="headerlink" title="【困难】Kafka 中如何实现事务机制？"></a>【困难】Kafka 中如何实现事务机制？</h3><p>::: info Kafka 事务实现</p>
+<p>:::</p>
+<p>Kafka 事务是为了实现消息的 <strong>Exactly-Once 语义</strong>，确保消息在生产、传输、消费过程中<strong>仅处理一次</strong>。</p>
+<p><strong>关键组件</strong></p>
+<ul>
+<li><strong>事务协调器</strong>：管理事务生命周期，状态持久化到<code>__transaction_state</code>主题。</li>
+<li><strong>幂等生产者</strong>：通过<code>Producer ID + Sequence Number</code>避免重复消息。</li>
+<li><strong>事务性消费</strong>：支持<code>read_committed</code>隔离级别，过滤未提交消息。</li>
+</ul>
+<p><strong>工作流程</strong></p>
+<ul>
+<li><strong>启事务</strong>：生产者向协调器注册事务</li>
+<li><strong>写消息</strong>：带事务 ID 的消息写入分区（标记为未提交）</li>
+<li><strong>定结局</strong>：协调器最终提交（写 Commit 标记）或回滚</li>
+<li><strong>控消费</strong>：消费者仅读取已提交消息</li>
+</ul>
+<p><strong>设计特点</strong></p>
+<ul>
+<li>轻量级事务（非完整 2PC）</li>
+<li>与高吞吐架构兼容</li>
+<li>故障自动恢复（通过事务日志）</li>
+</ul>
+<p>::: info Kafka 事务 和 RocketMQ 事务的区别</p>
+<p>:::</p>
+<ul>
+<li><strong>Kafka 事务</strong>主要解决 <strong>Exactly-Once 语义</strong>（生产、消费的精确一次处理），适用于 <strong>流处理场景</strong>（如 Flink、Kafka Streams 的状态一致性）。</li>
+<li><strong>RocketMQ 事务</strong>主要解决 <strong>分布式事务</strong>（如订单+库存的跨系统事务），适用于 <strong>业务事务场景</strong>（如电商、金融的最终一致性）。</li>
+</ul>
+<p><strong>实现机制差异</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>Kafka</strong></th>
+<th><strong>RocketMQ</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>事务协调者</strong></td>
+<td>内置 <code>TransactionCoordinator</code></td>
+<td>依赖外部 <strong>事务消息存储</strong>（如 MySQL）</td>
+</tr>
+<tr>
+<td><strong>事务状态存储</strong></td>
+<td>内部 Topic <code>__transaction_state</code></td>
+<td>独立存储（如数据库、ZK）</td>
+</tr>
+<tr>
+<td><strong>事务消息可见性</strong></td>
+<td>支持 <code>read_committed</code> 隔离</td>
+<td>需消费者主动回查（半消息机制）</td>
+</tr>
+<tr>
+<td><strong>事务提交方式</strong></td>
+<td>两阶段提交（2PC）</td>
+<td>本地事务+定时任务（事务回查）</td>
+</tr>
+</tbody></table>
+<p><strong>应用场景</strong></p>
+<ul>
+<li><strong>Kafka</strong>：<ul>
+<li>流处理任务的 <strong>端到端精确一次</strong>（如 Flink+Kafka）。</li>
+<li>跨分区的原子写入（如多个 Topic 的关联操作）。</li>
+</ul>
+</li>
+<li><strong>RocketMQ</strong>：<ul>
+<li>跨系统事务（如 <strong>订单创建+扣库存</strong>）。</li>
+<li>需要 <strong>业务回查</strong> 的最终一致性场景。</li>
+</ul>
+</li>
+</ul>
+<h3 id="【困难】Kafka-控制器如何处理事件？"><a href="#【困难】Kafka-控制器如何处理事件？" class="headerlink" title="【困难】Kafka 控制器如何处理事件？"></a>【困难】Kafka 控制器如何处理事件？</h3><p>控制器是 Kafka 集群的<strong>管理中枢</strong>，基于 ZooKeeper&#x2F;KRaft 选举，其本质是<strong>一个特殊的 Broker</strong>，额外承担集群管理职责。</p>
+<p><strong>控制器选举</strong></p>
+<ul>
+<li>每个 Broker 启动时尝试在 ZooKeeper 创建<code>/controller</code>临时节点</li>
+<li>成功创建的 Broker 成为控制器（Leader）</li>
+<li>其他 Broker 监听该节点，实现故障转移</li>
+</ul>
+<p><strong>事件处理流程</strong></p>
+<ul>
+<li><strong>事件捕获</strong>：通过 ZooKeeper Watch 机制监听关键路径：<ul>
+<li><code>/brokers/ids</code>（Broker 上下线）</li>
+<li><code>/admin/delete_topics</code>（主题删除）</li>
+<li><code>/isr_change_notification</code>（ISR 变更）</li>
+</ul>
+</li>
+<li><strong>事件入队</strong><ul>
+<li>控制器将事件放入<strong>异步事件队列</strong>（ControllerEventManager）</li>
+<li>保证事件顺序处理（单线程模型）</li>
+</ul>
+</li>
+<li><strong>事件处理</strong><ul>
+<li><strong>分区再均衡</strong>：触发 Leader 选举，更新 ISR 列表</li>
+<li><strong>Broker 故障</strong>：<ul>
+<li>将该 Broker 上的 Leader 分区迁移到其他 Broker</li>
+<li>更新元数据并同步到所有 Broker</li>
+</ul>
+</li>
+<li><strong>主题变更</strong>：更新分区分配方案并持久化到 ZooKeeper</li>
+</ul>
+</li>
+<li><strong>元数据同步</strong><ul>
+<li>通过 <strong>UpdateMetadataRequest</strong> 将最新元数据广播给所有 Broker</li>
+<li>Broker 更新本地缓存（MetadataCache）</li>
+</ul>
+</li>
+</ul>
+<p><strong>关键设计</strong></p>
+<ul>
+<li><strong>单线程模型</strong>：避免并发问题（所有事件串行处理）</li>
+<li><strong>批处理优化</strong>：合并相似事件（如多个分区 Leader 选举）</li>
+<li><strong>ZooKeeper 解耦</strong>：新版逐渐用 KRaft 替代 ZK 依赖</li>
+</ul>
+<p><strong>容错机制</strong></p>
+<ul>
+<li>控制器故障时通过 ZK 重新选举</li>
+<li>事件处理失败会重试或触发新一轮选举</li>
+<li>通过 <strong>epoch 机制</strong>防止脑裂（控制器切换时递增 epoch）</li>
+</ul>
+<p><strong>流程图解</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ZooKeeper</span> 事件触发</span><br><span class="line">       ↓</span><br><span class="line">控制器事件队列（ControllerEventManager）</span><br><span class="line">       ↓</span><br><span class="line">单线程事件处理器</span><br><span class="line">├─ 分区 Leader 选举</span><br><span class="line">├─ ISR 列表更新</span><br><span class="line">├─ 副本重分配</span><br><span class="line">       ↓</span><br><span class="line">UpdateMetadataRequest 广播</span><br><span class="line">       ↓</span><br><span class="line">集群元数据最终一致</span><br></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：高可靠性但存在单点瓶颈（新版 KRaft 改进为分布式控制器）</p>
+<h2 id="RocketMQ"><a href="#RocketMQ" class="headerlink" title="RocketMQ"></a>RocketMQ</h2><h3 id="【中等】RocketMQ-的事务消息有什么缺点？你还了解过别的事务消息实现吗？"><a href="#【中等】RocketMQ-的事务消息有什么缺点？你还了解过别的事务消息实现吗？" class="headerlink" title="【中等】RocketMQ 的事务消息有什么缺点？你还了解过别的事务消息实现吗？"></a>【中等】RocketMQ 的事务消息有什么缺点？你还了解过别的事务消息实现吗？</h3><h3 id="【中等】为什么-RocketMQ-不使用-Zookeeper-作为注册中心？"><a href="#【中等】为什么-RocketMQ-不使用-Zookeeper-作为注册中心？" class="headerlink" title="【中等】为什么 RocketMQ 不使用 Zookeeper 作为注册中心？"></a>【中等】为什么 RocketMQ 不使用 Zookeeper 作为注册中心？</h3><p>RocketMQ 自研 <strong>NameServer</strong> 是为了：</p>
+<ul>
+<li>规避 ZooKeeper 的 <strong>性能瓶颈</strong></li>
+<li>适应 <strong>大规模分布式队列场景</strong></li>
+<li>实现 <strong>简单高效的服务发现</strong></li>
+</ul>
+<blockquote>
+<p>注：阿里内部早期版本曾用 ZK，后因性能问题重构</p>
+</blockquote>
+<p><strong>设计目标差异</strong></p>
+<ul>
+<li><strong>ZooKeeper</strong>：强一致性（CP），适合小规模元数据管理（如 Kafka 的 Controller 选举）</li>
+<li><strong>RocketMQ</strong>：高可用性（AP），需要支持 <strong>高频读写</strong>（如 Broker 注册、心跳检测）</li>
+</ul>
+<p><strong>性能瓶颈</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>场景</strong></th>
+<th><strong>ZooKeeper</strong></th>
+<th><strong>RocketMQ 选择</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>注册中心读写频率</strong></td>
+<td>低频（秒级）</td>
+<td>高频（毫秒级 Broker 心跳）</td>
+</tr>
+<tr>
+<td><strong>节点规模</strong></td>
+<td>适合中小集群（&lt;100 节点）</td>
+<td>支持大规模集群（数千节点）</td>
+</tr>
+<tr>
+<td><strong>吞吐量</strong></td>
+<td>写性能受限（需全局有序）</td>
+<td>自研 NameServer（无强一致性要求）</td>
+</tr>
+</tbody></table>
+<p><strong>架构简化</strong></p>
+<ul>
+<li><strong>NameServer 轻量化</strong>：<ul>
+<li>无选举机制（所有节点平等）</li>
+<li>最终一致性（通过定时心跳维护状态）</li>
+<li>无持久化存储（重启后依赖 Broker 重新注册）</li>
+</ul>
+</li>
+<li><strong>避免 ZooKeeper 的依赖</strong>：<ul>
+<li>减少运维复杂度（无需单独维护 ZK 集群）</li>
+<li>降低网络开销（ZK 的 Watcher 机制在大规模下压力大）</li>
+</ul>
+</li>
+</ul>
+<p><strong>容灾能力</strong></p>
+<ul>
+<li><strong>ZooKeeper</strong><ul>
+<li>集群半数以上节点存活才可用</li>
+<li>脑裂问题需人工干预</li>
+</ul>
+</li>
+<li><strong>NameServer</strong><ul>
+<li>单节点故障不影响整体服务（无状态）</li>
+<li>任意存活节点均可提供服务</li>
+</ul>
+</li>
+</ul>
+<p><strong>业务场景适配</strong></p>
+<p>RocketMQ 的核心需求</p>
+<ul>
+<li>快速发现 Broker（路由信息）</li>
+<li>容忍短暂数据不一致（消息队列场景可接受）</li>
+<li>低延迟响应（Producer&#x2F;Consumer 频繁拉取路由表）</li>
+</ul>
+<h3 id="【中等】RocketMQ-的延迟消息是怎么实现的？"><a href="#【中等】RocketMQ-的延迟消息是怎么实现的？" class="headerlink" title="【中等】RocketMQ 的延迟消息是怎么实现的？"></a>【中等】RocketMQ 的延迟消息是怎么实现的？</h3><p>RocketMQ 的延迟消息采用 <strong>多级时间轮 + 定时任务扫描</strong> 实现，非实时投递而是延迟触发。</p>
+<p><strong>实现步骤</strong></p>
+<ol>
+<li><p><strong>消息标记</strong></p>
+<ul>
+<li>Producer 发送消息时指定 <code>delayTimeLevel</code>（如 <code>3</code> 表示延迟 10 秒）</li>
+<li>支持 18 个固定延迟级别（1s&#x2F;5s&#x2F;10s&#x2F;30s&#x2F;1m…2h）</li>
+</ul>
+</li>
+<li><p><strong>延迟存储</strong></p>
+<ul>
+<li>Broker 将延迟消息存入 <strong>专用 Topic</strong>（<code>SCHEDULE_TOPIC_XXXX</code>）</li>
+<li>按延迟级别分队列（如 <code>delayLevel=3</code> 的消息存入 <code>SCHEDULE_TOPIC_XXXX</code> 的 Queue3）</li>
+</ul>
+</li>
+<li><p><strong>定时扫描</strong></p>
+<ul>
+<li><strong>时间轮算法</strong> 管理延迟队列</li>
+<li>每秒扫描对应队列，将到期消息 <strong>重新投递</strong> 到目标 Topic</li>
+</ul>
+</li>
+<li><p><strong>消息投递</strong></p>
+<ul>
+<li>到期后，Broker 将消息从延迟 Topic 转移到原始 Topic</li>
+<li>Consumer 正常消费</li>
+</ul>
+</li>
+</ol>
+<p><strong>关键设计</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>组件</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ScheduleTopic</strong></td>
+<td>存储所有延迟消息（内部 Topic，对用户透明）</td>
+</tr>
+<tr>
+<td><strong>TimerWheel</strong></td>
+<td>高效触发延迟任务（O(1) 时间复杂度）</td>
+</tr>
+<tr>
+<td><strong>定时线程</strong></td>
+<td>每秒扫描时间轮，将到期消息移出延迟队列</td>
+</tr>
+</tbody></table>
+<p><strong>特点</strong></p>
+<ul>
+<li><strong>固定延迟级别</strong>：不支持任意时间精度（如 23 秒）</li>
+<li><strong>投递误差</strong>：±1 秒（依赖扫描间隔）</li>
+<li><strong>高吞吐</strong>：时间轮算法避免遍历所有消息</li>
+</ul>
+<p><strong>示例代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Message</span> <span class="variable">msg</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Message</span>(<span class="string">&quot;TestTopic&quot;</span>, <span class="string">&quot;Hello Delay&quot;</span>.getBytes());</span><br><span class="line"><span class="comment">// 设置延迟级别 3（对应 10 秒）</span></span><br><span class="line">msg.setDelayTimeLevel(<span class="number">3</span>);</span><br><span class="line">producer.send(msg);</span><br></pre></td></tr></table></figure>
+
+<p><strong>对比 Kafka</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>RocketMQ</strong></th>
+<th><strong>Kafka</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>延迟精度</strong></td>
+<td>固定级别（18 种）</td>
+<td>需外部实现（如 Streams 延迟处理）</td>
+</tr>
+<tr>
+<td><strong>实现复杂度</strong></td>
+<td>内置支持</td>
+<td>需自定义逻辑</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>订单超时、定时通知</td>
+<td>流处理中的窗口操作</td>
+</tr>
+</tbody></table>
+<p><strong>注</strong>：RocketMQ 5.0+ 支持 <strong>定时消息</strong>（精确到毫秒），底层改用时间戳+哈希分片。</p>
+<h3 id="【中等】RocketMQ-和-Kafka-在架构和功能上有什么区别？"><a href="#【中等】RocketMQ-和-Kafka-在架构和功能上有什么区别？" class="headerlink" title="【中等】RocketMQ 和 Kafka 在架构和功能上有什么区别？"></a>【中等】RocketMQ 和 Kafka 在架构和功能上有什么区别？</h3><p>::: info RocketMQ 和 Kafka 架构对比</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th><strong>维度</strong></th>
+<th><strong>RocketMQ</strong></th>
+<th><strong>Kafka</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>注册中心</strong></td>
+<td>自研轻量级 <strong>NameServer</strong>（AP 模型）</td>
+<td>依赖 <strong>ZooKeeper</strong>（CP 模型），Kafka 新版本计划用 KRaft 取代 ZooKeeper</td>
+</tr>
+<tr>
+<td><strong>Broker 角色</strong></td>
+<td>主从架构（Master-Slave）</td>
+<td>无主从区分（所有节点平等）</td>
+</tr>
+<tr>
+<td><strong>存储模型</strong></td>
+<td>单个 CommitLog 文件（含所有 Topic 数据） + 消费队列索引</td>
+<td><strong>主题-分区-段</strong>的层级结构</td>
+</tr>
+<tr>
+<td><strong>消费模式</strong></td>
+<td>支持 Push&#x2F;Pull 两种模式</td>
+<td>仅 Pull 模式</td>
+</tr>
+</tbody></table>
+<p>::: info RocketMQ 和 Kafka 功能对比</p>
+<p>:::</p>
+<p>设计差异：</p>
+<ul>
+<li><strong>RocketMQ</strong>：<ul>
+<li><strong>业务友好</strong>：强事务、延迟消息、过滤等开箱即用</li>
+<li><strong>轻量可控</strong>：NameServer 简化集群管理</li>
+</ul>
+</li>
+<li><strong>Kafka</strong>：<ul>
+<li><strong>流式优先</strong>：高吞吐、分区弹性伸缩</li>
+<li><strong>生态整合</strong>：与 Flink&#x2F;Spark 等深度兼容</li>
+</ul>
+</li>
+</ul>
+<p>主要功能差异如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>功能</strong></th>
+<th><strong>RocketMQ</strong></th>
+<th><strong>Kafka</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>消息类型</strong></td>
+<td>普通消息、顺序消息、事务消息、延迟消息</td>
+<td>主要支持普通消息（需扩展实现其他特性）</td>
+</tr>
+<tr>
+<td><strong>事务支持</strong></td>
+<td>二阶段提交+事务回查（业务级事务）</td>
+<td>精确一次语义（内部消息事务）</td>
+</tr>
+<tr>
+<td><strong>延迟消息</strong></td>
+<td>内置 18 个固定延迟级别</td>
+<td>需外部实现（如流处理或自定义调度）</td>
+</tr>
+<tr>
+<td><strong>消息回溯</strong></td>
+<td>支持按时间&#x2F;偏移量回溯</td>
+<td>仅支持按偏移量回溯</td>
+</tr>
+<tr>
+<td><strong>消息过滤</strong></td>
+<td>支持给 Topic 打标签，进一步分类</td>
+<td>仅支持通过 Topic 给消息分类</td>
+</tr>
+<tr>
+<td><strong>死信队列</strong></td>
+<td>消息消费重试失败多次后，进入死信队列</td>
+<td>Kafka 原生不支持</td>
+</tr>
+</tbody></table>
+<p>::: info RocketMQ 和 Kafka 性能与扩展对比</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th><strong>维度</strong></th>
+<th><strong>RocketMQ</strong></th>
+<th><strong>Kafka</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>吞吐量</strong></td>
+<td>单机约 10 万 TPS</td>
+<td>单机可达百万 TPS（更高吞吐）</td>
+</tr>
+<tr>
+<td><strong>延迟</strong></td>
+<td>毫秒级（优化后更低）</td>
+<td>毫秒级（依赖 PageCache）</td>
+</tr>
+<tr>
+<td><strong>水平扩展</strong></td>
+<td>需手动调整队列数</td>
+<td>分区自动均衡（更易扩展）</td>
+</tr>
+<tr>
+<td><strong>数据保留</strong></td>
+<td>基于时间&#x2F;大小策略</td>
+<td>基于时间&#x2F;大小策略（支持日志压缩）</td>
+</tr>
+</tbody></table>
+<p>::: info RocketMQ 和 Kafka 应用场景与选型</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th><strong>场景</strong></th>
+<th><strong>RocketMQ</strong></th>
+<th><strong>Kafka</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>电商&#x2F;金融业务</strong></td>
+<td>订单、支付等业务级事务</td>
+<td>日志收集、流处理（如 Flink）</td>
+</tr>
+<tr>
+<td><strong>延迟&#x2F;定时任务</strong></td>
+<td>内置支持（如订单超时）</td>
+<td>需外部系统配合</td>
+</tr>
+<tr>
+<td><strong>大规模日志流</strong></td>
+<td>适合中小规模</td>
+<td>超大规模日志场景（如大数据管道）</td>
+</tr>
+<tr>
+<td><strong>多协议支持</strong></td>
+<td>兼容 JMS、MQTT 等</td>
+<td>仅原生协议</td>
+</tr>
+</tbody></table>
+<p><strong>总结选择建议</strong>：</p>
+<ul>
+<li>选 <strong>RocketMQ</strong>：需要 <strong>业务级事务、延迟消息、多协议支持</strong> 的场景</li>
+<li>选 <strong>Kafka</strong>：需要 <strong>超高吞吐、流处理集成、大规模日志</strong> 的场景</li>
+</ul>
+<h3 id="【困难】RocketMQ-如何实现事务消息？"><a href="#【困难】RocketMQ-如何实现事务消息？" class="headerlink" title="【困难】RocketMQ 如何实现事务消息？"></a>【困难】RocketMQ 如何实现事务消息？</h3><p>RocketMQ 事务消息采用 <strong>“半消息（Half Message） + 事务状态回查”</strong> 的二阶段方案，确保分布式事务的最终一致性。</p>
+<p><strong>关键流程</strong></p>
+<ol>
+<li><p><strong>第一阶段：发送半消息</strong></p>
+<ul>
+<li>Producer 发送<strong>半消息</strong>（对 Consumer 不可见）</li>
+<li>Broker 持久化消息并返回确认响应</li>
+<li>Producer 执行<strong>本地事务</strong>（如数据库操作）</li>
+</ul>
+</li>
+<li><p><strong>第二阶段：事务状态确认</strong></p>
+<ul>
+<li><strong>成功</strong>：Producer 提交事务确认 → Broker 将消息改为可消费状态</li>
+<li><strong>失败</strong>：Producer 回滚 → Broker 丢弃消息</li>
+<li><strong>超时未决</strong>：Broker 主动回查 Producer 的事务状态（默认每分钟 1 次）</li>
+</ul>
+</li>
+<li><p><strong>消息投递</strong></p>
+<ul>
+<li>仅提交后的消息会被 Consumer 消费</li>
+<li>支持消息重试和死信队列机制</li>
+</ul>
+</li>
+</ol>
+<p><strong>核心组件</strong></p>
+<ul>
+<li><strong>事务监听器</strong>（TransactionListener）：实现本地事务执行和回查逻辑</li>
+<li><strong>事务日志存储</strong>：Broker 存储半消息和事务状态（基于文件或 DB）</li>
+<li><strong>定时回查线程</strong>：处理超时未确认的事务</li>
+</ul>
+<p><strong>特点</strong></p>
+<ul>
+<li><strong>最终一致性</strong>：依赖定期回查机制</li>
+<li><strong>业务耦合</strong>：需实现本地事务和回查接口</li>
+<li><strong>高可用</strong>：Broker 集群保证消息不丢失</li>
+</ul>
+<p><strong>应用场景</strong></p>
+<ul>
+<li>订单支付（扣库存+生成订单）</li>
+<li>跨系统数据同步</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例：事务生产者</span></span><br><span class="line"><span class="type">TransactionMQProducer</span> <span class="variable">producer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionMQProducer</span>();</span><br><span class="line">producer.setTransactionListener(<span class="keyword">new</span> <span class="title class_">TransactionListener</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> LocalTransactionState <span class="title function_">executeLocalTransaction</span><span class="params">(Message msg, Object arg)</span> &#123;</span><br><span class="line">        <span class="comment">// 执行本地事务</span></span><br><span class="line">        <span class="keyword">return</span> LocalTransactionState.COMMIT_MESSAGE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> LocalTransactionState <span class="title function_">checkLocalTransaction</span><span class="params">(MessageExt msg)</span> &#123;</span><br><span class="line">        <span class="comment">// 事务状态回查</span></span><br><span class="line">        <span class="keyword">return</span> LocalTransactionState.UNKNOW;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a>RabbitMQ</h2><h3 id="【简单】RabbitMQ-的-routing-key-和-binding-key-的最大长度是多少字节？"><a href="#【简单】RabbitMQ-的-routing-key-和-binding-key-的最大长度是多少字节？" class="headerlink" title="【简单】RabbitMQ 的 routing key 和 binding key 的最大长度是多少字节？"></a>【简单】RabbitMQ 的 routing key 和 binding key 的最大长度是多少字节？</h3><p><strong>长度限制</strong></p>
+<ul>
+<li><strong>最大 255 字节</strong>（超限会抛出异常）。</li>
+<li>适用于 <strong>Routing Key</strong>（生产者指定）和 <strong>Binding Key</strong>（队列绑定交换机时指定）。</li>
+</ul>
+<p><strong>匹配规则（不同交换机类型）</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>交换机类型</strong></th>
+<th><strong>匹配方式</strong></th>
+<th><strong>示例</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Direct</strong></td>
+<td>完全匹配</td>
+<td><code>routing_key == binding_key</code></td>
+</tr>
+<tr>
+<td><strong>Topic</strong></td>
+<td>通配符匹配（<code>*</code> 匹配一个词，<code>#</code> 匹配多个词）</td>
+<td><code>*.order.#</code> 匹配 <code>user.order.create</code></td>
+</tr>
+<tr>
+<td><strong>Headers</strong></td>
+<td>不依赖 Routing Key，基于消息头键值对匹配</td>
+<td><code>x-match: all/any</code></td>
+</tr>
+</tbody></table>
+<p><strong>最佳实践</strong></p>
+<ul>
+<li><strong>保持简短</strong>：避免接近 255 字节，提升性能。</li>
+<li><strong>命名规范</strong>：如 <code>&#123;服务&#125;.&#123;模块&#125;.&#123;事件&#125;</code>（例：<code>user.order.paid</code>）。</li>
+<li><strong>Topic 通配符</strong>：合理使用 <code>*</code> 和 <code>#</code>，避免过度复杂。</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：Headers 交换机忽略 Routing Key，仅依赖消息头（Headers）匹配。</p>
+</blockquote>
+<h3 id="【中等】RabbitMQ-中无法路由的消息会去到哪里？"><a href="#【中等】RabbitMQ-中无法路由的消息会去到哪里？" class="headerlink" title="【中等】RabbitMQ 中无法路由的消息会去到哪里？"></a>【中等】RabbitMQ 中无法路由的消息会去到哪里？</h3><p>在 RabbitMQ 中，<strong>无法路由的消息</strong>（即无法被投递到任何队列的消息）的处理方式取决于消息的 <strong><code>mandatory</code> 和 <code>immediate</code> 属性</strong>（RabbitMQ 3.0+ 已弃用 <code>immediate</code>），具体规则如下：</p>
+<p><strong>默认情况（未设置 <code>mandatory</code>）</strong></p>
+<ul>
+<li><strong>消息被直接丢弃</strong>（即 “静默丢失”）。</li>
+<li><strong>生产者无感知</strong>：Broker 不会返回任何通知。</li>
+</ul>
+<p><strong>设置了 <code>mandatory=true</code></strong></p>
+<ul>
+<li><p>若消息无法路由到任何队列，Broker 会通过 <strong><code>basic.return</code></strong> 方法将消息返回给生产者。</p>
+</li>
+<li><p><strong>生产者需监听返回消息</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">channel.basicPublish(<span class="string">&quot;exchange&quot;</span>, <span class="string">&quot;routingKey&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">AMQP</span>.BasicProperties.Builder().mandatory(<span class="literal">true</span>).build(),</span><br><span class="line">    message.getBytes());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加 ReturnListener 监听返回消息</span></span><br><span class="line">channel.addReturnListener((replyCode, replyText, exchange, routingKey, properties, body) -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;消息未被路由：&quot;</span> + <span class="keyword">new</span> <span class="title class_">String</span>(body));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>适用场景</strong>：需严格确保消息路由成功的业务（如关键订单通知）。</p>
+</li>
+</ul>
+<p><strong>备用交换机（Alternate Exchange）</strong></p>
+<ul>
+<li><p><strong>预先声明一个备用交换机</strong>，绑定一个队列（如 <code>unrouted_queue</code>）接收无法路由的消息。</p>
+</li>
+<li><p><strong>配置方式</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Object&gt; args = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">args.put(<span class="string">&quot;alternate-exchange&quot;</span>, <span class="string">&quot;my_ae&quot;</span>); <span class="comment">// 指定备用交换机</span></span><br><span class="line">channel.exchangeDeclare(<span class="string">&quot;main_exchange&quot;</span>, <span class="string">&quot;direct&quot;</span>, <span class="literal">false</span>, <span class="literal">false</span>, args);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 声明备用交换机和队列</span></span><br><span class="line">channel.exchangeDeclare(<span class="string">&quot;my_ae&quot;</span>, <span class="string">&quot;fanout&quot;</span>);</span><br><span class="line">channel.queueDeclare(<span class="string">&quot;unrouted_queue&quot;</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">null</span>);</span><br><span class="line">channel.queueBind(<span class="string">&quot;unrouted_queue&quot;</span>, <span class="string">&quot;my_ae&quot;</span>, <span class="string">&quot;&quot;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>逻辑</strong>：若消息无法通过 <code>main_exchange</code> 路由，则自动转发到 <code>my_ae</code>，最终进入 <code>unrouted_queue</code>。</p>
+</li>
+</ul>
+<p><strong>关键区别</strong></p>
+<table>
+<thead>
+<tr>
+<th>处理方式</th>
+<th>条件</th>
+<th>结果</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>直接丢弃</strong></td>
+<td>默认情况</td>
+<td>消息丢失，无通知</td>
+<td>允许消息丢失的非关键业务</td>
+</tr>
+<tr>
+<td><strong>返回生产者</strong></td>
+<td><code>mandatory=true</code></td>
+<td>通过 <code>basic.return</code> 回退消息</td>
+<td>需严格监控路由失败的场景</td>
+</tr>
+<tr>
+<td><strong>转发到备用交换机</strong></td>
+<td>配置了 Alternate Exchange</td>
+<td>消息存入备用队列</td>
+<td>需审计或补偿无法路由的消息</td>
+</tr>
+</tbody></table>
+<p><strong>最佳实践</strong></p>
+<ul>
+<li><strong>关键消息</strong>：始终设置 <code>mandatory=true</code> 并监听 <code>basic.return</code>。</li>
+<li><strong>日志与监控</strong>：使用备用交换机收集无法路由的消息，便于排查问题。</li>
+<li><strong>避免消息丢失</strong>：确保交换机和队列的绑定关系正确，或使用 <strong>死信队列（DLX）</strong> 处理异常消息。</li>
+</ul>
+<blockquote>
+<p>📌 <strong>注意</strong>：RabbitMQ 3.0+ 已移除 <code>immediate</code> 参数，旧版本中设置 <code>immediate=true</code> 会导致无法路由的消息被丢弃（除非同时设置 <code>mandatory</code>）。</p>
+</blockquote>
+<h3 id="【中等】RabbitMQ-中消息什么时候会进入死信交换机？"><a href="#【中等】RabbitMQ-中消息什么时候会进入死信交换机？" class="headerlink" title="【中等】RabbitMQ 中消息什么时候会进入死信交换机？"></a>【中等】RabbitMQ 中消息什么时候会进入死信交换机？</h3><p>通过合理配置 DLX，可以实现消息的优雅降级和故障隔离。</p>
+<p>::: info RabbitMQ 中消息进入死信交换机的触发情况</p>
+<p>:::</p>
+<p>在 RabbitMQ 中，消息进入 <strong>死信交换机（Dead Letter Exchange, DLX）</strong> 通常由以下 <strong>5 种情况</strong>触发：</p>
+<p><strong>（1）消息被消费者拒绝</strong>：消费者显式拒绝消息且不重新入队。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel.basicReject(deliveryTag, <span class="literal">false</span>); <span class="comment">// 或 basicNack 且 requeue=false</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>典型场景</strong>：消息处理失败且无需重试（如业务校验不通过）。</li>
+</ul>
+<p><strong>（2）消息过期（TTL 超时）</strong>：</p>
+<ul>
+<li>消息设置了 <strong>TTL（Time-To-Live）</strong>，且未在过期前被消费。</li>
+<li>队列设置了 <code>x-message-ttl</code>，消息在队列中停留超时。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置消息 TTL</span></span><br><span class="line">AMQP.<span class="type">BasicProperties</span> <span class="variable">props</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AMQP</span>.BasicProperties.Builder()</span><br><span class="line">    .expiration(<span class="string">&quot;60000&quot;</span>) <span class="comment">// 60 秒过期</span></span><br><span class="line">    .build();</span><br><span class="line">channel.basicPublish(<span class="string">&quot;&quot;</span>, <span class="string">&quot;normal_queue&quot;</span>, props, message.getBytes());</span><br></pre></td></tr></table></figure>
+
+<p><strong>（3）队列达到最大长度</strong>：队列设置了 <code>x-max-length</code> 或 <code>x-max-length-bytes</code>，且新消息到达时队列已满。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明队列时设置最大长度</span></span><br><span class="line">Map&lt;String, Object&gt; args = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">args.put(<span class="string">&quot;x-max-length&quot;</span>, <span class="number">1000</span>); <span class="comment">// 最多 1000 条消息</span></span><br><span class="line">channel.queueDeclare(<span class="string">&quot;normal_queue&quot;</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">false</span>, args);</span><br></pre></td></tr></table></figure>
+
+<p><strong>（4）队列被删除</strong>：消息所在的队列被删除（<code>queueDelete</code>），且消息未被消费。</p>
+<p><strong>（5）主节点崩溃</strong>：<strong>镜像队列（Mirrored Queue）</strong> 中主节点崩溃，且消息未同步到从节点。</p>
+<p>::: info 关键配置步骤</p>
+<p>:::</p>
+<ol>
+<li><p><strong>声明死信交换机（DLX）和死信队列</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明死信交换机（类型通常为 direct/fanout）</span></span><br><span class="line">channel.exchangeDeclare(<span class="string">&quot;dlx_exchange&quot;</span>, <span class="string">&quot;direct&quot;</span>);</span><br><span class="line"><span class="comment">// 声明死信队列</span></span><br><span class="line">channel.queueDeclare(<span class="string">&quot;dlx_queue&quot;</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">null</span>);</span><br><span class="line">channel.queueBind(<span class="string">&quot;dlx_queue&quot;</span>, <span class="string">&quot;dlx_exchange&quot;</span>, <span class="string">&quot;dlx_routing_key&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="number">2.</span> **为普通队列绑定死信交换机**：</span><br><span class="line"></span><br><span class="line">   ```java</span><br><span class="line">   Map&lt;String, Object&gt; <span class="keyword">args</span> = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">   <span class="keyword">args</span>.put(<span class="string">&quot;x-dead-letter-exchange&quot;</span>, <span class="string">&quot;dlx_exchange&quot;</span>); <span class="comment">// 指定 DLX</span></span><br><span class="line">   <span class="keyword">args</span>.put(<span class="string">&quot;x-dead-letter-routing-key&quot;</span>, <span class="string">&quot;dlx_routing_key&quot;</span>); <span class="comment">// 可选</span></span><br><span class="line">   channel.queueDeclare(<span class="string">&quot;normal_queue&quot;</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="literal">false</span>, <span class="keyword">args</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意事项</strong></p>
+<ul>
+<li>死信消息的 <strong>原始属性</strong>（如 headers）会被保留，但 <code>exchange</code> 和 <code>routingKey</code> 会被替换为 DLX 的配置。</li>
+<li>若未指定 <code>x-dead-letter-routing-key</code>，则使用消息原来的 routing key。</li>
+</ul>
+<p><strong>典型应用场景</strong></p>
+<ul>
+<li><strong>延迟队列</strong>：通过 TTL+DLX 实现消息延迟投递。</li>
+<li><strong>失败处理</strong>：将处理失败的消息自动路由到死信队列，供人工或异步处理。</li>
+<li><strong>流量控制</strong>：队列满时转移旧消息，避免阻塞新消息。</li>
+</ul>
+<h3 id="【中等】RabbitMQ-如何实现事务机制？"><a href="#【中等】RabbitMQ-如何实现事务机制？" class="headerlink" title="【中等】RabbitMQ 如何实现事务机制？"></a>【中等】RabbitMQ 如何实现事务机制？</h3><p>RabbitMQ 的事务机制（Transaction）通过 <strong>信道（Channel）</strong> 提供了一种保证消息可靠投递的机制，但其设计简单且对性能影响较大。</p>
+<p>RabbitMQ 的事务通过同步机制确保消息投递的原子性，但性能代价高。<strong>在绝大多数生产环境中，推荐使用 Publisher Confirms 替代事务</strong>，以兼顾可靠性和吞吐量。</p>
+<p><strong>事务的核心操作</strong></p>
+<ul>
+<li><p><strong>开启事务</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel.txSelect(); <span class="comment">// 开启事务模式</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>提交事务</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel.txCommit(); <span class="comment">// 提交事务，消息真正投递到队列</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>回滚事务</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel.txRollback(); <span class="comment">// 回滚事务，丢弃未提交的消息</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>事务的工作流程</strong></p>
+<ol>
+<li>生产者发送消息到 RabbitMQ（消息暂存于信道缓冲区，未写入队列）。</li>
+<li>执行 <code>txCommit()</code>：消息持久化到队列；若失败或调用 <code>txRollback()</code>，消息丢弃。</li>
+<li><strong>同步阻塞</strong>：事务提交&#x2F;回滚需等待 Broker 确认，性能较低。</li>
+</ol>
+<p><strong>事务的局限性</strong></p>
+<ul>
+<li><strong>性能差</strong>：每次提交需等待 Broker 确认，吞吐量显著下降（通常降低 100~200 倍）。</li>
+<li><strong>无分布式事务</strong>：仅保证生产者到 Broker 的可靠性，不涉及消费者或下游系统。</li>
+<li><strong>不推荐高频使用</strong>：适合低频关键业务，高并发场景建议用 <strong>确认机制（Publisher Confirms）</strong>。</li>
+</ul>
+<p><strong>事务 vs. 确认机制（Publisher Confirms）</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>事务（Transaction）</th>
+<th>确认机制（Publisher Confirms）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>可靠性</strong></td>
+<td>强一致（同步阻塞）</td>
+<td>最终一致（异步）</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>极低（同步等待）</td>
+<td>高（异步回调）</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>低频关键消息（如支付）</td>
+<td>高频业务（如日志、订单）</td>
+</tr>
+<tr>
+<td><strong>复杂度</strong></td>
+<td>简单</td>
+<td>需处理确认&#x2F;未确认逻辑</td>
+</tr>
+</tbody></table>
+<p><strong>代码示例</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    channel.txSelect(); <span class="comment">// 开启事务</span></span><br><span class="line">    channel.basicPublish(<span class="string">&quot;&quot;</span>, <span class="string">&quot;queue1&quot;</span>, <span class="literal">null</span>, msg1.getBytes());</span><br><span class="line">    channel.basicPublish(<span class="string">&quot;&quot;</span>, <span class="string">&quot;queue2&quot;</span>, <span class="literal">null</span>, msg2.getBytes());</span><br><span class="line">    channel.txCommit(); <span class="comment">// 提交事务</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    channel.txRollback(); <span class="comment">// 回滚事务</span></span><br><span class="line">    <span class="comment">// 处理异常</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用建议</strong></p>
+<ul>
+<li><p><strong>优先选择 Confirm 模式</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">channel.confirmSelect(); <span class="comment">// 开启确认模式</span></span><br><span class="line">channel.addConfirmListener(...); <span class="comment">// 异步回调</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>事务适用场景</strong>：</p>
+<ul>
+<li>严格保证单批次消息的原子性（如同时投递订单和库存消息）。</li>
+<li>兼容旧版 RabbitMQ（Confirm 模式需 v3.3+）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="【中等】RabbitMQ-中有哪些核心概念？"><a href="#【中等】RabbitMQ-中有哪些核心概念？" class="headerlink" title="【中等】RabbitMQ 中有哪些核心概念？"></a>【中等】RabbitMQ 中有哪些核心概念？</h3><p>RabbitMQ 通过 <strong>生产者→交换机→队列→消费者</strong> 的链路传递消息，核心设计围绕 <strong>解耦</strong> 和 <strong>灵活路由</strong>。理解这些角色和概念是掌握其工作原理的基础。</p>
+<p><strong>核心角色</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>角色</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>生产者（Producer）</strong></td>
+<td>发送消息到交换机的客户端</td>
+</tr>
+<tr>
+<td><strong>消费者（Consumer）</strong></td>
+<td>从队列订阅并处理消息的客户端</td>
+</tr>
+<tr>
+<td><strong>消息代理（Broker）</strong></td>
+<td>RabbitMQ 服务实例，负责接收、路由和存储消息（即 RabbitMQ 服务器本身）</td>
+</tr>
+</tbody></table>
+<p><strong>核心组件</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>组件</strong></th>
+<th><strong>功能</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>连接（Connection）</strong></td>
+<td>生产者&#x2F;消费者与 Broker 之间的 TCP 长连接（复用减少开销）</td>
+</tr>
+<tr>
+<td><strong>信道（Channel）</strong></td>
+<td>连接中的虚拟通道（轻量级，避免频繁创建 TCP 连接）</td>
+</tr>
+<tr>
+<td><strong>交换机（Exchange）</strong></td>
+<td>接收生产者消息，按规则路由到队列（类型决定路由逻辑）</td>
+</tr>
+<tr>
+<td><strong>队列（Queue）</strong></td>
+<td>存储消息的容器，消费者从中拉取数据</td>
+</tr>
+<tr>
+<td><strong>绑定（Binding）</strong></td>
+<td>定义交换机与队列的映射关系（含路由键规则）</td>
+</tr>
+</tbody></table>
+<p><strong>辅助概念</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>概念</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>路由键（Routing Key）</strong></td>
+<td>生产者发送时指定的关键字，用于交换机匹配队列（类似“邮件地址”）</td>
+</tr>
+<tr>
+<td><strong>虚拟主机（VHost）</strong></td>
+<td>逻辑隔离单元（类似命名空间），不同 VHost 的队列&#x2F;交换机互不可见</td>
+</tr>
+<tr>
+<td><strong>死信队列（DLX）</strong></td>
+<td>处理过期&#x2F;被拒绝消息的特殊队列（用于延迟队列或异常处理）</td>
+</tr>
+<tr>
+<td><strong>消息确认（ACK）</strong></td>
+<td>消费者手动确认消息处理完成，确保可靠性</td>
+</tr>
+</tbody></table>
+<p><strong>关键协议与机制</strong></p>
+<ul>
+<li><strong>AMQP 协议</strong>：RabbitMQ 的核心通信协议，定义消息格式与交互规则</li>
+<li><strong>持久化（Durable）</strong>：队列&#x2F;消息可持久化到磁盘，防止服务重启丢失</li>
+<li><strong>事务（Transaction）</strong>：确保批量操作的原子性（但性能较差，通常用 ACK 替代）</li>
+</ul>
+<h3 id="【中等】RabbitMQ-有哪些工作模式？"><a href="#【中等】RabbitMQ-有哪些工作模式？" class="headerlink" title="【中等】RabbitMQ 有哪些工作模式？"></a>【中等】RabbitMQ 有哪些工作模式？</h3><p>RabbitMQ 有以下几种主要的工作模式：</p>
+<ul>
+<li>简单模式（Simple）</li>
+<li>工作队列模式（Work Queue）</li>
+<li>发布&#x2F;订阅模式（Publish&#x2F;Subscribe）</li>
+<li>路由模式（Routing）</li>
+<li>主题模式（Topic）</li>
+<li>RPC 模式（远程调用）</li>
+</ul>
+<p>以下，对几种工作模式逐一进行说明：</p>
+<p><strong>简单模式（Simple）</strong></p>
+<ul>
+<li><strong>角色</strong>：1 生产者 → 1 队列 → 1 消费者</li>
+<li><strong>特点</strong>：单向通信，无路由逻辑，即点对点模式</li>
+<li><strong>场景</strong>：单任务处理（如日志记录）</li>
+</ul>
+<p><strong>工作队列模式（Work Queue）</strong></p>
+<ul>
+<li><strong>角色</strong>：1 生产者 → 1 队列 → <strong>多个消费者竞争消费</strong></li>
+<li><strong>特点</strong>：<ul>
+<li>消息<strong>轮询分发</strong>（默认）或<strong>公平分发</strong>（需设置<code>prefetch=1</code>）</li>
+<li>消费者并行处理</li>
+</ul>
+</li>
+<li><strong>场景</strong>：任务分发（如订单处理）</li>
+</ul>
+<p><strong>发布&#x2F;订阅模式（Publish&#x2F;Subscribe）</strong></p>
+<ul>
+<li><strong>角色</strong>：1 生产者 → <strong>Fanout 交换机</strong> → 绑定多个队列 → 多个消费者</li>
+<li><strong>特点</strong>：<ul>
+<li>消息<strong>广播</strong>到所有队列</li>
+<li>消费者各自独立接收全量消息</li>
+</ul>
+</li>
+<li><strong>场景</strong>：事件通知（如系统公告）</li>
+</ul>
+<p><strong>路由模式（Routing）</strong></p>
+<ul>
+<li><strong>角色</strong>：1 生产者 → <strong>Direct 交换机</strong> → 根据<code>routing_key</code>路由到特定队列</li>
+<li><strong>特点</strong>：<ul>
+<li><strong>精确匹配</strong>路由键</li>
+<li>支持多队列绑定相同路由键</li>
+</ul>
+</li>
+<li><strong>场景</strong>：条件过滤（如错误日志分级处理）</li>
+</ul>
+<p><strong>主题模式（Topic）</strong></p>
+<ul>
+<li><strong>角色</strong>：1 生产者 → <strong>Topic 交换机</strong> → 基于通配符（<code>*</code>&#x2F;<code>#</code>）匹配路由键</li>
+<li><strong>特点</strong>：<ul>
+<li><strong>模糊匹配</strong>（如<code>order.*</code>匹配<code>order.create</code>）</li>
+<li>灵活性高</li>
+</ul>
+</li>
+<li><strong>场景</strong>：复杂路由（如多维度消息分类）</li>
+</ul>
+<p><strong>RPC 模式（远程调用）</strong></p>
+<ul>
+<li><strong>角色</strong>：客户端 → 请求队列 → 服务端 → 响应队列 → 客户端</li>
+<li><strong>特点</strong>：<ul>
+<li>通过<code>reply_to</code>和<code>correlation_id</code>关联请求&#x2F;响应</li>
+<li>同步阻塞式通信</li>
+</ul>
+</li>
+<li><strong>场景</strong>：服务间调用（需即时响应）</li>
+</ul>
+<p><strong>模式对比</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>模式</strong></th>
+<th><strong>交换机类型</strong></th>
+<th><strong>路由规则</strong></th>
+<th><strong>典型应用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单模式</td>
+<td>无</td>
+<td>无</td>
+<td>单任务处理</td>
+</tr>
+<tr>
+<td>工作队列</td>
+<td>无</td>
+<td>轮询&#x2F;公平分发</td>
+<td>并行任务</td>
+</tr>
+<tr>
+<td>发布&#x2F;订阅</td>
+<td>Fanout</td>
+<td>广播</td>
+<td>多系统通知</td>
+</tr>
+<tr>
+<td>路由模式</td>
+<td>Direct</td>
+<td>精确匹配<code>routing_key</code></td>
+<td>条件过滤</td>
+</tr>
+<tr>
+<td>主题模式</td>
+<td>Topic</td>
+<td>通配符匹配</td>
+<td>复杂路由</td>
+</tr>
+<tr>
+<td>RPC 模式</td>
+<td>无</td>
+<td>请求-响应关联</td>
+<td>同步服务调用</td>
+</tr>
+</tbody></table>
+<p><strong>选择建议</strong></p>
+<ul>
+<li><strong>广播需求</strong> → Fanout</li>
+<li><strong>条件过滤</strong> → Direct&#x2F;Topic</li>
+<li><strong>任务并行</strong> → Work Queue</li>
+<li><strong>服务调用</strong> → RPC</li>
+</ul>
+<h3 id="【中等】RabbitMQ-有哪些集群模式？"><a href="#【中等】RabbitMQ-有哪些集群模式？" class="headerlink" title="【中等】RabbitMQ 有哪些集群模式？"></a>【中等】RabbitMQ 有哪些集群模式？</h3><p>RabbitMQ 有以下集群模式：</p>
+<ul>
+<li>普通集群</li>
+<li>镜像队列集群（高可用模式）</li>
+<li>联邦集群</li>
+<li>分片集群</li>
+</ul>
+<p>所有集群模式均依赖 <strong>Erlang Cookie</strong> 实现节点间认证，需确保一致。</p>
+<p>::: info 普通集群</p>
+<p>:::</p>
+<ul>
+<li><strong>核心特点</strong><ul>
+<li>元数据（队列、交换机等）<strong>全节点同步</strong></li>
+<li><strong>消息实体仅存于创建队列的节点</strong>（其他节点通过指针访问）</li>
+</ul>
+</li>
+<li><strong>优点</strong><ul>
+<li>节省存储（消息不冗余）</li>
+<li>横向扩展方便</li>
+</ul>
+</li>
+<li><strong>缺点</strong><ul>
+<li><strong>单点故障风险</strong>：若某节点宕机，其上的队列消息不可用</li>
+<li>跨节点访问消息需网络传输</li>
+</ul>
+</li>
+</ul>
+<p>::: info 镜像队列集群（高可用模式）</p>
+<p>:::</p>
+<ul>
+<li><strong>核心特点</strong><ul>
+<li>队列<strong>跨节点镜像复制</strong>（消息实体全节点冗余）</li>
+<li>通过策略（Policy）定义镜像规则（如 <code>ha-mode=all</code> 表示全节点复制）</li>
+</ul>
+</li>
+<li><strong>优点</strong><ul>
+<li><strong>高可用</strong>：任一节点宕机，其他节点可继续服务</li>
+<li>自动故障转移（消费者无感知）</li>
+</ul>
+</li>
+<li><strong>缺点</strong><ul>
+<li><strong>存储开销大</strong>（消息全量复制）</li>
+<li>写入性能略低（需同步所有副本）</li>
+</ul>
+</li>
+</ul>
+<p>::: info 联邦集群（Federation）</p>
+<p>:::</p>
+<ul>
+<li><strong>核心特点</strong><ul>
+<li><strong>跨机房&#x2F;地域</strong>部署，消息按需异步转发</li>
+<li>基于插件（<code>rabbitmq_federation</code>）实现</li>
+</ul>
+</li>
+<li><strong>适用场景</strong><ul>
+<li>异地容灾</li>
+<li>多区域消息同步</li>
+</ul>
+</li>
+</ul>
+<p>::: info 分片集群（Sharding）</p>
+<p>:::</p>
+<ul>
+<li><strong>核心特点</strong><ul>
+<li>通过插件（<code>rabbitmq_sharding</code>）将队列<strong>水平拆分</strong>到不同节点</li>
+<li>生产者自动路由到对应分片</li>
+</ul>
+</li>
+<li><strong>适用场景</strong><ul>
+<li>超大规模队列（减轻单节点压力）</li>
+</ul>
+</li>
+</ul>
+<p>::: info 方案对比</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th><strong>模式</strong></th>
+<th><strong>数据冗余</strong></th>
+<th><strong>高可用</strong></th>
+<th><strong>跨地域</strong></th>
+<th><strong>适用场景</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>普通集群</td>
+<td>无</td>
+<td>❌</td>
+<td>❌</td>
+<td>开发测试、低重要性数据</td>
+</tr>
+<tr>
+<td>镜像队列</td>
+<td>全量复制</td>
+<td>✅</td>
+<td>❌</td>
+<td>生产环境（如订单、支付）</td>
+</tr>
+<tr>
+<td>联邦集群</td>
+<td>按需同步</td>
+<td>✅</td>
+<td>✅</td>
+<td>异地多活</td>
+</tr>
+<tr>
+<td>分片集群</td>
+<td>无</td>
+<td>❌</td>
+<td>❌</td>
+<td>超大规模队列</td>
+</tr>
+</tbody></table>
+<p><strong>选择建议</strong></p>
+<ul>
+<li><strong>生产环境</strong>：优先使用 <strong>镜像队列集群</strong>（需权衡性能与冗余）</li>
+<li><strong>异地容灾</strong>：结合 <strong>联邦集群</strong> + 镜像队列</li>
+<li><strong>海量数据</strong>：考虑 <strong>分片集群</strong>（但需业务适配）</li>
+</ul>
+<h3 id="【中等】RabbitMQ-如何实现延迟队列？"><a href="#【中等】RabbitMQ-如何实现延迟队列？" class="headerlink" title="【中等】RabbitMQ 如何实现延迟队列？"></a>【中等】RabbitMQ 如何实现延迟队列？</h3><p>::: info 原生方案：TTL+死信队列（DLX）</p>
+<p>:::</p>
+<ul>
+<li><p><strong>核心原理</strong>：通过消息 TTL（存活时间）和死信交换机（DLX）实现延迟投递。</p>
+</li>
+<li><p><strong>实现步骤</strong></p>
+<ol>
+<li><strong>创建延迟队列</strong>：设置 <code>x-message-ttl</code>（消息过期时间）和 <code>x-dead-letter-exchange</code>（死信交换机）</li>
+<li><strong>消息投递</strong>：发送到延迟队列，等待 TTL 到期</li>
+<li><strong>自动转发</strong>：过期后由 DLX 将消息路由到目标队列</li>
+<li><strong>消费者</strong>：从目标队列获取延迟消息</li>
+</ol>
+</li>
+<li><p><strong>特点</strong></p>
+<ul>
+<li>固定延迟时间（每条消息 TTL 需单独设置）</li>
+<li>无需插件，但灵活性较差</li>
+</ul>
+</li>
+</ul>
+<p>::: info 插件方案：rabbitmq_delayed_message_exchange</p>
+<p>:::</p>
+<ul>
+<li><p><strong>核心原理</strong>：官方插件提供 <code>x-delayed-message</code> 交换机类型，支持动态延迟时间。</p>
+</li>
+<li><p><strong>实现步骤</strong></p>
+<ol>
+<li><strong>启用插件</strong>：安装 <code>rabbitmq_delayed_message_exchange</code></li>
+<li><strong>声明交换机</strong>：类型设为 <code>x-delayed-message</code>，并指定路由规则（如 direct&#x2F;topic）</li>
+<li><strong>发送消息</strong>：通过 <code>headers</code> 设置 <code>x-delay</code> 参数（毫秒级延迟）</li>
+<li><strong>自动投递</strong>：插件内部调度，到期后投递到目标队列</li>
+</ol>
+</li>
+<li><p><strong>特点</strong></p>
+<ul>
+<li>支持动态延迟时间（每条消息可独立设置）</li>
+<li>高精度（毫秒级）</li>
+<li>需额外安装插件</li>
+</ul>
+</li>
+</ul>
+<p>::: info 方案对比</p>
+<p>:::</p>
+<table>
+<thead>
+<tr>
+<th><strong>维度</strong></th>
+<th><strong>TTL+DLX</strong></th>
+<th><strong>插件方案</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>灵活性</strong></td>
+<td>固定延迟（队列级别）</td>
+<td>动态延迟（消息级别）</td>
+</tr>
+<tr>
+<td><strong>精度</strong></td>
+<td>秒级</td>
+<td>毫秒级</td>
+</tr>
+<tr>
+<td><strong>复杂度</strong></td>
+<td>无需插件，需配置 DLX</td>
+<td>需安装插件</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>简单延迟需求（如统一 30 秒延迟）</td>
+<td>复杂延迟需求（如不同订单超时时间）</td>
+</tr>
+<tr>
+<td><strong>缺点</strong></td>
+<td>队列中消息若阻塞，会延迟后续消息投递（需确保 FIFO 消费）</td>
+<td>大量延迟消息可能占用较高内存</td>
+</tr>
+</tbody></table>
+<p><strong>示例代码（插件方案）</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 声明延迟交换机</span></span><br><span class="line">channel.exchange_declare(</span><br><span class="line">    exchange=<span class="string">&#x27;delayed_exchange&#x27;</span>,</span><br><span class="line">    exchange_type=<span class="string">&#x27;x-delayed-message&#x27;</span>,  <span class="comment"># 关键参数</span></span><br><span class="line">    arguments=&#123;<span class="string">&#x27;x-delayed-type&#x27;</span>: <span class="string">&#x27;direct&#x27;</span>&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送延迟消息（延迟 5 秒）</span></span><br><span class="line">channel.basic_publish(</span><br><span class="line">    exchange=<span class="string">&#x27;delayed_exchange&#x27;</span>,</span><br><span class="line">    routing_key=<span class="string">&#x27;order_queue&#x27;</span>,</span><br><span class="line">    body=message,</span><br><span class="line">    properties=pika.BasicProperties(</span><br><span class="line">        headers=&#123;<span class="string">&#x27;x-delay&#x27;</span>: <span class="number">5000</span>&#125;  <span class="comment"># 延迟毫秒数</span></span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/itfly8/p/5155983.html">大型网站架构系列：分布式 MQ（一）</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/itfly8/p/5156155.html">大型网站架构系列：MQ（二）</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/453c6e7ff81c">分布式开放 MQ(RocketMQ) 的原理与实践</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/entry/5a0abfb5f265da43062a4a91">阿里 RocketMQ 优势对比</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/doocs/advanced-java/blob/master/docs/high-concurrency/mq-interview.md">advanced-java 之 MQ</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/6844903635046924296">浅谈消息队列及常见的消息中间件</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/3510f99a/" title="MQ 面试">https://dunwu.github.io/blog/pages/3510f99a/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag"># 中间件</a>
+              <a href="/blog/tags/MQ/" rel="tag"># MQ</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/d407d3f9/" rel="prev" title="RocketMQ 快速入门">
+                  <i class="fa fa-angle-left"></i> RocketMQ 快速入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/9e448b84/" rel="next" title="Tomcat 和 Jetty">
+                  Tomcat 和 Jetty <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"f19c689b82c390772ac70f7d51058b0a"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Java 虚拟机之调优JVM 调优概述GC 性能指标对于 JVM 调优来说，需要先明确调优的目标。从性能的角度看，通常关注三个指标：  吞吐量（throughput） - 指不考虑 GC 引起的停顿时间或内存消耗，垃圾收集器能支撑应用达到的最高性能指标。 停顿时间（latency） - 其度量标准是缩短由于垃圾啊收集引起的停顿时间或者完全消除因垃圾收集所引起的停顿，避免应用运行时发生抖动。 垃圾回">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 虚拟机之调优">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/78e07005/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Java 虚拟机之调优JVM 调优概述GC 性能指标对于 JVM 调优来说，需要先明确调优的目标。从性能的角度看，通常关注三个指标：  吞吐量（throughput） - 指不考虑 GC 引起的停顿时间或内存消耗，垃圾收集器能支撑应用达到的最高性能指标。 停顿时间（latency） - 其度量标准是缩短由于垃圾啊收集引起的停顿时间或者完全消除因垃圾收集所引起的停顿，避免应用运行时发生抖动。 垃圾回">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220107093538.jfif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220107093543.jfif">
+<meta property="article:published_time" content="2019-10-28T14:04:39.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.704Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JVM">
+<meta property="article:tag" content="JavaCore">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220107093538.jfif">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/78e07005/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/78e07005/","path":"/pages/78e07005/","title":"Java 虚拟机之调优"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java 虚拟机之调优 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B9%8B%E8%B0%83%E4%BC%98"><span class="nav-number">1.</span> <span class="nav-text">Java 虚拟机之调优</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-%E8%B0%83%E4%BC%98%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">JVM 调优概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.1.1.</span> <span class="nav-text">GC 性能指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E4%BC%98%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.2.</span> <span class="nav-text">调优原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E-Minor-GC-%E9%A2%91%E7%8E%87"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">降低 Minor GC 频率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E-Full-GC-%E7%9A%84%E9%A2%91%E7%8E%87"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">降低 Full GC 的频率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E-Full-GC-%E7%9A%84%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">降低 Full GC 的时间</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-%E4%BC%98%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.3.</span> <span class="nav-text">GC 优化的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E7%9B%91%E6%8E%A7-GC-%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">（1）监控 GC 状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%86%E6%9E%90-GC-%E6%97%A5%E5%BF%97"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">（2）分析 GC 日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82-GC-%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">（3）选择合适 GC 回收器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E5%88%86%E6%9E%90%E7%BB%93%E6%9E%9C"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">（4）分析结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E5%BA%94%E7%94%A8%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">（5）应用优化配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC-%E6%97%A5%E5%BF%97"><span class="nav-number">1.2.</span> <span class="nav-text">GC 日志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-GC-%E6%97%A5%E5%BF%97"><span class="nav-number">1.2.1.</span> <span class="nav-text">获取 GC 日志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#jstat-%E5%91%BD%E4%BB%A4%E6%9F%A5%E7%9C%8B-GC"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">jstat 命令查看 GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%93%E5%8D%B0-GC-%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">打印 GC 的参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90-GC-%E6%97%A5%E5%BF%97"><span class="nav-number">1.2.2.</span> <span class="nav-text">分析 GC 日志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU-%E8%BF%87%E9%AB%98"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">CPU 过高</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">GC 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E5%A4%A7%E5%B0%8F%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.3.1.</span> <span class="nav-text">堆大小设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.2.</span> <span class="nav-text">JVM 内存配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC-%E7%B1%BB%E5%9E%8B%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.3.</span> <span class="nav-text">GC 类型配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8%E9%80%9A%E7%94%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.4.</span> <span class="nav-text">垃圾回收器通用参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMX"><span class="nav-number">1.3.5.</span> <span class="nav-text">JMX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B-DEBUG"><span class="nav-number">1.3.6.</span> <span class="nav-text">远程 DEBUG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HeapDump"><span class="nav-number">1.3.7.</span> <span class="nav-text">HeapDump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.8.</span> <span class="nav-text">辅助配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/78e07005/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java 虚拟机之调优 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 虚拟机之调优<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/06.JVM/Java_%E8%99%9A%E6%8B%9F%E6%9C%BA_%E8%B0%83%E4%BC%98.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-28 22:04:39" itemprop="dateCreated datePublished" datetime="2019-10-28T22:04:39+08:00">2019-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Java-虚拟机之调优"><a href="#Java-虚拟机之调优" class="headerlink" title="Java 虚拟机之调优"></a>Java 虚拟机之调优</h1><h2 id="JVM-调优概述"><a href="#JVM-调优概述" class="headerlink" title="JVM 调优概述"></a>JVM 调优概述</h2><h3 id="GC-性能指标"><a href="#GC-性能指标" class="headerlink" title="GC 性能指标"></a>GC 性能指标</h3><p>对于 JVM 调优来说，需要先明确调优的目标。<br>从性能的角度看，通常关注三个指标：</p>
+<ul>
+<li><code>吞吐量（throughput）</code> - 指不考虑 GC 引起的停顿时间或内存消耗，垃圾收集器能支撑应用达到的最高性能指标。</li>
+<li><code>停顿时间（latency）</code> - 其度量标准是缩短由于垃圾啊收集引起的停顿时间或者完全消除因垃圾收集所引起的停顿，避免应用运行时发生抖动。</li>
+<li><code>垃圾回收频率</code> - 久发生一次指垃圾回收呢？通常垃圾回收的频率越低越好，增大堆内存空间可以有效降低垃圾回收发生的频率，但同时也意味着堆积的回收对象越多，最终也会增加回收时的停顿时间。所以我们只要适当地增大堆内存空间，保证正常的垃圾回收频率即可。</li>
+</ul>
+<p>大多数情况下调优会侧重于其中一个或者两个方面的目标，很少有情况可以兼顾三个不同的角度。</p>
+<h3 id="调优原则"><a href="#调优原则" class="headerlink" title="调优原则"></a>调优原则</h3><p>GC 优化的两个目标：</p>
+<ul>
+<li><strong>降低 Full GC 的频率</strong></li>
+<li><strong>减少 Full GC 的执行时间</strong></li>
+</ul>
+<p>GC 优化的基本原则是：将不同的 GC 参数应用到两个及以上的服务器上然后比较它们的性能，然后将那些被证明可以提高性能或减少 GC 执行时间的参数应用于最终的工作服务器上。</p>
+<h4 id="降低-Minor-GC-频率"><a href="#降低-Minor-GC-频率" class="headerlink" title="降低 Minor GC 频率"></a>降低 Minor GC 频率</h4><p>如果新生代空间较小，Eden 区很快被填满，就会导致频繁 Minor GC，因此我们可以通过增大新生代空间来降低 Minor GC 的频率。</p>
+<p>可能你会有这样的疑问，扩容 Eden 区虽然可以减少 Minor GC 的次数，但不会增加单次 Minor GC 的时间吗？如果单次 Minor GC 的时间增加，那也很难达到我们期待的优化效果呀。</p>
+<p>我们知道，单次 Minor GC 时间是由两部分组成：T1（扫描新生代）和 T2（复制存活对象）。假设一个对象在 Eden 区的存活时间为 500ms，Minor GC 的时间间隔是 300ms，那么正常情况下，Minor GC 的时间为 ：T1+T2。</p>
+<p>当我们增大新生代空间，Minor GC 的时间间隔可能会扩大到 600ms，此时一个存活 500ms 的对象就会在 Eden 区中被回收掉，此时就不存在复制存活对象了，所以再发生 Minor GC 的时间为：两次扫描新生代，即 2T1。</p>
+<p>可见，扩容后，Minor GC 时增加了 T1，但省去了 T2 的时间。通常在虚拟机中，复制对象的成本要远高于扫描成本。</p>
+<p>如果在堆内存中存在较多的长期存活的对象，此时增加年轻代空间，反而会增加 Minor GC 的时间。如果堆中的短期对象很多，那么扩容新生代，单次 Minor GC 时间不会显著增加。因此，单次 Minor GC 时间更多取决于 GC 后存活对象的数量，而非 Eden 区的大小。</p>
+<h4 id="降低-Full-GC-的频率"><a href="#降低-Full-GC-的频率" class="headerlink" title="降低 Full GC 的频率"></a>降低 Full GC 的频率</h4><p>Full GC 相对来说会比 Minor GC 更耗时。减少进入老年代的对象数量可以显著降低 Full GC 的频率。</p>
+<p><strong>减少创建大对象：</strong>如果<strong>对象占用内存过大，在 Eden 区被创建后会直接被传入老年代</strong>。在平常的业务场景中，我们习惯一次性从数据库中查询出一个大对象用于 web 端显示。例如，我之前碰到过一个一次性查询出 60 个字段的业务操作，这种大对象如果超过年轻代最大对象阈值，会被直接创建在老年代；即使被创建在了年轻代，由于年轻代的内存空间有限，通过 Minor GC 之后也会进入到老年代。这种大对象很容易产生较多的 Full GC。</p>
+<p>我们可以将这种大对象拆解出来，首次只查询一些比较重要的字段，如果还需要其它字段辅助查看，再通过第二次查询显示剩余的字段。</p>
+<p><strong>增大堆内存空间：</strong>在堆内存不足的情况下，增大堆内存空间，且设置初始化堆内存为最大堆内存，也可以降低 Full GC 的频率。</p>
+<h4 id="降低-Full-GC-的时间"><a href="#降低-Full-GC-的时间" class="headerlink" title="降低 Full GC 的时间"></a>降低 Full GC 的时间</h4><p>Full GC 的执行时间比 Minor GC 要长很多，因此，如果在 Full GC 上花费过多的时间（超过 1s），将可能出现超时错误。</p>
+<ul>
+<li>如果<strong>通过减小老年代内存来减少 Full GC 时间</strong>，可能会引起 <code>OutOfMemoryError</code> 或者导致 Full GC 的频率升高。</li>
+<li>另外，如果<strong>通过增加老年代内存来降低 Full GC 的频率</strong>，Full GC 的时间可能因此增加。</li>
+</ul>
+<p>因此，你<strong>需要把老年代的大小设置成一个“合适”的值</strong>。</p>
+<p><strong>GC 优化需要考虑的 JVM 参数</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>类型</strong></th>
+<th><strong>参数</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>堆内存大小</td>
+<td><code>-Xms</code></td>
+<td>启动 JVM 时堆内存的大小</td>
+</tr>
+<tr>
+<td></td>
+<td><code>-Xmx</code></td>
+<td>堆内存最大限制</td>
+</tr>
+<tr>
+<td>新生代空间大小</td>
+<td><code>-XX:NewRatio</code></td>
+<td>新生代和老年代的内存比</td>
+</tr>
+<tr>
+<td></td>
+<td><code>-XX:NewSize</code></td>
+<td>新生代内存大小</td>
+</tr>
+<tr>
+<td></td>
+<td><code>-XX:SurvivorRatio</code></td>
+<td>Eden 区和 Survivor 区的内存比</td>
+</tr>
+</tbody></table>
+<p>GC 优化时最常用的参数是<code>-Xms</code>,<code>-Xmx</code>和<code>-XX:NewRatio</code>。<code>-Xms</code>和<code>-Xmx</code>参数通常是必须的，所以<code>NewRatio</code>的值将对 GC 性能产生重要的影响。</p>
+<p>有些人可能会问<strong>如何设置永久代内存大小</strong>，你可以用<code>-XX:PermSize</code>和<code>-XX:MaxPermSize</code>参数来进行设置，但是要记住，只有当出现<code>OutOfMemoryError</code>错误时你才需要去设置永久代内存。</p>
+<h3 id="GC-优化的过程"><a href="#GC-优化的过程" class="headerlink" title="GC 优化的过程"></a>GC 优化的过程</h3><p>GC 优化的过程大致可分为以下步骤：</p>
+<h4 id="（1）监控-GC-状态"><a href="#（1）监控-GC-状态" class="headerlink" title="（1）监控 GC 状态"></a>（1）监控 GC 状态</h4><p>你需要监控 GC 从而检查系统中运行的 GC 的各种状态。</p>
+<h4 id="（2）分析-GC-日志"><a href="#（2）分析-GC-日志" class="headerlink" title="（2）分析 GC 日志"></a>（2）分析 GC 日志</h4><p>在检查 GC 状态后，你需要分析监控结构并决定是否需要进行 GC 优化。如果分析结果显示运行 GC 的时间只有 0.1-0.3 秒，那么就不需要把时间浪费在 GC 优化上，但如果运行 GC 的时间达到 1-3 秒，甚至大于 10 秒，那么 GC 优化将是很有必要的。</p>
+<p>但是，如果你已经分配了大约 10GB 内存给 Java，并且这些内存无法省下，那么就无法进行 GC 优化了。在进行 GC 优化之前，你需要考虑为什么你需要分配这么大的内存空间，如果你分配了 1GB 或 2GB 大小的内存并且出现了<code>OutOfMemoryError</code>，那你就应该执行<strong>堆快照（heap dump）</strong>来消除导致异常的原因。</p>
+<blockquote>
+<p>🔔 注意：</p>
+</blockquote>
+<blockquote>
+<p><strong>堆快照（heap dump）</strong>是一个用来检查 Java 内存中的对象和数据的内存文件。该文件可以通过执行 JDK 中的<code>jmap</code>命令来创建。在创建文件的过程中，所有 Java 程序都将暂停，因此，不要在系统执行过程中创建该文件。</p>
+</blockquote>
+<blockquote>
+<p>你可以在互联网上搜索 heap dump 的详细说明。</p>
+</blockquote>
+<h4 id="（3）选择合适-GC-回收器"><a href="#（3）选择合适-GC-回收器" class="headerlink" title="（3）选择合适 GC 回收器"></a>（3）选择合适 GC 回收器</h4><p>如果你决定要进行 GC 优化，那么你需要选择一个 GC 回收器，并且为它设置合理 JVM 参数。此时如果你有多个服务器，请如上文提到的那样，在每台机器上设置不同的 GC 参数并分析它们的区别。</p>
+<h4 id="（4）分析结果"><a href="#（4）分析结果" class="headerlink" title="（4）分析结果"></a>（4）分析结果</h4><p>在设置完 GC 参数后就可以开始收集数据，请在收集至少 24 小时后再进行结果分析。如果你足够幸运，你可能会找到系统的最佳 GC 参数。如若不然，你还需要分析输出日志并检查分配的内存，然后需要通过不断调整 GC 类型&#x2F;内存大小来找到系统的最佳参数。</p>
+<h4 id="（5）应用优化配置"><a href="#（5）应用优化配置" class="headerlink" title="（5）应用优化配置"></a>（5）应用优化配置</h4><p>如果 GC 优化的结果令人满意，就可以将参数应用到所有服务器上，并停止 GC 优化。</p>
+<p>在下面的章节中，你将会看到上述每一步所做的具体工作。</p>
+<h2 id="GC-日志"><a href="#GC-日志" class="headerlink" title="GC 日志"></a>GC 日志</h2><h3 id="获取-GC-日志"><a href="#获取-GC-日志" class="headerlink" title="获取 GC 日志"></a>获取 GC 日志</h3><p>获取 GC 日志有两种方式：</p>
+<ul>
+<li>使用 <code>jstat</code> 命令动态查看</li>
+<li>在容器中设置相关参数打印 GC 日志</li>
+</ul>
+<h4 id="jstat-命令查看-GC"><a href="#jstat-命令查看-GC" class="headerlink" title="jstat 命令查看 GC"></a>jstat 命令查看 GC</h4><p><code>jstat -gc</code> 统计垃圾回收堆的行为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -gc <span class="number">1262</span></span><br><span class="line"> S0C    S1C     S0U     S1U   EC       EU        OC         OU        PC       PU         YGC    YGCT    FGC    FGCT     GCT</span><br><span class="line"><span class="number">26112.0</span> <span class="number">24064.0</span> <span class="number">6562.5</span>  <span class="number">0.0</span>   <span class="number">564224.0</span> <span class="number">76274.5</span>   <span class="number">434176.0</span>   <span class="number">388518.3</span>  <span class="number">524288.0</span> <span class="number">42724.7</span>    <span class="number">320</span>    <span class="number">6.417</span>   <span class="number">1</span>      <span class="number">0.398</span>    <span class="number">6.815</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以设置间隔固定时间来打印：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstat -gc 1262 2000 20</span><br></pre></td></tr></table></figure>
+
+<p>这个命令意思就是每隔 2000ms 输出 1262 的 gc 情况，一共输出 20 次</p>
+<h4 id="打印-GC-的参数"><a href="#打印-GC-的参数" class="headerlink" title="打印 GC 的参数"></a>打印 GC 的参数</h4><p>通过 JVM 参数预先设置 GC 日志，通常有以下几种 JVM 参数设置：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-<span class="variable constant_">XX</span><span class="symbol">:+PrintGC</span> 输出 <span class="variable constant_">GC</span> 日志</span><br><span class="line">-<span class="variable constant_">XX</span><span class="symbol">:+PrintGCDetails</span> 输出 <span class="variable constant_">GC</span> 的详细日志</span><br><span class="line">-<span class="variable constant_">XX</span><span class="symbol">:+PrintGCTimeStamps</span> 输出 <span class="variable constant_">GC</span> 的时间戳（以基准时间的形式）</span><br><span class="line">-<span class="variable constant_">XX</span><span class="symbol">:+PrintGCDateStamps</span> 输出 <span class="variable constant_">GC</span> 的时间戳（以日期的形式，如 <span class="number">2013</span>-<span class="number">05</span>-04<span class="symbol">T21:</span><span class="number">53</span><span class="symbol">:</span><span class="number">59.234</span>+0800）</span><br><span class="line">-<span class="variable constant_">XX</span><span class="symbol">:+PrintHeapAtGC</span> 在进行 <span class="variable constant_">GC</span> 的前后打印出堆的信息</span><br><span class="line">-<span class="symbol">verbose:</span>gc -<span class="title class_">Xloggc</span><span class="symbol">:</span>../logs/gc.log 日志文件的输出路径</span><br></pre></td></tr></table></figure>
+
+<p>如果是长时间的 GC 日志，我们很难通过文本形式去查看整体的 GC 性能。此时，我们可以通过<a target="_blank" rel="noopener" href="https://sourceforge.net/projects/gcviewer/">GCView</a>工具打开日志文件，图形化界面查看整体的 GC 性能。</p>
+<p>【示例】Tomcat 设置示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">JAVA_OPTS=&quot;-server -Xms2000m -Xmx2000m -Xmn800m -XX:PermSize=64m -XX:MaxPermSize=256m -XX:SurvivorRatio=4</span><br><span class="line">-verbose:gc -Xloggc:$CATALINA_HOME/logs/gc.log</span><br><span class="line">-Djava.awt.headless=true</span><br><span class="line">-XX:+PrintGCTimeStamps -XX:+PrintGCDetails</span><br><span class="line">-Dsun.rmi.dgc.server.gcInterval=600000 -Dsun.rmi.dgc.client.gcInterval=600000</span><br><span class="line">-XX:+UseConcMarkSweepGC -XX:MaxTenuringThreshold=15&quot;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-Xms2000m -Xmx2000m -Xmn800m -XX:PermSize=64m -XX:MaxPermSize=256m</code><br>Xms，即为 jvm 启动时得 JVM 初始堆大小,Xmx 为 jvm 的最大堆大小，xmn 为新生代的大小，permsize 为永久代的初始大小，MaxPermSize 为永久代的最大空间。</li>
+<li><code>-XX:SurvivorRatio=4</code><br>SurvivorRatio 为新生代空间中的 Eden 区和救助空间 Survivor 区的大小比值，默认是 8，则两个 Survivor 区与一个 Eden 区的比值为 2:8,一个 Survivor 区占整个年轻代的 1&#x2F;10。调小这个参数将增大 survivor 区，让对象尽量在 survitor 区呆长一点，减少进入年老代的对象。去掉救助空间的想法是让大部分不能马上回收的数据尽快进入年老代，加快年老代的回收频率，减少年老代暴涨的可能性，这个是通过将-XX:SurvivorRatio 设置成比较大的值（比如 65536)来做到。</li>
+<li><code>-verbose:gc -Xloggc:$CATALINA_HOME/logs/gc.log</code><br>将虚拟机每次垃圾回收的信息写到日志文件中，文件名由 file 指定，文件格式是平文件，内容和-verbose:gc 输出内容相同。</li>
+<li><code>-Djava.awt.headless=true</code> Headless 模式是系统的一种配置模式。在该模式下，系统缺少了显示设备、键盘或鼠标。</li>
+<li><code>-XX:+PrintGCTimeStamps -XX:+PrintGCDetails</code><br>设置 gc 日志的格式</li>
+<li><code>-Dsun.rmi.dgc.server.gcInterval=600000 -Dsun.rmi.dgc.client.gcInterval=600000</code><br>指定 rmi 调用时 gc 的时间间隔</li>
+<li><code>-XX:+UseConcMarkSweepGC -XX:MaxTenuringThreshold=15</code> 采用并发 gc 方式，经过 15 次 minor gc 后进入年老代</li>
+</ul>
+<h3 id="分析-GC-日志"><a href="#分析-GC-日志" class="headerlink" title="分析 GC 日志"></a>分析 GC 日志</h3><p>Young GC 回收日志:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span>-<span class="number">07</span>-05T10:<span class="number">43</span>:<span class="number">18.093</span>+0800: <span class="number">25.395</span>: [GC [PSYoungGen: 274931K-&gt;10738K(274944K)] 371093K-&gt;147186K(450048K), <span class="number">0.0668480</span> secs] [Times: user=<span class="number">0.17</span> sys=<span class="number">0.08</span>, real=<span class="number">0.07</span> secs]</span><br></pre></td></tr></table></figure>
+
+<p>Full GC 回收日志:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span>-<span class="number">07</span>-05T10:<span class="number">43</span>:<span class="number">18.160</span>+0800: <span class="number">25.462</span>: [Full GC [PSYoungGen: 10738K-&gt;0K(274944K)] [ParOldGen: 136447K-&gt;140379K(302592K)] 147186K-&gt;140379K(577536K) [PSPermGen: 85411K-&gt;85376K(171008K)], <span class="number">0.6763541</span> secs] [Times: user=<span class="number">1.75</span> sys=<span class="number">0.02</span>, real=<span class="number">0.68</span> secs]</span><br></pre></td></tr></table></figure>
+
+<p>通过上面日志分析得出，PSYoungGen、ParOldGen、PSPermGen 属于 Parallel 收集器。其中 PSYoungGen 表示 gc 回收前后年轻代的内存变化；ParOldGen 表示 gc 回收前后老年代的内存变化；PSPermGen 表示 gc 回收前后永久区的内存变化。young gc 主要是针对年轻代进行内存回收比较频繁，耗时短；full gc 会对整个堆内存进行回城，耗时长，因此一般尽量减少 full gc 的次数</p>
+<p>通过两张图非常明显看出 gc 日志构成：</p>
+<p>YOUNG GC</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220107093538.jfif" alt="img"></p>
+<p>FULL GC</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220107093543.jfif" alt="img"></p>
+<h4 id="CPU-过高"><a href="#CPU-过高" class="headerlink" title="CPU 过高"></a>CPU 过高</h4><p>定位步骤：</p>
+<p>（1）执行 top -c 命令，找到 cpu 最高的进程的 id</p>
+<p>（2）jstack PID 导出 Java 应用程序的线程堆栈信息。</p>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">jstack <span class="number">6795</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;Low Memory Detector&quot;</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x081465f8</span> nid=<span class="number">0x7</span> runnable [<span class="number">0x00000000</span>..<span class="number">0x00000000</span>]</span><br><span class="line">        <span class="string">&quot;CompilerThread0&quot;</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x08143c58</span> nid=<span class="number">0x6</span> waiting on condition [<span class="number">0x00000000</span>..<span class="number">0xfb5fd798</span>]</span><br><span class="line">        <span class="string">&quot;Signal Dispatcher&quot;</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x08142f08</span> nid=<span class="number">0x5</span> waiting on condition [<span class="number">0x00000000</span>..<span class="number">0x00000000</span>]</span><br><span class="line">        <span class="string">&quot;Finalizer&quot;</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x08137ca0</span> nid=<span class="number">0x4</span> in Object.wait() [<span class="number">0xfbeed000</span>..<span class="number">0xfbeeddb8</span>]</span><br><span class="line"></span><br><span class="line">        at java.lang.Object.wait(Native Method)</span><br><span class="line"></span><br><span class="line">        - waiting on &lt;<span class="number">0xef600848</span>&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line"></span><br><span class="line">        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:<span class="number">116</span>)</span><br><span class="line"></span><br><span class="line">        - locked &lt;<span class="number">0xef600848</span>&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line"></span><br><span class="line">        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:<span class="number">132</span>)</span><br><span class="line"></span><br><span class="line">        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:<span class="number">159</span>)</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;Reference Handler&quot;</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x081370f0</span> nid=<span class="number">0x3</span> in Object.wait() [<span class="number">0xfbf4a000</span>..<span class="number">0xfbf4aa38</span>]</span><br><span class="line"></span><br><span class="line">        at java.lang.Object.wait(Native Method)</span><br><span class="line"></span><br><span class="line">        - waiting on &lt;<span class="number">0xef600758</span>&gt; (a java.lang.ref.Reference$Lock)</span><br><span class="line"></span><br><span class="line">        at java.lang.Object.wait(Object.java:<span class="number">474</span>)</span><br><span class="line"></span><br><span class="line">        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:<span class="number">116</span>)</span><br><span class="line"></span><br><span class="line">        - locked &lt;<span class="number">0xef600758</span>&gt; (a java.lang.ref.Reference$Lock)</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;VM Thread&quot;</span> prio=<span class="number">10</span> tid=<span class="number">0x08134878</span> nid=<span class="number">0x2</span> runnable</span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;VM Periodic Task Thread&quot;</span> prio=<span class="number">10</span> tid=<span class="number">0x08147768</span> nid=<span class="number">0x8</span> waiting on condition</span><br></pre></td></tr></table></figure>
+
+<p>在打印的堆栈日志文件中，tid 和 nid 的含义：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nid : 对应的 Linux 操作系统下的 tid 线程号，也就是前面转化的 <span class="number">16</span> 进制数字</span><br><span class="line"><span class="symbol">tid:</span> 这个应该是 <span class="keyword">jvm </span>的 <span class="keyword">jmm </span>内存规范中的唯一地址定位</span><br></pre></td></tr></table></figure>
+
+<p>在 CPU 过高的情况下，查找响应的线程，一般定位都是用 nid 来定位的。而如果发生死锁之类的问题，一般用 tid 来定位。</p>
+<p>（3）定位 CPU 高的线程打印其 nid</p>
+<p>查看线程下具体进程信息的命令如下：</p>
+<p>top -H -p 6735</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">top - <span class="number">14</span>:<span class="number">20</span>:09 up <span class="number">611</span> days,  <span class="number">2</span>:<span class="number">56</span>,  <span class="number">1</span> user,  load average: <span class="number">13.19</span>, <span class="number">7.76</span>, <span class="number">7.82</span></span><br><span class="line">Threads: <span class="number">6991</span> total,  <span class="number">17</span> running, <span class="number">6974</span> sleeping,   <span class="number">0</span> stopped,   <span class="number">0</span> zombie</span><br><span class="line">%Cpu(s): <span class="number">90.4</span> us,  <span class="number">2.1</span> sy,  <span class="number">0.0</span> ni,  <span class="number">7.0</span> id,  <span class="number">0.0</span> wa,  <span class="number">0.0</span> hi,  <span class="number">0.4</span> si,  <span class="number">0.0</span> st</span><br><span class="line">KiB Mem:  <span class="number">32783044</span> total, <span class="number">32505008</span> used,   <span class="number">278036</span> free,   <span class="number">120304</span> buffers</span><br><span class="line">KiB Swap:        <span class="number">0</span> total,        <span class="number">0</span> used,        <span class="number">0</span> free. <span class="number">4497428</span> cached Mem</span><br><span class="line"></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND</span><br><span class="line"> <span class="number">6800</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">54.7</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">55.61</span> java</span><br><span class="line"> <span class="number">6803</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">54.4</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">52.59</span> java</span><br><span class="line"> <span class="number">6798</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">53.7</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">55.08</span> java</span><br><span class="line"> <span class="number">6801</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">53.7</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">55.25</span> java</span><br><span class="line"> <span class="number">6797</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">53.1</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">52.78</span> java</span><br><span class="line"> <span class="number">6804</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">53.1</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">55.76</span> java</span><br><span class="line"> <span class="number">6802</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">52.1</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">54.79</span> java</span><br><span class="line"> <span class="number">6799</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">51.8</span> <span class="number">70.1</span> <span class="number">187</span>:<span class="number">53.36</span> java</span><br><span class="line"> <span class="number">6807</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S <span class="number">13.6</span> <span class="number">70.1</span>  <span class="number">48</span>:<span class="number">58.60</span> java</span><br><span class="line"><span class="number">11014</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> R  <span class="number">8.4</span> <span class="number">70.1</span>   <span class="number">8</span>:<span class="number">00.32</span> java</span><br><span class="line"><span class="number">10642</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> R  <span class="number">6.5</span> <span class="number">70.1</span>   <span class="number">6</span>:<span class="number">32.06</span> java</span><br><span class="line"> <span class="number">6808</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S  <span class="number">6.1</span> <span class="number">70.1</span> <span class="number">159</span>:<span class="number">08.40</span> java</span><br><span class="line"><span class="number">11315</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S  <span class="number">3.9</span> <span class="number">70.1</span>   <span class="number">5</span>:<span class="number">54.10</span> java</span><br><span class="line"><span class="number">12545</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S  <span class="number">3.9</span> <span class="number">70.1</span>   <span class="number">6</span>:<span class="number">55.48</span> java</span><br><span class="line"><span class="number">23353</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S  <span class="number">3.9</span> <span class="number">70.1</span>   <span class="number">2</span>:<span class="number">20.55</span> java</span><br><span class="line"><span class="number">24868</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S  <span class="number">3.9</span> <span class="number">70.1</span>   <span class="number">2</span>:<span class="number">12.46</span> java</span><br><span class="line"> <span class="number">9146</span> root      <span class="number">20</span>   <span class="number">0</span> <span class="number">27.</span>299g <span class="number">0.</span>021t   <span class="number">7172</span> S  <span class="number">3.6</span> <span class="number">70.1</span>   <span class="number">7</span>:<span class="number">42.72</span> java</span><br></pre></td></tr></table></figure>
+
+<p>由此可以看出占用 CPU 较高的线程，但是这些还不高，无法直接定位到具体的类。nid 是 16 进制的，所以我们要获取线程的 16 进制 ID：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">printf</span> <span class="string">&quot;<span class="variable">%x</span>\n&quot;</span> <span class="number">6800</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">输出结果:<span class="number">45</span><span class="built_in">cd</span></span><br></pre></td></tr></table></figure>
+
+<p>然后根据输出结果到 jstack 打印的堆栈日志中查定位：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;catalina-exec-5692&quot;</span> daemon prio=<span class="number">10</span> tid=<span class="number">0x00007f3b05013800</span> nid=<span class="number">0x45cd</span> waiting on condition [<span class="number">0x00007f3ae08e3000</span>]</span><br><span class="line">   java.lang.Thread.State: TIMED_WAITING (parking)</span><br><span class="line">        at sun.misc.Unsafe.park(Native Method)</span><br><span class="line">        - parking to wait <span class="keyword">for</span>  &lt;<span class="number">0x00000006a7800598</span>&gt; (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)</span><br><span class="line">        at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:<span class="number">226</span>)</span><br><span class="line">        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:<span class="number">2082</span>)</span><br><span class="line">        at java.util.concurrent.LinkedBlockingQueue.poll(LinkedBlockingQueue.java:<span class="number">467</span>)</span><br><span class="line">        at org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:<span class="number">86</span>)</span><br><span class="line">        at org.apache.tomcat.util.threads.TaskQueue.poll(TaskQueue.java:<span class="number">32</span>)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:<span class="number">1068</span>)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:<span class="number">1130</span>)</span><br><span class="line">        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:<span class="number">615</span>)</span><br><span class="line">        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:<span class="number">61</span>)</span><br><span class="line">        at java.lang.Thread.run(Thread.java:<span class="number">745</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="GC-配置"><a href="#GC-配置" class="headerlink" title="GC 配置"></a>GC 配置</h2><blockquote>
+<p>详细参数说明请参考官方文档：<a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html">JavaHotSpot VM Options</a>，这里仅列举常用参数。</p>
+</blockquote>
+<h3 id="堆大小设置"><a href="#堆大小设置" class="headerlink" title="堆大小设置"></a>堆大小设置</h3><p><strong>年轻代的设置很关键。</strong></p>
+<p>JVM 中最大堆大小有三方面限制：</p>
+<ol>
+<li>相关操作系统的数据模型（32-bt 还是 64-bit）限制；</li>
+<li>系统的可用虚拟内存限制；</li>
+<li>系统的可用物理内存限制。</li>
+</ol>
+<figure class="highlight fix"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">整个堆大小 </span>=<span class="string"> 年轻代大小 + 年老代大小 + 持久代大小</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>持久代一般固定大小为 <code>64m</code>。使用 <code>-XX:PermSize</code> 设置。</li>
+<li>官方推荐年轻代占整个堆的 3&#x2F;8。使用 <code>-Xmn</code> 设置。</li>
+</ul>
+<h3 id="JVM-内存配置"><a href="#JVM-内存配置" class="headerlink" title="JVM 内存配置"></a>JVM 内存配置</h3><table>
+<thead>
+<tr>
+<th>配置</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-Xss</code></td>
+<td>虚拟机栈大小。</td>
+</tr>
+<tr>
+<td><code>-Xms</code></td>
+<td>堆空间初始值。</td>
+</tr>
+<tr>
+<td><code>-Xmx</code></td>
+<td>堆空间最大值。</td>
+</tr>
+<tr>
+<td><code>-Xmn</code></td>
+<td>新生代空间大小。</td>
+</tr>
+<tr>
+<td><code>-XX:NewSize</code></td>
+<td>新生代空间初始值。</td>
+</tr>
+<tr>
+<td><code>-XX:MaxNewSize</code></td>
+<td>新生代空间最大值。</td>
+</tr>
+<tr>
+<td><code>-XX:NewRatio</code></td>
+<td>新生代与年老代的比例。默认为 2，意味着老年代是新生代的 2 倍。</td>
+</tr>
+<tr>
+<td><code>-XX:SurvivorRatio</code></td>
+<td>新生代中调整 eden 区与 survivor 区的比例，默认为 8。即 <code>eden</code> 区为 80% 的大小，两个 <code>survivor</code> 分别为 10% 的大小。</td>
+</tr>
+<tr>
+<td><code>-XX:PermSize</code></td>
+<td>永久代空间的初始值。</td>
+</tr>
+<tr>
+<td><code>-XX:MaxPermSize</code></td>
+<td>永久代空间的最大值。</td>
+</tr>
+</tbody></table>
+<h3 id="GC-类型配置"><a href="#GC-类型配置" class="headerlink" title="GC 类型配置"></a>GC 类型配置</h3><table>
+<thead>
+<tr>
+<th>配置</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-XX:+UseSerialGC</code></td>
+<td>使用 Serial + Serial Old 垃圾回收器组合</td>
+</tr>
+<tr>
+<td><code>-XX:+UseParallelGC</code></td>
+<td>使用 Parallel Scavenge + Parallel Old 垃圾回收器组合</td>
+</tr>
+<tr>
+<td><del><code>-XX:+UseParallelOldGC</code></del></td>
+<td><del>使用 Parallel Old 垃圾回收器（JDK5 后已无用）</del></td>
+</tr>
+<tr>
+<td><code>-XX:+UseParNewGC</code></td>
+<td>使用 ParNew + Serial Old 垃圾回收器</td>
+</tr>
+<tr>
+<td><code>-XX:+UseConcMarkSweepGC</code></td>
+<td>使用 CMS + ParNew + Serial Old 垃圾回收器组合</td>
+</tr>
+<tr>
+<td><code>-XX:+UseG1GC</code></td>
+<td>使用 G1 垃圾回收器</td>
+</tr>
+<tr>
+<td><code>-XX:ParallelCMSThreads</code></td>
+<td>并发标记扫描垃圾回收器 &#x3D; 为使用的线程数量</td>
+</tr>
+</tbody></table>
+<h3 id="垃圾回收器通用参数"><a href="#垃圾回收器通用参数" class="headerlink" title="垃圾回收器通用参数"></a>垃圾回收器通用参数</h3><table>
+<thead>
+<tr>
+<th>配置</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PretenureSizeThreshold</code></td>
+<td>晋升年老代的对象大小。默认为 0。比如设为 10M，则超过 10M 的对象将不在 eden 区分配，而直接进入年老代。</td>
+</tr>
+<tr>
+<td><code>MaxTenuringThreshold</code></td>
+<td>晋升老年代的最大年龄。默认为 15。比如设为 10，则对象在 10 次普通 GC 后将会被放入年老代。</td>
+</tr>
+<tr>
+<td><code>DisableExplicitGC</code></td>
+<td>禁用 <code>System.gc()</code></td>
+</tr>
+</tbody></table>
+<h3 id="JMX"><a href="#JMX" class="headerlink" title="JMX"></a>JMX</h3><p>开启 JMX 后，可以使用 <code>jconsole</code> 或 <code>jvisualvm</code> 进行监控 Java 程序的基本信息和运行情况。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-Dcom.sun.management.jmxremote=<span class="literal">true</span></span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=<span class="literal">false</span></span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=<span class="literal">false</span></span><br><span class="line">-Djava.rmi.server.hostname=<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">-Dcom.sun.management.jmxremote.port=<span class="number">18888</span></span><br></pre></td></tr></table></figure>
+
+<p><code>-Djava.rmi.server.hostname</code> 指定 Java 程序运行的服务器，<code>-Dcom.sun.management.jmxremote.port</code> 指定服务监听端口。</p>
+<h3 id="远程-DEBUG"><a href="#远程-DEBUG" class="headerlink" title="远程 DEBUG"></a>远程 DEBUG</h3><p>如果开启 Java 应用的远程 Debug 功能，需要指定如下参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-Xdebug</span><br><span class="line">-Xnoagent</span><br><span class="line">-Djava.compiler=NONE</span><br><span class="line">-Xrunjdwp:transport=dt_socket,address=<span class="number">28888</span>,server=y,suspend=n</span><br></pre></td></tr></table></figure>
+
+<p>address 即为远程 debug 的监听端口。</p>
+<h3 id="HeapDump"><a href="#HeapDump" class="headerlink" title="HeapDump"></a>HeapDump</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError</span><br></pre></td></tr></table></figure>
+
+<h3 id="辅助配置"><a href="#辅助配置" class="headerlink" title="辅助配置"></a>辅助配置</h3><table>
+<thead>
+<tr>
+<th>配置</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-XX:+PrintGCDetails</code></td>
+<td>打印 GC 日志</td>
+</tr>
+<tr>
+<td><code>-Xloggc:&lt;filename&gt;</code></td>
+<td>指定 GC 日志文件名</td>
+</tr>
+<tr>
+<td><code>-XX:+HeapDumpOnOutOfMemoryError</code></td>
+<td>内存溢出时输出堆快照文件</td>
+</tr>
+</tbody></table>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/34907497/">《深入理解 Java 虚拟机》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100028001">极客时间教程 - Java 性能调优实战</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.douban.com/doulist/2545443/">从表到里学习 JVM 实现</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.importnew.com/23761.html">JVM（4）：Jvm 调优-命令篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhguang/p/Java-JVM-GC.html">Java 系列笔记(4) - JVM 监控与调优</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000005174819">Java 服务 GC 参数调优案例</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.importnew.com/19264.html">JVM 调优总结（5）：典型配置</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/59f02f406fb9a0451869f01c">如何合理的规划一次 jvm 性能调优</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ityouknow.com/jvm/2017/09/21/How-to-optimize-Java-GC.html">jvm 系列(九):如何优化 Java GC“译”</a></li>
+<li><a target="_blank" rel="noopener" href="https://my.oschina.net/feichexia/blog/196575">https://my.oschina.net/feichexia/blog/196575</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/78e07005/" title="Java 虚拟机之调优">https://dunwu.github.io/blog/pages/78e07005/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/JVM/" rel="tag"># JVM</a>
+              <a href="/blog/tags/JavaCore/" rel="tag"># JavaCore</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/20427d78/" rel="prev" title="分库分表基本原理">
+                  <i class="fa fa-angle-left"></i> 分库分表基本原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/1da350fe/" rel="next" title="Java 虚拟机之字节码">
+                  Java 虚拟机之字节码 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"018f28b780e234e046b8d0c5f431d6f3"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

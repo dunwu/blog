@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="系统高性能架构性能简介要设计高性能的系统架构，应该有以下的思维步骤： 首先，要明确影响性能的因素有哪些？性能的指标有哪些？——做到有的放矢。 其次，要了解如何测试性能指标？性能优化，必须要有前后的效果对比，才能证明性能确实有改善。 接下来，学习针对不同场景下，不同性指标的优化策略以及具体实施方案。——见招拆招。 计算机资源了解性能指标前，需要先知道哪些计算机资源会影响性能。一般来说，影响性能的计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统高性能架构">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/bf101e07/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="系统高性能架构性能简介要设计高性能的系统架构，应该有以下的思维步骤： 首先，要明确影响性能的因素有哪些？性能的指标有哪些？——做到有的放矢。 其次，要了解如何测试性能指标？性能优化，必须要有前后的效果对比，才能证明性能确实有改善。 接下来，学习针对不同场景下，不同性指标的优化策略以及具体实施方案。——见招拆招。 计算机资源了解性能指标前，需要先知道哪些计算机资源会影响性能。一般来说，影响性能的计算">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3101171-3d533a36f42608a1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608103701.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608104151.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608104311.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608104922.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/cdn.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/reverse-proxy.jpg">
+<meta property="article:published_time" content="2018-07-05T07:11:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.721Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="性能">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/3101171-3d533a36f42608a1.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/bf101e07/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/bf101e07/","path":"/pages/bf101e07/","title":"系统高性能架构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>系统高性能架构 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%AB%98%E6%80%A7%E8%83%BD%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">系统高性能架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">性能简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%B5%84%E6%BA%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">计算机资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.1.2.</span> <span class="nav-text">性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">响应时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%95%B0"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">并发数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%9E%E5%90%90%E9%87%8F"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">吞吐量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D%E4%BD%BF%E7%94%A8%E7%8E%87"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">资源分配使用率</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="nav-number">1.1.3.</span> <span class="nav-text">性能测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">1.1.4.</span> <span class="nav-text">性能优化策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E6%9C%8D%E5%8A%A1%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.</span> <span class="nav-text">应用服务性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">1.2.1.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">并发模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PPC"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">PPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#prefork"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">prefork</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TPC"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">TPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#prethread"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">prethread</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Reactor"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">Reactor</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.3.</span> <span class="nav-text">异步操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.2.4.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.5.</span> <span class="nav-text">代码优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.5.1.1.</span> <span class="nav-text">线程安全问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%A4%8D%E7%94%A8"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">资源复用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">1.2.5.4.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">存储性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">数据库读写分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">数据库分库分表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Nosql"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">Nosql</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">文件存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%BA%E6%A2%B0%E9%94%AE%E7%9B%98%E5%92%8C%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">机械键盘和固态硬盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E6%95%B0%E5%92%8C-LSM-%E6%A0%91"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">B+数和 LSM 树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID-%E5%92%8C-HDFS"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">RAID 和 HDFS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">前端性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AE%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.1.</span> <span class="nav-text">浏览器访问优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CDN"><span class="nav-number">1.4.2.</span> <span class="nav-text">CDN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">反向代理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/bf101e07/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="系统高性能架构 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统高性能架构<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/01.%E6%9E%B6%E6%9E%84/00.%E7%BB%BC%E5%90%88/03.%E7%B3%BB%E7%BB%9F%E9%AB%98%E6%80%A7%E8%83%BD%E6%9E%B6%E6%9E%84.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-05 15:11:00" itemprop="dateCreated datePublished" datetime="2018-07-05T15:11:00+08:00">2018-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="系统高性能架构"><a href="#系统高性能架构" class="headerlink" title="系统高性能架构"></a>系统高性能架构</h1><h2 id="性能简介"><a href="#性能简介" class="headerlink" title="性能简介"></a>性能简介</h2><p>要设计高性能的系统架构，应该有以下的思维步骤：</p>
+<p>首先，要明确影响性能的因素有哪些？性能的指标有哪些？——做到有的放矢。</p>
+<p>其次，要了解如何测试性能指标？性能优化，必须要有前后的效果对比，才能证明性能确实有改善。</p>
+<p>接下来，学习针对不同场景下，不同性指标的优化策略以及具体实施方案。——见招拆招。</p>
+<h3 id="计算机资源"><a href="#计算机资源" class="headerlink" title="计算机资源"></a>计算机资源</h3><p>了解性能指标前，需要先知道哪些计算机资源会影响性能。一般来说，影响性能的计算机资源包括：</p>
+<ul>
+<li><strong>CPU</strong></li>
+<li><strong>内存</strong></li>
+<li><strong>磁盘 I&#x2F;O</strong></li>
+<li><strong>网络 I&#x2F;O</strong></li>
+<li><strong>数据库</strong></li>
+<li><strong>锁竞争</strong></li>
+</ul>
+<h3 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h3><p>性能测试的主要指标有：</p>
+<ul>
+<li><strong>响应时间</strong></li>
+<li><strong>并发数</strong></li>
+<li><strong>吞吐量</strong><ul>
+<li>QPS</li>
+<li>TPS</li>
+</ul>
+</li>
+<li><strong>资源分配使用率</strong></li>
+</ul>
+<h4 id="响应时间"><a href="#响应时间" class="headerlink" title="响应时间"></a>响应时间</h4><p>响应时间(RT)是指从客户端发一个请求开始计时，到客户端接收到从服务器端返回的响应结果结束所经历的时间，响应时间由请求发送时间、网络传输时间和服务器处理时间三部分组成。</p>
+<p><strong>响应时间越短，性能越好</strong>，一般一个接口的响应时间是在毫秒级。</p>
+<p>响应时间可以进一步细分：</p>
+<ul>
+<li>客户端响应时间</li>
+<li>网络响应时间</li>
+<li>服务端响应时间</li>
+<li>数据库响应时间</li>
+</ul>
+<h4 id="并发数"><a href="#并发数" class="headerlink" title="并发数"></a>并发数</h4><p><strong>并发数是指系统能同时处理的请求、事务数</strong>。</p>
+<p>系统自身的 CPU 处理能力、内存、以及系统自身的线程复用、锁竞争等都会影响并发数。</p>
+<h4 id="吞吐量"><a href="#吞吐量" class="headerlink" title="吞吐量"></a>吞吐量</h4><p>吞吐量计算公式：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">吞吐量 <span class="operator">=</span> 并发数 / 平均响应时间</span><br></pre></td></tr></table></figure>
+
+<p><strong>吞吐量越大，性能越好</strong>。</p>
+<p>一般，系统呈现给外部的最常见的吞吐量指标，就是：</p>
+<ul>
+<li><strong><code>QPS(每秒查询数)</code></strong> - 即系统每秒可以处理的读请求。</li>
+<li><strong><code>TPS(每秒事务数)</code></strong> - 即系统每秒可以处理的写请求。</li>
+</ul>
+<p>而在系统内部，存在以下吞吐量：</p>
+<ul>
+<li>磁盘吞吐量 - 体现了磁盘随机读写的性能。</li>
+<li>网络吞吐量 - 除了受限于网络带宽，CPU 的处理能力、网卡、防火墙、外部接口以及 I&#x2F;O、系统 IO 算法都会影响到网络吞吐量。</li>
+</ul>
+<h4 id="资源分配使用率"><a href="#资源分配使用率" class="headerlink" title="资源分配使用率"></a>资源分配使用率</h4><p>通常由 CPU 占用率、内存使用率、磁盘 I&#x2F;O、网络 I&#x2F;O 、对象与线程数来表示资源使用率。这些指标也是系统监控的重要参数。</p>
+<h3 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h3><p>性能测试手段：</p>
+<ul>
+<li>性能测试</li>
+<li>负载测试</li>
+<li>压力测试</li>
+<li>稳定性测试</li>
+</ul>
+<p>对于 Java 应用而言，最简单的，可以使用 Jmeter 进行性能测试。</p>
+<p>性能测试报告示例：</p>
+<div align="center">
+<img src="https://upload-images.jianshu.io/upload_images/3101171-3d533a36f42608a1.png" />
+</div>
+#### 性能测试的问题
+
+<p>性能测试时，需要注意一些问题：</p>
+<ul>
+<li><strong>热身问题</strong> - 系统刚开始运行时，自身可能加载缓存，JVM 可能会优化热点代码等，这些行为都可能使得前后有较大的性能差异。所以，性能测试时，应该先跳过一段热身时间，等趋于稳定后，再开始性能测试。</li>
+<li><strong>测试结果不稳定</strong> - 性能测试中，有很多不稳定的因素，如环境、网络等，几乎不可能每次都是一样的结果。所以应该多次测试，求平均值。</li>
+<li><strong>多 JVM 情况下的影响</strong> - 应尽量避免一台机器部署多个 JVM 的情况。因为任意一个 JVM 都拥有整个系统的资源使用权，所以在性能测试时，可能会彼此干扰。</li>
+</ul>
+<h3 id="性能优化策略"><a href="#性能优化策略" class="headerlink" title="性能优化策略"></a>性能优化策略</h3><ol>
+<li><strong>性能分析</strong> - 如果请求响应慢，存在性能问题。需要对请求经历的各个环节逐一分析，排查可能出现性能瓶颈的地方，定位问题。检查监控数据，分析影响性能的主要因素：内存、磁盘、网络、CPU，可能是代码或架构设计不合理，又或者是系统资源确实不足。</li>
+<li><strong>性能优化</strong> - 性能优化根据网站分层架构，大致可分为前端性能优化、应用服务性能优化、存储服务性能优化。</li>
+</ol>
+<h2 id="应用服务性能优化"><a href="#应用服务性能优化" class="headerlink" title="应用服务性能优化"></a>应用服务性能优化</h2><h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>网站性能优化第一定律：<strong>第一优先考虑使用缓存提升性能</strong>。</p>
+<p>缓存是用于存储数据的硬件或软件的组成部分，以使得后续更快访问相应的数据。缓存中的数据可能是提前计算好的结果、数据的副本等。</p>
+<ul>
+<li>单点应用可以使用进程内缓存（如：ConcurrentHashMap、Caffeine）；</li>
+<li>分布式应用可以使用分布式缓存（如：Redis、Memcached），或进程缓存+分布式缓存的多级缓存方案。</li>
+</ul>
+<blockquote>
+<p>缓存解决方案请参考：<a href="https://dunwu.github.io/design/distributed/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98.html">缓存基本原理</a></p>
+</blockquote>
+<h3 id="并发模型"><a href="#并发模型" class="headerlink" title="并发模型"></a>并发模型</h3><p>高并发需要根据两个条件划分：连接数量，请求数量。</p>
+<ul>
+<li>海量连接（成千上万）海量请求：例如抢购，双十一等</li>
+<li>常量连接（几十上百）海量请求：例如中间件</li>
+<li>海量连接常量请求：例如门户网站</li>
+<li>常量连接常量请求：例如内部运营系统，管理系统</li>
+</ul>
+<p>单服务器高性能的关键之一就是<strong>服务器采取的并发模型</strong></p>
+<ul>
+<li>服务器如何管理连接。</li>
+<li>服务器如何处理请求。</li>
+</ul>
+<p>以上两个设计点最终都和操作系统的 I&#x2F;O 模型及进程模型相关。</p>
+<ul>
+<li>I&#x2F;O 模型：阻塞、非阻塞、同步、异步。</li>
+<li>进程模型：单进程、多进程、多线程。</li>
+</ul>
+<h4 id="PPC"><a href="#PPC" class="headerlink" title="PPC"></a>PPC</h4><p>PPC 是 Process Per Connection 的缩写，其含义是指每次有新的连接就新建一个进程去专门处理这个连接的请求，这是传统的 UNIX 网络服务器所采用的模型。基本的流程图是：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608103701.png" alt="img"></p>
+<ul>
+<li>父进程接受连接（图中 accept）。</li>
+<li>父进程“fork”子进程（图中 fork）。</li>
+<li>子进程处理连接的读写请求（图中子进程 read、业务处理、write）。</li>
+<li>子进程关闭连接（图中子进程中的 close）。</li>
+</ul>
+<p>这种模式的缺点：</p>
+<ul>
+<li>fork 代价高</li>
+<li>父子进程通信复杂</li>
+<li>支持的并发连接数量有限</li>
+</ul>
+<h4 id="prefork"><a href="#prefork" class="headerlink" title="prefork"></a>prefork</h4><p>PPC 模式中，当连接进来时才 fork 新进程来处理连接请求，由于 fork 进程代价高，用户访问时可能感觉比较慢，prefork 模式的出现就是为了解决这个问题。</p>
+<p>顾名思义，prefork 就是提前创建进程（pre-fork）。系统在启动的时候就预先创建好进程，然后才开始接受用户的请求，当有新的连接进来的时候，就可以省去 fork 进程的操作，让用户访问更快、体验更好。prefork 的基本示意图是：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608104151.png" alt="img"></p>
+<p>prefork 的实现关键就是多个子进程都 accept 同一个 socket，当有新的连接进入时，操作系统保证只有一个进程能最后 accept 成功。但这里也存在一个小小的问题：“惊群”现象，就是指虽然只有一个子进程能 accept 成功，但所有阻塞在 accept 上的子进程都会被唤醒，这样就导致了不必要的进程调度和上下文切换了。幸运的是，操作系统可以解决这个问题，例如 Linux 2.6 版本后内核已经解决了 accept 惊群问题。</p>
+<p>prefork 模式和 PPC 一样，还是存在父子进程通信复杂、支持的并发连接数量有限的问题，因此目前实际应用也不多。Apache 服务器提供了 MPM prefork 模式，推荐在需要可靠性或者与旧软件兼容的站点时采用这种模式，默认情况下最大支持 256 个并发连接。</p>
+<h4 id="TPC"><a href="#TPC" class="headerlink" title="TPC"></a>TPC</h4><p>TPC 是 Thread Per Connection 的缩写，其含义是指每次有新的连接就新建一个线程去专门处理这个连接的请求。与进程相比，线程更轻量级，创建线程的消耗比进程要少得多；同时多线程是共享进程内存空间的，线程通信相比进程通信更简单。因此，TPC 实际上是解决或者弱化了 PPC fork 代价高的问题和父子进程通信复杂的问题。</p>
+<p>TPC 的基本流程是：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608104311.png" alt="img"></p>
+<ul>
+<li>父进程接受连接（图中 accept）。</li>
+<li>父进程创建子线程（图中 pthread）。</li>
+<li>子线程处理连接的读写请求（图中子线程 read、业务处理、write）。</li>
+<li>子线程关闭连接（图中子线程中的 close）。</li>
+</ul>
+<p>注意，和 PPC 相比，主进程不用“close”连接了。原因是在于子线程是共享主进程的进程空间的，连接的文件描述符并没有被复制，因此只需要一次 close 即可。</p>
+<p>TPC 虽然解决了 fork 代价高和进程通信复杂的问题，但是也引入了新的问题，具体表现在：</p>
+<ul>
+<li>创建线程虽然比创建进程代价低，但并不是没有代价，高并发时（例如每秒上万连接）还是有性能问题。</li>
+<li>无须进程间通信，但是线程间的互斥和共享又引入了复杂度，可能一不小心就导致了死锁问题。</li>
+<li>多线程会出现互相影响的情况，某个线程出现异常时，可能导致整个进程退出（例如内存越界）。</li>
+</ul>
+<p>除了引入了新的问题，TPC 还是存在 CPU 线程调度和切换代价的问题。因此，TPC 方案本质上和 PPC 方案基本类似，在并发几百连接的场景下，反而更多地是采用 PPC 的方案，因为 PPC 方案不会有死锁的风险，也不会多进程互相影响，稳定性更高。</p>
+<h4 id="prethread"><a href="#prethread" class="headerlink" title="prethread"></a>prethread</h4><p>TPC 模式中，当连接进来时才创建新的线程来处理连接请求，虽然创建线程比创建进程要更加轻量级，但还是有一定的代价，而 prethread 模式就是为了解决这个问题。</p>
+<p>和 prefork 类似，prethread 模式会预先创建线程，然后才开始接受用户的请求，当有新的连接进来的时候，就可以省去创建线程的操作，让用户感觉更快、体验更好。</p>
+<p>由于多线程之间数据共享和通信比较方便，因此实际上 prethread 的实现方式相比 prefork 要灵活一些，常见的实现方式有下面几种：</p>
+<ul>
+<li>主进程 accept，然后将连接交给某个线程处理。</li>
+<li>子线程都尝试去 accept，最终只有一个线程 accept 成功，方案的基本示意图如下：</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608104922.png" alt="img"></p>
+<p>Apache 服务器的 MPM worker 模式本质上就是一种 prethread 方案，但稍微做了改进。Apache 服务器会首先创建多个进程，每个进程里面再创建多个线程，这样做主要是为了考虑稳定性，即：即使某个子进程里面的某个线程异常导致整个子进程退出，还会有其他子进程继续提供服务，不会导致整个服务器全部挂掉。</p>
+<p>prethread 理论上可以比 prefork 支持更多的并发连接，Apache 服务器 MPM worker 模式默认支持 16 × 25 &#x3D; 400 个并发处理线程。</p>
+<h4 id="Reactor"><a href="#Reactor" class="headerlink" title="Reactor"></a>Reactor</h4><p>I&#x2F;O 多路复用技术归纳起来有两个关键实现点：</p>
+<ul>
+<li>当多条连接共用一个阻塞对象后，进程只需要在一个阻塞对象上等待，而无须再轮询所有连接，常见的实现方式有 <code>select</code>、<code>epoll</code>、<code>kqueue</code> 等。</li>
+<li>当某条连接有新的数据可以处理时，操作系统会通知进程，进程从阻塞状态返回，开始进行业务处理。</li>
+</ul>
+<p>I&#x2F;O 多路复用结合线程池，完美地解决了 PPC 和 TPC 的问题</p>
+<p>Reactor 模式的核心组成部分包括 Reactor 和处理资源池（进程池或线程池），其中 Reactor 负责监听和分配事件，处理资源池负责处理事件。初看 Reactor 的实现是比较简单的，但实际上结合不同的业务场景，Reactor 模式的具体实现方案灵活多变，主要体现在：</p>
+<ul>
+<li>Reactor 的数量可以变化：可以是一个 Reactor，也可以是多个 Reactor。</li>
+<li>资源池的数量可以变化：以进程为例，可以是单个进程，也可以是多个进程（线程类似）。</li>
+</ul>
+<p>最终 Reactor 模式有这三种典型的实现方案：</p>
+<ul>
+<li>单 Reactor 单进程 &#x2F; 线程。</li>
+<li>单 Reactor 多线程。</li>
+<li>多 Reactor 多进程 &#x2F; 线程。</li>
+</ul>
+<h3 id="异步操作"><a href="#异步操作" class="headerlink" title="异步操作"></a>异步操作</h3><p>异步处理不仅可以减少系统服务间的耦合度，提高扩展性，事实上，它还可以提高系统的性能。异步处理可以有效减少响应等待时间，从而提高响应速度。</p>
+<p>异步处理一般是通过分布式消息队列的方式。</p>
+<p>异步处理可以解决以下问题：</p>
+<ul>
+<li>异步响应</li>
+<li>应用解耦</li>
+<li>流量削锋</li>
+<li>日志处理</li>
+<li>消息通讯</li>
+</ul>
+<h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>在高并发场景下，使用负载均衡技术为一个应用构建一个由多台服务器组成的服务器集群，将并发访问请求分发到多台服务器上处理，避免单一服务器因负载压力过大而响应缓慢，使用户请求具有更好的响应延迟特性。</p>
+<p><strong>高性能集群的复杂性主要体现在需要增加一个任务分配器，以及为任务选择一个合适的任务分配算法</strong>。</p>
+<blockquote>
+<p>缓存解决方案请参考：<a href="https://dunwu.github.io/waterdrop/pages/6da58e4b/">负载均衡</a></p>
+</blockquote>
+<h3 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h3><h4 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h4><p>从资源利用的角度看，使用多线程的原因主要有两个：IO 阻塞和多 CPU。</p>
+<p>线程数并非越多越好，那么启动多少线程合适呢？</p>
+<p>有个参考公式：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">启动线程数 <span class="operator">=</span> (任务执行时间 / (任务执行时间 - IO 等待时间)) * CPU 内核数</span><br></pre></td></tr></table></figure>
+
+<p>最佳启动线程数和 CPU 内核数成正比，和 IO 阻塞时间成反比。</p>
+<ul>
+<li>如果任务都是 CPU 计算型任务，那么线程数最多不要超过 CPU 内核数，因为启动再多线程，CPU 也来不及调度；</li>
+<li>相反，如果是任务需要等待磁盘操作，网络响应，那么多启动线程有助于任务并发，提高系统吞吐量。</li>
+</ul>
+<h5 id="线程安全问题"><a href="#线程安全问题" class="headerlink" title="线程安全问题"></a>线程安全问题</h5><p>线程安全问题时指多个线程并发访问某个资源，导致数据混乱。</p>
+<p>解决手段有：</p>
+<ul>
+<li><strong>将对象设计为无状态对象</strong> - 典型应用：Servlet 就是无状态对象，可以被服务器多线程并发调用处理用户请求。</li>
+<li><strong>使用局部对象</strong></li>
+<li><strong>并发访问资源时使用锁</strong> - 但是引入锁会产生性能开销，应尽量使用轻量级的锁。</li>
+</ul>
+<h4 id="资源复用"><a href="#资源复用" class="headerlink" title="资源复用"></a>资源复用</h4><p>应该尽量减少那些开销很大的系统资源的创建和销毁，如数据库连接、网络通信连接、线程、复杂对象等。从编程角度，资源复用主要有两种模式：单例模式和对象池。</p>
+<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p>根据具体场景，选择合适的数据结构。</p>
+<h4 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h4><p>如果 Web 应用运行在 JVM 等具有垃圾回收功能的环境中，那么垃圾回收可能会对系统的性能特性产生巨大影响。立即垃圾回收机制有助于程序优化和参数调优，以及编写内存安全的代码。</p>
+<h2 id="存储性能优化"><a href="#存储性能优化" class="headerlink" title="存储性能优化"></a>存储性能优化</h2><h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><h4 id="数据库读写分离"><a href="#数据库读写分离" class="headerlink" title="数据库读写分离"></a>数据库读写分离</h4><p><strong>读写分离的基本原理是将数据库读写操作分散到不同的节点上</strong></p>
+<blockquote>
+<p>详细解决方案参考：<a href="https://dunwu.github.io/waterdrop/pages/708e3c01/">读写分离</a></p>
+</blockquote>
+<h4 id="数据库分库分表"><a href="#数据库分库分表" class="headerlink" title="数据库分库分表"></a>数据库分库分表</h4><p><strong>数据分片指按照某个维度将存放在单一数据库中的数据分散地存放至多个数据库或表中以达到提升性能瓶颈以及可用性的效果</strong>。</p>
+<blockquote>
+<p>详细解决方案参考：<a href="https://dunwu.github.io/waterdrop/pages/20427d78/">分库分表</a></p>
+</blockquote>
+<h4 id="Nosql"><a href="#Nosql" class="headerlink" title="Nosql"></a>Nosql</h4><p>关系型数据库的优势在于：存储结构化数据，有利于进行各种复杂查询。</p>
+<p>但是，它也存在一些缺点：</p>
+<ul>
+<li>关系数据库存储的是行记录，无法存储数据结构</li>
+<li>关系数据库的 schema 扩展很不方便</li>
+<li>关系数据库在大数据场景下 I&#x2F;O 较高</li>
+<li>关系数据库的全文搜索功能比较弱</li>
+</ul>
+<p>为了解决上述问题，分别诞生了解决不同问题的 Nosql 数据库。</p>
+<p>常见的 NoSQL 数据库可以分为四类：</p>
+<ul>
+<li><strong>K-V 数据库</strong>：KV 存储非常适合存储<strong>不涉及过多数据关系业务关系的数据</strong>，同时能有效减少读写磁盘的次数，比 SQL 数据库存储拥有更好的读写性能，能够<strong>解决关系型数据库无法存储数据结构的问题</strong>。以 Redis 为代表。</li>
+<li><strong>列式数据库</strong>：<strong>适合于批量数据处理和即时查询，解决关系数据库大数据场景下的 I&#x2F;O 问题</strong>。以 HBase 为代表。</li>
+<li><strong>文档数据库</strong>：文档数据库（也称为文档型数据库）是<strong>旨在将半结构化数据存储为文档的一种数据库，它可以解决关系型数据库表结构 schema 扩展不方便的问题</strong>。文档数据库<strong>通常以 JSON 或 XML 格式存储数据</strong>。以 MongoDB 为代表。</li>
+<li><strong>全文搜索引擎</strong>：<strong>解决关系型数据库全文搜索功能较弱的问题</strong>。以 Elasticsearch 为代表。</li>
+</ul>
+<blockquote>
+<p>详情参考：<a target="_blank" rel="noopener" href="https://github.com/dunwu/db-tutorial/blob/master/docs/nosql/nosql-selection.md">Nosql 技术选型</a></p>
+</blockquote>
+<h3 id="文件存储"><a href="#文件存储" class="headerlink" title="文件存储"></a>文件存储</h3><h4 id="机械键盘和固态硬盘"><a href="#机械键盘和固态硬盘" class="headerlink" title="机械键盘和固态硬盘"></a>机械键盘和固态硬盘</h4><p>考虑使用固态硬盘替代机械键盘，因为它的读写速度更快。</p>
+<h4 id="B-数和-LSM-树"><a href="#B-数和-LSM-树" class="headerlink" title="B+数和 LSM 树"></a>B+数和 LSM 树</h4><p>传统关系数据库的数据库索引一般都使用两级索引的 <strong>B+ 树</strong> 结构，树的层次最多三层。因此可能需要 5 次磁盘访问才能更新一条记录（三次磁盘访问获得数据索引及行 ID，然后再进行一次数据文件读操作及一次数据文件写操作）。</p>
+<p>由于磁盘访问是随机的，传统机械键盘在数据随机访问时性能较差，每次数据访问都需要多次访问磁盘影响数据访问性能。</p>
+<p>许多 Nosql 数据库中的索引采用 <strong>LSM 树</strong> 作为主要数据结构。LSM 树可视为一个 N 阶合并树。数据写操作都在内存中进行。在 <strong>LSM 树上进行一次数据更新不需要磁盘访问，速度远快于 B+ 树</strong>。</p>
+<h4 id="RAID-和-HDFS"><a href="#RAID-和-HDFS" class="headerlink" title="RAID 和 HDFS"></a>RAID 和 HDFS</h4><p>RAID 是 Redundant Array of Independent Disks 的缩写，中文简称为独立冗余磁盘阵列。</p>
+<p>RAID 是一种把多块独立的硬盘（物理硬盘）按不同的方式组合起来形成一个硬盘组（逻辑硬盘），从而提供比单个硬盘更高的存储性能和提供数据备份技术。</p>
+<p>HDFS(分布式文件系统) 更被大型网站所青睐。它可以配合 <code>MapReduce</code> 并发计算任务框架进行大数据处理，可以在整个集群上并发访问所有磁盘，无需 RAID 支持。</p>
+<p>HDFS 对数据存储空间的管理以数据块（Block）为单位，默认为 64 MB。所以，HDFS 更适合存储较大的文件。</p>
+<h2 id="前端性能优化"><a href="#前端性能优化" class="headerlink" title="前端性能优化"></a>前端性能优化</h2><h3 id="浏览器访问优化"><a href="#浏览器访问优化" class="headerlink" title="浏览器访问优化"></a>浏览器访问优化</h3><ol>
+<li><strong>减少 HTTP 请求</strong> - HTTP 请求需要建立通信链路，进行数据传输，开销高昂，所以减少 HTTP 请求数可以有效提高访问性能。减少 HTTP 的主要手段是合并 Css、JavaScript、图片。</li>
+<li><strong>使用浏览器缓存</strong> - 因为静态资源文件更新频率低，可以缓存浏览器中以提高性能。设置 HTTP 头中的 <code>Cache-Control</code> 和 <code>Expires</code> 属性，可设定浏览器缓存。</li>
+<li><strong>启用压缩</strong> - 在服务器端压缩静态资源文件，在浏览器端解压缩，可以有效减少传输的数据量。由于文本文件压缩率可达 80% 以上，所以可以对静态资源，如 Html、Css、JavaScrip 进行压缩。</li>
+<li><strong>CSS 放在页面最上面，JavaScript 放在页面最下面</strong> - 浏览器会在下载完全部的 Css 后才对整个页面进行渲染，所以最好的做法是将 Css 放在页面最上面，让浏览器尽快下载 Css；JavaScript 则相反，浏览器加载 JavaScript 后立即执行，可能会阻塞整个页面，造成页面显示缓慢，因此 JavaScript 最好放在页面最下面。</li>
+<li><strong>减少 Cookie 传输</strong> - Cookie 包含在 HTTP 每次的请求和响应中，太大的 Cookie 会严重影响数据传输。</li>
+</ol>
+<h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><p>CDN 一般缓存的是静态资源。</p>
+<p>CDN 的本质仍然是一个缓存，而且将数据缓存在离用户最近的地方，使用户已最快速度获取数据，即所谓网络访问第一跳。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/cdn.png" width="640" />
+</div>
+
+<h3 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h3><p>传统代理服务器位于浏览器一侧，代理浏览器将 HTTP 请求发送到互联网上，而反向代理服务器位于网站机房一侧，代理网站服务器接收 HTTP 请求。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/reverse-proxy.jpg" width="640" />
+</div>
+
+<p>反向代理服务器可以配置缓存功能加速 Web 请求，当用户第一次访问静态内容时，静态内容就会被缓存在反向代理服务器上。</p>
+<p>反向代理还可以实现负载均衡，通过负载均衡构建的集群可以提高系统总体处理能力。</p>
+<p>因为所有请求都必须先经过反向代理服务器，所以可以屏蔽一些攻击 IP，达到保护网站安全的作用。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11322972.html">《大型网站技术架构：核心原理与案例分析》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100028001">极客时间教程 - Java 性能调优实战</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/bf101e07/" title="系统高性能架构">https://dunwu.github.io/blog/pages/bf101e07/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/blog/tags/%E6%80%A7%E8%83%BD/" rel="tag"># 性能</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/ce132f76/" rel="prev" title="系统高可用架构">
+                  <i class="fa fa-angle-left"></i> 系统高可用架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/2c4f8405/" rel="next" title="系统架构概述">
+                  系统架构概述 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"4be225967a0795b67aca8df9d0a9af53"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

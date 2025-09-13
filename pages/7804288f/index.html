@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="翻译自：https:&#x2F;&#x2F;sourcemaking.com&#x2F;refactoring&#x2F;smells&#x2F;bloaters 代码臃肿(Bloated)这组坏味道意味着：代码中的类、函数、字段没有经过合理的组织，只是简单的堆砌起来。这一类型的问题通常在代码的初期并不明显，但是随着代码规模的增长而逐渐积累（特别是当没有人努力去根除它们时）。  基本类型偏执 基本类型偏执(Primitive Obsession">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码坏味道之代码臃肿">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/7804288f/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="翻译自：https:&#x2F;&#x2F;sourcemaking.com&#x2F;refactoring&#x2F;smells&#x2F;bloaters 代码臃肿(Bloated)这组坏味道意味着：代码中的类、函数、字段没有经过合理的组织，只是简单的堆砌起来。这一类型的问题通常在代码的初期并不明显，但是随着代码规模的增长而逐渐积累（特别是当没有人努力去根除它们时）。  基本类型偏执 基本类型偏执(Primitive Obsession">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/primitive-obsession-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/primitive-obsession-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/primitive-obsession-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-class-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-class-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/data-clumps-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/data-clumps-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/large-class-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/large-class-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/large-class-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-subclass-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-subclass-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-interface-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-interface-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/duplicate-observed-data-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/duplicate-observed-data-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-method-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-method-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-method-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-parameter-list-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-parameter-list-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png">
+<meta property="article:published_time" content="2018-10-13T14:48:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.726Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="设计">
+<meta property="article:tag" content="重构">
+<meta property="article:tag" content="代码的坏味道">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/primitive-obsession-1.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/7804288f/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/7804288f/","path":"/pages/7804288f/","title":"代码坏味道之代码臃肿"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>代码坏味道之代码臃肿 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E5%81%8F%E6%89%A7"><span class="nav-number">1.</span> <span class="nav-text">基本类型偏执</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A"><span class="nav-number">1.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E"><span class="nav-number">1.4.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E7%B1%BB%E5%8F%96%E4%BB%A3%E7%B1%BB%E5%9E%8B%E7%A0%81-Replace-Type-Code-with-Class"><span class="nav-number">1.4.1.</span> <span class="nav-text">以类取代类型码(Replace Type Code with Class)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E5%8F%82%E6%95%B0%E5%AF%B9%E8%B1%A1-Introduce-Parameter-Object"><span class="nav-number">1.4.2.</span> <span class="nav-text">引入参数对象(Introduce Parameter Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E5%AF%B9%E8%B1%A1%E5%AE%8C%E6%95%B4-Preserve-Whole-Object"><span class="nav-number">1.4.3.</span> <span class="nav-text">保持对象完整(Preserve Whole Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%AD%90%E7%B1%BB%E5%8F%96%E4%BB%A3%E7%B1%BB%E5%9E%8B%E7%A0%81-Replace-Type-Code-with-Subclass"><span class="nav-number">1.4.4.</span> <span class="nav-text">以子类取代类型码(Replace Type Code with Subclass)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E7%8A%B6%E6%80%81-%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E5%8F%96%E4%BB%A3%E7%B1%BB%E5%9E%8B%E7%A0%81-Replace-Type-Code-with-State-Strategy"><span class="nav-number">1.4.5.</span> <span class="nav-text">以状态&#x2F;策略模式取代类型码(Replace Type Code with State&#x2F;Strategy)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%AF%B9%E8%B1%A1%E5%8F%96%E4%BB%A3%E6%95%B0%E7%BB%84-Replace-Array-with-Object"><span class="nav-number">1.4.6.</span> <span class="nav-text">以对象取代数组(Replace Array with Object)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B3%A5%E5%9B%A2"><span class="nav-number">2.</span> <span class="nav-text">数据泥团</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-1"><span class="nav-number">2.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">2.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-1"><span class="nav-number">2.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5"><span class="nav-number">2.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-1"><span class="nav-number">2.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E7%B1%BB-Extract-Class"><span class="nav-number">2.5.1.</span> <span class="nav-text">提炼类(Extract Class)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E5%8F%82%E6%95%B0%E5%AF%B9%E8%B1%A1-Introduce-Parameter-Object-1"><span class="nav-number">2.5.2.</span> <span class="nav-text">引入参数对象(Introduce Parameter Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E5%AF%B9%E8%B1%A1%E5%AE%8C%E6%95%B4-Preserve-Whole-Object-1"><span class="nav-number">2.5.3.</span> <span class="nav-text">保持对象完整(Preserve Whole Object)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E5%A4%A7%E7%9A%84%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">过大的类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-2"><span class="nav-number">3.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-2"><span class="nav-number">3.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-2"><span class="nav-number">3.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-2"><span class="nav-number">3.4.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E7%B1%BB-Extract-Class-1"><span class="nav-number">3.4.1.</span> <span class="nav-text">提炼类(Extract Class)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E5%AD%90%E7%B1%BB-Extract-Subclass"><span class="nav-number">3.4.2.</span> <span class="nav-text">提炼子类(Extract Subclass)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E6%8E%A5%E5%8F%A3-Extract-Interface"><span class="nav-number">3.4.3.</span> <span class="nav-text">提炼接口(Extract Interface)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E8%A2%AB%E7%9B%91%E8%A7%86%E6%95%B0%E6%8D%AE-Duplicate-Observed-Data"><span class="nav-number">3.4.4.</span> <span class="nav-text">复制被监视数据(Duplicate Observed Data)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E9%95%BF%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">过长函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">4.1.</span> <span class="nav-text">问题的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text">解决函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-3"><span class="nav-number">4.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD"><span class="nav-number">4.4.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-3"><span class="nav-number">4.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E5%87%BD%E6%95%B0-Extract-Method"><span class="nav-number">4.5.1.</span> <span class="nav-text">提炼函数(Extract Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E6%9F%A5%E8%AF%A2%E5%8F%96%E4%BB%A3%E4%B8%B4%E6%97%B6%E5%8F%98%E9%87%8F-Replace-Temp-with-Query"><span class="nav-number">4.5.2.</span> <span class="nav-text">以查询取代临时变量(Replace Temp with Query)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E5%8F%82%E6%95%B0%E5%AF%B9%E8%B1%A1-Introduce-Parameter-Object-2"><span class="nav-number">4.5.3.</span> <span class="nav-text">引入参数对象(Introduce Parameter Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E5%AF%B9%E8%B1%A1%E5%AE%8C%E6%95%B4-Preserve-Whole-Object-2"><span class="nav-number">4.5.4.</span> <span class="nav-text">保持对象完整(Preserve Whole Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E5%8F%96%E4%BB%A3%E5%87%BD%E6%95%B0-Replace-Method-with-Method-Object"><span class="nav-number">4.5.5.</span> <span class="nav-text">以函数对象取代函数(Replace Method with Method Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E8%A7%A3%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F-Decompose-Conditional"><span class="nav-number">4.5.6.</span> <span class="nav-text">分解条件表达式(Decompose Conditional)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E9%95%BF%E5%8F%82%E6%95%B0%E5%88%97"><span class="nav-number">5.</span> <span class="nav-text">过长参数列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-3"><span class="nav-number">5.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">5.2.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-4"><span class="nav-number">5.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5-1"><span class="nav-number">5.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-4"><span class="nav-number">5.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%87%BD%E6%95%B0%E5%8F%96%E4%BB%A3%E5%8F%82%E6%95%B0-Replace-Parameter-with-Methods"><span class="nav-number">5.5.1.</span> <span class="nav-text">以函数取代参数(Replace Parameter with Methods)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E5%AF%B9%E8%B1%A1%E5%AE%8C%E6%95%B4-Preserve-Whole-Object-3"><span class="nav-number">5.5.2.</span> <span class="nav-text">保持对象完整(Preserve Whole Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E5%8F%82%E6%95%B0%E5%AF%B9%E8%B1%A1-Introduce-Parameter-Object-3"><span class="nav-number">5.5.3.</span> <span class="nav-text">引入参数对象(Introduce Parameter Object)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E9%98%85%E8%AF%BB"><span class="nav-number">6.</span> <span class="nav-text">扩展阅读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/7804288f/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="代码坏味道之代码臃肿 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          代码坏味道之代码臃肿<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/03.%E9%87%8D%E6%9E%84/02.%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E4%BB%A3%E7%A0%81%E8%87%83%E8%82%BF.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-10-13 22:48:00" itemprop="dateCreated datePublished" datetime="2018-10-13T22:48:00+08:00">2018-10-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E9%87%8D%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">重构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>翻译自：<a target="_blank" rel="noopener" href="https://sourcemaking.com/refactoring/smells/bloaters">https://sourcemaking.com/refactoring/smells/bloaters</a></p>
+<p><strong>代码臃肿(Bloated)这组坏味道意味着：代码中的类、函数、字段没有经过合理的组织，只是简单的堆砌起来。这一类型的问题通常在代码的初期并不明显，但是随着代码规模的增长而逐渐积累（特别是当没有人努力去根除它们时）。</strong></p>
+</blockquote>
+<h2 id="基本类型偏执"><a href="#基本类型偏执" class="headerlink" title="基本类型偏执"></a>基本类型偏执</h2><blockquote>
+<p>基本类型偏执(Primitive Obsession)</p>
+<ul>
+<li>使用基本类型而不是小对象来实现简单任务（例如货币、范围、电话号码字符串等）。</li>
+<li>使用常量编码信息（例如一个用于引用管理员权限的常量<code>USER_ADMIN_ROLE = 1</code> ）。</li>
+<li>使用字符串常量作为字段名在数组中使用。</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/primitive-obsession-1.png" alt="img"></p>
+<h3 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h3><p>类似其他大部分坏味道，基本类型偏执诞生于类初建的时候。一开始，可能只是不多的字段，随着表示的特性越来越多，基本数据类型字段也越来越多。</p>
+<p>基本类型常常被用于表示模型的类型。你有一组数字或字符串用来表示某个实体。</p>
+<p>还有一个场景：在模拟场景，大量的字符串常量被用于数组的索引。</p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/primitive-obsession-2.png" alt="img"></p>
+<p>大多数编程语言都支持基本数据类型和结构类型（类、结构体等）。结构类型允许程序员将基本数据类型组织起来，以代表某一事物的模型。</p>
+<p>基本数据类型可以看成是机构类型的积木块。当基本数据类型数量成规模后，将它们有组织地结合起来，可以更方便的管理这些数据。</p>
+<ul>
+<li>如果你有大量的基本数据类型字段，就有可能将其中部分存在逻辑联系的字段组织起来，形成一个类。更进一步的是，将与这些数据有关联的方法也一并移入类中。为了实现这个目标，可以尝试 <code>以类取代类型码(Replace Type Code with Class)</code> 。</li>
+<li>如果基本数据类型字段的值是用于方法的参数，可以使用 <code>引入参数对象(Introduce Parameter Object)</code> 或 <code>保持对象完整(Preserve Whole Object)</code> 。</li>
+<li>如果想要替换的数据值是类型码，而它并不影响行为，则可以运用 <code>以类取代类型码(Replace Type Code with Class)</code> 将它替换掉。如果你有与类型码相关的条件表达式，可运用 <code>以子类取代类型码(Replace Type Code with Subclass)</code> 或 <code>以状态/策略模式取代类型码(Replace Type Code with State/Strategy)</code> 加以处理。</li>
+<li>如果你发现自己正从数组中挑选数据，可运用 <code>以对象取代数组(Replace Array with Object)</code> 。</li>
+</ul>
+<h3 id="收益"><a href="#收益" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>多亏了使用对象替代基本数据类型，使得代码变得更加灵活。</li>
+<li>代码变得更加易读和更加有组织。特殊数据可以集中进行操作，而不像之前那样分散。不用再猜测这些陌生的常量的意义以及它们为什么在数组中。</li>
+<li>更容易发现重复代码。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/primitive-obsession-3.png" alt="img"></p>
+<h3 id="重构方法说明"><a href="#重构方法说明" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="以类取代类型码-Replace-Type-Code-with-Class"><a href="#以类取代类型码-Replace-Type-Code-with-Class" class="headerlink" title="以类取代类型码(Replace Type Code with Class)"></a>以类取代类型码(Replace Type Code with Class)</h4><p><strong>问题</strong></p>
+<p>类之中有一个数值类型码，但它并不影响类的行为。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-class-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以一个新的类替换该数值类型码。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-class-after.png" alt="img"></p>
+<h4 id="引入参数对象-Introduce-Parameter-Object"><a href="#引入参数对象-Introduce-Parameter-Object" class="headerlink" title="引入参数对象(Introduce Parameter Object)"></a>引入参数对象(Introduce Parameter Object)</h4><p><strong>问题</strong></p>
+<p>某些参数总是很自然地同时出现。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以一个对象来取代这些参数。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png" alt="img"></p>
+<h4 id="保持对象完整-Preserve-Whole-Object"><a href="#保持对象完整-Preserve-Whole-Object" class="headerlink" title="保持对象完整(Preserve Whole Object)"></a>保持对象完整(Preserve Whole Object)</h4><p><strong>问题</strong></p>
+<p>你从某个对象中取出若干值，将它们作为某一次函数调用时的参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">low</span> <span class="operator">=</span> daysTempRange.getLow();</span><br><span class="line"><span class="type">int</span> <span class="variable">high</span> <span class="operator">=</span> daysTempRange.getHigh();</span><br><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(low, high);</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>改为传递整个对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(daysTempRange);</span><br></pre></td></tr></table></figure>
+
+<h4 id="以子类取代类型码-Replace-Type-Code-with-Subclass"><a href="#以子类取代类型码-Replace-Type-Code-with-Subclass" class="headerlink" title="以子类取代类型码(Replace Type Code with Subclass)"></a>以子类取代类型码(Replace Type Code with Subclass)</h4><p><strong>问题</strong></p>
+<p>你有一个不可变的类型码，它会影响类的行为。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以子类取代这个类型码。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-after.png" alt="img"></p>
+<h4 id="以状态-策略模式取代类型码-Replace-Type-Code-with-State-Strategy"><a href="#以状态-策略模式取代类型码-Replace-Type-Code-with-State-Strategy" class="headerlink" title="以状态&#x2F;策略模式取代类型码(Replace Type Code with State&#x2F;Strategy)"></a>以状态&#x2F;策略模式取代类型码(Replace Type Code with State&#x2F;Strategy)</h4><p><strong>问题</strong></p>
+<p>你有一个类型码，它会影响类的行为，但你无法通过继承消除它。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以状态对象取代类型码。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-after.png" alt="img"></p>
+<h4 id="以对象取代数组-Replace-Array-with-Object"><a href="#以对象取代数组-Replace-Array-with-Object" class="headerlink" title="以对象取代数组(Replace Array with Object)"></a>以对象取代数组(Replace Array with Object)</h4><p><strong>问题</strong></p>
+<p>你有一个数组，其中的元素各自代表不同的东西。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String[] row = <span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">3</span>];</span><br><span class="line">row[<span class="number">0</span>] = <span class="string">&quot;Liverpool&quot;</span>;</span><br><span class="line">row[<span class="number">1</span>] = <span class="string">&quot;15&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>以对象替换数组。对于数组中的每个元素，以一个字段来表示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Performance</span> <span class="variable">row</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Performance</span>();</span><br><span class="line">row.setName(<span class="string">&quot;Liverpool&quot;</span>);</span><br><span class="line">row.setWins(<span class="string">&quot;15&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据泥团"><a href="#数据泥团" class="headerlink" title="数据泥团"></a>数据泥团</h2><blockquote>
+<p>数据泥团(Data Clumps)</p>
+<p>有时，代码的不同部分包含相同的变量组（例如用于连接到数据库的参数）。这些绑在一起出现的数据应该拥有自己的对象。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/data-clumps-1.png" alt="img"></p>
+<h3 id="问题原因-1"><a href="#问题原因-1" class="headerlink" title="问题原因"></a>问题原因</h3><p>通常，数据泥团的出现时因为糟糕的编程结构或“复制-粘贴式编程”。</p>
+<p>有一个判断是否是数据泥团的好办法：删掉众多数据中的一项。这么做，其他数据有没有因而失去意义？如果它们不再有意义，这就是个明确的信号：你应该为它们产生一个新的对象。</p>
+<h3 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>首先找出这些数据以字段形式出现的地方，运用 <code>提炼类(Extract Class)</code> 将它们提炼到一个独立对象中。</li>
+<li>如果数据泥团在函数的参数列中出现，运用 <code>引入参数对象(Introduce Parameter Object)</code> 将它们组织成一个类。</li>
+<li>如果数据泥团的部分数据出现在其他函数中，考虑运用 <code>保持对象完整(Preserve Whole Object)</code> 将整个数据对象传入到函数中。</li>
+<li>检视一下使用这些字段的代码，也许，将它们移入一个数据类是个不错的主意。</li>
+</ul>
+<h3 id="收益-1"><a href="#收益-1" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>提高代码易读性和组织性。对于特殊数据的操作，可以集中进行处理，而不像以前那样分散。</li>
+<li>减少代码量。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/data-clumps-3.png" alt="img"></p>
+<h3 id="何时忽略"><a href="#何时忽略" class="headerlink" title="何时忽略"></a>何时忽略</h3><ul>
+<li>有时为了对象中的部分数据而将整个对象作为参数传递给函数，可能会产生让两个类之间不收欢迎的依赖关系，这中情况下可以不传递整个对象。</li>
+</ul>
+<h3 id="重构方法说明-1"><a href="#重构方法说明-1" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="提炼类-Extract-Class"><a href="#提炼类-Extract-Class" class="headerlink" title="提炼类(Extract Class)"></a>提炼类(Extract Class)</h4><p><strong>问题</strong></p>
+<p>某个类做了不止一件事。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>建立一个新类，将相关的字段和函数从旧类搬移到新类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png" alt="img"></p>
+<h4 id="引入参数对象-Introduce-Parameter-Object-1"><a href="#引入参数对象-Introduce-Parameter-Object-1" class="headerlink" title="引入参数对象(Introduce Parameter Object)"></a>引入参数对象(Introduce Parameter Object)</h4><p><strong>问题</strong></p>
+<p>某些参数总是很自然地同时出现。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以一个对象来取代这些参数。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png" alt="img"></p>
+<h4 id="保持对象完整-Preserve-Whole-Object-1"><a href="#保持对象完整-Preserve-Whole-Object-1" class="headerlink" title="保持对象完整(Preserve Whole Object)"></a>保持对象完整(Preserve Whole Object)</h4><p><strong>问题</strong></p>
+<p>你从某个对象中取出若干值，将它们作为某一次函数调用时的参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">low</span> <span class="operator">=</span> daysTempRange.getLow();</span><br><span class="line"><span class="type">int</span> <span class="variable">high</span> <span class="operator">=</span> daysTempRange.getHigh();</span><br><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(low, high);</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>改为传递整个对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(daysTempRange);</span><br></pre></td></tr></table></figure>
+
+<h2 id="过大的类"><a href="#过大的类" class="headerlink" title="过大的类"></a>过大的类</h2><blockquote>
+<p>过大的类(Large Class)</p>
+<p>一个类含有过多字段、函数、代码行。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/large-class-1.png" alt="img"></p>
+<h3 id="问题原因-2"><a href="#问题原因-2" class="headerlink" title="问题原因"></a>问题原因</h3><p>类通常一开始很小，但是随着程序的增长而逐渐膨胀。</p>
+<p>类似于过长函数，程序员通常觉得在一个现存类中添加新特性比创建一个新的类要容易。</p>
+<h3 id="解决方法-2"><a href="#解决方法-2" class="headerlink" title="解决方法"></a>解决方法</h3><p>设计模式中有一条重要原则：职责单一原则。一个类应该只赋予它一个职责。如果它所承担的职责太多，就该考虑为它减减负。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/large-class-2.png" alt="img"></p>
+<ul>
+<li>如果过大类中的部分行为可以提炼到一个独立的组件中，可以使用 <code>提炼类(Extract Class)</code>。</li>
+<li>如果过大类中的部分行为可以用不同方式实现或使用于特殊场景，可以使用 <code>提炼子类(Extract Subclass)</code>。</li>
+<li>如果有必要为客户端提供一组操作和行为，可以使用 <code>提炼接口(Extract Interface)</code>。</li>
+<li>如果你的过大类是个 GUI 类，可能需要把数据和行为移到一个独立的领域对象去。你可能需要两边各保留一些重复数据，并保持两边同步。 <code>复制被监视数据(Duplicate Observed Data)</code> 可以告诉你怎么做。</li>
+</ul>
+<h3 id="收益-2"><a href="#收益-2" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>重构过大的类可以使程序员不必记住一个类中大量的属性。</li>
+<li>在大多数情况下，分割过大的类可以避免代码和功能的重复。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/large-class-3.png" alt="img"></p>
+<h3 id="重构方法说明-2"><a href="#重构方法说明-2" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="提炼类-Extract-Class-1"><a href="#提炼类-Extract-Class-1" class="headerlink" title="提炼类(Extract Class)"></a>提炼类(Extract Class)</h4><p><strong>问题</strong></p>
+<p>某个类做了不止一件事。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>建立一个新类，将相关的字段和函数从旧类搬移到新类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png" alt="img"></p>
+<h4 id="提炼子类-Extract-Subclass"><a href="#提炼子类-Extract-Subclass" class="headerlink" title="提炼子类(Extract Subclass)"></a>提炼子类(Extract Subclass)</h4><p><strong>问题</strong></p>
+<p>一个类中有些特性仅用于特定场景。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-subclass-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>创建一个子类，并将用于特殊场景的特性置入其中。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-subclass-after.png" alt="img"></p>
+<h4 id="提炼接口-Extract-Interface"><a href="#提炼接口-Extract-Interface" class="headerlink" title="提炼接口(Extract Interface)"></a>提炼接口(Extract Interface)</h4><p><strong>问题</strong></p>
+<p>多个客户端使用一个类部分相同的函数。另一个场景是两个类中的部分函数相同。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-interface-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>移动相同的部分函数到接口中。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-interface-after.png" alt="img"></p>
+<h4 id="复制被监视数据-Duplicate-Observed-Data"><a href="#复制被监视数据-Duplicate-Observed-Data" class="headerlink" title="复制被监视数据(Duplicate Observed Data)"></a>复制被监视数据(Duplicate Observed Data)</h4><p><strong>问题</strong></p>
+<p>如果存储在类中的数据是负责 GUI 的。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/duplicate-observed-data-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>一个比较好的方法是将负责 GUI 的数据放入一个独立的类，以确保 GUI 数据与域类之间的连接和同步。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/duplicate-observed-data-after.png" alt="img"></p>
+<h2 id="过长函数"><a href="#过长函数" class="headerlink" title="过长函数"></a>过长函数</h2><blockquote>
+<p>过长函数(Long Method)</p>
+<p>一个函数含有太多行代码。一般来说，任何函数超过 10 行时，你就可以考虑是不是过长了。<br>函数中的代码行数原则上不要超过 100 行。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-method-1.png" alt="img"></p>
+<h3 id="问题的原因"><a href="#问题的原因" class="headerlink" title="问题的原因"></a>问题的原因</h3><p>通常情况下，创建一个新函数的难度要大于添加功能到一个已存在的函数。大部分人都觉得：“我就添加这么两行代码，为此新建一个函数实在是小题大做了。”于是，张三加两行，李四加两行，王五加两行。。。函数日益庞大，最终烂的像一锅浆糊，再也没人能完全看懂了。于是大家就更不敢轻易动这个函数了，只能恶性循环的往其中添加代码。所以，如果你看到一个超过 200 行的函数，通常都是多个程序员东拼西凑出来的。</p>
+<h3 id="解决函数"><a href="#解决函数" class="headerlink" title="解决函数"></a>解决函数</h3><p>一个很好的技巧是：<strong>寻找注释</strong>。添加注释，一般有这么几个原因：代码逻辑较为晦涩或复杂；这段代码功能相对独立；特殊处理。<br>如果代码前方有一行注释，就是在提醒你：可以将这段代码替换成一个函数，而且可以在注释的基础上给这个函数命名。如果函数有一个描述恰当的名字，就不需要去看内部代码究竟是如何实现的。就算只有一行代码，如果它需要以注释来说明，那也值得将它提炼到独立函数中。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-method-2.png" alt="img"></p>
+<ul>
+<li>为了给一个函数瘦身，可以使用 <code>提炼函数(Extract Method)</code>。</li>
+<li>如果局部变量和参数干扰提炼函数，可以使用 <code>以查询取代临时变量(Replace Temp with Query)</code>，<code>引入参数对象(Introduce Parameter Object)</code> 或 <code>保持对象完整(Preserve Whole Object)</code> 。</li>
+<li>如果前面两条没有帮助，可以通过 <code>以函数对象取代函数(Replace Method with Method Object)</code> 尝试移动整个函数到一个独立的对象中。</li>
+<li>条件表达式和循环常常也是提炼的信号。对于条件表达式，可以使用 <code>分解条件表达式(Decompose Conditional)</code> 。至于循环，应该使用 <code>提炼函数(Extract Method)</code> 将循环和其内的代码提炼到独立函数中。</li>
+</ul>
+<h3 id="收益-3"><a href="#收益-3" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>在所有类型的面向对象代码中，函数比较短小精悍的类往往生命周期较长。一个函数越长，就越不容易理解和维护。</li>
+<li>此外，过长函数中往往含有难以发现的重复代码。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-method-3.png" alt="img"></p>
+<h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><p>是否像许多人说的那样，增加函数的数量会影响性能？在几乎绝大多数情况下，这种影响是可以忽略不计，所以不用担心。<br>此外，现在有了清晰和易读的代码，在需要的时候，你将更容易找到真正有效的函数来重组代码和提高性能。</p>
+<h3 id="重构方法说明-3"><a href="#重构方法说明-3" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="提炼函数-Extract-Method"><a href="#提炼函数-Extract-Method" class="headerlink" title="提炼函数(Extract Method)"></a>提炼函数(Extract Method)</h4><p><strong>问题</strong></p>
+<p>你有一段代码可以组织在一起。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//print details</span></span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + getOutstanding());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>移动这段代码到一个新的函数中，使用函数的调用来替代老代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line">  printDetails(getOutstanding());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">printDetails</span><span class="params">(<span class="type">double</span> outstanding)</span> &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + outstanding);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="以查询取代临时变量-Replace-Temp-with-Query"><a href="#以查询取代临时变量-Replace-Temp-with-Query" class="headerlink" title="以查询取代临时变量(Replace Temp with Query)"></a>以查询取代临时变量(Replace Temp with Query)</h4><p><strong>问题</strong></p>
+<p>将表达式的结果放在局部变量中，然后在代码中使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> <span class="title function_">calculateTotal</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">double</span> <span class="variable">basePrice</span> <span class="operator">=</span> quantity * itemPrice;</span><br><span class="line">  <span class="keyword">if</span> (basePrice &gt; <span class="number">1000</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> basePrice * <span class="number">0.95</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> basePrice * <span class="number">0.98</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>将整个表达式移动到一个独立的函数中并返回结果。使用查询函数来替代使用变量。如果需要，可以在其他函数中合并新函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">double</span> <span class="title function_">calculateTotal</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (basePrice() &gt; <span class="number">1000</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> basePrice() * <span class="number">0.95</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> basePrice() * <span class="number">0.98</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">double</span> <span class="title function_">basePrice</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> quantity * itemPrice;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="引入参数对象-Introduce-Parameter-Object-2"><a href="#引入参数对象-Introduce-Parameter-Object-2" class="headerlink" title="引入参数对象(Introduce Parameter Object)"></a>引入参数对象(Introduce Parameter Object)</h4><p><strong>问题</strong></p>
+<p>某些参数总是很自然地同时出现。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以一个对象来取代这些参数。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png" alt="img"></p>
+<h4 id="保持对象完整-Preserve-Whole-Object-2"><a href="#保持对象完整-Preserve-Whole-Object-2" class="headerlink" title="保持对象完整(Preserve Whole Object)"></a>保持对象完整(Preserve Whole Object)</h4><p><strong>问题</strong></p>
+<p>你从某个对象中取出若干值，将它们作为某一次函数调用时的参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">low</span> <span class="operator">=</span> daysTempRange.getLow();</span><br><span class="line"><span class="type">int</span> <span class="variable">high</span> <span class="operator">=</span> daysTempRange.getHigh();</span><br><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(low, high);</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>改为传递整个对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(daysTempRange);</span><br></pre></td></tr></table></figure>
+
+<h4 id="以函数对象取代函数-Replace-Method-with-Method-Object"><a href="#以函数对象取代函数-Replace-Method-with-Method-Object" class="headerlink" title="以函数对象取代函数(Replace Method with Method Object)"></a>以函数对象取代函数(Replace Method with Method Object)</h4><p><strong>问题</strong></p>
+<p>你有一个过长函数，它的局部变量交织在一起，以致于你无法应用提炼函数(Extract Method) 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Order</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">price</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">double</span> primaryBasePrice;</span><br><span class="line">    <span class="type">double</span> secondaryBasePrice;</span><br><span class="line">    <span class="type">double</span> tertiaryBasePrice;</span><br><span class="line">    <span class="comment">// long computation.</span></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>将函数移到一个独立的类中，使得局部变量成了这个类的字段。然后，你可以将函数分割成这个类中的多个函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Order</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">price</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">PriceCalculator</span>(<span class="built_in">this</span>).compute();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PriceCalculator</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">double</span> primaryBasePrice;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">double</span> secondaryBasePrice;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">double</span> tertiaryBasePrice;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="title function_">PriceCalculator</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">    <span class="comment">// copy relevant information from order object.</span></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">compute</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// long computation.</span></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="分解条件表达式-Decompose-Conditional"><a href="#分解条件表达式-Decompose-Conditional" class="headerlink" title="分解条件表达式(Decompose Conditional)"></a>分解条件表达式(Decompose Conditional)</h4><p><strong>问题</strong></p>
+<p>你有复杂的条件表达式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (date.before(SUMMER_START) || date.after(SUMMER_END)) &#123;</span><br><span class="line">  charge = quantity * winterRate + winterServiceCharge;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">  charge = quantity * summerRate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>根据条件分支将整个条件表达式分解成几个函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (notSummer(date)) &#123;</span><br><span class="line">  charge = winterCharge(quantity);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">  charge = summerCharge(quantity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="过长参数列"><a href="#过长参数列" class="headerlink" title="过长参数列"></a>过长参数列</h2><blockquote>
+<p>过长参数列(Long Parameter List)</p>
+<p>一个函数有超过 3、4 个入参。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-parameter-list-1.png" alt="img"></p>
+<h3 id="问题原因-3"><a href="#问题原因-3" class="headerlink" title="问题原因"></a>问题原因</h3><p>过长参数列可能是将多个算法并到一个函数中时发生的。函数中的入参可以用来控制最终选用哪个算法去执行。</p>
+<p>过长参数列也可能是解耦类之间依赖关系时的副产品。例如，用于创建函数中所需的特定对象的代码已从函数移动到调用函数的代码处，但创建的对象是作为参数传递到函数中。因此，原始类不再知道对象之间的关系，并且依赖性也已经减少。但是如果创建的这些对象，每一个都将需要它自己的参数，这意味着过长参数列。</p>
+<p>太长的参数列难以理解，太多参数会造成前后不一致、不易使用，而且一旦需要更多数据，就不得不修改它。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/long-parameter-list-2.png" alt="img"></p>
+<ul>
+<li>如果向已有的对象发出一条请求就可以取代一个参数，那么你应该使用 <code>以函数取代参数(Replace Parameter with Methods)</code> 。在这里，，“已有的对象”可能是函数所属类里的一个字段，也可能是另一个参数。</li>
+<li>你还可以运用 <code>保持对象完整(Preserve Whole Object)</code> 将来自同一对象的一堆数据收集起来，并以该对象替换它们。</li>
+<li>如果某些数据缺乏合理的对象归属，可使用 <code>引入参数对象(Introduce Parameter Object)</code> 为它们制造出一个“参数对象”。</li>
+</ul>
+<h3 id="收益-4"><a href="#收益-4" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>更易读，更简短的代码。</li>
+<li>重构可能会暴露出之前未注意到的重复代码。</li>
+</ul>
+<h3 id="何时忽略-1"><a href="#何时忽略-1" class="headerlink" title="何时忽略"></a>何时忽略</h3><ul>
+<li>这里有一个重要的例外：有时候你明显不想造成”被调用对象”与”较大对象”间的某种依赖关系。这时候将数据从对象中拆解出来单独作为参数，也很合情理。但是请注意其所引发的代价。如果参数列太长或变化太频繁，就需要重新考虑自己的依赖结构了。</li>
+</ul>
+<h3 id="重构方法说明-4"><a href="#重构方法说明-4" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="以函数取代参数-Replace-Parameter-with-Methods"><a href="#以函数取代参数-Replace-Parameter-with-Methods" class="headerlink" title="以函数取代参数(Replace Parameter with Methods)"></a>以函数取代参数(Replace Parameter with Methods)</h4><p><strong>问题</strong></p>
+<p>对象调用某个函数，并将所得结果作为参数，传递给另一个函数。而接受该参数的函数本身也能够调用前一个函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">basePrice</span> <span class="operator">=</span> quantity * itemPrice;</span><br><span class="line"><span class="type">double</span> <span class="variable">seasonDiscount</span> <span class="operator">=</span> <span class="built_in">this</span>.getSeasonalDiscount();</span><br><span class="line"><span class="type">double</span> <span class="variable">fees</span> <span class="operator">=</span> <span class="built_in">this</span>.getFees();</span><br><span class="line"><span class="type">double</span> <span class="variable">finalPrice</span> <span class="operator">=</span> discountedPrice(basePrice, seasonDiscount, fees);</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>让参数接受者去除该项参数，并直接调用前一个函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">basePrice</span> <span class="operator">=</span> quantity * itemPrice;</span><br><span class="line"><span class="type">double</span> <span class="variable">finalPrice</span> <span class="operator">=</span> discountedPrice(basePrice);</span><br></pre></td></tr></table></figure>
+
+<h4 id="保持对象完整-Preserve-Whole-Object-3"><a href="#保持对象完整-Preserve-Whole-Object-3" class="headerlink" title="保持对象完整(Preserve Whole Object)"></a>保持对象完整(Preserve Whole Object)</h4><p><strong>问题</strong></p>
+<p>你从某个对象中取出若干值，将它们作为某一次函数调用时的参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">low</span> <span class="operator">=</span> daysTempRange.getLow();</span><br><span class="line"><span class="type">int</span> <span class="variable">high</span> <span class="operator">=</span> daysTempRange.getHigh();</span><br><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(low, high);</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>改为传递整个对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="variable">withinPlan</span> <span class="operator">=</span> plan.withinRange(daysTempRange);</span><br></pre></td></tr></table></figure>
+
+<h4 id="引入参数对象-Introduce-Parameter-Object-3"><a href="#引入参数对象-Introduce-Parameter-Object-3" class="headerlink" title="引入参数对象(Introduce Parameter Object)"></a>引入参数对象(Introduce Parameter Object)</h4><p><strong>问题</strong></p>
+<p>某些参数总是很自然地同时出现。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以一个对象来取代这些参数。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/introduce-parameter-object-after.png" alt="img"></p>
+<h2 id="扩展阅读"><a href="#扩展阅读" class="headerlink" title="扩展阅读"></a>扩展阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%8F%E5%91%B3%E9%81%93%E5%92%8C%E9%87%8D%E6%9E%84.md">代码的坏味道和重构</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E4%BB%A3%E7%A0%81%E8%87%83%E8%82%BF.md">代码坏味道之代码臃肿</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E6%BB%A5%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1.md">代码坏味道之滥用面向对象</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E5%8F%98%E9%9D%A9%E7%9A%84%E9%9A%9C%E7%A2%8D.md">代码坏味道之变革的障碍</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E9%9D%9E%E5%BF%85%E8%A6%81%E7%9A%84.md">代码坏味道之非必要的</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E8%80%A6%E5%90%88.md">代码坏味道之耦合</a></li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/4199741/">《代码整洁之道》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/4262627/">《重构 - 改善既有代码的设计》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/1477390/">《代码大全》</a></li>
+<li><a target="_blank" rel="noopener" href="https://sourcemaking.com/refactoring">https://sourcemaking.com/refactoring</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/7804288f/" title="代码坏味道之代码臃肿">https://dunwu.github.io/blog/pages/7804288f/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E8%AE%BE%E8%AE%A1/" rel="tag"># 设计</a>
+              <a href="/blog/tags/%E9%87%8D%E6%9E%84/" rel="tag"># 重构</a>
+              <a href="/blog/tags/%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%8F%E5%91%B3%E9%81%93/" rel="tag"># 代码的坏味道</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/3ba0474c/" rel="prev" title="代码坏味道之滥用面向对象">
+                  <i class="fa fa-angle-left"></i> 代码坏味道之滥用面向对象
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/b14a7acd/" rel="next" title="代码的坏味道和重构">
+                  代码的坏味道和重构 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"a39423ee5211deed8eb97ee8d8000cce"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

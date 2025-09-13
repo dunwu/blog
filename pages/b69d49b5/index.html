@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="MySQL 面试之事务和锁篇MySQL 事务 扩展阅读：  MySQL 官方文档之 InnoDB 锁和事务模型   【简单】什么是事务，什么是 ACID？事务指的是满足 ACID 特性的一组操作。事务内的 SQL 语句，要么全执行成功，要么全执行失败。可以通过 Commit 提交一个事务，也可以使用 Rollback 进行回滚。通俗来说，事务就是要保证一组数据库操作，要么全部成功，要么全部失败。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 面试之事务和锁篇">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/b69d49b5/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="MySQL 面试之事务和锁篇MySQL 事务 扩展阅读：  MySQL 官方文档之 InnoDB 锁和事务模型   【简单】什么是事务，什么是 ACID？事务指的是满足 ACID 特性的一组操作。事务内的 SQL 语句，要么全执行成功，要么全执行失败。可以通过 Commit 提交一个事务，也可以使用 Rollback 进行回滚。通俗来说，事务就是要保证一组数据库操作，要么全部成功，要么全部失败。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242207831.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242209867.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242210430.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242211015.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242212639.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242213050.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242214504.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242217983.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242218464.png">
+<meta property="article:published_time" content="2025-03-24T14:42:57.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.733Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="关系型数据库">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242207831.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/b69d49b5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/b69d49b5/","path":"/pages/b69d49b5/","title":"MySQL 面试之事务和锁篇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL 面试之事务和锁篇 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL-%E9%9D%A2%E8%AF%95%E4%B9%8B%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">MySQL 面试之事务和锁篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.1.</span> <span class="nav-text">MySQL 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%EF%BC%8C%E4%BB%80%E4%B9%88%E6%98%AF-ACID%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【简单】什么是事务，什么是 ACID？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%BA%8B%E5%8A%A1%E5%AD%98%E5%9C%A8%E5%93%AA%E4%BA%9B%E5%B9%B6%E5%8F%91%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【中等】事务存在哪些并发一致性问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E9%95%BF%E4%BA%8B%E5%8A%A1%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【中等】长事务可能会导致哪些问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BA%8B%E5%8A%A1%E7%9A%84%E4%BA%8C%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.4.</span> <span class="nav-text">【困难】事务的二阶段提交是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%8C%E5%88%86%E5%88%AB%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.1.5.</span> <span class="nav-text">【中等】有哪些事务隔离级别，分别解决了什么问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91MySQL-%E7%9A%84%E9%BB%98%E8%AE%A4%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.6.</span> <span class="nav-text">【中等】MySQL 的默认事务隔离级别是什么？为什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91MySQL-%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.7.</span> <span class="nav-text">【困难】MySQL 是如何实现事务的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-MVCC%EF%BC%9F"><span class="nav-number">1.1.8.</span> <span class="nav-text">【困难】什么是 MVCC？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E5%AD%97%E6%AE%B5"><span class="nav-number">1.1.8.1.</span> <span class="nav-text">隐式字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UndoLog"><span class="nav-number">1.1.8.2.</span> <span class="nav-text">UndoLog</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReadView"><span class="nav-number">1.1.8.3.</span> <span class="nav-text">ReadView</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91MVCC-%E5%AE%9E%E7%8E%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%8C%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.9.</span> <span class="nav-text">【困难】MVCC 实现了哪些隔离级别，如何实现的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%90%84%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.10.</span> <span class="nav-text">【困难】各事务隔离级别是如何实现的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E9%94%81"><span class="nav-number">1.2.</span> <span class="nav-text">MySQL 锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91MySQL-%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E9%94%81%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【中等】MySQL 中有哪些锁？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8B%AC%E4%BA%AB%E9%94%81%E5%92%8C%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">独享锁和共享锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%82%B2%E8%A7%82%E9%94%81%E5%92%8C%E4%B9%90%E8%A7%82%E9%94%81"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">悲观锁和乐观锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">全局锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">表级锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81"><span class="nav-number">1.2.1.5.</span> <span class="nav-text">行级锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E6%AD%BB%E9%94%81%E6%98%AF%E5%A6%82%E4%BD%95%E4%BA%A7%E7%94%9F%E7%9A%84%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【中等】死锁是如何产生的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81%EF%BC%9F"><span class="nav-number">1.2.3.</span> <span class="nav-text">【困难】如何避免死锁？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E6%AD%BB%E9%94%81%EF%BC%9F"><span class="nav-number">1.2.4.</span> <span class="nav-text">【困难】如何解决死锁？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/b69d49b5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL 面试之事务和锁篇 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL 面试之事务和锁篇<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/03.%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/MySQL_%E9%9D%A2%E8%AF%95_%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-03-24 22:42:57" itemprop="dateCreated datePublished" datetime="2025-03-24T22:42:57+08:00">2025-03-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">关系型数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="MySQL-面试之事务和锁篇"><a href="#MySQL-面试之事务和锁篇" class="headerlink" title="MySQL 面试之事务和锁篇"></a>MySQL 面试之事务和锁篇</h1><h2 id="MySQL-事务"><a href="#MySQL-事务" class="headerlink" title="MySQL 事务"></a>MySQL 事务</h2><blockquote>
+<p>扩展阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-transaction-model.html">MySQL 官方文档之 InnoDB 锁和事务模型</a></li>
+</ul>
+</blockquote>
+<h3 id="【简单】什么是事务，什么是-ACID？"><a href="#【简单】什么是事务，什么是-ACID？" class="headerlink" title="【简单】什么是事务，什么是 ACID？"></a>【简单】什么是事务，什么是 ACID？</h3><p><strong>事务指的是满足 ACID 特性的一组操作</strong>。事务内的 SQL 语句，要么全执行成功，要么全执行失败。可以通过 <code>Commit</code> 提交一个事务，也可以使用 <code>Rollback</code> 进行回滚。通俗来说，<strong>事务就是要保证一组数据库操作，要么全部成功，要么全部失败</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242207831.png"></p>
+<p>ACID 是数据库事务正确执行的四个基本要素。</p>
+<ul>
+<li><strong>原子性（Atomicity）</strong><ul>
+<li>事务被视为不可分割的最小单元，事务中的所有操作要么全部提交成功，要么全部失败回滚。</li>
+<li>回滚可以用日志来实现，日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。</li>
+</ul>
+</li>
+<li><strong>一致性（Consistency）</strong><ul>
+<li>数据库在事务执行前后都保持一致性状态。</li>
+<li>在一致性状态下，所有事务对一个数据的读取结果都是相同的。</li>
+</ul>
+</li>
+<li><strong>隔离性（Isolation）</strong><ul>
+<li>一个事务所做的修改在最终提交以前，对其它事务是不可见的。</li>
+</ul>
+</li>
+<li><strong>持久性（Durability）</strong><ul>
+<li>一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。</li>
+<li>可以通过数据库备份和恢复来实现，在系统发生奔溃时，使用备份的数据库进行数据恢复。</li>
+</ul>
+</li>
+</ul>
+<p>一个支持事务（Transaction）中的数据库系统，必需要具有这四种特性，否则在事务过程（Transaction processing）当中无法保证数据的正确性。</p>
+<h3 id="【中等】事务存在哪些并发一致性问题？"><a href="#【中等】事务存在哪些并发一致性问题？" class="headerlink" title="【中等】事务存在哪些并发一致性问题？"></a>【中等】事务存在哪些并发一致性问题？</h3><p>事务中存在的并发一致性问题有：</p>
+<ul>
+<li>丢失修改</li>
+<li>脏读</li>
+<li>不可重复读</li>
+<li>幻读</li>
+</ul>
+<p><strong>“丢失修改”是指一个事务的更新操作被另外一个事务的更新操作替换</strong>。</p>
+<p>如下图所示，T<sub>1</sub> 和 T<sub>2</sub> 两个事务对同一个数据进行修改，T<sub>1</sub> 先修改，T<sub>2</sub> 随后修改，T<sub>2</sub> 的修改覆盖了 T<sub>1</sub> 的修改。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242209867.png"></p>
+<p><strong>“脏读（dirty read）”是指当前事务可以读取其他事务未提交的数据</strong>。</p>
+<p>如下图所示，T<sub>1</sub> 修改一个数据，T<sub>2</sub> 随后读取这个数据。如果 T<sub>1</sub> 撤销了这次修改，那么 T<sub>2</sub> 读取的数据是脏数据。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242210430.png"></p>
+<p><strong>“不可重复读（non-repeatable read）”是指一个事务内多次读取同一数据，过程中，该数据被其他事务所修改，导致当前事务多次读取的数据可能不一致</strong>。</p>
+<p>如下图所示，T<sub>2</sub> 读取一个数据，T<sub>1</sub> 对该数据做了修改。如果 T<sub>2</sub> 再次读取这个数据，此时读取的结果和第一次读取的结果不同。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242211015.png"></p>
+<p><strong>“幻读（phantom read）”是指一个事务内多次读取同一范围的数据，过程中，其他事务在该数据范围新增了数据，导致当前事务未发现新增数据</strong>。</p>
+<p>事务 T<sub>1</sub> 读取某个范围内的记录时，事务 T<sub>2</sub> 在该范围内插入了新的记录，T<sub>1</sub> 再次读取这个范围的数据，此时读取的结果和和第一次读取的结果不同。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242212639.png"></p>
+<h3 id="【中等】长事务可能会导致哪些问题？"><a href="#【中等】长事务可能会导致哪些问题？" class="headerlink" title="【中等】长事务可能会导致哪些问题？"></a>【中等】长事务可能会导致哪些问题？</h3><p>长事务可能会导致以下问题：</p>
+<ul>
+<li><strong>锁竞争与资源阻塞</strong><ul>
+<li>长事务长时间持有锁，导致其他事务阻塞，增加系统等待时间，降低并发性能。</li>
+<li>业务线程因数据库请求等待而阻塞，可能引发连锁反应（如服务雪崩），造成严重线上事故。</li>
+</ul>
+</li>
+<li><strong>死锁风险增加</strong> - 多个长事务互相等待对方释放锁，容易形成死锁，导致系统无法正常执行。</li>
+<li><strong>主从延迟问题</strong> - 主库执行时间长，从库同步及重放耗时增加，导致主从数据长时间不一致。</li>
+<li><strong>回滚效率低下</strong> - 长事务执行中途失败时，回滚操作会浪费已执行的资源与时间，影响系统效率。</li>
+</ul>
+<h3 id="【困难】事务的二阶段提交是什么？"><a href="#【困难】事务的二阶段提交是什么？" class="headerlink" title="【困难】事务的二阶段提交是什么？"></a>【困难】事务的二阶段提交是什么？</h3><p>事务的二阶段提交确保 <strong>redo log（重做日志）</strong> 和 <strong>binlog（二进制日志）</strong> 的一致性，防止崩溃恢复时出现数据丢失或不一致。</p>
+<p><strong>两阶段流程</strong></p>
+<ul>
+<li><strong>Prepare 阶段（准备阶段）</strong> - InnoDB 写入 redo log，并标记为 <strong>prepare</strong> 状态（事务预提交，但未最终提交）。</li>
+<li><strong>Commit 阶段（提交阶段）</strong> - MySQL Server 写入 <strong>binlog</strong>（记录 DML 操作）。binlog 写入成功后，InnoDB 将 redo log 状态改为 <strong>commit</strong>，完成事务提交。</li>
+</ul>
+<p><strong>binlog 和 redo log 的区别</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>特性</strong></th>
+<th align="left"><strong>redo log</strong></th>
+<th align="left"><strong>binlog</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>所属层级</strong></td>
+<td align="left">InnoDB 引擎层</td>
+<td align="left">MySQL Server 层</td>
+</tr>
+<tr>
+<td align="left"><strong>日志类型</strong></td>
+<td align="left">记录数据页的<strong>物理日志</strong></td>
+<td align="left">记录 DML&#x2F;DDL 操作的<strong>逻辑日志</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>存储方式</strong></td>
+<td align="left">固定大小，<strong>环形写入</strong></td>
+<td align="left"><strong>追加写入</strong>，可无限增长</td>
+</tr>
+<tr>
+<td align="left"><strong>主要用途</strong></td>
+<td align="left"><strong>崩溃恢复</strong>（保证数据持久性）</td>
+<td align="left"><strong>主从复制、数据恢复、备份</strong></td>
+</tr>
+</tbody></table>
+<p><strong>为什么需要二阶段提交？</strong></p>
+<p>无论是单独先写 redo log 或先写 binlog，都可能导致数据不一致：</p>
+<ol>
+<li><strong>先写 redo log，后写 binlog</strong>（宕机时 binlog 未写入） - redo log 恢复数据，但 binlog 缺失该事务 → <strong>主从数据不一致</strong>。</li>
+<li><strong>先写 binlog，后写 redo log</strong>（宕机时 redo log 未写入） - binlog 有记录，但 redo log 未提交 → <strong>数据库实际数据丢失</strong>，与 binlog 不一致。</li>
+</ol>
+<p>为了解决以上问题，所以需要事务二阶段提交（<code>repare</code> → <code>commit</code>），以确保写入两日志的原子性。</p>
+<p><strong>二阶段提交如何保证一致性？</strong></p>
+<p>MySQL 崩溃恢复时，检查两日志状态：</p>
+<ul>
+<li><strong>redo log prepare，binlog 未写入</strong> - 直接回滚（两日志均无有效记录）。</li>
+<li><strong>redo log prepare，binlog 已写入</strong> - 对比两日志数据：<ul>
+<li><strong>一致</strong>：提交事务（redo log commit）。</li>
+<li><strong>不一致</strong>：回滚事务（保证数据一致）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="【中等】有哪些事务隔离级别，分别解决了什么问题？"><a href="#【中等】有哪些事务隔离级别，分别解决了什么问题？" class="headerlink" title="【中等】有哪些事务隔离级别，分别解决了什么问题？"></a>【中等】有哪些事务隔离级别，分别解决了什么问题？</h3><p>为了解决以上提到的并发一致性问题，SQL 标准提出了四种“事务隔离级别”来应对这些问题。事务隔离级别等级越高，越能保证数据的一致性和完整性，但是执行效率也越低。因此，设置数据库的事务隔离级别时需要做一下权衡。</p>
+<p>事务隔离级别从低到高分别是：</p>
+<ul>
+<li><strong>读未提交（read uncommitted）</strong> - 是指，<strong>事务中的修改，即使没有提交，对其它事务也是可见的</strong>。</li>
+<li><strong>读已提交（read committed）</strong> - 是指，<strong>事务提交后，其他事务才能看到它的修改</strong>。换句话说，一个事务所做的修改在提交之前对其它事务是不可见的。<ul>
+<li><strong>读已提交解决了脏读的问题</strong>。</li>
+<li>读已提交是大多数数据库的默认事务隔离级别，如 Oracle。</li>
+</ul>
+</li>
+<li><strong>可重复读（repeatable read）</strong> - 是指：<strong>保证在同一个事务中多次读取同样数据的结果是一样的</strong>。<ul>
+<li><strong>可重复读解决了不可重复读问题</strong>。</li>
+<li><strong>可重复读是 InnoDB 存储引擎的默认事务隔离级别</strong>。</li>
+</ul>
+</li>
+<li><strong>串行化（serializable ）</strong> - 是指，<strong>强制事务串行执行</strong>，对于同一行记录，加读写锁，一旦出现锁冲突，必须等前面的事务释放锁。<ul>
+<li><strong>串行化解决了幻读问题</strong>。由于强制事务串行执行，自然避免了所有的并发问题。</li>
+<li><strong>串行化策略会在读取的每一行数据上都加锁</strong>，这可能导致大量的超时和锁竞争。这对于高并发应用基本上是不可接受的，所以一般不会采用这个级别。</li>
+</ul>
+</li>
+</ul>
+<p>事务隔离级别对并发一致性问题的解决情况：</p>
+<table>
+<thead>
+<tr>
+<th align="center">隔离级别</th>
+<th align="center">丢失修改</th>
+<th align="center">脏读</th>
+<th align="center">不可重复读</th>
+<th align="center">幻读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">读未提交</td>
+<td align="center">✔️️️</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td align="center">读已提交</td>
+<td align="center">✔️️️</td>
+<td align="center">✔️️️</td>
+<td align="center">❌</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td align="center">可重复读</td>
+<td align="center">✔️️️</td>
+<td align="center">✔️️️</td>
+<td align="center">✔️️️</td>
+<td align="center">❌</td>
+</tr>
+<tr>
+<td align="center">可串行化</td>
+<td align="center">✔️️️</td>
+<td align="center">✔️️️</td>
+<td align="center">✔️️️</td>
+<td align="center">✔️️️</td>
+</tr>
+</tbody></table>
+<h3 id="【中等】MySQL-的默认事务隔离级别是什么？为什么？"><a href="#【中等】MySQL-的默认事务隔离级别是什么？为什么？" class="headerlink" title="【中等】MySQL 的默认事务隔离级别是什么？为什么？"></a>【中等】MySQL 的默认事务隔离级别是什么？为什么？</h3><p>事务隔离级别等级越高，越能保证数据的一致性和完整性，但是执行效率也越低。因此，设置数据库的事务隔离级别时需要做一下权衡。</p>
+<p>MySQL 中的事务功能是在存储引擎层实现的，<strong>并非所有存储引擎都支持事务功能</strong>。比如 MyISAM 引擎就不支持事务，这也是 MyISAM 被 InnoDB 取代的重要原因之一。</p>
+<p><strong>大部分数据库的默认隔离级别是“读已提交”</strong>。然而，<strong>InnoDB 的默认隔离级别是“可重复读”</strong>。这是为了兼容早期 binlog 的 statement 格式问题。如果使用可重复读以下的隔离级别，使用了 statement 格式的 binlog 会产生主从数据不一致的问题。</p>
+<p>此外，<strong>在 InnoDB 中，可重复读隔离级别虽然不能解决幻读，但是可以很大程度的避免幻读的发生</strong>。根据不同的查询方式，分别提出了避免幻读的方案：</p>
+<ul>
+<li>针对<strong>快照读</strong>（普通 <code>select</code> 语句），<strong>通过 MVCC 方式解决了幻读</strong>，因为可重复读隔离级别下，事务执行过程中看到的数据，一直跟这个事务启动时看到的数据是一致的，即使中途有其他事务插入了一条数据，是查询不出来这条数据的，所以就很好了避免幻读问题。</li>
+<li>针对<strong>当前读</strong>（<code>select ... for update</code> 等语句），<strong>通过 Next-Key Lock（记录锁+间隙锁）方式解决了幻读</strong>，因为当执行 select … for update 语句的时候，会加上 Next-Key Lock，如果有其他事务在 Next-Key Lock 锁范围内插入了一条记录，那么这个插入语句就会被阻塞，无法成功插入，所以就很好了避免幻读问题。</li>
+</ul>
+<p>很大程度的避免幻读，不代表完全解决幻读问题，下面是两个示例：</p>
+<ul>
+<li>对于快照读，MVCC 并不能完全避免幻读现象。因为当事务 A 更新了一条事务 B 插入的记录，那么事务 A 前后两次查询的记录条目就不一样了，所以就发生幻读。</li>
+<li>对于当前读，如果事务开启后，并没有执行当前读，而是先快照读，然后这期间如果其他事务插入了一条记录，那么事务后续使用当前读进行查询的时候，就会发现两次查询的记录条目就不一样了，所以就发生幻读。</li>
+</ul>
+<h3 id="【困难】MySQL-是如何实现事务的？"><a href="#【困难】MySQL-是如何实现事务的？" class="headerlink" title="【困难】MySQL 是如何实现事务的？"></a>【困难】MySQL 是如何实现事务的？</h3><p>MySQL 主要是通过 <strong>锁</strong>、<strong>Redo Log</strong> 、<strong>Undo Log</strong>、<strong>MVCC</strong> 来实现事务。</p>
+<ul>
+<li>MySQL 利用锁（行锁、间隙锁等等机制），<strong>控制数据的并发修改</strong>，满足事务的隔离性。</li>
+<li><strong>Redo Log（重做日志）</strong>，它会<strong>记录事务对数据库的所有修改</strong>，当 MySQL 发生宕机或崩溃时，<strong>通过重放 redo log 就可以恢复数据</strong>，用来满足事务的持久性。</li>
+<li><strong>Undo Log（回滚日志）</strong>，它会<strong>记录事务的反向操作</strong>，简单地说就是保存数据的历史版本，<strong>用于事务的回滚</strong>，使得事务执行失败之后可以恢复之前的样子。实现原子性和隔离性</li>
+<li><strong>MVCC（多版本并发控制）</strong>，满足了非锁定读的需求，提高了并发度，<strong>实现了读已提交和可重复读两种隔离级别</strong>，实现了事务的隔离性。</li>
+</ul>
+<p>事务实现了原子性、隔离性和持久性特性后，本身就达到了一致性的目的。</p>
+<h3 id="【困难】什么是-MVCC？"><a href="#【困难】什么是-MVCC？" class="headerlink" title="【困难】什么是 MVCC？"></a>【困难】什么是 MVCC？</h3><p><strong>MVCC 是 Multi Version Concurrency Control 的缩写，即“多版本并发控制”</strong>。MVCC 的设计目标是提高数据库的并发性，采用非阻塞的方式去处理读&#x2F;写并发冲突，可以将其看成一种乐观锁。</p>
+<p>不仅是 MySQL，包括 Oracle、PostgreSQL 等其他关系型数据库都实现了各自的 MVCC，实现机制没有统一标准。<strong>MVCC 是 InnoDB 存储引擎实现事务隔离级别的一种具体方式</strong>。其主要用于实现读已提交和可重复读这两种隔离级别。而未提交读隔离级别总是读取最新的数据行，要求很低，无需使用 MVCC。可串行化隔离级别需要对所有读取的行都加锁，单纯使用 MVCC 无法实现。</p>
+<p>::: info MVCC 实现原理</p>
+<p>:::</p>
+<p>MVCC 的实现原理，主要基于隐式字段、UndoLog、ReadView 来实现。</p>
+<h4 id="隐式字段"><a href="#隐式字段" class="headerlink" title="隐式字段"></a>隐式字段</h4><p>InnoDB 存储引擎中，数据表的每行记录，除了用户显示定义的字段以外，还有几个数据库隐式定义的字段：</p>
+<ul>
+<li><code>row_id</code> - <strong>隐藏的自增 ID</strong>。如果数据表没有指定主键，InnoDB 会自动基于 <code>row_id</code> 产生一个聚簇索引。</li>
+<li><code>trx_id</code> - <strong>最近修改的事务 ID</strong>。事务对某条聚簇索引记录进行改动时，就会把该事务的事务 id 记录在 trx_id 隐藏列里；</li>
+<li><code>roll_pointer</code> - <strong>回滚指针</strong>，指向这条记录的上一个版本。</li>
+</ul>
+<h4 id="UndoLog"><a href="#UndoLog" class="headerlink" title="UndoLog"></a>UndoLog</h4><p>MVCC 的多版本指的是多个版本的快照，快照存储在 UndoLog 中。该日志通过回滚指针 <code>roll_pointer</code> 把一个数据行的所有快照链接起来，构成一个<strong>版本链</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242213050.png"></p>
+<h4 id="ReadView"><a href="#ReadView" class="headerlink" title="ReadView"></a>ReadView</h4><p><strong>ReadView 就是事务进行快照读时产生的读视图（快照）</strong>。</p>
+<p>ReadView 有四个重要的字段：</p>
+<ul>
+<li><code>m_ids</code> - 指的是在创建 ReadView 时，当前数据库中“活跃事务”的事务 ID 列表。注意：这是一个列表，<strong>“活跃事务”指的就是，启动了但还没提交的事务</strong>。</li>
+<li><code>min_trx_id</code> - 指的是在创建 ReadView 时，当前数据库中“活跃事务”中事务 id 最小的事务，也就是 <code>m_ids</code> 的最小值。</li>
+<li><code>max_trx_id</code> - 这个并不是 m_ids 的最大值，而是指创建 ReadView 时当前数据库中应该给下一个事务分配的 ID 值，也就是全局事务中最大的事务 ID 值 + 1；</li>
+<li><code>creator_trx_id</code> - 指的是创建该 ReadView 的事务的事务 ID。</li>
+</ul>
+<p>在创建 ReadView 后，我们可以将记录中的 trx_id 划分为三种情况：</p>
+<ul>
+<li>已提交事务</li>
+<li>已启动但未提交的事务</li>
+<li>未启动的事务</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242214504.png"></p>
+<blockquote>
+<p>ReadView 如何判断版本链中哪个版本可见？</p>
+</blockquote>
+<p>一个事务去访问记录的时候，除了自己的更新记录总是可见之外，还有这几种情况：</p>
+<ul>
+<li><code>trx_id == creator_trx_id</code> - 表示 <code>trx_id</code> 版本记录由 ReadView 所代表的当前事务产生，当然可以访问。</li>
+<li><code>trx_id &lt; min_trx_id</code> - 表示 <code>trx_id</code> 版本记录是在创建 ReadView 之前已提交的事务生成的，当前事务可以访问。</li>
+<li><code>trx_id &gt;= max_trx_id</code> - 表示 <code>trx_id</code> 版本记录是在创建 ReadView 之后才启动的事务生成的，当前事务不可以访问。</li>
+<li><code>min_trx_id &lt;= trx_id &lt; max_trx_id</code> - 需要判断 <code>trx_id</code> 是否在 <code>m_ids</code> 列表中<ul>
+<li>如果 <code>trx_id</code> 在 <code>m_ids</code> 列表中，表示生成 <code>trx_id</code> 版本记录的事务依然活跃（未提交事务），当前事务不可以访问。</li>
+<li>如果 <code>trx_id</code> 不在 <code>m_ids</code> 列表中，表示生成 <code>trx_id</code> 版本记录的事务已提交，当前事务可以访问。</li>
+</ul>
+</li>
+</ul>
+<p>这种通过“版本链”来控制并发事务访问同一个记录时的行为就叫 MVCC（多版本并发控制）。</p>
+<h3 id="【困难】MVCC-实现了哪些隔离级别，如何实现的？"><a href="#【困难】MVCC-实现了哪些隔离级别，如何实现的？" class="headerlink" title="【困难】MVCC 实现了哪些隔离级别，如何实现的？"></a>【困难】MVCC 实现了哪些隔离级别，如何实现的？</h3><p>对于“读已提交”和“可重复读”隔离级别的事务来说，它们都是通过 MVCC 的 ReadView 机制来实现的，区别仅在于创建 ReadView 的时机不同。ReadView 可以理解为一个数据快照。</p>
+<blockquote>
+<p>MVCC 如何实现可重复读隔离级别</p>
+</blockquote>
+<p><strong>可重复读隔离级别只有在启动事务时才会创建 ReadView，然后整个事务期间都使用这个 ReadView</strong>。这样就保证了在事务期间读到的数据都是事务启动前的记录。</p>
+<p>举个例子，假设有两个事务依次执行以下操作：</p>
+<ul>
+<li>初始，表中 id &#x3D; 1 的 value 列值为 100。</li>
+<li>事务 2 读取数据，value 为 100；</li>
+<li>事务 1 将 value 设为 200；</li>
+<li>事务 2 读取数据，value 为 100；</li>
+<li>事务 1 提交事务；</li>
+<li>事务 2 读取数据，value 依旧为 100；</li>
+</ul>
+<p>以上操作，如下图所示。T2 事务在事务过程中，是否可以看到 T1 事务的修改，可以根据 <a href="#ReadView">ReadView</a> 中描述的规则去判断。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242217983.png"></p>
+<p>从图中不难看出：</p>
+<ul>
+<li>对于 <code>trx_id = 100</code> 的版本记录，比对 T2 事务 ReadView ，<code>trx_id &lt; min_trx_id</code>，因此在 T2 事务中的任意时刻都可见；</li>
+<li>对于 <code>trx_id = 101</code> 的版本记录，比对 T2 事务 ReadView ，可以看出 <code>min_trx_id &lt;= trx_id &lt; max_trx_id</code> ，且 <code>trx_id</code> 在 <code>m_ids</code> 中，因此 T2 事务中不可见。</li>
+</ul>
+<p>综上所述，在 T2 事务中，自始至终只能看到 <code>trx_id = 100</code> 的版本记录。</p>
+<blockquote>
+<p>MVCC 如何实现读已提交隔离级别</p>
+</blockquote>
+<p><strong>读已提交隔离级别每次读取数据时都会创建一个 ReadView</strong>。这意味着，事务期间的多次读取同一条数据，前后读取的数据可能会出现不一致——因为，这期间可能有另外一个事务修改了该记录，并提交了事务。</p>
+<p>举个例子，假设有两个事务依次执行以下操作：</p>
+<ul>
+<li>初始，表中 id &#x3D; 1 的 value 列值为 100。</li>
+<li>事务 2 读取数据（创建 ReadView），value 为 0；</li>
+<li>事务 1 将 value 设为 100；</li>
+<li>事务 2 读取数据（创建 ReadView），value 为 0；</li>
+<li>事务 1 提交事务；</li>
+<li>事务 2 读取数据（创建 ReadView），value 为 100；</li>
+</ul>
+<p>以上操作，如下图所示，T2 事务在事务过程中，是否可以看到其他事务的修改，可以根据 <a href="#ReadView">ReadView</a> 中描述的规则去判断。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503242218464.png"></p>
+<p>从图中不难看出：</p>
+<ul>
+<li>对于 <code>trx_id = 100</code> 的版本记录，比对 T2 事务 ReadView ，<code>trx_id &lt; min_trx_id</code>，因此在 T2 事务中的任意时刻都可见；</li>
+<li>对于 <code>trx_id = 101</code> 的版本记录，比对 T2 事务 ReadView ，可以看出第二次查询时（T1 更新未提交），<code>min_trx_id &lt;= trx_id &lt; max_trx_id</code> ，且 <code>trx_id</code> 在 <code>m_ids</code> 中，因此 T2 事务中不可见；而第三次查询时（T1 更新已提交），<code>trx_id &lt; min_trx_id</code>，因此在 T2 事务中可见；</li>
+</ul>
+<p>综上所述，在 T2 事务中，当 T1 事务提交前，可读取到的是 <code>trx_id = 100</code> 的版本记录；当 T1 事务提交后，可读取到的是 <code>trx_id = 101</code> 的版本记录。</p>
+<blockquote>
+<p>MVCC + Next-Key Lock 如何解决幻读</p>
+</blockquote>
+<p>MySQL InnoDB 引擎的默认隔离级别虽然是“可重复读”，但是它很大程度上避免幻读现象（并不是完全解决了），解决的方案有两种：</p>
+<ul>
+<li>针对<strong>快照读</strong>（普通 <code>SELECT</code> 语句），<strong>通过 MVCC 方式解决了幻读</strong>，因为可重复读隔离级别下，事务执行过程中看到的数据，一直跟这个事务启动时看到的数据是一致的，即使中途有其他事务插入了一条数据，是查询不出来这条数据的，所以就很好了避免幻读问题。</li>
+<li>针对<strong>当前读</strong>（<code>SELECT ... FOR UPDATE</code> 等语句），<strong>通过 Next-Key Lock（记录锁+间隙锁）方式解决了幻读</strong>，因为当执行 <code>SELECT ... FOR UPDATE</code> 语句的时候，会加上 Next-Key Lock，如果有其他事务在 Next-Key Lock 锁范围内插入了一条记录，那么这个插入语句就会被阻塞，无法成功插入，所以就很好的避免了幻读问题。</li>
+</ul>
+<h3 id="【困难】各事务隔离级别是如何实现的？"><a href="#【困难】各事务隔离级别是如何实现的？" class="headerlink" title="【困难】各事务隔离级别是如何实现的？"></a>【困难】各事务隔离级别是如何实现的？</h3><p>四种隔离级别具体是如何实现的呢？</p>
+<p>以 InnoDB 的事务实现来说明：</p>
+<ul>
+<li>对于“读未提交”隔离级别的事务来说，因为可以读到未提交事务修改的数据，所以直接读取最新的数据就好了；</li>
+<li>对于“串行化”隔离级别的事务来说，通过加读写锁的方式来避免并行访问；</li>
+<li>对于“读提交”和“可重复读”隔离级别的事务来说，它们都是通过 ReadView 来实现的，区别仅在于创建 ReadView 的时机不同。ReadView 可以理解为一个数据快照。<ul>
+<li>“读提交”隔离级别是在“每个语句执行前”都会重新生成一个 ReadView</li>
+<li>“可重复读”隔离级别是在“启动事务时”生成一个 ReadView，然后整个事务期间都在用这个 ReadView。</li>
+</ul>
+</li>
+</ul>
+<h2 id="MySQL-锁"><a href="#MySQL-锁" class="headerlink" title="MySQL 锁"></a>MySQL 锁</h2><h3 id="【中等】MySQL-中有哪些锁？"><a href="#【中等】MySQL-中有哪些锁？" class="headerlink" title="【中等】MySQL 中有哪些锁？"></a>【中等】MySQL 中有哪些锁？</h3><p>为了解决并发一致性问题，MySQL 支持了很多种锁来实现不同程度的隔离性，以保证数据的安全性。</p>
+<h4 id="独享锁和共享锁"><a href="#独享锁和共享锁" class="headerlink" title="独享锁和共享锁"></a>独享锁和共享锁</h4><p><strong>独享锁（Exclusive）</strong>：简写为 X 锁，又称为“写锁”、“排它锁”。</p>
+<ul>
+<li>特性<ul>
+<li>用于写入操作</li>
+<li>完全排他，同一时间仅允许一个事务持有</li>
+</ul>
+</li>
+<li>加锁<ul>
+<li><code>SELECT ... FOR UPDATE</code></li>
+<li>DML 语句（隐式加锁）</li>
+</ul>
+</li>
+</ul>
+<p><strong>共享锁（Shared）</strong>：简写为 S 锁，又称为“读锁”。</p>
+<ul>
+<li>特性<ul>
+<li>用于读取操作</li>
+<li>允许多事务并发持有，互不阻塞</li>
+</ul>
+</li>
+<li>加锁<ul>
+<li><code>SELECT ... LOCK IN SHARE MODE</code></li>
+<li><code>SELECT ... FOR SHARE</code>（MySQL 8.0+）</li>
+</ul>
+</li>
+</ul>
+<p><strong>存储引擎实现差异</strong></p>
+<ul>
+<li><strong>MyISAM</strong>：仅支持表级锁<ul>
+<li><code>LOCK TABLES ... READ</code> → S 锁</li>
+<li><code>LOCK TABLES ... WRITE</code> → X 锁</li>
+</ul>
+</li>
+<li><strong>InnoDB</strong>：支持行级锁和表级锁<ul>
+<li>默认使用行锁（更细粒度）</li>
+<li>特殊场景退化为表锁（如无索引更新）</li>
+</ul>
+</li>
+</ul>
+<h4 id="悲观锁和乐观锁"><a href="#悲观锁和乐观锁" class="headerlink" title="悲观锁和乐观锁"></a>悲观锁和乐观锁</h4><p>基于加锁方式分类，MySQL 可以分为悲观锁和乐观锁。</p>
+<ul>
+<li><strong>悲观锁</strong> - 假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作<ul>
+<li>在查询完数据的时候就把事务锁起来，直到提交事务（<code>COMMIT</code>）</li>
+<li>实现方式：<strong>使用数据库中的锁机制</strong>。</li>
+</ul>
+</li>
+<li><strong>乐观锁</strong> - 假设最好的情况——每次访问数据时，都假设数据不会被其他线程修改，不必加锁。只在更新的时候，判断一下在此期间是否有其他线程更新该数据。<ul>
+<li>实现方式：<strong>更新数据时，先使用版本号机制或 CAS 算法检查数据是否被修改</strong>。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>为什么要引入乐观锁？</p>
+</blockquote>
+<p>乐观锁也是一种通用的锁机制，在很多软件领域，都存在乐观锁机制。</p>
+<p><strong>锁，意味着互斥，意味着阻塞。在高并发场景下，锁越多，阻塞越多，势必会拉低并发性能</strong>。那么，为了提高并发度，能不能尽量不加锁呢？</p>
+<p>乐观锁，顾名思义，就是假设最好的情况——每次访问数据时，都假设数据不会被其他线程修改，不必加锁。虽然不加锁，但不意味着什么都不做，而是在更新的时候，判断一下在此期间是否有其他线程更新该数据。乐观锁最常见的实现方式，是使用版本号机制或 CAS 算法（Compare And Swap）去实现。</p>
+<p>【示例】MySQL 乐观锁示例</p>
+<p>假设，order 表中有一个字段 status，表示订单状态：status 为 1 代表订单未支付；status 为 2 代表订单已支付。现在，要将 id 为 1 的订单状态置为已支付，则操作如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> status, version <span class="keyword">from</span> <span class="keyword">order</span> <span class="keyword">where</span> id<span class="operator">=</span>#&#123;id&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">update</span> <span class="keyword">order</span></span><br><span class="line"><span class="keyword">set</span> status<span class="operator">=</span><span class="number">2</span>, version<span class="operator">=</span>version<span class="operator">+</span><span class="number">1</span></span><br><span class="line"><span class="keyword">where</span> id<span class="operator">=</span>#&#123;id&#125; <span class="keyword">and</span> version<span class="operator">=</span>#&#123;version&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>乐观锁的<strong>优点</strong>是：减少锁竞争，提高并发度。</p>
+<p>乐观锁的<strong>缺点</strong>是：</p>
+<ul>
+<li><strong>存在 ABA 问题</strong>。所谓的 ABA 问题是指在并发编程中，如果一个变量初次读取的时候是 A 值，它的值被改成了 B，然后又其他线程把 B 值改成了 A，而另一个早期线程在对比值时会误以为此值没有发生改变，但其实已经发生变化了</li>
+<li>如果乐观锁所检查的数据存在大量锁竞争，会由于<strong>不断循环重试，产生大量的 CPU 开销</strong>。</li>
+</ul>
+<h4 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h4><p>全局锁是 MySQL 中一种<strong>锁住整个数据库实例</strong>的机制，使数据库处于<strong>只读状态</strong>，禁止所有数据修改操作（DML、DDL）。</p>
+<p><strong>加锁、解锁</strong></p>
+<p>加全局锁（Flush Tables With Read Lock, FTWRL）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FLUSH TABLES <span class="keyword">WITH</span> READ LOCK;</span><br></pre></td></tr></table></figure>
+
+<p>阻塞所有 <strong>写操作（INSERT&#x2F;UPDATE&#x2F;DELETE）</strong> 和 <strong>DDL（ALTER&#x2F;DROP）</strong>，但允许读操作（SELECT）。</p>
+<p>释放锁</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UNLOCK TABLES;</span><br></pre></td></tr></table></figure>
+
+<p><strong>应用场景</strong></p>
+<ul>
+<li><strong>数据库备份</strong>（确保备份数据一致性）</li>
+<li><strong>主从同步初始化</strong></li>
+<li><strong>防止数据修改</strong>（维护期间禁止写入）</li>
+</ul>
+<h4 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h4><ul>
+<li><strong>表锁</strong>：<strong>锁定整张表</strong>，是 MyISAM 引擎的默认锁类型，InnoDB 引擎在特定情况下也会使用。<ul>
+<li><strong>表共享读锁（Table Read Lock）</strong>：<code>LOCK TABLE table_name READ</code><ul>
+<li>所有会话可以<strong>同时读取</strong>该表</li>
+<li><strong>禁止任何会话写入</strong>（INSERT&#x2F;UPDATE&#x2F;DELETE）</li>
+<li>读锁之间<strong>不互斥</strong>（多个事务可同时持有读锁）</li>
+</ul>
+</li>
+<li><strong>表独占写锁（Table Write Lock）</strong>：<code>LOCK TABLE table_name WRITE</code><ul>
+<li><strong>仅允许当前会话读写</strong>该表</li>
+<li>其他会话<strong>无法读取或写入</strong>（完全排他）</li>
+<li>写锁<strong>与其他所有锁互斥</strong>（包括读锁和其他写锁）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>元数据锁（Metadata Lock, MDL）</strong>：自动加锁，保护表结构，防止在查询或修改时表结构被更改。<ul>
+<li>增删改查，加读锁</li>
+<li>结构变更，加写锁</li>
+</ul>
+</li>
+<li><strong>意向锁（Intention Lock）</strong>：用于快速判断表中是否有行被锁定，从而优化锁冲突检测效率。<ul>
+<li><strong>意向共享锁（IS）</strong>：表示事务准备在表的某些行上加 S 锁（共享锁），如 <code>SELECT ... LOCK IN SHARE MODE</code>。</li>
+<li><strong>意向独享锁（IX）</strong>：表示事务准备在表的某些行上加 X 锁（排他锁），如 <code>SELECT ... FOR UPDATE</code> 或 DML 操作。</li>
+</ul>
+</li>
+<li><strong>自增锁（Auto Increment Lock）</strong>：确保并发插入时自增值的正确分配。<ul>
+<li><strong>确保自增值连续</strong>：防止多个事务同时插入数据时，自增列出现重复或跳跃。</li>
+<li><strong>保证唯一性</strong>：避免并发插入时多个事务获取相同的自增值，导致主键冲突。</li>
+<li><strong>支持事务回滚</strong>：如果事务回滚，已分配的自增值不会回退，但后续插入仍会继续递增，确保不重复。</li>
+</ul>
+</li>
+</ul>
+<h4 id="行级锁"><a href="#行级锁" class="headerlink" title="行级锁"></a>行级锁</h4><ul>
+<li><p><strong>记录锁（Record Lock）</strong>：锁定索引中的<strong>单条记录</strong>。</p>
+<ul>
+<li>仅锁住符合条件的行，不影响其他行</li>
+<li>如果表无索引，InnoDB 会退化为表锁<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 对 id=1 的记录加锁</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>间隙锁（Gap Lock）</strong>：锁定索引记录之间的<strong>间隙</strong>，防止其他事务在这个范围内插入数据。</p>
+<ul>
+<li><p>仅存在于<strong>可重复读</strong>隔离级别，为了解决幻读问题</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 锁定 20-30 之间的间隙</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> age <span class="keyword">BETWEEN</span> <span class="number">20</span> <span class="keyword">AND</span> <span class="number">30</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>临键锁（Next-Key Lock）</strong>：<strong>记录锁+间隙锁</strong>的组合，锁定记录及前面的间隙。</p>
+<ul>
+<li>InnoDB 默认的行锁方式</li>
+<li>同时防止幻读和保证当前读的一致性<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 锁定 id&gt;10 的记录及后面的间隙</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> id <span class="operator">&gt;</span> <span class="number">10</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>插入意向锁（Insert Intention Lock）</strong>：在 <code>INSERT</code> 操作前设置，表示准备插入</p>
+<ul>
+<li>不阻塞其他插入意向锁</li>
+<li>会等待间隙锁释放<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 自动获取插入意向锁</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> users <span class="keyword">VALUES</span> (<span class="number">15</span>, <span class="string">&#x27;John&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="【中等】死锁是如何产生的？"><a href="#【中等】死锁是如何产生的？" class="headerlink" title="【中等】死锁是如何产生的？"></a>【中等】死锁是如何产生的？</h3><p><strong>死锁</strong>是指，<strong>多个事务竞争同一资源，并请求锁定对方占用的资源，从而导致恶性循环的现象</strong>。</p>
+<p><strong>死锁产生条件（必须同时满足）</strong></p>
+<ul>
+<li><strong>互斥</strong>：资源一次只能被一个事务占用（如行锁）。</li>
+<li><strong>占有并等待</strong>：事务持有资源的同时，等待其他事务释放资源。</li>
+<li><strong>不可强占</strong>：事务已获得的资源不能被强制抢占，只能主动释放。</li>
+<li><strong>循环等待</strong>：事务之间形成循环等待。</li>
+</ul>
+<h3 id="【困难】如何避免死锁？"><a href="#【困难】如何避免死锁？" class="headerlink" title="【困难】如何避免死锁？"></a>【困难】如何避免死锁？</h3><p><strong>死锁的四个必要条件</strong>：<strong>互斥、占有且等待、不可强占、循环等待</strong>。只要系统发生死锁，这些条件必然成立，但是只要破坏任意一个条件就死锁就不会成立。由此可知，要想避免死锁，就要从这几个必要条件上去着手：</p>
+<ul>
+<li>更新表时，<strong>尽量使用主键更新</strong>，减少冲突；</li>
+<li><strong>避免长事务</strong>，尽量将长事务拆解，可以降低与其它事务发生冲突的概率；</li>
+<li><strong>设置合理的锁等待超时参数</strong>，我们可以通过 <code>innodb_lock_wait_timeout</code> 设置合理的等待超时阈值，特别是在一些高并发的业务中，我们可以尽量将该值设置得小一些，避免大量事务等待，占用系统资源，造成严重的性能开销。</li>
+<li>在编程中<strong>尽量按照固定的顺序来处理数据库记录</strong>，假设有两个更新操作，分别更新两条相同的记录，但更新顺序不一样，有可能导致死锁；</li>
+<li>在允许幻读和不可重复读的情况下，尽量使用读已提交事务隔离级别，可以避免 Gap Lock 导致的死锁问题；</li>
+<li>还可以使用其它的方式来代替数据库实现幂等性校验。例如，使用 Redis 以及 ZooKeeper 来实现，运行效率比数据库更佳。</li>
+</ul>
+<h3 id="【困难】如何解决死锁？"><a href="#【困难】如何解决死锁？" class="headerlink" title="【困难】如何解决死锁？"></a>【困难】如何解决死锁？</h3><p>当出现死锁以后，有两种策略：</p>
+<ul>
+<li><strong>设置事务等待锁的超时时间</strong>。这个超时时间可以通过参数 <code>innodb_lock_wait_timeout</code> 来设置。</li>
+<li><strong>开启死锁检测</strong>，发现死锁后，主动回滚死锁链条中的某一个事务，让其他事务得以继续执行。将参数 <code>innodb_deadlock_detect</code> 设置为 <code>on</code>，表示开启这个逻辑。</li>
+</ul>
+<p>在 InnoDB 中，<code>innodb_lock_wait_timeout</code> 的默认值是 50s，意味着如果采用第一个策略，当出现死锁以后，第一个被锁住的线程要过 50s 才会超时退出，然后其他线程才有可能继续执行。对于在线服务来说，这个等待时间往往是无法接受的。但是，若直接把这个时间设置成一个很小的值，比如 1s，也是不可取的。当出现死锁的时候，确实很快就可以解开，但如果不是死锁，而是简单的锁等待呢？所以，超时时间设置太短的话，会出现很多误伤。</p>
+<p>所以，正常情况下我们还是要采用第二种策略，即：主动死锁检测，而且 <code>innodb_deadlock_detect</code> 的默认值本身就是 on。为了解决死锁问题，不同数据库实现了各自的死锁检测和超时机制。InnoDB 的处理策略是：<strong>将持有最少行级排它锁的事务进行回滚</strong>。主动死锁检测在发生死锁的时候，是能够快速发现并进行处理的，但是它也是有额外负担的：每当事务被锁时，就要查看它所依赖的线程是否被其他事务锁住，如此循环，来判断是否出现了循环等待，也就是死锁。因此，死锁检测可能会耗费大量的 CPU。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/23008813/">《高性能 MySQL》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/139">极客时间教程 - MySQL 实战 45 讲</a></li>
+<li><a target="_blank" rel="noopener" href="https://xiaolincoding.com/mysql/">图解 MySQL 介绍</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/b69d49b5/" title="MySQL 面试之事务和锁篇">https://dunwu.github.io/blog/pages/b69d49b5/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 关系型数据库</a>
+              <a href="/blog/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/9303ab78/" rel="prev" title="MySQL 面试之索引篇">
+                  <i class="fa fa-angle-left"></i> MySQL 面试之索引篇
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/4dec9ccb/" rel="next" title="MyBatis 面试">
+                  MyBatis 面试 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"6d3a83083dc2a555c3f1214b6d1a01e3"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

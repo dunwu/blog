@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="《消息队列高手课》笔记为什么需要消息队列？消息队列的应用  异步处理 系统解耦 流量削峰 系统间通信 数据缓冲 数据一致性  该如何选择消息队列？ 是否开源：这决定了能否商用，所以最为重要。 社区活跃度越高越好：高社区活跃度，一般保证了低 Bug 率，因为大部分 Bug，已经有人遇到并解决了。 技术生态适配性：客户端对各种编程语言的支持。比如：如果使用 MQ 的都是 Java 应用，那么 Acti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《消息队列高手课》笔记">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/d30711ee/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="《消息队列高手课》笔记为什么需要消息队列？消息队列的应用  异步处理 系统解耦 流量削峰 系统间通信 数据缓冲 数据一致性  该如何选择消息队列？ 是否开源：这决定了能否商用，所以最为重要。 社区活跃度越高越好：高社区活跃度，一般保证了低 Bug 率，因为大部分 Bug，已经有人遇到并解决了。 技术生态适配性：客户端对各种编程语言的支持。比如：如果使用 MQ 的都是 Java 应用，那么 Acti">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220511211021.jfif">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170725456.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170726651.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170725763.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170724393.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170724863.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170724276.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170723879.png">
+<meta property="article:published_time" content="2022-05-11T12:59:25.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.697Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="分布式通信">
+<meta property="article:tag" content="MQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220511211021.jfif">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/d30711ee/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/d30711ee/","path":"/pages/d30711ee/","title":"《消息队列高手课》笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《消息队列高手课》笔记 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%80%8A%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E9%AB%98%E6%89%8B%E8%AF%BE%E3%80%8B%E7%AC%94%E8%AE%B0"><span class="nav-number">1.</span> <span class="nav-text">《消息队列高手课》笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要消息队列？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A5%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">该如何选择消息队列？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81-MQ"><span class="nav-number">1.2.1.</span> <span class="nav-text">主流 MQ</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B%EF%BC%9A%E4%B8%BB%E9%A2%98%E5%92%8C%E9%98%9F%E5%88%97%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">消息模型：主题和队列有什么区别？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%9F%E5%88%97%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">队列模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85%E6%A8%A1%E5%9E%8B%EF%BC%88Publish-Subscribe-Pattern%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">发布 订阅模型（Publish-Subscribe Pattern）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RabbitMQ-%E7%9A%84%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text">RabbitMQ 的消息模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ-%E7%9A%84%E6%B6%88%E6%81%AF%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.4.</span> <span class="nav-text">RocketMQ 的消息模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">如何利用事务消息实现分布式事务？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MQ-%E4%BA%8B%E5%8A%A1%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.1.</span> <span class="nav-text">MQ 事务方案总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%A1%AE%E4%BF%9D%E6%B6%88%E6%81%AF%E4%B8%8D%E4%BC%9A%E4%B8%A2%E5%A4%B1%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">如何确保消息不会丢失？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E6%B6%88%E8%B4%B9%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%87%8D%E5%A4%8D%E6%B6%88%E6%81%AF%EF%BC%9F"><span class="nav-number">1.6.</span> <span class="nav-text">如何处理消费过程中的重复消息？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%A7%AF%E5%8E%8B%E4%BA%86%E8%AF%A5%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%EF%BC%9F"><span class="nav-number">1.7.</span> <span class="nav-text">消息积压了该如何处理？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.7.1.</span> <span class="nav-text">发送端性能优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E7%AB%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.7.2.</span> <span class="nav-text">消费端性能优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%A7%AF%E5%8E%8B%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">1.7.3.</span> <span class="nav-text">消息积压的处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81%E8%AF%A5%E5%A6%82%E4%BD%95%E5%85%A5%E6%89%8B%EF%BC%9F"><span class="nav-number">1.8.</span> <span class="nav-text">学习开源代码该如何入手？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%BC%82%E6%AD%A5%E8%AE%BE%E8%AE%A1%E6%8F%90%E5%8D%87%E7%B3%BB%E7%BB%9F%E6%80%A7%E8%83%BD%EF%BC%9F"><span class="nav-number">1.9.</span> <span class="nav-text">如何使用异步设计提升系统性能？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E5%BC%82%E6%AD%A5%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93%EF%BC%9F"><span class="nav-number">1.10.</span> <span class="nav-text">如何实现高性能的异步网络传输？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%9A%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93%E7%BB%93%E6%9E%84%E5%8C%96%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="nav-number">1.11.</span> <span class="nav-text">序列化与反序列化：如何通过网络传输结构化的数据？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE%EF%BC%9A%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%B9%8B%E9%97%B4%E5%AF%B9%E8%AF%9D%E7%9A%84%E8%AF%AD%E8%A8%80"><span class="nav-number">1.12.</span> <span class="nav-text">传输协议：应用程序之间对话的语言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%EF%BC%9A%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%92%8C%E9%A2%91%E7%B9%81%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%EF%BC%9F"><span class="nav-number">1.13.</span> <span class="nav-text">内存管理：如何避免内存溢出和频繁的垃圾回收？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E9%AB%98%E6%80%A7%E8%83%BD-IO%EF%BC%9F"><span class="nav-number">1.14.</span> <span class="nav-text">Kafka 如何实现高性能 IO？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5%EF%BC%9A%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98%E6%9D%A5%E5%87%8F%E5%B0%91%E7%A3%81%E7%9B%98-IO%EF%BC%9F"><span class="nav-number">1.15.</span> <span class="nav-text">缓存策略：如何使用缓存来减少磁盘 IO？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8%E9%94%81%E4%BF%9D%E6%8A%A4%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE%EF%BC%8C%E5%8D%8F%E8%B0%83%E5%BC%82%E6%AD%A5%E7%BA%BF%E7%A8%8B%EF%BC%9F"><span class="nav-number">1.16.</span> <span class="nav-text">如何正确使用锁保护共享数据，协调异步线程？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%A8%E7%A1%AC%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%AD%EF%BC%88CAS%EF%BC%89%E6%9B%BF%E4%BB%A3%E9%94%81%EF%BC%9F"><span class="nav-number">1.17.</span> <span class="nav-text">如何用硬件同步原语（CAS）替代锁？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9%EF%BC%9A%E6%97%B6%E9%97%B4%E6%8D%A2%E7%A9%BA%E9%97%B4%E7%9A%84%E6%B8%B8%E6%88%8F"><span class="nav-number">1.18.</span> <span class="nav-text">数据压缩：时间换空间的游戏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ-Producer-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%EF%BC%9A%E6%B6%88%E6%81%AF%E7%94%9F%E4%BA%A7%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="nav-number">1.19.</span> <span class="nav-text">RocketMQ Producer 源码分析：消息生产的实现过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka-Consumer-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%EF%BC%9A%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="nav-number">1.20.</span> <span class="nav-text">Kafka Consumer 源码分析：消息消费的实现过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka-%E5%92%8C-RocketMQ-%E7%9A%84%E6%B6%88%E6%81%AF%E5%A4%8D%E5%88%B6%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%B7%AE%E5%BC%82%E7%82%B9%E5%9C%A8%E5%93%AA%EF%BC%9F"><span class="nav-number">1.21.</span> <span class="nav-text">Kafka 和 RocketMQ 的消息复制实现的差异点在哪？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%A4%8D%E5%88%B6"><span class="nav-number">1.21.1.</span> <span class="nav-text">RocketMQ 如何实现复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%A4%8D%E5%88%B6%E7%9A%84"><span class="nav-number">1.21.2.</span> <span class="nav-text">Kafka 是如何实现复制的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%A6%82%E4%BD%95%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E6%89%BE%E5%88%B0%E6%AD%A3%E7%A1%AE%E7%9A%84%E8%8A%82%E7%82%B9%EF%BC%9F"><span class="nav-number">1.21.3.</span> <span class="nav-text">RocketMQ 客户端如何在集群中找到正确的节点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NameServer-%E7%9A%84%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">1.21.4.</span> <span class="nav-text">NameServer 的总体结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kafka-%E7%9A%84%E5%8D%8F%E8%B0%83%E6%9C%8D%E5%8A%A1-ZooKeeper%EF%BC%9A%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E2%80%9C%E7%91%9E%E5%A3%AB%E5%86%9B%E5%88%80%E2%80%9D"><span class="nav-number">1.22.</span> <span class="nav-text">Kafka 的协调服务 ZooKeeper：实现分布式系统的“瑞士军刀”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ-%E4%B8%8E-Kafka-%E4%B8%AD%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%EF%BC%9F"><span class="nav-number">1.23.</span> <span class="nav-text">RocketMQ 与 Kafka 中如何实现事务？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MQTT-%E5%8D%8F%E8%AE%AE%EF%BC%9A%E5%A6%82%E4%BD%95%E6%94%AF%E6%8C%81%E6%B5%B7%E9%87%8F%E7%9A%84%E5%9C%A8%E7%BA%BF-IoT-%E8%AE%BE%E5%A4%87%EF%BC%9F"><span class="nav-number">1.24.</span> <span class="nav-text">MQTT 协议：如何支持海量的在线 IoT 设备？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pulsar-%E7%9A%84%E5%AD%98%E5%82%A8%E8%AE%A1%E7%AE%97%E5%88%86%E7%A6%BB%E8%AE%BE%E8%AE%A1%EF%BC%9A%E5%85%A8%E6%96%B0%E7%9A%84%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">1.25.</span> <span class="nav-text">Pulsar 的存储计算分离设计：全新的消息队列设计思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E8%AE%A1%E7%AE%97%E4%B8%8E%E6%B6%88%E6%81%AF%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E9%80%9A%E8%BF%87-Flink-%E7%90%86%E8%A7%A3%E6%B5%81%E8%AE%A1%E7%AE%97%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.26.</span> <span class="nav-text">流计算与消息（一）：通过 Flink 理解流计算的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E8%AE%A1%E7%AE%97%E4%B8%8E%E6%B6%88%E6%81%AF%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%9C%A8%E6%B5%81%E8%AE%A1%E7%AE%97%E4%B8%AD%E4%BD%BF%E7%94%A8-Kafka-%E9%93%BE%E6%8E%A5%E8%AE%A1%E7%AE%97%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.27.</span> <span class="nav-text">流计算与消息（二）：在流计算中使用 Kafka 链接计算任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E9%83%BD%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E6%B6%88%E6%81%AF%E7%9A%84%EF%BC%9F"><span class="nav-number">1.28.</span> <span class="nav-text">主流消息队列都是如何存储消息的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-%E5%AD%98%E5%82%A8%E6%B6%88%E6%81%AF%E7%BB%93%E6%9E%84"><span class="nav-number">1.28.1.</span> <span class="nav-text">Kafka 存储消息结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ-%E5%AD%98%E5%82%A8%E6%B6%88%E6%81%AF%E7%BB%93%E6%9E%84"><span class="nav-number">1.28.2.</span> <span class="nav-text">RocketMQ 存储消息结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-%E5%92%8C-RocketMQ-%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.28.3.</span> <span class="nav-text">Kafka 和 RocketMQ 的存储结构比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.29.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/d30711ee/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="《消息队列高手课》笔记 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《消息队列高手课》笔记<a href="https://github.com/dunwu/blog/blob/master/source/_posts/00.%E7%AC%94%E8%AE%B0/15.%E5%88%86%E5%B8%83%E5%BC%8F/21.%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%E6%95%99%E7%A8%8B-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E9%AB%98%E6%89%8B%E8%AF%BE%E7%AC%94%E8%AE%B0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-11 20:59:25" itemprop="dateCreated datePublished" datetime="2022-05-11T20:59:25+08:00">2022-05-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/" itemprop="url" rel="index"><span itemprop="name">分布式通信</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>15k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="《消息队列高手课》笔记"><a href="#《消息队列高手课》笔记" class="headerlink" title="《消息队列高手课》笔记"></a>《消息队列高手课》笔记</h1><h2 id="为什么需要消息队列？"><a href="#为什么需要消息队列？" class="headerlink" title="为什么需要消息队列？"></a>为什么需要消息队列？</h2><p>消息队列的应用</p>
+<ul>
+<li><strong>异步处理</strong></li>
+<li><strong>系统解耦</strong></li>
+<li><strong>流量削峰</strong></li>
+<li><strong>系统间通信</strong></li>
+<li><strong>数据缓冲</strong></li>
+<li><strong>数据一致性</strong></li>
+</ul>
+<h2 id="该如何选择消息队列？"><a href="#该如何选择消息队列？" class="headerlink" title="该如何选择消息队列？"></a>该如何选择消息队列？</h2><ul>
+<li><strong>是否开源</strong>：这决定了能否商用，所以最为重要。</li>
+<li><strong>社区活跃度越高越好</strong>：高社区活跃度，一般保证了低 Bug 率，因为大部分 Bug，已经有人遇到并解决了。</li>
+<li><strong>技术生态适配性</strong>：客户端对各种编程语言的支持。比如：如果使用 MQ 的都是 Java 应用，那么 ActiveMQ、RabbitMQ、RocketMQ、Kafka 都可以。如果需要支持其他语言，那么 RMQ 比较合适，因为它支持的编程语言比较丰富。如果 MQ 是应用于大数据或流式计算，那么 Kafka 几乎是标配。如果是应用于在线业务系统，那么 Kafka 就不合适了，可以考虑 RabbitMQ、 RocketMQ 很合适。</li>
+<li><strong>高可用</strong>：应用于线上的准入标准。</li>
+<li><strong>高性能</strong>：具备足够好的性能，能满足绝大多数场景的性能要求。</li>
+<li><strong>可靠传输</strong></li>
+</ul>
+<h3 id="主流-MQ"><a href="#主流-MQ" class="headerlink" title="主流 MQ"></a>主流 MQ</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>RocketMQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单机吞吐量</td>
+<td>万级</td>
+<td>万级</td>
+<td>十万级</td>
+<td>十万级，略高于 RocketMQ</td>
+</tr>
+<tr>
+<td>topic 数量对吞吐量的影响</td>
+<td></td>
+<td></td>
+<td>topic 可以达到几百、几千的级别，吞吐量会有较小幅度的下降，这是 RocketMQ 的一大优势，在同等机器下，可以支撑大量的 topic</td>
+<td>topic 从几十到几百个时候，吞吐量会大幅度下降，在同等机器下，Kafka 尽量保证 topic 数量不要过多，如果要支撑大规模的 topic，需要增加更多的机器资源</td>
+</tr>
+<tr>
+<td>时效性</td>
+<td>毫秒级</td>
+<td>微秒级</td>
+<td>毫秒级</td>
+<td>毫秒级以内</td>
+</tr>
+<tr>
+<td>可用性</td>
+<td>高：基于主从架构实现高可用</td>
+<td>同 ActiveMQ</td>
+<td>非常高：分布式架构</td>
+<td>非常高：分布式架构。每个数据都有多个副本，少数机器宕机，不会丢失数据，不会导致不可用</td>
+</tr>
+<tr>
+<td>消息可靠性</td>
+<td>有较低的概率丢失数据</td>
+<td>基本不丢</td>
+<td>经过参数优化配置，可以做到不丢失</td>
+<td>同 RocketMQ</td>
+</tr>
+<tr>
+<td>应用场景</td>
+<td>MQ 领域的功能极其完备</td>
+<td>基于 erlang 开发，并发能力很强，性能极好，延时很低</td>
+<td>适合在线业务</td>
+<td>大数据、实时计算以及日志采集领域，应用最为广泛</td>
+</tr>
+<tr>
+<td>流行度</td>
+<td>不活跃</td>
+<td>社区非常活跃</td>
+<td>阿里出品，有非常活跃的中文社区</td>
+<td>社区非常活跃</td>
+</tr>
+<tr>
+<td>支持编程语言</td>
+<td></td>
+<td>非常多</td>
+<td>Java</td>
+<td>Scala、Java</td>
+</tr>
+<tr>
+<td>学习成本</td>
+<td></td>
+<td>采用 ErLang 开发，比较小众，不利于扩展和二次开发</td>
+<td>采用 Java 开发，且贡献者多为中国人，容易读懂源码</td>
+<td>使用 Scala 和 Java 开发，容易读懂源码</td>
+</tr>
+</tbody></table>
+<ul>
+<li>RabbitMQ<ul>
+<li>优点<ul>
+<li>支持的编程语言最多</li>
+<li>支持非常灵活的路由配置</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>对消息堆积的支持并不好</li>
+<li>性能差强人意</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>RocketMQ<ul>
+<li>优点<ul>
+<li>有着不错的性能，稳定性和可靠性</li>
+<li>支持事务</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>国外认同弱于其他流行 MQ</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Kafka<ul>
+<li>优点<ul>
+<li>可靠、稳定、性能高</li>
+<li>技术生态最健全，尤其是在大数据和流计算领域</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>同步收发响应延时比较高，不太适合在线业务</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="消息模型：主题和队列有什么区别？"><a href="#消息模型：主题和队列有什么区别？" class="headerlink" title="消息模型：主题和队列有什么区别？"></a>消息模型：主题和队列有什么区别？</h2><h3 id="队列模型"><a href="#队列模型" class="headerlink" title="队列模型"></a>队列模型</h3><p>队列是先进先出（FIFO, First-In-First-Out）的线性表（Linear List）。在具体应用中通常用链表或者数组来实现。队列只允许在后端（称为 rear）进行插入操作，在前端（称为 front）进行删除操作。</p>
+<p><strong>早期的消息队列，就是按照“队列”的数据结构来设计的。</strong>生产者（Producer）发消息就是入队操作，消费者（Consumer）收消息就是出队也就是删除操作，服务端存放消息的容器自然就称为“队列”。</p>
+<p>如果有多个生产者往同一个队列里面发送消息，这个队列中可以消费到的消息，就是这些生产者生产的所有消息的合集。消息的顺序就是这些生产者发送消息的自然顺序。如果有多个消费者接收同一个队列的消息，这些消费者之间实际上是竞争的关系，每个消费者只能收到队列中的一部分消息，也就是说任何一条消息只能被其中的一个消费者收到。</p>
+<p>如果需要将一份消息数据分发给多个消费者，要求每个消费者都能收到全量的消息。此时，单个队列就满足不了需求，一个可行的解决方式是，为每个消费者创建一个单独的队列，让生产者发送多份。显然这是个比较蠢的做法，同样的一份消息数据被复制到多个队列中会浪费资源，更重要的是，生产者必须知道有多少个消费者。为每个消费者单独发送一份消息，这实际上违背了消息队列“解耦”这个设计初衷。</p>
+<h3 id="发布-订阅模型（Publish-Subscribe-Pattern）"><a href="#发布-订阅模型（Publish-Subscribe-Pattern）" class="headerlink" title="发布 订阅模型（Publish-Subscribe Pattern）"></a>发布 订阅模型（Publish-Subscribe Pattern）</h3><p>在发布 - 订阅模型中，消息的发送方称为发布者（Publisher），消息的接收方称为订阅者（Subscriber），服务端存放消息的容器称为主题（Topic）。发布者将消息发送到主题中，订阅者在接收消息之前需要先“订阅主题”。“订阅”在这里既是一个动作，同时还可以认为是主题在消费时的一个逻辑副本，每份订阅中，订阅者都可以接收到主题的所有消息。</p>
+<p><strong>队列模型和发布订阅模型最大的区别就是：一份消息数据能不能被消费多次的问题</strong>。</p>
+<h3 id="RabbitMQ-的消息模型"><a href="#RabbitMQ-的消息模型" class="headerlink" title="RabbitMQ 的消息模型"></a>RabbitMQ 的消息模型</h3><p>在 RabbitMQ 中，Exchange 位于生产者和队列之间，生产者并不关心将消息发送给哪个队列，而是将消息发送给 Exchange，由 Exchange 上配置的策略来决定将消息投递到哪些队列中。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220511211021.jfif" alt="img"></p>
+<p>同一份消息如果需要被多个消费者来消费，需要配置 Exchange 将消息发送到多个队列，每个队列中都存放一份完整的消息数据，可以为一个消费者提供消费服务。这也可以变相地实现新发布 - 订阅模型中，“一份消息数据可以被多个订阅者来多次消费”这样的功能。</p>
+<h3 id="RocketMQ-的消息模型"><a href="#RocketMQ-的消息模型" class="headerlink" title="RocketMQ 的消息模型"></a>RocketMQ 的消息模型</h3><p>RocketMQ 使用的消息模型是标准的发布 - 订阅模型。但是，在 RocketMQ 也有队列（Queue）这个概念。<strong>每个主题包含多个队列，通过多个队列来实现多实例并行生产和消费。</strong>需要注意的是，RocketMQ 只在队列上保证消息的有序性，主题层面是无法保证消息的严格顺序的。</p>
+<p>在 Topic 的消费过程中，由于消息需要被不同的组进行多次消费，所以消费完的消息并不会立即被删除，这就需要 RocketMQ 为每个消费组在每个队列上维护一个消费位置（Consumer Offset），这个位置之前的消息都被消费过，之后的消息都没有被消费过，每成功消费一条消息，消费位置就加一。这个消费位置是非常重要的概念，我们在使用消息队列的时候，丢消息的原因大多是由于消费位置处理不当导致的。</p>
+<blockquote>
+<p>Kafka 的消息模型和 RocketMQ 是完全一样的。只是在 Kafka 中，将 Queue 这个概念称为分区（Partition）</p>
+</blockquote>
+<h2 id="如何利用事务消息实现分布式事务？"><a href="#如何利用事务消息实现分布式事务？" class="headerlink" title="如何利用事务消息实现分布式事务？"></a>如何利用事务消息实现分布式事务？</h2><p>事务消息需要消息队列提供相应的功能才能实现，Kafka 和 RocketMQ 都提供了事务相关功能。</p>
+<p><strong>Kafka</strong> 的解决方案是：直接抛出异常，让用户自行处理。用户可以在业务代码中反复重试提交，直到提交成功，或者删除之前修改的数据记录进行事务补偿。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170725456.jpeg" alt="img"></p>
+<p><strong>RocketMQ</strong> 的解决方案是：通过事务反查机制来解决事务消息提交失败的问题。如果 Producer 在提交或者回滚事务消息时发生网络异常，RocketMQ 的 Broker 没有收到提交或者回滚的请求，Broker 会定期去 Producer 上反查这个事务对应的本地事务的状态，然后根据反查结果决定提交或者回滚这个事务。为了支撑这个事务反查机制，业务代码需要实现一个反查本地事务状态的接口，告知 RocketMQ 本地事务是成功还是失败。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170726651.jpeg" alt="img"></p>
+<h3 id="MQ-事务方案总结"><a href="#MQ-事务方案总结" class="headerlink" title="MQ 事务方案总结"></a>MQ 事务方案总结</h3><p>相比本地消息表方案，MQ 事务方案优点是：</p>
+<ul>
+<li>消息数据独立存储 ，降低业务系统与消息系统之间的耦合。</li>
+<li>吞吐量优于使用本地消息表方案。</li>
+</ul>
+<p>缺点是：</p>
+<ul>
+<li>一次消息发送需要两次网络请求 (half 消息 + commit&#x2F;rollback 消息）</li>
+<li>业务处理服务需要实现消息状态回查接口</li>
+</ul>
+<h2 id="如何确保消息不会丢失？"><a href="#如何确保消息不会丢失？" class="headerlink" title="如何确保消息不会丢失？"></a>如何确保消息不会丢失？</h2><p>检测消息丢失方法：</p>
+<p><strong>利用消息队列的有序性来验证是否有消息丢失</strong>：在 Producer 端，我们给每个发出的消息附加一个连续递增的序号，然后在 Consumer 端来检查这个序号的连续性。</p>
+<p>确保消息不丢失：</p>
+<ul>
+<li><strong>生产</strong>阶段：捕获消息发送的错误，并针对性进行容错处理。</li>
+<li><strong>存储</strong>阶段：数据必须设置副本，并且写数据需要保证所有副本都写入成功才视为提交成功。这样可以保证，即使主副本不可用，使用从副本替代，也包含最新数据。</li>
+<li><strong>消费</strong>阶段：所有数据处理完毕，再手动提交消费偏移量。</li>
+</ul>
+<h2 id="如何处理消费过程中的重复消息？"><a href="#如何处理消费过程中的重复消息？" class="headerlink" title="如何处理消费过程中的重复消息？"></a>如何处理消费过程中的重复消息？</h2><p>在 MQTT 协议中，给出了三种传递消息时能够提供的服务质量标准，这三种服务质量从低到高依次是：</p>
+<ul>
+<li><strong>At most once</strong>:- 至多一次。消息在传递时，最多会被送达一次。换一个说法就是，<strong>没什么消息可靠性保证，允许丢消息</strong>。一般都是一些对消息可靠性要求不太高的监控场景使用，比如每分钟上报一次机房温度数据，可以接受数据少量丢失。</li>
+<li><strong>At least once</strong>:- 至少一次。消息在传递时，至少会被送达一次。也就是说，<strong>不允许丢消息，但是允许有少量重复消息</strong>出现。</li>
+<li><strong>Exactly once</strong> - 恰好一次。消息在传递时，只会被送达一次，<strong>不允许丢失也不允许重复</strong>，这个是最高的等级。</li>
+</ul>
+<p>现在常用的绝大部分消息队列提供的服务质量都是 At least once，包括 RocketMQ、RabbitMQ 和 Kafka 都是这样。也就是说，消息队列很难保证消息不重复。</p>
+<p>一般解决重复消息的办法是，在消费端，让我们消费消息的操作具备幂等性。一个幂等操作的特点是，<strong>其任意多次执行所产生的影响均与一次执行的影响相同。</strong>如果我们系统消费消息的业务逻辑具备幂等性，那就不用担心消息重复的问题了，因为同一条消息，消费一次和消费多次对系统的影响是完全一样的。也就可以认为，消费多次等于消费一次。</p>
+<p>从对系统的影响结果来说：<strong>At least once + 幂等消费 &#x3D; Exactly once。</strong></p>
+<p>常用的设计幂等操作的方法：</p>
+<ol>
+<li><strong>利用数据库的唯一约束实现幂等</strong>：INSERT IF NOT EXIST</li>
+<li><strong>为更新的数据设置前置条件</strong>：设置一个前置条件，如果满足条件就更新数据，否则拒绝更新数据，在更新数据的时候，同时变更前置条件中需要判断的数据。例如：采用乐观锁方式，为数据增加版本号，每次更数据前，比较当前数据的版本号是否和消息中的版本号一致，如果不一致就拒绝更新数据，更新数据的同时将版本号 +1，一样可以实现幂等更新。</li>
+<li><strong>记录并检查操作</strong>：在发送消息时，给每条消息指定一个全局唯一的 ID，消费时，先根据这个 ID 检查这条消息是否有被消费过，如果没有消费过，才更新数据，然后将消费状态置为已消费。——此处涉及分布式 ID 知识点，可以使用类似 GUID、雪花算法 等方式来实现</li>
+</ol>
+<h2 id="消息积压了该如何处理？"><a href="#消息积压了该如何处理？" class="headerlink" title="消息积压了该如何处理？"></a>消息积压了该如何处理？</h2><h3 id="发送端性能优化"><a href="#发送端性能优化" class="headerlink" title="发送端性能优化"></a>发送端性能优化</h3><p><strong>发送消息的性能上不去，你需要优先检查一下，是不是发消息之前的业务逻辑耗时太多导致的</strong>。对于发送消息的业务逻辑，只需要注意设置合适的并发和批量大小，就可以达到很好的发送性能。</p>
+<h3 id="消费端性能优化"><a href="#消费端性能优化" class="headerlink" title="消费端性能优化"></a>消费端性能优化</h3><p>如果消费的速度跟不上生产消息的速度，就会造成消息积压。即供大于求。</p>
+<p><strong>一定要保证消费端的消费性能要高于生产端的发送性能，这样的系统才能健康的持续运行。</strong></p>
+<p>消费端的性能优化除了优化消费业务逻辑以外，也可以通过水平扩容，增加消费端的并发数来提升总体的消费性能。特别需要注意的一点是，<strong>在扩容 Consumer 的实例数量的同时，必须同步扩容主题中的分区（也叫队列）数量，确保 Consumer 的实例数和分区数量是相等的。</strong>如果 Consumer 的实例数量超过分区数量，这样的扩容实际上是没有效果的。</p>
+<h3 id="消息积压的处理"><a href="#消息积压的处理" class="headerlink" title="消息积压的处理"></a>消息积压的处理</h3><p>需要先分析消息积压的原因：是发送变快了，还是消费变慢了。大部分消息队列都内置了监控的功能，只要通过监控数据，很容易确定是哪种原因。</p>
+<ul>
+<li><p>如果是因为促销或抢购等原因，导致消息陡增，短时间内不太可能优化消费端的代码来提升消费性能，唯一的方法是通过扩容消费端的实例数来提升总体的消费能力。</p>
+</li>
+<li><p>如果短时间内没有足够的服务器资源进行扩容，没办法的办法是，将系统降级，通过关闭一些不重要的业务，减少发送方发送的数据量，最低限度让系统还能正常运转，服务一些重要业务。</p>
+</li>
+<li><p>如果监控到消费变慢了，你需要检查你的消费实例，分析一下是什么原因导致消费变慢。优先检查一下日志是否有大量的消费错误，如果没有错误的话，可以通过打印堆栈信息，看一下你的消费线程是不是卡在什么地方不动了，比如触发了死锁或者卡在等待某些资源上了。</p>
+</li>
+</ul>
+<h2 id="学习开源代码该如何入手？"><a href="#学习开源代码该如何入手？" class="headerlink" title="学习开源代码该如何入手？"></a>学习开源代码该如何入手？</h2><p>（1）先看官方文档，了解关键点：</p>
+<ul>
+<li>这个项目是什么</li>
+<li>这个项目有什么用</li>
+<li>这个项目如何使用</li>
+<li>这个项目适用于什么场景</li>
+<li>这个项目有哪些优点、缺点</li>
+<li>。</li>
+</ul>
+<p>（2）由点及面的阅读源码</p>
+<p>不要泛泛而读，容易迷失。最好带着目的性，带着问题去阅读源码，最好是带着问题的答案去读源码。</p>
+<h2 id="如何使用异步设计提升系统性能？"><a href="#如何使用异步设计提升系统性能？" class="headerlink" title="如何使用异步设计提升系统性能？"></a>如何使用异步设计提升系统性能？</h2><p>异步编程，可以减少或者避免线程等待，从而提高处理速度。但是，其增加了程序复杂度，应酌情使用。</p>
+<p>Java 中比较常用的异步框架有 Java8 内置的 <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html">CompletableFuture</a> 和 ReactiveX 的 <a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava">RxJava</a>。</p>
+<h2 id="如何实现高性能的异步网络传输？"><a href="#如何实现高性能的异步网络传输？" class="headerlink" title="如何实现高性能的异步网络传输？"></a>如何实现高性能的异步网络传输？</h2><p>系统一般可以分为 IO 密集型应用和计算密集型应用。大多数业务系统都属于 IO 密集型应用。最常用的 IO 资源有磁盘 IO 和带宽 IO。由于 IO 相较于内存计算，耗时较高，所以往往成为性能优化的关键。</p>
+<p>提升 IO 效率的关键在于减少 IO 等待时间，在大量连接请求的时候，如果单线程，显然阻塞时间较长，所以，一般应采用并发 IO 模型。但是，线程数过多时，线程本身造成的 CPU 上下文切换，竞态造成的冲突都会造成额外的开销，导致 CPU 负载升高，从而降低系统整体性能。所以，理想的 IO 模型应该是一个能够复用少量线程的并发 IO 模型。这个模型的当前答案就是 NIO，其最具代表性的框架就是 Netty。其核心原理就是通过多路复用，来提升 IO 效率。</p>
+<h2 id="序列化与反序列化：如何通过网络传输结构化的数据？"><a href="#序列化与反序列化：如何通过网络传输结构化的数据？" class="headerlink" title="序列化与反序列化：如何通过网络传输结构化的数据？"></a>序列化与反序列化：如何通过网络传输结构化的数据？</h2><p>略</p>
+<h2 id="传输协议：应用程序之间对话的语言"><a href="#传输协议：应用程序之间对话的语言" class="headerlink" title="传输协议：应用程序之间对话的语言"></a>传输协议：应用程序之间对话的语言</h2><p>传输协议的目的，在于定义一种信息规则，使得收发双方能够互相交流。传输协议并没有什么必须遵循的规范，能满足需要即可。复杂的协议可以如网络协议报文一样，定义为 TLV 结构。</p>
+<h2 id="内存管理：如何避免内存溢出和频繁的垃圾回收？"><a href="#内存管理：如何避免内存溢出和频繁的垃圾回收？" class="headerlink" title="内存管理：如何避免内存溢出和频繁的垃圾回收？"></a>内存管理：如何避免内存溢出和频繁的垃圾回收？</h2><p>略</p>
+<h2 id="Kafka-如何实现高性能-IO？"><a href="#Kafka-如何实现高性能-IO？" class="headerlink" title="Kafka 如何实现高性能 IO？"></a>Kafka 如何实现高性能 IO？</h2><p><strong>使用批量消息提升服务端处理能力</strong></p>
+<p><strong>使用顺序读写提升磁盘 IO 性能</strong></p>
+<p>操作系统每次从磁盘读写数据的时候，需要先寻址，也就是先要找到数据在磁盘上的物理位置，然后再进行数据读写。如果是机械硬盘，这个寻址需要比较长的时间，因为它要移动磁头，这是个机械运动，机械硬盘工作的时候会发出咔咔的声音，就是移动磁头发出的声音。</p>
+<p>顺序读写相比随机读写省去了大部分的寻址时间，它只要寻址一次，就可以连续地读写下去，所以说，性能要比随机读写要好很多。</p>
+<p><strong>利用 PageCache 加速消息读写</strong></p>
+<p>在 Kafka 中，它会利用 PageCache 加速消息读写。</p>
+<ul>
+<li>PageCache 就是操作系统在内存中给磁盘上的文件建立的缓存。调用系统的 API 读写文件的时候，不会直接去读写磁盘上的文件，应用程序实际操作的都是 PageCache，也就是文件在内存中缓存的副本。</li>
+<li>应用程序在写入文件的时候，操作系统会先把数据写入到内存中的 PageCache，然后再一批一批地写到磁盘上。读取文件的时候，也是从 PageCache 中来读取数据，这时候会出现两种可能情况。一种是 PageCache 中有数据，那就直接读取，这样就节省了从磁盘上读取数据的时间；另一种情况是，PageCache 中没有数据，这时候操作系统会引发一个缺页中断，应用程序的读取线程会被阻塞，操作系统把数据从文件中复制到 PageCache 中，然后应用程序再从 PageCache 中继续把数据读出来，这时会真正读一次磁盘上的文件，这个读的过程就会比较慢。</li>
+<li>用户的应用程序在使用完某块 PageCache 后，操作系统并不会立刻就清除这个 PageCache，而是尽可能地利用空闲的物理内存保存这些 PageCache，除非系统内存不够用，操作系统才会清理掉一部分 PageCache。清理的策略一般是 LRU 或它的变种算法，这个算法我们不展开讲，它保留 PageCache 的逻辑是：优先保留最近一段时间最常使用的那些 PageCache。</li>
+<li>Kafka 在读写消息文件的时候，充分利用了 PageCache 的特性。一般来说，消息刚刚写入到服务端就会被消费，按照 LRU 的“优先清除最近最少使用的页”这种策略，读取的时候，对于这种刚刚写入的 PageCache，命中的几率会非常高。也就是说，大部分情况下，消费读消息都会命中 PageCache，带来的好处有两个：一个是读取的速度会非常快，另外一个是，给写入消息让出磁盘的 IO 资源，间接也提升了写入的性能。</li>
+</ul>
+<p><strong>零拷贝技术</strong></p>
+<p>在服务端，处理消费的大致逻辑是这样的：</p>
+<ul>
+<li>首先，从文件中找到消息数据，读到内存中；</li>
+<li>然后，把消息通过网络发给客户端。</li>
+</ul>
+<p>这个过程中，数据实际上做了 2 次或者 3 次复制：</p>
+<ol>
+<li>从文件复制数据到 PageCache 中，如果命中 PageCache，这一步可以省掉；</li>
+<li>从 PageCache 复制到应用程序的内存空间中，也就是我们可以操作的对象所在的内存；</li>
+<li>从应用程序的内存空间复制到 Socket 的缓冲区，这个过程就是我们调用网络应用框架的 API 发送数据的过程。</li>
+</ol>
+<p>Kafka 使用零拷贝技术可以把这个复制次数减少一次，上面的 2、3 步骤两次复制合并成一次复制。直接从 PageCache 中把数据复制到 Socket 缓冲区中，这样不仅减少一次数据复制，更重要的是，由于不用把数据复制到用户内存空间，DMA 控制器可以直接完成数据复制，不需要 CPU 参与，速度更快。</p>
+<p>零拷贝操作，实际上是调用系统 API <code>sendfile</code> 实现的。</p>
+<h2 id="缓存策略：如何使用缓存来减少磁盘-IO？"><a href="#缓存策略：如何使用缓存来减少磁盘-IO？" class="headerlink" title="缓存策略：如何使用缓存来减少磁盘 IO？"></a>缓存策略：如何使用缓存来减少磁盘 IO？</h2><p>略</p>
+<h2 id="如何正确使用锁保护共享数据，协调异步线程？"><a href="#如何正确使用锁保护共享数据，协调异步线程？" class="headerlink" title="如何正确使用锁保护共享数据，协调异步线程？"></a>如何正确使用锁保护共享数据，协调异步线程？</h2><p>略</p>
+<h2 id="如何用硬件同步原语（CAS）替代锁？"><a href="#如何用硬件同步原语（CAS）替代锁？" class="headerlink" title="如何用硬件同步原语（CAS）替代锁？"></a>如何用硬件同步原语（CAS）替代锁？</h2><p>略</p>
+<h2 id="数据压缩：时间换空间的游戏"><a href="#数据压缩：时间换空间的游戏" class="headerlink" title="数据压缩：时间换空间的游戏"></a>数据压缩：时间换空间的游戏</h2><p><strong>数据压缩不仅能节省存储空间，还可以用于提升网络传输性能。</strong></p>
+<p>压缩和解压的操作都是计算密集型的操作，非常耗费 CPU 资源。如果你的应用处理业务逻辑就需要耗费大量的 CPU 资源，就不太适合再进行压缩和解压。<strong>数据压缩本质上是用时间换空间</strong>。这个买卖是不是划算，需要根据实际情况先衡量一下。</p>
+<p>目前常用的压缩算法包括：ZIP，GZIP，SNAPPY，LZ4 等等。在选择压缩算法的时候，需要综合考虑压缩时间和压缩率两个因素，被压缩数据的内容也是影响压缩时间和压缩率的重要因素，必要的时候可以先用业务数据做一个压缩测试，这样有助于选择最合适的压缩算法。一般来说，压缩率越高的算法，压缩耗时也越高。如果是对性能要求高的系统，可以选择压缩速度快的算法，比如 LZ4；如果需要更高的压缩比，可以考虑 GZIP 或者压缩率更高的 XZ 等算法。</p>
+<p>另外一个影响压缩率的重要因素是压缩分段的大小，你需要根据业务情况选择一个合适的分段策略，在保证不错的压缩率的前提下，尽量减少解压浪费。</p>
+<p>Kafka 在生产者上，对每批消息进行压缩，批消息在服务端不解压，消费者在收到消息之后再进行解压。简单地说，<strong>Kafka 的压缩和解压都是在客户端完成的</strong>。</p>
+<h2 id="RocketMQ-Producer-源码分析：消息生产的实现过程"><a href="#RocketMQ-Producer-源码分析：消息生产的实现过程" class="headerlink" title="RocketMQ Producer 源码分析：消息生产的实现过程"></a>RocketMQ Producer 源码分析：消息生产的实现过程</h2><p>Producer 中包含的几个核心的服务都是有状态的，在 Producer 启动时，在 MQClientInstance 这个类中来统一来启动。在发送消息的流程中，RocketMQ 分了三种发送方式：单向、同步和异步，这三种发送方式对应的发送流程基本是相同的，同步和异步发送是由已经封装好的 MQClientAPIImpl 类来分别实现的。</p>
+<p>对于我们在分析代码中提到的几个重要的业务逻辑实现类，你最好能记住这几个类和它的功能，包括 ：DefaultMQProducerImpl 封装了大部分 Producer 的业务逻辑，MQClientInstance 封装了客户端一些通用的业务逻辑，MQClientAPIImpl 封装了客户端与服务端的 RPC，NettyRemotingClient 实现了底层网络通信。</p>
+<h2 id="Kafka-Consumer-源码分析：消息消费的实现过程"><a href="#Kafka-Consumer-源码分析：消息消费的实现过程" class="headerlink" title="Kafka Consumer 源码分析：消息消费的实现过程"></a>Kafka Consumer 源码分析：消息消费的实现过程</h2><p>Kafka 消费模型的几个要点：</p>
+<ul>
+<li>Kafka 的每个 Consumer（消费者）实例属于一个 ConsumerGroup（消费组）；</li>
+<li>在消费时，ConsumerGroup 中的每个 Consumer 独占一个或多个 Partition（分区）；</li>
+<li>对于每个 ConsumerGroup，在任意时刻，每个 Partition 至多有 1 个 Consumer 在消费；</li>
+<li>每个 ConsumerGroup 都有一个 Coordinator（协调者）负责分配 Consumer 和 Partition 的对应关系，当 Partition 或是 Consumer 发生变更是，会触发 reblance（重新分配）过程，重新分配 Consumer 与 Partition 的对应关系；</li>
+<li>Consumer 维护与 Coordinator 之间的心跳，这样 Coordinator 就能感知到 Consumer 的状态，在 Consumer 故障的时候及时触发 rebalance。</li>
+</ul>
+<p>发送请求时，构建 Request 对象，暂存入发送队列，但不立即发送，而是等待合适的时机批量发送。并且，用回调或者 RequestFeuture 方式，预先定义好如何处理响应的逻辑。在收到 Broker 返回的响应之后，也不会立即处理，而是暂存在队列中，择机处理。那这个择机策略就比较复杂了，有可能是需要读取响应的时候，也有可能是缓冲区满了或是时间到了，都有可能触发一次真正的网络请求，也就是在 poll() 方法中发送所有待发送 Request 并处理所有 Response。</p>
+<h2 id="Kafka-和-RocketMQ-的消息复制实现的差异点在哪？"><a href="#Kafka-和-RocketMQ-的消息复制实现的差异点在哪？" class="headerlink" title="Kafka 和 RocketMQ 的消息复制实现的差异点在哪？"></a>Kafka 和 RocketMQ 的消息复制实现的差异点在哪？</h2><p>如果要确保数据一致性，必须采用“主 - 从”的复制方式。</p>
+<p>在“主 - 从”模式下，数据先写入到主节点上，从节点只从主节点上复制数据，如果出现主从数据不一致的情况，必须以主节点上的数据为准。</p>
+<h3 id="RocketMQ-如何实现复制"><a href="#RocketMQ-如何实现复制" class="headerlink" title="RocketMQ 如何实现复制"></a>RocketMQ 如何实现复制</h3><p>在 RocketMQ 中，复制的基本单位是 Broker，也就是服务端的进程。复制采用的也是主从方式，通常情况下配置成一主一从，也可以支持一主多从。</p>
+<p>RocketMQ 提供新、老两种复制方式：传统的主从模式和新的基于 Dledger 的复制方式。传统的主从模式性能更好，但灵活性和可用性稍差，而基于 Dledger 的复制方式，在 Broker 故障的时候可以自动选举出新节点，可用性更好，性能稍差，并且资源利用率更低一些。</p>
+<p>RocketMQ 引入 Dledger，通过 Dledger 来完成复制。Dledger 在写入消息的时候，要求至少消息复制到半数以上的节点之后，才给客户端返回写入成功，并且它是支持通过选举来动态切换主节点的。</p>
+<h3 id="Kafka-是如何实现复制的"><a href="#Kafka-是如何实现复制的" class="headerlink" title="Kafka 是如何实现复制的"></a>Kafka 是如何实现复制的</h3><p>Kafka 中，复制的基本单位是分区。每个分区的几个副本之间，构成一个小的复制集群，Broker 只是这些分区副本的容器，所以 Kafka 的 Broker 是不分主从的。</p>
+<p>分区的多个副本中也是采用一主多从的方式。Kafka 在写入消息的时候，采用的也是异步复制的方式。消息在写入到主节点之后，并不会马上返回写入成功，而是等待足够多的节点都复制成功后再返回。Kafka 为这个“足够多”创造了一个专有名词：ISR（In Sync Replicas)，翻译过来就是“保持数据同步的副本”。ISR 的数量是可配的，但需要注意的是，这个 ISR 中是包含主节点的。</p>
+<p>Kafka 使用 ZooKeeper 来监控每个分区的多个节点，如果发现某个分区的主节点宕机了，Kafka 会利用 ZooKeeper 来选出一个新的主节点，这样解决了可用性的问题。选举的时候，会从所有 ISR 节点中来选新的主节点，这样可以保证数据一致性。</p>
+<h3 id="RocketMQ-客户端如何在集群中找到正确的节点？"><a href="#RocketMQ-客户端如何在集群中找到正确的节点？" class="headerlink" title="RocketMQ 客户端如何在集群中找到正确的节点？"></a>RocketMQ 客户端如何在集群中找到正确的节点？</h3><p>任何一个弹性分布式集群，都需要一个类似于 NameServer 服务，来帮助访问集群的客户端寻找集群中的节点。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170725763.jpeg" alt="img"></p>
+<p>在 RocketMQ 中，NameServer 是一个独立的进程，为 Broker、生产者和消费者提供服务。NameServer 最主要的功能就是，为客户端提供寻址服务，协助客户端找到主题对应的 Broker 地址。此外，NameServer 还负责监控每个 Broker 的存活状态。</p>
+<p>NameServer 支持只部署一个节点，也支持部署多个节点组成一个集群，这样可以避免单点故障。在集群模式下，NameServer 各节点之间是不需要任何通信的，也不会通过任何方式互相感知，每个节点都可以独立提供全部服务。</p>
+<p>每个 Broker 都需要和所有的 NameServer 节点进行通信。当 Broker 保存的 Topic 信息发生变化的时候，它会主动通知所有的 NameServer 更新路由信息，为了保证数据一致性，Broker 还会定时给所有的 NameServer 节点上报路由信息。这个上报路由信息的 RPC 请求，也同时起到 Broker 与 NameServer 之间的心跳作用，NameServer 依靠这个心跳来确定 Broker 的健康状态。</p>
+<p>因为每个 NameServer 节点都可以独立提供完整的服务，所以，对于客户端来说，包括生产者和消费者，只需要选择任意一个 NameServer 节点来查询路由信息就可以了。客户端在生产或消费某个主题的消息之前，会先从 NameServer 上查询这个主题的路由信息，然后根据路由信息获取到当前主题和队列对应的 Broker 物理地址，再连接到 Broker 节点上进行生产或消费。</p>
+<p>如果 NameServer 检测到与 Broker 的连接中断了，NameServer 会认为这个 Broker 不再能提供服务。NameServer 会立即把这个 Broker 从路由信息中移除掉，避免客户端连接到一个不可用的 Broker 上去。而客户端在与 Broker 通信失败之后，会重新去 NameServer 上拉取路由信息，然后连接到其他 Broker 上继续生产或消费消息，这样就实现了自动切换失效 Broker 的功能。</p>
+<h3 id="NameServer-的总体结构"><a href="#NameServer-的总体结构" class="headerlink" title="NameServer 的总体结构"></a>NameServer 的总体结构</h3><ul>
+<li><strong>NamesrvStartup</strong>：程序入口。</li>
+<li><strong>NamesrvController</strong>：NameServer 的总控制器，负责所有服务的生命周期管理。</li>
+<li><strong>RouteInfoManager</strong>：NameServer 最核心的实现类，负责保存和管理集群路由信息。</li>
+<li><strong>BrokerHousekeepingService</strong>：监控 Broker 连接状态的代理类。</li>
+<li><strong>DefaultRequestProcessor</strong>：负责处理客户端和 Broker 发送过来的 RPC 请求的处理器。</li>
+<li><strong>ClusterTestRequestProcessor</strong>：用于测试的请求处理器。</li>
+</ul>
+<p>NameServer 的所有核心功能都是在 RouteInfoManager 这个类中实现的。RouteInfoManager 这个类中保存了所有的路由信息，这些路由信息都是保存在内存中，并且没有持久化的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BrokerData</span> <span class="keyword">implements</span> <span class="title class_">Comparable</span>&lt;BrokerData&gt; &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String<span class="comment">/* topic */</span>, List&lt;QueueData&gt;&gt; topicQueueTable;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String<span class="comment">/* brokerName */</span>, BrokerData&gt; brokerAddrTable;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String<span class="comment">/* clusterName */</span>, Set&lt;String<span class="comment">/* brokerName */</span>&gt;&gt; clusterAddrTable;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String<span class="comment">/* brokerAddr */</span>, BrokerLiveInfo&gt; brokerLiveTable;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String<span class="comment">/* brokerAddr */</span>, List&lt;String&gt;<span class="comment">/* Filter Server */</span>&gt; filterServerTable;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Kafka-的协调服务-ZooKeeper：实现分布式系统的“瑞士军刀”"><a href="#Kafka-的协调服务-ZooKeeper：实现分布式系统的“瑞士军刀”" class="headerlink" title="Kafka 的协调服务 ZooKeeper：实现分布式系统的“瑞士军刀”"></a>Kafka 的协调服务 ZooKeeper：实现分布式系统的“瑞士军刀”</h2><p>ZooKeeper 是一个分布式的协调服务，它的核心服务是一个高可用、高可靠的一致性存储，在此基础上，提供了包括读写元数据、节点监控、选举、节点间通信和分布式锁等很多功能，<strong>这些功能可以极大方便我们快速开发一个分布式的集群系统。</strong></p>
+<p>ZooKeeper 的使用注意点：</p>
+<ol>
+<li>不要往 ZooKeeper 里面写入大量数据，它不是一个真正意义上的存储系统，只适合存放少量的数据。依据服务器配置的不同，ZooKeeper 在写入超过几百 MB 数据之后，性能和稳定性都会严重下降。</li>
+<li>不要让业务集群的可用性依赖于 ZooKeeper 的可用性，什么意思呢？你的系统可以使用 Zookeeper，但你要留一手，要考虑如果 Zookeeper 集群宕机了，你的业务集群最好还能提供服务。因为 ZooKeeper 的选举过程是比较慢的，而它对网络的抖动又比较敏感，一旦触发选举，这段时间内的 ZooKeeper 是不能提供任何服务的。</li>
+</ol>
+<p>Kafka 主要使用 ZooKeeper 来保存它的元数据、监控 Broker 和分区的存活状态，并利用 ZooKeeper 来进行选举。</p>
+<p>Kafka 在 ZooKeeper 中保存的元数据，主要就是 Broker 的列表和主题分区信息两棵树。这份元数据同时也被缓存到每一个 Broker 中。客户端并不直接和 ZooKeeper 来通信，而是在需要的时候，通过 RPC 请求去 Broker 上拉取它关心的主题的元数据，然后保存到客户端的元数据缓存中，以便支撑客户端生产和消费</p>
+<h2 id="RocketMQ-与-Kafka-中如何实现事务？"><a href="#RocketMQ-与-Kafka-中如何实现事务？" class="headerlink" title="RocketMQ 与 Kafka 中如何实现事务？"></a>RocketMQ 与 Kafka 中如何实现事务？</h2><p>Kafka 和 RocketMQ 都是基于两阶段提交来实现的事务，都利用了特殊的主题中的队列和分区来记录事务日志。</p>
+<p>不同之处在于对处于事务中的消息的处理方式，RocketMQ 是把这些消息暂存在一个特殊的队列中，待事务提交后再移动到业务队列中；而 Kafka 直接把消息放到对应的业务分区中，配合客户端过滤来暂时屏蔽进行中的事务消息。</p>
+<p>RocketMQ 和 Kafka 的事务，它们的适用场景是不一样的，RocketMQ 的事务适用于解决本地事务和发消息的数据一致性问题，而 Kafka 的事务则是用于实现它的 Exactly Once 机制，应用于实时计算的场景中。</p>
+<h2 id="MQTT-协议：如何支持海量的在线-IoT-设备？"><a href="#MQTT-协议：如何支持海量的在线-IoT-设备？" class="headerlink" title="MQTT 协议：如何支持海量的在线 IoT 设备？"></a>MQTT 协议：如何支持海量的在线 IoT 设备？</h2><p>MQTT 是专门为物联网设备设计的一套标准的通信协议。这套协议在消息模型和功能上与普通的消息队列协议是差不多的，最大的区别在于应用场景不同。在物联网应用场景中，IoT 设备性能差，网络连接不稳定。服务端面临的挑战主要是，需要支撑海量的客户端和主题。</p>
+<p>已有的开源的 MQTT 产品，对于协议的支持都不错，在客户端数量小于十万级别的情况下，可以选择。对于海量客户端的场景，服务端必须使用集群来支撑，可以选择收费的云服务和企业版产品。也可以选择自行来构建 MQTT 集群。</p>
+<p>自行构建集群，最关键的技术点就是，通过前置的 Proxy 集群来解决海量连接、会话管理和海量主题这三个问题。前置 Proxy 负责在 Broker 和客户端之间转发消息，通过这种方式，将海量客户端连接收敛为少量的 Proxy 与 Broker 之间的连接，解决了海量客户端连接数的问题。维护会话的实现原理，和 Tomcat 维护 HTTP 会话是一样的。对于海量主题，可以在后端部署多组 Broker 小集群，每个小集群分担一部分主题这样的方式来解决。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170724393.jpeg" alt="img"></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170724863.jpeg" alt="img"></p>
+<h2 id="Pulsar-的存储计算分离设计：全新的消息队列设计思路"><a href="#Pulsar-的存储计算分离设计：全新的消息队列设计思路" class="headerlink" title="Pulsar 的存储计算分离设计：全新的消息队列设计思路"></a>Pulsar 的存储计算分离设计：全新的消息队列设计思路</h2><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170724276.png" alt="img"></p>
+<p>Pulsar 和其他消息队列最大的区别是，它采用了存储计算分离的设计。存储消息的职责从 Broker 中分离出来，交给专门的 BookKeeper 存储集群。这样 Broker 就变成了无状态的节点，在集群调度和故障恢复方面更加简单灵活。</p>
+<p>无论是 RocketMQ、RabbitMQ 还是 Kafka，消息都是存储在 Broker 的磁盘或者内存中。客户端在访问某个主题分区之前，必须先找到这个分区所在 Broker，然后连接到这个 Broker 上进行生产和消费。在集群模式下，为了避免单点故障导致丢消息，Broker 在保存消息的时候，必须也把消息复制到其他的 Broker 上。当某个 Broker 节点故障的时候，并不是集群中任意一个节点都能替代这个故障的节点，只有那些“和这个故障节点拥有相同数据的节点”才能替代这个故障的节点。原因就是，每一个 Broker 存储的消息数据是不一样的，或者说，每个节点上都存储了状态（数据）。这种节点称为“有状态的节点（Stateful Node）”。</p>
+<p>存储计算分离是一种设计思想，它将系统的存储职责和计算职责分离开，存储节点只负责数据存储，而计算节点只负责计算，计算节点是无状态的。无状态的计算节点，具有易于开发、调度灵活的优点，故障转移和恢复也更加简单快速。这种设计的缺点是，系统总体的复杂度更高，性能也更差。不过对于大部分分布式的业务系统来说，由于它不需要自己开发存储系统，采用存储计算分离的设计，既可以充分利用这种设计的优点，整个系统也不会因此变得过于复杂，综合评估优缺点，利大于弊，更加划算。</p>
+<h2 id="流计算与消息（一）：通过-Flink-理解流计算的原理"><a href="#流计算与消息（一）：通过-Flink-理解流计算的原理" class="headerlink" title="流计算与消息（一）：通过 Flink 理解流计算的原理"></a>流计算与消息（一）：通过 Flink 理解流计算的原理</h2><p>Flink 分析计算任务之后生成 JobGraph，JobGraph 是一个有向无环图，数据流过这个图中的节点，在每个节点进行计算和变换，最终流出有向无环图就完成了计算。JobGraph 中的每个节点是一个 Task，Task 是可以并行执行的，每个线程就是一个 SubTask。SubTask 被 JobManager 分配给某个 TaskManager，在 TaskManager 进程中的一个线程中执行。</p>
+<h2 id="流计算与消息（二）：在流计算中使用-Kafka-链接计算任务"><a href="#流计算与消息（二）：在流计算中使用-Kafka-链接计算任务" class="headerlink" title="流计算与消息（二）：在流计算中使用 Kafka 链接计算任务"></a>流计算与消息（二）：在流计算中使用 Kafka 链接计算任务</h2><p>端到端 Exactly Once 语义，可以保证在分布式系统中，每条数据不多不少只被处理一次。在流计算中，因为数据重复会导致计算结果错误，所以 Exactly Once 在流计算场景中尤其重要。Kafka 和 Flink 都提供了保证 Exactly Once 的特性，配合使用可以实现端到端的 Exactly Once 语义。</p>
+<p>在 Flink 中，如果节点出现故障，可以自动重启计算任务，重新分配计算节点来保证系统的可用性。配合 CheckPoint 机制，可以保证重启后任务的状态恢复到最后一次 CheckPoint，然后从 CheckPoint 中记录的恢复位置继续读取数据进行计算。Flink 通过一个巧妙的 Barrier 使 CheckPoint 中恢复位置和各节点状态完全对应。</p>
+<p>Kafka 的 Exactly Once 语义是通过它的事务和生产幂等两个特性来共同实现的。在配合 Flink 的时候，每个 Flink 的 CheckPoint 对应一个 Kafka 事务，只要保证 CheckPoint 和 Kafka 事务同步提交就可以实现端到端的 Exactly Once，Flink 通过“二阶段提交”这个分布式事务的经典算法来保证 CheckPoint 和 Kafka 事务状态的一致性。</p>
+<h2 id="主流消息队列都是如何存储消息的？"><a href="#主流消息队列都是如何存储消息的？" class="headerlink" title="主流消息队列都是如何存储消息的？"></a>主流消息队列都是如何存储消息的？</h2><p>在所有的存储系统中，消息队列的存储可能是最简单的。每个主题包含若干个分区，每个分区其实就是一个 WAL（Write Ahead Log），写入的时候只能尾部追加，不允许修改。读取的时候，根据一个索引序号进行查询，然后连续顺序往下读。</p>
+<h3 id="Kafka-存储消息结构"><a href="#Kafka-存储消息结构" class="headerlink" title="Kafka 存储消息结构"></a>Kafka 存储消息结构</h3><p>Kafka 的存储以 Partition 为单位，每个 Partition 包含一组消息文件（Segment file）和一组索引文件（Index），并且消息文件和索引文件一一对应，具有相同的文件名（但文件扩展名不一样），文件名就是这个文件中第一条消息的索引序号。</p>
+<p>每个索引中保存索引序号（也就是这条消息是这个分区中的第几条消息）和对应的消息在消息文件中的绝对位置。在索引的设计上，Kafka 采用的是稀疏索引，为了节省存储空间，它不会为每一条消息都创建索引，而是每隔几条消息创建一条索引。</p>
+<p>写入消息的时候非常简单，就是在消息文件尾部连续追加写入，一个文件写满了再写下一个文件。查找消息时，首先根据文件名找到所在的索引文件，然后用二分法遍历索引文件内的索引，在里面找到离目标消息最近的索引，再去消息文件中，找到这条最近的索引指向的消息位置，从这个位置开始顺序遍历消息文件，找到目标消息。</p>
+<p>可以看到，寻址过程还是需要一定时间的。一旦找到消息位置后，就可以批量顺序读取，不必每条消息都要进行一次寻址。</p>
+<h3 id="RocketMQ-存储消息结构"><a href="#RocketMQ-存储消息结构" class="headerlink" title="RocketMQ 存储消息结构"></a>RocketMQ 存储消息结构</h3><p>RocketMQ 的存储以 Broker 为单位。它的存储也是分为消息文件和索引文件，但是在 RocketMQ 中，每个 Broker 只有一组消息文件，它把在这个 Broker 上的所有主题的消息都存在这一组消息文件中。索引文件和 Kafka 一样，是按照主题和队列分别建立的，每个队列对应一组索引文件，这组索引文件在 RocketMQ 中称为 ConsumerQueue。RocketMQ 中的索引是定长稠密索引，它为每一条消息都建立索引，每个索引的长度（注意不是消息长度）是固定的 20 个字节。</p>
+<p>写入消息的时候，Broker 上所有主题、所有队列的消息按照自然顺序追加写入到同一个消息文件中，一个文件写满了再写下一个文件。查找消息的时候，可以直接根据队列的消息序号，计算出索引的全局位置（索引序号 x 索引固定长度 20），然后直接读取这条索引，再根据索引中记录的消息的全局位置，找到消息。可以看到，这里两次寻址都是绝对位置寻址，比 Kafka 的查找是要快的。</p>
+<h3 id="Kafka-和-RocketMQ-的存储结构比较"><a href="#Kafka-和-RocketMQ-的存储结构比较" class="headerlink" title="Kafka 和 RocketMQ 的存储结构比较"></a>Kafka 和 RocketMQ 的存储结构比较</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202502170723879.png" alt="img"></p>
+<p>对比这两种存储结构，你可以看到它们有很多共通的地方，都是采用消息文件 + 索引文件的存储方式，索引文件的名字都是第一条消息的索引序号，索引中记录了消息的位置等等。</p>
+<p>在消息文件的存储粒度上，Kafka 以分区为单位，粒度更细，优点是更加灵活，很容易进行数据迁移和扩容。RocketMQ 以 Broker 为单位，较粗的粒度牺牲了灵活性，带来的好处是，在写入的时候，同时写入的文件更少，有更好的批量（不同主题和分区的数据可以组成一批一起写入），更多的顺序写入，尤其是在 Broker 上有很多主题和分区的情况下，有更好的写入性能。</p>
+<p>大多数场景下，这两种存储设计的差异其实并不明显，都可以满足需求。但是在某些极限场景下，依然会体现出它们设计的差异。比如，在一个 Broker 上有上千个活动主题的情况下，RocketMQ 的写入性能就会体现出优势。再比如，如果我们的消息都是几个、十几个字节的小消息，但是消息的数量很多，这时候 Kafka 的稀疏索引设计就能节省非常多的存储空间。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100032301">消息队列高手课</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/d30711ee/" title="《消息队列高手课》笔记">https://dunwu.github.io/blog/pages/d30711ee/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%80%9A%E4%BF%A1/" rel="tag"># 分布式通信</a>
+              <a href="/blog/tags/MQ/" rel="tag"># MQ</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/04e2841d/" rel="prev" title="如何阅读源码">
+                  <i class="fa fa-angle-left"></i> 如何阅读源码
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/3a9971fd/" rel="next" title="DevOps 简介">
+                  DevOps 简介 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"cfe752a41dd7a21b7df0f16030fc7574"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="分库分表基本原理什么是分库分表分库分表是一种数据库水平拆分方案，用于解决单机数据库的存储瓶颈和性能瓶颈问题。  分库：将数据分散到不同的数据库实例（如 DB1、DB2）。 分表：将数据分散到同一数据库的不同表（如 order_1、order_2）。  为何要分库分表分库分表主要基于以下理由：  并发连接 - 单库超过每秒 2000 个并发时，而一个健康的单库最好保持在每秒 1000 个并发左右，不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分库分表基本原理">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/20427d78/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="分库分表基本原理什么是分库分表分库分表是一种数据库水平拆分方案，用于解决单机数据库的存储瓶颈和性能瓶颈问题。  分库：将数据分散到不同的数据库实例（如 DB1、DB2）。 分表：将数据分散到同一数据库的不同表（如 order_1、order_2）。  为何要分库分表分库分表主要基于以下理由：  并发连接 - 单库超过每秒 2000 个并发时，而一个健康的单库最好保持在每秒 1000 个并发左右，不">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/image-20200114211639899.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/image-20200114211203589.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608091832.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601114836.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601135751.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601121215.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601121400.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3710706-925381b9a478c8df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3710706-9a7cfbdb95bb9b70.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="article:published_time" content="2019-10-16T12:54:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.752Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="分库分表">
+<meta property="article:tag" content="分布式存储">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/image-20200114211639899.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/20427d78/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/20427d78/","path":"/pages/20427d78/","title":"分库分表基本原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分库分表基本原理 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">分库分表基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">1.1.</span> <span class="nav-text">什么是分库分表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BD%95%E8%A6%81%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">1.2.</span> <span class="nav-text">为何要分库分表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">分库分表原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%88%86%E7%89%87"><span class="nav-number">1.3.1.</span> <span class="nav-text">垂直分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%88%86%E7%89%87"><span class="nav-number">1.3.2.</span> <span class="nav-text">水平分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AD%96%E7%95%A5"><span class="nav-number">1.3.3.</span> <span class="nav-text">分库分表策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E8%8C%83%E5%9B%B4%E8%B7%AF%E7%94%B1"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">数值范围路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hash-%E8%B7%AF%E7%94%B1"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">Hash 路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E8%A1%A8"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">路由表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%81%E7%A7%BB%E5%92%8C%E6%89%A9%E5%AE%B9"><span class="nav-number">1.4.</span> <span class="nav-text">迁移和扩容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9C%E6%9C%BA%E8%BF%81%E7%A7%BB-%E6%89%A9%E5%AE%B9%EF%BC%88%E4%B8%8D%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="nav-number">1.4.1.</span> <span class="nav-text">停机迁移&#x2F;扩容（不推荐）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%9C%BA%E8%BF%81%E7%A7%BB-%E6%89%A9%E5%AE%B9%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">停机迁移&#x2F;扩容流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%9C%BA%E8%BF%81%E7%A7%BB-%E6%89%A9%E5%AE%B9%E6%96%B9%E6%A1%88%E5%88%86%E6%9E%90"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">停机迁移&#x2F;扩容方案分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E5%86%99%E8%BF%81%E7%A7%BB"><span class="nav-number">1.4.2.</span> <span class="nav-text">双写迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8C%E5%86%99%E8%BF%81%E7%A7%BB%E6%96%B9%E6%A1%88%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">双写迁移方案核心思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8C%E5%86%99%E8%BF%81%E7%A7%BB%E6%96%B9%E6%A1%88%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">双写迁移方案流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8C%E5%86%99%E8%BF%81%E7%A7%BB%E6%96%B9%E6%A1%88%E5%88%86%E6%9E%90"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">双写迁移方案分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E6%9B%BF%E6%8D%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">主从替换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E4%BB%8E%E5%BA%93%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">升级从库的流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E4%BB%8E%E5%BA%93%E6%96%B9%E6%A1%88%E5%88%86%E6%9E%90"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">升级从库方案分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.</span> <span class="nav-text">分库分表的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-ID-%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.1.</span> <span class="nav-text">分布式 ID 问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.2.</span> <span class="nav-text">分布式事务问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%A8%E8%8A%82%E7%82%B9-Join-%E5%92%8C%E8%81%9A%E5%90%88"><span class="nav-number">1.5.3.</span> <span class="nav-text">跨节点 Join 和聚合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%A8%E5%88%86%E7%89%87%E7%9A%84%E6%8E%92%E5%BA%8F%E5%88%86%E9%A1%B5"><span class="nav-number">1.5.4.</span> <span class="nav-text">跨分片的排序分页</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.6.</span> <span class="nav-text">中间件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/20427d78/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分库分表基本原理 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分库分表基本原理<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/22.%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-16 20:54:00" itemprop="dateCreated datePublished" datetime="2019-10-16T20:54:00+08:00">2019-10-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">分布式存储</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分库分表基本原理"><a href="#分库分表基本原理" class="headerlink" title="分库分表基本原理"></a>分库分表基本原理</h1><h2 id="什么是分库分表"><a href="#什么是分库分表" class="headerlink" title="什么是分库分表"></a>什么是分库分表</h2><p><strong>分库分表</strong>是一种数据库水平拆分方案，用于解决单机数据库的<strong>存储瓶颈</strong>和<strong>性能瓶颈</strong>问题。</p>
+<ul>
+<li><strong>分库</strong>：将数据分散到不同的数据库实例（如 <code>DB1</code>、<code>DB2</code>）。</li>
+<li><strong>分表</strong>：将数据分散到同一数据库的不同表（如 <code>order_1</code>、<code>order_2</code>）。</li>
+</ul>
+<h2 id="为何要分库分表"><a href="#为何要分库分表" class="headerlink" title="为何要分库分表"></a>为何要分库分表</h2><p>分库分表主要基于以下理由：</p>
+<ul>
+<li><strong>并发连接</strong> - 单库超过每秒 2000 个并发时，而一个健康的单库最好保持在每秒 1000 个并发左右，不要太大。</li>
+<li><strong>磁盘容量</strong> - 磁盘容量占满，会导致服务器不可用。</li>
+<li><strong>SQL 性能</strong> - 单表数据量过大，会导致 SQL 执行效率低下。一般，单表超过 1000 万条数据，就可以考虑分表了。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>分库分表前</th>
+<th>分库分表后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>并发支撑情况</td>
+<td>MySQL 单机部署，扛不住高并发</td>
+<td>MySQL 从单机到多机，能承受的并发增加了多倍</td>
+</tr>
+<tr>
+<td>磁盘使用情况</td>
+<td>MySQL 单机磁盘容量几乎撑满</td>
+<td>拆分为多个库，数据库服务器磁盘使用率大大降低</td>
+</tr>
+<tr>
+<td>SQL 执行性能</td>
+<td>单表数据量太大，SQL 越跑越慢</td>
+<td>单表数据量减少，SQL 执行效率明显提升</td>
+</tr>
+</tbody></table>
+<h2 id="分库分表原理"><a href="#分库分表原理" class="headerlink" title="分库分表原理"></a>分库分表原理</h2><p><strong>数据分片指按照某个维度将存放在单一数据库中的数据分散地存放至多个数据库或表中以达到提升性能瓶颈以及可用性的效果</strong>。 数据分片的有效手段是对关系型数据库进行分库和分表。分库和分表均可以有效的避免由数据量超过可承受阈值而产生的查询瓶颈。 除此之外，分库还能够用于有效的分散对数据库单点的访问量；分表虽然无法缓解数据库压力，但却能够提供尽量将分布式事务转化为本地事务的可能，一旦涉及到跨库的更新操作，分布式事务往往会使问题变得复杂。 使用多主多从的分片方式，可以有效的避免数据单点，从而提升数据架构的可用性。</p>
+<p>通过分库和分表进行数据的拆分来使得各个表的数据量保持在阈值以下，以及对流量进行疏导应对高访问量，是应对高并发和海量数据系统的有效手段。 数据分片的拆分方式又分为垂直分片和水平分片。</p>
+<h3 id="垂直分片"><a href="#垂直分片" class="headerlink" title="垂直分片"></a>垂直分片</h3><p>垂直分片有两种拆分考量：业务拆分和访问频率拆分</p>
+<p>（1）业务拆分</p>
+<blockquote>
+<p>业务拆分的核心理念是<strong>专库专用</strong>。</p>
+</blockquote>
+<p>在拆分之前，一个数据库由多个数据表构成，每个表对应着不同的业务。而拆分之后，则是<strong>按照业务将表进行归类，分布到不同的数据库中</strong>，从而将压力分散至不同的数据库。下图展示了根据业务需要，将用户表和订单表垂直分片到不同的数据库的方案。</p>
+<p>垂直分片往往需要对架构和设计进行调整。通常来讲，是来不及应对互联网业务需求快速变化的；而且，它也并无法真正的解决单点瓶颈。<strong>垂直拆分可以缓解数据量和访问量带来的问题，但无法根治。如果垂直拆分之后，表中的数据量依然超过单节点所能承载的阈值，则需要水平分片来进一步处理</strong>。</p>
+<p>（2）访问频率拆分</p>
+<blockquote>
+<p>访问频率拆分，是 <strong>把一个有很多字段的表给拆分成多个表，或者是多个库上去</strong>。一般来说，会 <strong>将较少的、访问频率较高的字段放到一个表中</strong>，然后 <strong>将较多的、访问频率较低的字段放到另外一个表中</strong>。因为数据库是有缓存的，访问频率高的行字段越少，就可以在缓存里缓存更多的行，性能就越好。这个一般在表层面做的较多一些。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/image-20200114211639899.png" alt="image-20200114211639899"></p>
+<p>一般来说，满足下面的条件就可以考虑扩容了：</p>
+<ul>
+<li>Mysql 单库超过 5000 万条记录，Oracle 单库超过 1 亿条记录，DB 压力就很大。</li>
+<li>单库超过每秒 2000 个并发时，而一个健康的单库最好保持在每秒 1000 个并发左右，不要太大。</li>
+</ul>
+<p>在数据库的层面使用垂直切分将按数据库中表的密集程度部署到不同的库中，例如将原来的电商数据库垂直切分成商品数据库、用户数据库等。</p>
+<h3 id="水平分片"><a href="#水平分片" class="headerlink" title="水平分片"></a>水平分片</h3><blockquote>
+<p><strong>水平拆分</strong> 又称为 <strong>Sharding</strong>，它是将同一个表中的记录拆分到多个结构相同的表中。当 <strong>单表数据量太大</strong> 时，会极大影响 <strong>SQL 执行的性能</strong> 。分表是将原来一张表的数据分布到数据库集群的不同节点上，从而缓解单点的压力。</p>
+</blockquote>
+<p>相对于垂直分片，水平分片不再将数据根据业务逻辑分类，而是通过某个字段（或某几个字段），根据某种规则将数据分散至多个库或表中，每个分片仅包含数据的一部分。 例如：根据主键分片，偶数主键的记录放入 0 库（或表），奇数主键的记录放入 1 库（或表）。</p>
+<p>水平分片从理论上突破了单机数据量处理的瓶颈，并且扩展相对自由，是分库分表的标准解决方案。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/image-20200114211203589.png" alt="image-20200114211203589"></p>
+<p>一般来说，<strong>单表有 200 万条数据</strong> 的时候，性能就会相对差一些了，需要考虑分表了。但是，这也要视具体情况而定，可能是 100 万条，也可能是 500 万条，SQL 越复杂，就最好让单表行数越少。</p>
+<p>读写分离的数据节点中的数据内容是一致的，而水平分片的每个数据节点的数据内容却并不相同。将水平分片和读写分离联合使用，能够更加有效的提升系统性能。</p>
+<h3 id="分库分表策略"><a href="#分库分表策略" class="headerlink" title="分库分表策略"></a>分库分表策略</h3><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200608091832.png" alt="img"></p>
+<p>分库分表策略主要有两种：</p>
+<ul>
+<li>根据数值范围划分</li>
+<li>根据 Hash 划分</li>
+</ul>
+<h4 id="数值范围路由"><a href="#数值范围路由" class="headerlink" title="数值范围路由"></a>数值范围路由</h4><p>数值范围路由，就是根据 ID、时间范围 这类具有排序性的字段来进行划分。例如：用户 Id 为 1-9999 的记录分到第一个库，10000-20000 的分到第二个库，以此类推。</p>
+<p>按这种策略划分出来的数据，具有数据连续性。</p>
+<p>优点：数据迁移很简单。</p>
+<p>缺点：容易产生热点问题，大量的流量都打在最新的数据上了。</p>
+<h4 id="Hash-路由"><a href="#Hash-路由" class="headerlink" title="Hash 路由"></a>Hash 路由</h4><p>典型的 Hash 路由，如根据数值取模，当需要扩容时，一般以 2 的幂次方进行扩容（这样，扩容时迁移的数据量会小一些）。例如：用户 Id mod n，余数为 0 的记录放到第一个库，余数为 1 的放到第二个库，以此类推。</p>
+<p>一般采用 <strong>预分区</strong> 的方式，提前根据 <strong>数据量</strong> 规划好 <strong>分区数</strong>，比如划分为 <code>512</code> 或 <code>1024</code> 张表，保证可支撑未来一段时间的 <strong>数据容量</strong>，再根据 <strong>负载情况</strong> 将 <strong>表</strong> 迁移到其他 <strong>数据库</strong> 中。扩容时通常采用 <strong>翻倍扩容</strong>，避免 <strong>数据映射</strong> 全部被 <strong>打乱</strong>，导致 <strong>全量迁移</strong> 的情况。</p>
+<p>优点：数据离散分布，不存在热点问题。</p>
+<p>缺点：数据迁移、扩容麻烦（之前的数据需要重新计算 hash 值重新分配到不同的库或表）。当 <strong>节点数量</strong> 变化时，如 <strong>扩容</strong> 或 <strong>收缩</strong> 节点，数据节点 <strong>映射关系</strong> 需要重新计算，会导致数据的 <strong>重新迁移</strong>。</p>
+<h4 id="路由表"><a href="#路由表" class="headerlink" title="路由表"></a>路由表</h4><p>这种策略，就是用一张独立的表记录路由信息。</p>
+<p>优点：简单、灵活，尤其是在扩容、迁移时，只需要迁移指定的数据，然后修改路由表即可。</p>
+<p>缺点：每次查询，必须先查路由表，增加了 IO 开销。并且，如果路由表本身太大，也会面临性能瓶颈，如果想对路由表再做分库分表，将出现死循环式的路由算法选择问题。</p>
+<h2 id="迁移和扩容"><a href="#迁移和扩容" class="headerlink" title="迁移和扩容"></a>迁移和扩容</h2><h3 id="停机迁移-扩容（不推荐）"><a href="#停机迁移-扩容（不推荐）" class="headerlink" title="停机迁移&#x2F;扩容（不推荐）"></a>停机迁移&#x2F;扩容（不推荐）</h3><p>停机迁移&#x2F;扩容是最暴力、最简单的迁移、扩容方案。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601114836.png" alt="img"></p>
+<h4 id="停机迁移-扩容流程"><a href="#停机迁移-扩容流程" class="headerlink" title="停机迁移&#x2F;扩容流程"></a>停机迁移&#x2F;扩容流程</h4><ol>
+<li>预估停服时间，发布停服公告；停服，不允许数据访问。</li>
+<li>编写临时的数据导入程序，从老数据库中读取数据。</li>
+<li>将数据写入中间件。</li>
+<li>中间件根据分片规则，将数据分发到分库（分表）中。</li>
+<li>应用程序修改配置，重启。</li>
+</ol>
+<h4 id="停机迁移-扩容方案分析"><a href="#停机迁移-扩容方案分析" class="headerlink" title="停机迁移&#x2F;扩容方案分析"></a>停机迁移&#x2F;扩容方案分析</h4><ul>
+<li><strong>优点</strong>：简单、无数据一致性问题。</li>
+<li><strong>缺点</strong>：<ul>
+<li>停服时间长（数据量大时可能需数小时）。</li>
+<li>风险高，失败后难以回滚。</li>
+</ul>
+</li>
+</ul>
+<p><strong>结论</strong>：代价过高，不推荐使用。</p>
+<h3 id="双写迁移"><a href="#双写迁移" class="headerlink" title="双写迁移"></a>双写迁移</h3><h4 id="双写迁移方案核心思想"><a href="#双写迁移方案核心思想" class="headerlink" title="双写迁移方案核心思想"></a>双写迁移方案核心思想</h4><p><strong>双写迁移方案核心思想</strong>：</p>
+<ul>
+<li>新旧库同时写入，通过开关控制读写状态（只写旧库、只写新库、双写）。</li>
+<li>逐步切换读请求到新库，确保数据一致性。</li>
+</ul>
+<p><strong>双写迁移方案关键步骤</strong>：</p>
+<ol>
+<li><strong>双写阶段</strong>：先写旧库，再写新库，以旧库结果为准。记录旧库成功但新库失败的日志，用于补偿。</li>
+<li><strong>数据校验</strong>：运行对比程序，检查新旧库数据差异并修复。</li>
+<li><strong>灰度切换读请求</strong>：逐步将读流量切至新库，观察稳定性。</li>
+<li><strong>最终切换</strong>：读写全部切至新库，清理旧库冗余数据。</li>
+</ol>
+<h4 id="双写迁移方案流程"><a href="#双写迁移方案流程" class="headerlink" title="双写迁移方案流程"></a>双写迁移方案流程</h4><p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601135751.png" alt="img"></p>
+<ol>
+<li>修改应用程序配置，将数据同时写入老数据库和中间件。这就是所谓的<strong>双写</strong>，同时写俩库，老库和新库。</li>
+<li>编写临时程序，读取老数据库。</li>
+<li>将数据写入中间件。如果数据不存在，直接写入；如果数据存在，比较时间戳，只允许新数据覆盖老数据。</li>
+<li>导入数据后，有可能数据还是存在不一致，那么就对数据进行校验，比对新老库的每条数据。如果存在差异，针对差异数据，执行（3）。循环（3）、（4）步骤，直至数据完全一致。</li>
+<li>修改应用程序配置，将数据只写入中间件。</li>
+<li>中间件根据分片规则，将数据分发到分库（分表）中。</li>
+</ol>
+<h4 id="双写迁移方案分析"><a href="#双写迁移方案分析" class="headerlink" title="双写迁移方案分析"></a>双写迁移方案分析</h4><p><strong>优点</strong>：</p>
+<ul>
+<li>无需停服，业务影响小。</li>
+<li>可灰度验证，风险可控。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>实现复杂，需处理双写一致性和补偿逻辑。</li>
+</ul>
+<h3 id="主从替换"><a href="#主从替换" class="headerlink" title="主从替换"></a>主从替换</h3><p>生产环境的数据库，为了保证高可用，一般会采用主从架构。主库支持读写操作，从库支持读操作。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601121215.png" alt="img"></p>
+<p>由于主从节点数据一致，所以将从库升级为主节点，并修改分片配置，将从节点作为分库之一，就实现了扩容。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200601121400.png" alt="img"></p>
+<h4 id="升级从库的流程"><a href="#升级从库的流程" class="headerlink" title="升级从库的流程"></a>升级从库的流程</h4><ol>
+<li>解除主从关系，从库升级为主库。</li>
+<li>应用程序，修改配置，读写通过中间件。</li>
+<li>分库分表中间，修改分片配置。将数据按照新的规则分发。</li>
+<li>编写临时程序，清理冗余数据。比如：原来是一个单库，数据量为 400 万。从节点升级为分库之一后，每个分库都有 400 万数据，其中 200 万是冗余数据。清理完后，进行数据校验。</li>
+<li>为每个分库添加新的从库，保证高可用。</li>
+</ol>
+<h4 id="升级从库方案分析"><a href="#升级从库方案分析" class="headerlink" title="升级从库方案分析"></a>升级从库方案分析</h4><p>优点：不需要停机，无需数据迁移。</p>
+<h2 id="分库分表的问题"><a href="#分库分表的问题" class="headerlink" title="分库分表的问题"></a>分库分表的问题</h2><p>分库分表主要存在以下问题：</p>
+<ul>
+<li><strong>分布式 ID 问题</strong></li>
+<li><strong>分布式事务问题</strong></li>
+<li><strong>跨节点 Join 和聚合</strong></li>
+<li><strong>跨分片的排序分页</strong></li>
+</ul>
+<h3 id="分布式-ID-问题"><a href="#分布式-ID-问题" class="headerlink" title="分布式 ID 问题"></a>分布式 ID 问题</h3><p>一旦数据库被切分到多个物理结点上，我们将不能再依赖数据库自身的主键生成机制。一方面，某个分区数据库自生成的 ID 无法保证在全局上是唯一的；另一方面，应用程序在插入数据之前需要先获得 ID，以便进行 SQL 路由。</p>
+<blockquote>
+<p>分布式 ID 的解决方案详见：<a href="https://dunwu.github.io/waterdrop/pages/058bdd15/">分布式 ID</a></p>
+</blockquote>
+<h3 id="分布式事务问题"><a href="#分布式事务问题" class="headerlink" title="分布式事务问题"></a>分布式事务问题</h3><p>跨库事务也是分布式的数据库集群要面对的棘手事情。 合理采用分表，可以在降低单表数据量的情况下，尽量使用本地事务，善于使用同库不同表可有效避免分布式事务带来的麻烦。在不能避免跨库事务的场景，有些业务仍然需要保持事务的一致性。 而基于 XA 的分布式事务由于在并发度高的场景中性能无法满足需要，并未被互联网巨头大规模使用，他们大多采用最终一致性的柔性事务代替强一致事务。</p>
+<blockquote>
+<p>分布式事务的解决方案详见：<a href="https://dunwu.github.io/waterdrop/pages/f293688d/">分布式事务</a></p>
+</blockquote>
+<h3 id="跨节点-Join-和聚合"><a href="#跨节点-Join-和聚合" class="headerlink" title="跨节点 Join 和聚合"></a>跨节点 Join 和聚合</h3><p>分库分表后，无法直接跨节点 <code>join</code> 、<code>count</code>、<code>order by</code>、<code>group by</code> 以及聚合。</p>
+<p>针对这类问题，普遍做法是<strong>二次查询</strong>。</p>
+<p>在第一次查询时，获取各个节点上的结果。</p>
+<p>在程序中将这些结果进行合并、筛选。</p>
+<h3 id="跨分片的排序分页"><a href="#跨分片的排序分页" class="headerlink" title="跨分片的排序分页"></a>跨分片的排序分页</h3><p>一般来讲，分页时需要按照指定字段进行排序。当排序字段就是分片字段的时候，我们通过分片规则可以比较容易定位到指定的分片，而当排序字段非分片字段的时候，情况就会变得比较复杂了。为了最终结果的准确性，我们需要在不同的分片节点中将数据进行排序并返回，并将不同分片返回的结果集进行汇总和再次排序，最后再返回给用户。如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3710706-925381b9a478c8df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<p>上面图中所描述的只是最简单的一种情况（取第一页数据），看起来对性能的影响并不大。但是，如果想取出第 10 页数据，情况又将变得复杂很多，如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3710706-9a7cfbdb95bb9b70.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<p>有些读者可能并不太理解，为什么不能像获取第一页数据那样简单处理（排序取出前 10 条再合并、排序）。其实并不难理解，因为各分片节点中的数据可能是随机的，为了排序的准确性，必须把所有分片节点的前 N 页数据都排序好后做合并，最后再进行整体的排序。很显然，这样的操作是比较消耗资源的，用户越往后翻页，系统性能将会越差。</p>
+<p>那如何解决分库情况下的分页问题呢？有以下几种办法：</p>
+<p>如果是在前台应用提供分页，则限定用户只能看前面 n 页，这个限制在业务上也是合理的，一般看后面的分页意义不大（如果一定要看，可以要求用户缩小范围重新查询）。</p>
+<p>如果是后台批处理任务要求分批获取数据，则可以加大 page size，比如每次获取 5000 条记录，有效减少分页数（当然离线访问一般走备库，避免冲击主库）。</p>
+<p>分库设计时，一般还有配套大数据平台汇总所有分库的记录，有些分页查询可以考虑走大数据平台。</p>
+<h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><p>国内常见分库分表中间件：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/alibaba/cobar">Cobar</a> - 阿里 b2b 团队开发和开源的，属于 proxy 层方案，就是介于应用服务器和数据库服务器之间。应用程序通过 JDBC 驱动访问 cobar 集群，cobar 根据 SQL 和分库规则对 SQL 做分解，然后分发到 MySQL 集群不同的数据库实例上执行。早些年还可以用，但是最近几年都没更新了，基本没啥人用，差不多算是被抛弃的状态吧。而且不支持读写分离、存储过程、跨库 join 和分页等操作。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/alibaba/tb_tddl">TDDL</a> - 淘宝团队开发的，属于 client 层方案。支持基本的 crud 语法和读写分离，但不支持 join、多表查询等语法。目前使用的也不多，因为还依赖淘宝的 diamond 配置管理系统。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Qihoo360/Atlas">Atlas</a> - 360 开源的，属于 proxy 层方案，以前是有一些公司在用的，但是确实有一个很大的问题就是社区最新的维护都在 5 年前了。所以，现在用的公司基本也很少了。</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dangdangdotcom/sharding-jdbc">sharding-jdbc</a> - 当当开源的，属于 client 层方案。确实之前用的还比较多一些，因为 SQL 语法支持也比较多，没有太多限制，而且目前推出到了 2.0 版本，支持分库分表、读写分离、分布式 id 生成、柔性事务（最大努力送达型事务、TCC 事务）。而且确实之前使用的公司会比较多一些（这个在官网有登记使用的公司，可以看到从 2017 年一直到现在，是有不少公司在用的），目前社区也还一直在开发和维护，还算是比较活跃，个人认为算是一个现在也<strong>可以选择的方案</strong>。</li>
+<li><a target="_blank" rel="noopener" href="http://www.mycat.org.cn/">Mycat</a> - 基于 cobar 改造的，属于 proxy 层方案，支持的功能非常完善，而且目前应该是非常火的而且不断流行的数据库中间件，社区很活跃，也有一些公司开始在用了。但是确实相比于 sharding jdbc 来说，年轻一些，经历的锤炼少一些。</li>
+</ul>
+<p>技术选型建议：</p>
+<p>建议使用的是 sharding-jdbc 和 mycat。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/dangdangdotcom/sharding-jdbc">sharding-jdbc</a> 这种 client 层方案的<strong>优点在于不用部署，运维成本低，不需要代理层的二次转发请求，性能很高</strong>，但是如果遇到升级啥的需要各个系统都重新升级版本再发布，各个系统都需要<strong>耦合</strong> sharding-jdbc 的依赖。其本质上通过配置多数据源，然后根据设定的分库分表策略，计算路由，将请求发送到计算得到的节点上。</li>
+<li><a target="_blank" rel="noopener" href="http://www.mycat.org.cn/">Mycat</a> 这种 proxy 层方案的<strong>缺点在于需要部署</strong>，自己运维一套中间件，运维成本高，但是<strong>好处在于对于各个项目是透明的</strong>，如果遇到升级之类的都是自己中间件那里搞就行了。</li>
+</ul>
+<p>通常来说，这两个方案其实都可以选用，但是我个人建议中小型公司选用 sharding-jdbc，client 层方案轻便，而且维护成本低，不需要额外增派人手，而且中小型公司系统复杂度会低一些，项目也没那么多；但是中大型公司最好还是选用 mycat 这类 proxy 层方案，因为可能大公司系统和项目非常多，团队很大，人员充足，那么最好是专门弄个人来研究和维护 mycat，然后大量项目直接透明使用即可。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100046801">后端存储实战课</a></li>
+<li><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/current/cn/overview/">ShardingSphere 官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5bf778ef5188251b8a26ed8b">“分库分表” ？选型和流程要慎重，否则会失控</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/32b3e91aa22c">分库分表需要考虑的问题及方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5d4b6dc1f265da03c1288332">一次难得的分库分表实践</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/barrywxx/p/11532122.html">分库分表平滑扩容</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/20427d78/" title="分库分表基本原理">https://dunwu.github.io/blog/pages/20427d78/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" rel="tag"># 分库分表</a>
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag"># 分布式存储</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/36fc34f3/" rel="prev" title="Systemd 应用">
+                  <i class="fa fa-angle-left"></i> Systemd 应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/78e07005/" rel="next" title="Java 虚拟机之调优">
+                  Java 虚拟机之调优 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"6533839773405d2fb6242d10a93b8d97"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

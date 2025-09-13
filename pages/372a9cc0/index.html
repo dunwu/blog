@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="分布式协同面试复制【基础】什么是复制？复制有什么作用？:::details 要点 复制主要指通过网络在多台机器上保存相同数据的副本。 复制数据，可能出于各种各样的原因：  提高可用性 - 当部分组件出现位障，系统依然可以继续工作，系统依然可以继续工作。 降低访问延迟 - 使数据在地理位置上更接近用户。 提高读吞吐量 - 扩展至多台机器以同时提供数据访问服务。  ::: 【中级】复制有哪些模式？::">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式协同面试">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/372a9cc0/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="分布式协同面试复制【基础】什么是复制？复制有什么作用？:::details 要点 复制主要指通过网络在多台机器上保存相同数据的副本。 复制数据，可能出于各种各样的原因：  提高可用性 - 当部分组件出现位障，系统依然可以继续工作，系统依然可以继续工作。 降低访问延迟 - 使数据在地理位置上更接近用户。 提高读吞吐量 - 扩展至多台机器以同时提供数据访问服务。  ::: 【中级】复制有哪些模式？::">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220302202101.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220302202158.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405122221705.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220303111528.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220303112708.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405122231579.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220304120137.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220304163629.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140719760.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140723628.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140724776.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140725035.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140725296.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140726693.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140726821.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140726904.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140809614.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140759853.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150751202.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150752176.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150752372.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150752580.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150753776.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190814629.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190815373.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-StickySessions.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SessionReplication.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SpringSession.jpg">
+<meta property="article:published_time" content="2024-12-16T15:57:04.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.746Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="协同">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220302202101.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/372a9cc0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/372a9cc0/","path":"/pages/372a9cc0/","title":"分布式协同面试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式协同面试 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E9%9D%A2%E8%AF%95"><span class="nav-number">1.</span> <span class="nav-text">分布式协同面试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6"><span class="nav-number">1.1.</span> <span class="nav-text">复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%8D%E5%88%B6%EF%BC%9F%E5%A4%8D%E5%88%B6%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【基础】什么是复制？复制有什么作用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E5%A4%8D%E5%88%B6%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【中级】复制有哪些模式？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【中级】主从复制是如何工作的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E3%80%81%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E3%80%81%E5%BC%82%E6%AD%A5%E5%A4%8D%E5%88%B6%E6%9C%89%E4%BB%80%E4%B9%88%E5%B7%AE%E5%BC%82%EF%BC%9F"><span class="nav-number">1.1.4.</span> <span class="nav-text">【中级】同步复制、半同步复制、异步复制有什么差异？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E6%96%B0%E7%9A%84%E4%BB%8E%E8%8A%82%E7%82%B9%E5%A6%82%E4%BD%95%E5%A4%8D%E5%88%B6%E4%B8%BB%E8%8A%82%E7%82%B9%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="nav-number">1.1.5.</span> <span class="nav-text">【中级】新的从节点如何复制主节点数据？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%8A%80%E6%9C%AF%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%B3%BB%E7%BB%9F%E9%AB%98%E5%8F%AF%E7%94%A8%E5%91%A2%EF%BC%9F"><span class="nav-number">1.1.6.</span> <span class="nav-text">【高级】如何通过主从复制技术来实现系统高可用呢？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E8%8A%82%E7%82%B9%E5%A4%B1%E6%95%88%EF%BC%9A%E8%BF%BD%E8%B5%B6%E5%BC%8F%E6%81%A2%E5%A4%8D"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">从节点失效：追赶式恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9%E5%A4%B1%E6%95%88%EF%BC%9A%E8%8A%82%E7%82%B9%E5%88%87%E6%8D%A2"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">主节点失效：节点切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E5%A4%8D%E5%88%B6%E6%97%A5%E5%BF%97%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">1.1.7.</span> <span class="nav-text">【高级】复制日志如何实现？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E5%A4%9A%E4%B8%BB%E5%A4%8D%E5%88%B6%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.8.</span> <span class="nav-text">【高级】多主复制是如何工作的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83"><span class="nav-number">1.1.8.1.</span> <span class="nav-text">多数据中心</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E6%97%A0%E4%B8%BB%E5%A4%8D%E5%88%B6%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.9.</span> <span class="nav-text">【高级】无主复制是如何工作的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E4%BF%AE%E5%A4%8D%E5%92%8C%E5%8F%8D%E7%86%B5"><span class="nav-number">1.1.9.1.</span> <span class="nav-text">读修复和反熵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#QuorumNWR-%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.9.2.</span> <span class="nav-text">QuorumNWR 算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%86%99%E5%86%B2%E7%AA%81"><span class="nav-number">1.1.9.3.</span> <span class="nav-text">并发写冲突</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%8C%BA"><span class="nav-number">1.2.</span> <span class="nav-text">分区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%8C%BA%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%88%86%E5%8C%BA%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【基础】什么是分区？为什么要分区？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E5%88%86%E5%8C%BA%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【中级】分区有哪些模式？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%E5%A6%82%E4%BD%95%E5%88%86%E5%8C%BA%EF%BC%9F"><span class="nav-number">1.2.3.</span> <span class="nav-text">【高级】二级索引如何分区？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%8C%BA%E5%86%8D%E5%9D%87%E8%A1%A1%EF%BC%9F"><span class="nav-number">1.2.4.</span> <span class="nav-text">【基础】什么是分区再均衡？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E5%88%86%E5%8C%BA%E5%86%8D%E5%9D%87%E8%A1%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E7%AD%96%E7%95%A5%EF%BC%9F"><span class="nav-number">1.2.5.</span> <span class="nav-text">【高级】分区再均衡有哪些策略？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E6%95%B0%E9%87%8F%E7%9A%84%E5%88%86%E5%8C%BA"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">固定数量的分区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E5%8C%BA"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">动态分区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E8%8A%82%E7%82%B9%E6%AF%94%E4%BE%8B%E5%88%86%E5%8C%BA"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">按节点比例分区</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E5%A6%82%E4%BD%95%E7%A1%AE%E5%AE%9A%E8%AF%BB%E5%86%99%E8%AF%B7%E6%B1%82%E5%8F%91%E5%BE%80%E5%93%AA%E4%B8%AA%E8%8A%82%E7%82%B9%EF%BC%9F"><span class="nav-number">1.2.6.</span> <span class="nav-text">【高级】如何确定读写请求发往哪个节点？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E8%AF%86"><span class="nav-number">1.3.</span> <span class="nav-text">共识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.4.</span> <span class="nav-text">分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">【基础】什么是事务？什么是分布式事务？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-ACID%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF-BASE%EF%BC%9F%E4%BA%8C%E8%80%85%E6%9C%89%E4%BD%95%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">1.4.2.</span> <span class="nav-text">【基础】什么是 ACID？什么是 BASE？二者有何区别？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ACID"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">ACID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BASE"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">BASE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BASE-vs-ACID"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">BASE vs. ACID</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9F%BA%E7%A1%80%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="nav-number">1.4.3.</span> <span class="nav-text">【基础】什么是一致性？什么是最终一致性？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9F%E5%90%84%E6%9C%89%E4%BB%80%E4%B9%88%E5%88%A9%E5%BC%8A%EF%BC%9F"><span class="nav-number">1.4.4.</span> <span class="nav-text">【中级】有哪些分布式事务解决方案？各有什么利弊？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%912PC-%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.4.5.</span> <span class="nav-text">【中级】2PC 是如何工作的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%913PC-%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.4.6.</span> <span class="nav-text">【中级】3PC 是如何工作的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91TCC-%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.4.7.</span> <span class="nav-text">【中级】TCC 是如何工作的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E6%9C%AC%E5%9C%B0%E6%B6%88%E6%81%AF%E8%A1%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.4.8.</span> <span class="nav-text">【高级】本地消息表是如何工作的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E6%B6%88%E6%81%AF%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.4.9.</span> <span class="nav-text">【高级】消息事务是如何工作的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RocketMQ-%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.9.1.</span> <span class="nav-text">RocketMQ 事务消息实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91SAGA-%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.4.10.</span> <span class="nav-text">【高级】SAGA 事务是如何工作的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">1.5.</span> <span class="nav-text">分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%88%9D%E7%BA%A7%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%EF%BC%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">【初级】什么是分布式锁？为什么需要分布式锁？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E6%9C%89%E5%93%AA%E4%BA%9B%E8%A6%81%E7%82%B9%EF%BC%9F"><span class="nav-number">1.5.2.</span> <span class="nav-text">【高级】实现分布式锁有哪些要点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">1.5.3.</span> <span class="nav-text">【中级】数据库分布式锁如何实现？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">数据库分布式锁原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%B0%8F%E7%BB%93"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">数据库分布式锁小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91ZooKeeper-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">1.5.4.</span> <span class="nav-text">【高级】ZooKeeper 分布式锁如何实现？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ZooKeeper-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">ZooKeeper 分布式锁实现原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZooKeeper-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%B0%8F%E7%BB%93"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">ZooKeeper 分布式锁小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91Redis-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">1.5.5.</span> <span class="nav-text">【高级】Redis 分布式锁如何实现？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">Redis 分布式锁实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%81%E7%AE%80%E7%89%88%E6%9C%AC"><span class="nav-number">1.5.5.1.1.</span> <span class="nav-text">极简版本</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81"><span class="nav-number">1.5.5.1.2.</span> <span class="nav-text">避免死锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E7%BB%AD%E6%9C%9F"><span class="nav-number">1.5.5.1.3.</span> <span class="nav-text">超时续期</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E8%A7%A3%E9%94%81"><span class="nav-number">1.5.5.1.4.</span> <span class="nav-text">安全解锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E9%87%8D%E8%AF%95"><span class="nav-number">1.5.5.1.5.</span> <span class="nav-text">自旋重试</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%B0%8F%E7%BB%93"><span class="nav-number">1.5.5.2.</span> <span class="nav-text">Redis 分布式锁小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91RedLock-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="nav-number">1.5.6.</span> <span class="nav-text">【中级】RedLock 分布式锁如何实现？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RedLock-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.6.1.</span> <span class="nav-text">RedLock 分布式锁原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RedLock-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%B0%8F%E7%BB%93"><span class="nav-number">1.5.6.2.</span> <span class="nav-text">RedLock 分布式锁小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E9%AB%98%E7%BA%A7%E3%80%91%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%EF%BC%9F"><span class="nav-number">1.5.7.</span> <span class="nav-text">【高级】分布式锁如何进行技术选型？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-ID"><span class="nav-number">1.6.</span> <span class="nav-text">分布式 ID</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%88%9D%E7%BA%A7%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F-ID%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%88%86%E5%B8%83%E5%BC%8F-ID%EF%BC%9F"><span class="nav-number">1.6.1.</span> <span class="nav-text">【初级】什么是分布式 ID？为什么需要分布式 ID？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E6%9C%89%E5%93%AA%E4%BA%9B%E7%94%9F%E6%88%90%E5%88%86%E5%B8%83%E5%BC%8F-ID-%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.6.2.</span> <span class="nav-text">【中级】有哪些生成分布式 ID 的方式？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D"><span class="nav-number">1.7.</span> <span class="nav-text">分布式会话</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%88%9D%E7%BA%A7%E3%80%91Cookie-%E5%92%8C-Session-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">1.7.1.</span> <span class="nav-text">【初级】Cookie 和 Session 有什么区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E5%A6%82%E6%9E%9C%E7%A6%81%E7%94%A8%E4%BA%86-Cookie-%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">1.7.2.</span> <span class="nav-text">【中级】如果禁用了 Cookie 怎么办？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%BA%A7%E3%80%91%E5%88%86%E5%B8%83%E5%BC%8F-Session-%E6%9C%89%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%EF%BC%9F"><span class="nav-number">1.7.3.</span> <span class="nav-text">【中级】分布式 Session 有几种实现方案？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B2%98%E6%80%A7-Session"><span class="nav-number">1.7.3.1.</span> <span class="nav-text">粘性 Session</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Session-%E5%A4%8D%E5%88%B6%E5%85%B1%E4%BA%AB"><span class="nav-number">1.7.3.2.</span> <span class="nav-text">Session 复制共享</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BC%93%E5%AD%98%E7%9A%84-session-%E5%85%B1%E4%BA%AB"><span class="nav-number">1.7.3.3.</span> <span class="nav-text">基于缓存的 session 共享</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/372a9cc0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式协同面试 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式协同面试<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/11.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/01.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E9%9D%A2%E8%AF%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-12-16 23:57:04" itemprop="dateCreated datePublished" datetime="2024-12-16T23:57:04+08:00">2024-12-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/" itemprop="url" rel="index"><span itemprop="name">分布式协同</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式协同综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>28k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>26 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分布式协同面试"><a href="#分布式协同面试" class="headerlink" title="分布式协同面试"></a>分布式协同面试</h1><h2 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h2><h3 id="【基础】什么是复制？复制有什么作用？"><a href="#【基础】什么是复制？复制有什么作用？" class="headerlink" title="【基础】什么是复制？复制有什么作用？"></a>【基础】什么是复制？复制有什么作用？</h3><p>:::details 要点</p>
+<p><strong>复制主要指通过网络在多台机器上保存相同数据的副本</strong>。</p>
+<p>复制数据，可能出于各种各样的原因：</p>
+<ul>
+<li><strong>提高可用性</strong> - 当部分组件出现位障，系统依然可以继续工作，系统依然可以继续工作。</li>
+<li><strong>降低访问延迟</strong> - 使数据在地理位置上更接近用户。</li>
+<li><strong>提高读吞吐量</strong> - 扩展至多台机器以同时提供数据访问服务。</li>
+</ul>
+<p>:::</p>
+<h3 id="【中级】复制有哪些模式？"><a href="#【中级】复制有哪些模式？" class="headerlink" title="【中级】复制有哪些模式？"></a>【中级】复制有哪些模式？</h3><p>:::details 要点</p>
+<p>复制的模式有以下几种：</p>
+<ul>
+<li><strong>主从复制</strong> - <strong>所有的写入操作都发送到主节点</strong>，由主节点负责将数据更改事件发送到从节点。每个从节点都可以接收读请求，但内容可能是过期值。支持主从复制的系统：<ul>
+<li>数据库：Mysql、PostgreSQL、MongoDB 等</li>
+<li>消息队列：Kafka、RabbitMQ 等</li>
+</ul>
+</li>
+<li><strong>多主复制</strong> - <strong>系统存在多个主节点，每个都可以接收写请求</strong>，客户端将写请求发送到其中的一个主节点上，由该主节点负责将数据更改事件同步到其他主节点和自己的从节点。</li>
+<li><strong>无主复制</strong> - <strong>系统中不存在主节点，每一个节点都能接受客户端的写请求</strong>。此外，<strong>读取时从多个节点上并行读取，以此检测和纠正某些过期数据</strong>。支持无主复制的系统：<ul>
+<li>数据库：Cassandra</li>
+</ul>
+</li>
+</ul>
+<p>此外，复制还需要考虑以下问题：</p>
+<ul>
+<li><strong>同步还是异步</strong></li>
+<li><strong>如何处理失败的副本</strong></li>
+<li><strong>如何保证数据一致</strong></li>
+</ul>
+<p>:::</p>
+<h3 id="【中级】主从复制是如何工作的？"><a href="#【中级】主从复制是如何工作的？" class="headerlink" title="【中级】主从复制是如何工作的？"></a>【中级】主从复制是如何工作的？</h3><p>:::details 要点</p>
+<p>最常见的解决方案就是主从复制，其原理如下：</p>
+<p>主从复制模式中只有一个主副本（或称为主节点） ，其余称为从副本（或称为从节点）。</p>
+<ol>
+<li>所有的写请求只能发送给主副本，主副本首先将新数据写入本地存储。</li>
+<li>然后，主副本将数据更改作为复制的日志或更新流发送给所有从副本。每个从副本获得更新数据之后将其应用到本地，且严格保持与主副本相同的写入顺序。</li>
+<li>读请求既可以在主副本上，也可以在从副本上执行。</li>
+</ol>
+<p>再次强调，<strong>只有主副本才可以接受写请求</strong>：从客户端的角度来看，从副本都是只读的。如果由于某种原因，例如与主节点之间的网络中断而导致主节点无法连接，主从复制方案就会影响所有的写入操作。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220302202101.png" alt="主从复制系统"></p>
+<p>:::</p>
+<h3 id="【中级】同步复制、半同步复制、异步复制有什么差异？"><a href="#【中级】同步复制、半同步复制、异步复制有什么差异？" class="headerlink" title="【中级】同步复制、半同步复制、异步复制有什么差异？"></a>【中级】同步复制、半同步复制、异步复制有什么差异？</h3><p>:::details 要点</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220302202158.png" alt="主从复制——同步和异步"></p>
+<p>一般，复制速度会非常快；但是，系统不能保证复制多久能完成。有些情况下，从节点可能落后主节点几分钟甚至更长时间，例如：从节点刚从故障中恢复；或系统已经接近最大设计上限；或节点之间的网络出现问题。</p>
+<p><strong>全同步复制</strong>的优缺点：</p>
+<ul>
+<li><strong>优点</strong>：只有所有从节点都完成复制，才视为成功，因此是<strong>强一致的</strong>。</li>
+<li><strong>缺点</strong>：即使只有一个从节点未完成复制，写入都不能视为成功。所有从节点完成复制过程之前，主节点会<strong>阻塞</strong>后续所有的写操作。</li>
+</ul>
+<p>因此，<strong>把所有从节点都配置为同步复制有些不切实际</strong>。因为这样的话，任何一个同步节点的中断都会导致整个系统更新停滞不前。</p>
+<p><strong>全异步复制</strong>的优缺点：</p>
+<ul>
+<li><strong>优点</strong>：不管从节点上数据多么滞后，主节点总是可以继续响应写请求，<strong>系统的性能更好</strong>。</li>
+<li><strong>缺点</strong>：如果主节点发生故障且不可恢复，则<strong>所有尚未复制到从节点的写请求都会丢失</strong>。</li>
+</ul>
+<p>还有一种折中的方案——<strong>半同步复制</strong>：<strong>只要有一个从节点或半数以上的从节点同步成功，就视为同步，直接返回结果；剩下的节点都通过异步方式同步</strong>。万一同步的从节点变得不可用或性能下降，则将另一个异步的从节点提升为同步模式。这样可以保证至少有两个节点（即主节点和一个同步从节点）拥有最新的数据副本。</p>
+<p>:::</p>
+<h3 id="【中级】新的从节点如何复制主节点数据？"><a href="#【中级】新的从节点如何复制主节点数据？" class="headerlink" title="【中级】新的从节点如何复制主节点数据？"></a>【中级】新的从节点如何复制主节点数据？</h3><p>:::details 要点</p>
+<p>两种不可行的方案：</p>
+<ul>
+<li>由于主节点会源源不断接受新的写入数据，数据始终处于变化中，因此<strong>一次性从主节点复制数据到从节点是无法保证数据一致的</strong>。</li>
+<li>另一种思路是：考虑<strong>锁定数据库</strong>（使其不可写）来使磁盘上的文件保持一致，但这会<strong>违反高可用的设计目标</strong>。</li>
+</ul>
+<p>可行的方案：</p>
+<ol>
+<li>生成主节点某时刻的快照，避免长时间锁定数据库。</li>
+<li>将快照复制到从节点。</li>
+<li>从节点复制主节点快照过程中，所有的数据变更写入一个日志中（这个数据变更日志在不同数据库中有着不同的称呼，Mysql 称其为 binlog；Redis 称其为 AOF）。</li>
+<li>从节点复制完主节点的快照后，请求数据变更日志中的数据，并基于此补全数据，这个过程称为<strong>追赶</strong>，直至主从数据一致。井重复步骤 1 ～步骤 4 。</li>
+</ol>
+<p>:::</p>
+<h3 id="【高级】如何通过主从复制技术来实现系统高可用呢？"><a href="#【高级】如何通过主从复制技术来实现系统高可用呢？" class="headerlink" title="【高级】如何通过主从复制技术来实现系统高可用呢？"></a>【高级】如何通过主从复制技术来实现系统高可用呢？</h3><p>:::details 要点</p>
+<h4 id="从节点失效：追赶式恢复"><a href="#从节点失效：追赶式恢复" class="headerlink" title="从节点失效：追赶式恢复"></a>从节点失效：追赶式恢复</h4><p>从节点的本地磁盘上都保存了副本收到的数据变更日志。如果从节点从故障中恢复，可以和主节点对比数据变更日志的偏移量，从而确认数据是否滞后。如果数据存在滞后，则向主节点请求数据变更日志，并补全数据。这个过程称为<strong>追赶</strong>。</p>
+<h4 id="主节点失效：节点切换"><a href="#主节点失效：节点切换" class="headerlink" title="主节点失效：节点切换"></a>主节点失效：节点切换</h4><p>主节点失效后，需要选举出新主节点。然后，客户端需要更新路由，将所有写请求发送给新的主节点；其他从节点要接受来自新的主节点上的变更数据。这个过程称之为<strong>切换</strong>。</p>
+<p>主节点切换可以手动或自动进行。自动切换的步骤通常如下：</p>
+<ol>
+<li><strong>确认主节点失效</strong>。有很多种出错可能性，很难准确检测出问题的原因。所以，大多数系统都基于超时机制来确认主节点是否失效：节点间频繁地互相发生发送心跳存活悄息，如果发现某一个节点在一段比较长时间内没有响应，即认为该节点发生失效。</li>
+<li><strong>选举新的主节点</strong>。基于多数派共识选主。候选节点最好与原主节点的数据差异最小，这样可以最小化数据丢失的风险。</li>
+<li><strong>重新配置系统使新主节点生效</strong>。客户端现在需要将写请求发送给新的主节点。原主节点若恢复，需降级处理，避免脑裂。</li>
+</ol>
+<p>:::</p>
+<h3 id="【高级】复制日志如何实现？"><a href="#【高级】复制日志如何实现？" class="headerlink" title="【高级】复制日志如何实现？"></a>【高级】复制日志如何实现？</h3><p>:::details 要点</p>
+<p>复制日志的视线方式：</p>
+<ul>
+<li><strong>基于语句的复制</strong> - 将数据写操作写入日志。主要缺点是<strong>必须完全按照相同顺序执行</strong>，否则可能会产生不同的结果。</li>
+<li><strong>基于预写日志（WAL）传输</strong> - 通常每个写操作都是以追加写的方式写入到日志中。主要缺点是<strong>日志描述的数据结果非常底层</strong>，如果数据库不同版本的存储格式存在差异，就可能无法兼容。<ul>
+<li>对于日志结构存储引擎，日志是主要的存储方式。日志段在后台压缩井支持垃圾回收。</li>
+<li>对于采用覆写磁盘的 BTree 结构，每次修改会预先写入日志，如系统发生崩溃，通过索引更新的方式迅速恢复到此前一致状态。</li>
+</ul>
+</li>
+<li><strong>基于行的逻辑日志复制</strong> - 如果复制和存储引擎采用不同的日志格式，这样复制与存储的逻辑就可以剥离。这种复制日志称为逻辑日志，以区分物理存储引擎的数据表示。</li>
+<li><strong>基于触发器的复制</strong> - 这种方式<strong>很灵活</strong>，可以定制化控制复制逻辑。主要缺点是复制<strong>开销更高，也更容易出错</strong>。</li>
+</ul>
+<p>:::</p>
+<h3 id="【高级】多主复制是如何工作的？"><a href="#【高级】多主复制是如何工作的？" class="headerlink" title="【高级】多主复制是如何工作的？"></a>【高级】多主复制是如何工作的？</h3><p>:::details 要点</p>
+<p>对主从复制模型进行自然的扩展，则可以配置多个主节点，每个主节点都可以接受写操作，后面复制的流程类似：处理写的每个主节点都必须将该数据更改转发到所有其他节点。这就是多主节点（ 也称为主－主，或主动／主动）复制。此时，每个主节点还同时扮演其他主节点的从节点。</p>
+<p>在一个数据中心内部使用多主节点基本没有太大意义，其复杂性已经超过所能带来的好处。</p>
+<p>但是，以下场景这种配置则是合理的：</p>
+<ul>
+<li>多数据中心</li>
+<li>离线客户端操作</li>
+<li>协作编辑</li>
+</ul>
+<h4 id="多数据中心"><a href="#多数据中心" class="headerlink" title="多数据中心"></a>多数据中心</h4><p>有了多主节点复制模型，则可以在每个数据中心都配置主节点。在每个数据中心内，采用常规的主从复制方案；而在数据中心之间，由各个数据中心的主节点来负责同其他数据中心的主节点进行数据的交换、更新。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405122221705.png" alt="img"></p>
+<p>部署单主节点的主从复制方案与多主复制方案之间的差异</p>
+<ul>
+<li><strong>性能</strong>：对于主从复制，每个写请求都必须经由广域网传送至主节点所在的数据中心。这会大大增加写入延迟，井基本偏离了采用多数据中心的初衷（即就近访问）。而在多主节点模型中，每个写操作都可以在本地数据中心快速响应，然后采用异步复制方式将变化同步到其他数据中心。因此，对上层应用有效屏蔽了数据中心之间的网络延迟，使得终端用户所体验到的性能更好。</li>
+<li><strong>容忍数据中心失效</strong>：对于主从复制，如果主节点所在的数据中心发生故障，必须切换至另一个数据中心，将其中的一个从节点被提升为主节点。在多主节点模型中，每个数据中心则可以独立于其他数据中心继续运行，发生故障的数据中心在恢复之后更新到最新状态。</li>
+<li><strong>容忍网络问题</strong>：数据中心之间的通信通常经由广域网，它往往不如数据中心内的本地网络可靠。对于主从复制模型，由于写请求是同步操作，对数据中心之间的网络性能和稳定性等更加依赖。多主节点模型则通常采用异步复制，可以更好地容忍此类问题，例如临时网络闪断不会妨碍写请求最终成功。</li>
+</ul>
+<p>:::</p>
+<h3 id="【高级】无主复制是如何工作的？"><a href="#【高级】无主复制是如何工作的？" class="headerlink" title="【高级】无主复制是如何工作的？"></a>【高级】无主复制是如何工作的？</h3><p>:::details 要点</p>
+<p>无主复制模式，<strong>系统中不存在主节点，每一个节点都能接受客户端的写请求</strong>。此外，<strong>读取时从多个节点上并行读取，以此检测和纠正某些过期数据</strong>。</p>
+<h4 id="读修复和反熵"><a href="#读修复和反熵" class="headerlink" title="读修复和反熵"></a>读修复和反熵</h4><p>复制模型应确保所有数据最终复制到所有的副本。当一个失效的节点重新上线之后，如何赶上中间错过的那些写请求呢？</p>
+<p>有以下两种机制：</p>
+<ul>
+<li><strong>读修复</strong> - 客户端并行读取多个副本，根据版本识别过期返回值并更新最新值到相应副本。这种方法主要适合那些被频繁读取的场景。</li>
+<li><strong>反熵</strong> - 利用后台进程不断查找副本间的数据差异，将任何缺少的数据从一个副本复制到另一个副本。与基于主节点复制的复制日志不同，反熵过程并不保证以特定的顺序复制写入，并且会引入明显的同步滞后。</li>
+</ul>
+<h4 id="QuorumNWR-算法"><a href="#QuorumNWR-算法" class="headerlink" title="QuorumNWR 算法"></a>QuorumNWR 算法</h4><p>无主复制模式中，究竟多少个副本完成才可以认为写成功？</p>
+<p>如果有 n 个副本，写人需要 w 个节点确认，读取必须至少查询 r 个节点， 则只要 <code>w+r&gt;n</code> ，读取的节点中一定会包含最新值。</p>
+<h4 id="并发写冲突"><a href="#并发写冲突" class="headerlink" title="并发写冲突"></a>并发写冲突</h4><p>无主模式中，并发向多副本写操作，以及读时修复或数据回传都会导致并发写冲突。如何解决冲突呢？有以下几种机制：</p>
+<ul>
+<li>最后写入者获胜（丢弃并发写入） - 每个副本总是保存最新值，允许覆盖井丢弃旧值。</li>
+<li>Happens Before - 利用全序的逻辑时钟来确定事件发生的前后顺序。</li>
+<li>向量时钟、版本向量时钟 - 本质上是将全序的逻辑时钟改造为维护所有副本版本号的合集，基于此合集可以进行偏序比较。</li>
+</ul>
+<p>:::</p>
+<h2 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h2><h3 id="【基础】什么是分区？为什么要分区？"><a href="#【基础】什么是分区？为什么要分区？" class="headerlink" title="【基础】什么是分区？为什么要分区？"></a>【基础】什么是分区？为什么要分区？</h3><p>:::details 要点</p>
+<p>分区通常是这样定义的，即每一条数据（或者每条记录，每行或每个文档）只属于某个特定分区。实际上，每个分区都可以视为一个完整的小型数据库，虽然数据库可能存在一些跨分区的操作。</p>
+<p>在不同系统中，分区有着不同的称呼，例如它对应于 MongoDB, Elasticsearch 和 SolrCloud 中的 shard, HBase 的 region, Bigtable 中的 tablet, Cassandra 和 Riak 中的 vnode ，以及 Couch base 中的 vBucket。总体而言，分区是最普遍的术语。</p>
+<p>数据量如果太大，单台机器进行存储和处理就会成为瓶颈，因此需要引入数据分区机制。</p>
+<p>分区的目地是通过多台机器均匀分布数据和查询负载，避免出现热点。这需要选择合适的数据分区方案，在节点添加或删除时重新动态平衡分区。</p>
+<p>:::</p>
+<h3 id="【中级】分区有哪些模式？"><a href="#【中级】分区有哪些模式？" class="headerlink" title="【中级】分区有哪些模式？"></a>【中级】分区有哪些模式？</h3><p>:::details 要点</p>
+<p>分区通常与复制结合使用，即每个分区在多个节点都存有副本。这意味着某条记录属于特定的分区，而同样的内容会保存在不同的节点上以提高系统的容错性。</p>
+<p>一个节点上可能存储了多个分区。每个分区都有自己的主副本，例如被分配给某节点，而从副本则分配在其他一些节点。一个节点可能既是某些分区的主副本，同时又是其他分区的从副本。</p>
+<p>分区主要有两种模式：</p>
+<ul>
+<li><strong>基于关键字区间的分区</strong> - 先对关键字进行排序，每个分区只负责一段包含最小到最大关键字范围的一段关键字。对关键字排序的优点是可以支持高效的区间查询，但是如果应用程序经常访问与排序一致的某段关键字，就会存在热点的风险。采用这种方怯，当分区太大时，通常将其分裂为两个子区间，从而动态地再平衡分区。典型代表：HBase</li>
+<li><strong>哈希分区</strong> - 将哈希函数作用于每个关键字，每个分区负责一定范围的哈希值。这种方法打破了原关键字的顺序关系，它的区间查询效率比较低，但可以更均匀地分配负载。采用哈希分区时，通常事先创建好足够多（但固定数量）的分区， 让每个节点承担多个分区，当添加或删除节点时将某些分区从一个节点迁移到另一个节点，也可以支持动态分区。典型代表：Elasticsearch、Redis。</li>
+</ul>
+<p>:::</p>
+<h3 id="【高级】二级索引如何分区？"><a href="#【高级】二级索引如何分区？" class="headerlink" title="【高级】二级索引如何分区？"></a>【高级】二级索引如何分区？</h3><p>:::details 要点</p>
+<p>二级索引是关系数据库的必备特性，在文档数据库中应用也非常普遍。但考虑到其复杂性，许多键值存储（如 HBase 和 Voldemort）并不支持二级索引。此外， 二级索引技术也是 Solr 和 Elasticsearch 等搜索引擎数据库存在之根本。</p>
+<p>分区不仅仅是针对数据，二级索引也需要分区。通常有两种方法：</p>
+<p><strong>基于文档来分区二级索引（本地索引）</strong> - 二级索引存储在与关键字相同的分区中，这意味着写入时我们只需要更新一个分区，但缺点是读取二级索引时需要在所有分区上并行执行。它广泛用于实践： MongoDB 、Riak、Cassandra、Elasticsearch 、SolrCloud 和 VoltDB 都支持基于文档分区二级索引。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220303111528.png" alt="img"></p>
+<p><strong>基于词条来分区二级索引（全局索引）</strong> - 它是基于索引的值而进行的独立分区。二级索引中的条目可能包含来自关键字的多个分区里的记录。在写入时，不得不更新二级索引的多个分区；但读取时，则可以从单个分区直接快速提取数据。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220303112708.png" alt="img"></p>
+<p>:::</p>
+<h3 id="【基础】什么是分区再均衡？"><a href="#【基础】什么是分区再均衡？" class="headerlink" title="【基础】什么是分区再均衡？"></a>【基础】什么是分区再均衡？</h3><p>:::details 要点</p>
+<p>集群节点数变化，数据规模增长等情况，都会导致分区的分布不均。要保持分区的均衡，势必要将数据和请求进行迁移，这样一个迁移负载的过程称为<strong>分区再均衡</strong>。</p>
+<p>:::</p>
+<h3 id="【高级】分区再均衡有哪些策略？"><a href="#【高级】分区再均衡有哪些策略？" class="headerlink" title="【高级】分区再均衡有哪些策略？"></a>【高级】分区再均衡有哪些策略？</h3><p>:::details 要点</p>
+<h4 id="固定数量的分区"><a href="#固定数量的分区" class="headerlink" title="固定数量的分区"></a>固定数量的分区</h4><p>创建远超实际节点数的分区数，然后为每个节点分配多个分区。接下来， 如果集群中添加了一个新节点，该新节点可以从每个现有的节点上匀走几个分区，直到分区再次达到全局平衡。</p>
+<p>选中的整个分区会在节点之间迁移，但分区的总数量仍维持不变，也不会改变关键字到分区的映射关系。这里唯一要调整的是分区与节点的对应关系。考虑到节点间通过网络传输数据总是需要些时间，这样调整可以逐步完成，在此期间，旧分区仍然可以接收读写请求。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405122231579.png"></p>
+<p>原则上，也可以将集群中的不同的硬件配置因素考虑进来，即性能更强大的节点将分配更多的分区，从而分担更多的负载。</p>
+<p>目前，Riak、Elasticsearch、Couchbase 和 Voldemort 都支持这种动态平衡方法。</p>
+<p>使用该策略时，分区的数量往往在数据库创建时就确定好，之后不会改变。原则上也可以拆分和合并分区（稍后介绍），但固定数量的分区使得相关操作非常简单，因此许多采用固定分区策略的数据库决定不支持分区拆分功能。所以，在初始化时，已经充分考虑将来扩容增长的需求（未来可能拥有的最大节点数），设置一个足够大的分区数。而每个分区也有些额外的管理开销，选择过高的数字可能会有副作用。</p>
+<h4 id="动态分区"><a href="#动态分区" class="headerlink" title="动态分区"></a>动态分区</h4><p>对于采用关键宇区间分区的数据库，如果边界设置有问题，最终可能会出现所有数据都挤在一个分区而其他分区基本为空，那么设定固定边界、固定数量的分区将非常不便：而手动去重新配置分区边界又非常繁琐。</p>
+<p>因此， 一些数据库如 HBase 和 RethinkDB 等采用了动态创建分区。当分区的数据增长超过一个可配的参数阔值（HBase 上默认值是 10GB），它就拆分为两个分区，每个承担一半的数据量。相反，如果大量数据被删除，并且分区缩小到某个阈值以下，则将其与相邻分区进行合井。该过程类似于 B 树的分裂操作。</p>
+<p>每个分区总是分配给一个节点，而每个节点可以承载多个分区，这点与固定数量的分区一样。当一个大的分区发生分裂之后，可以将其中的一半转移到其他某节点以平衡负载。对于 HBase，分区文件的传输需要借助 HDFS。</p>
+<p>动态分区的一个优点是分区数量可以自动适配数据总量。如果只有少量的数据，少量的分区就足够了，这样系统开销很小；如果有大量的数据，每个分区的大小则被限制在一个可配的最大值。</p>
+<p>但是，需要注意的是，对于一个空的数据库， 因为没有任何先验知识可以帮助确定分区的边界，所以会从一个分区开始。可能数据集很小，但直到达到第一个分裂点之前，所有的写入操作都必须由单个节点来处理， 而其他节点则处于空闲状态。为了缓解这个问题，HBase 和 MongoDB 允许在一个空的数据库上配置一组初始分区（这被称为预分裂）。对于关键字区间分区，预分裂要求已经知道一些关键字的分布情况。</p>
+<p>动态分区不仅适用于关键字区间分区，也适用于基于哈希的分区策略。MongoDB 从版本 2.4 开始，同时支持二者，井且都可以动态分裂分区。</p>
+<h4 id="按节点比例分区"><a href="#按节点比例分区" class="headerlink" title="按节点比例分区"></a>按节点比例分区</h4><p>采用动态分区策略，拆分和合并操作使每个分区的大小维持在设定的最小值和最大值之间，因此分区的数量与数据集的大小成正比关系。另一方面，对于固定数量的分区方式，其每个分区的大小也与数据集的大小成正比。两种情况，分区的数量都与节点数无关。</p>
+<p>Cassandra 和 Ketama 则采用了第三种方式，使分区数与集群节点数成正比关系。换句话说，每个节点具有固定数量的分区。此时， 当节点数不变时，每个分区的大小与数据集大小保持正比的增长关系； 当节点数增加时，分区则会调整变得更小。较大的数据量通常需要大量的节点来存储，因此这种方法也使每个分区大小保持稳定。</p>
+<p>当一个新节点加入集群时，它随机选择固定数量的现有分区进行分裂，然后拿走这些分区的一半数据量，将另一半数据留在原节点。随机选择可能会带来不太公平的分区分裂，但是当平均分区数量较大时（Cassandra 默认情况下，每个节点有 256 个分区），新节点最终会从现有节点中拿走相当数量的负载。Cassandra 在 3.0 时推出了改进算洁，可以避免上述不公平的分裂。</p>
+<p>随机选择分区边界的前提要求采用基于哈希分区（可以从哈希函数产生的数字范围里设置边界）。这种方法也最符合本章开头所定义一致性哈希。一些新设计的哈希函数也可以以较低的元数据开销达到类似的效果。</p>
+<p>:::</p>
+<h3 id="【高级】如何确定读写请求发往哪个节点？"><a href="#【高级】如何确定读写请求发往哪个节点？" class="headerlink" title="【高级】如何确定读写请求发往哪个节点？"></a>【高级】如何确定读写请求发往哪个节点？</h3><p>:::details 要点</p>
+<p>当数据集分布到多个节点上，需要解决一个问题：当客户端发起请求时，如何知道应该连接哪个节点？如果发生了分区再平衡，分区与节点的对应关系随之还会变化。</p>
+<p>这其实属于一类典型的服务发现问题，任何通过网络访问的系统都有这样的需求，尤其是当服务目标支持高可用时（在多台机器上有冗余配置）。</p>
+<p>服务发现有以下处理策略：</p>
+<ol>
+<li>允许客户端链接任意的节点（例如，采用循环式的负载均衡器）。如果某节点恰好拥有所请求的分区，则直接处理该请求：否则，将请求转发到下一个合适的节点，接收答复，并将答复返回给客户端。</li>
+<li>将所有客户端的请求都发送到一个路由层，由后者负责将请求转发到对应的分区节点上。路由层本身不处理任何请求，它仅充一个分区感知的负载均衡器。</li>
+<li>客户端感知分区和节点分配关系。此时，客户端可以直接连接到目标节点，而不需要任何中介。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220304120137.png" alt="img"></p>
+<p>许多分布式数据系统依靠独立的协调服务（如 ZooKeeper ）跟踪集群范围内的元数据。每个节点都向 ZooKeeper 中注册自己， ZooKeeper 维护了分区到节点的最终映射关系。其他参与者（如路由层或分区感知的客户端）可以向 ZooKeeper 订阅此信息。一旦分区发生了改变，或者添加、删除节点， ZooKeeper 就会主动通知路由层，这样使路由信息保持最新状态。</p>
+<p>例如，HBase、SolrCloud 和 Kafka 也使用 ZooKeeper 来跟踪分区分配情况。MongoDB 有类似的设计，但它依赖于自己的配置服务器和 mongos 守护进程来充当路由层。</p>
+<p>Cassandra 和 Redis 则采用了不同的方法，它们在节点之间使用 gossip 协议来同步群集状态的变化。请求可以发送到任何节点，由该节点负责将其转发到目标分区节点。这种方式增加了数据库节点的复杂性，但是避免了对 ZooKeeper 之类的外部协调服务的依赖。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220304163629.png" alt="img"></p>
+<p>:::</p>
+<h2 id="共识"><a href="#共识" class="headerlink" title="共识"></a>共识</h2><h2 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h2><blockquote>
+<p>扩展：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903734753886216?searchId=2024121710293693FB283CD941B5B19BE2">理解分布式事务</a></li>
+<li><a href="https://dunwu.github.io/waterdrop/pages/f293688d/">分布式事务</a></li>
+</ul>
+</blockquote>
+<h3 id="【基础】什么是事务？什么是分布式事务？"><a href="#【基础】什么是事务？什么是分布式事务？" class="headerlink" title="【基础】什么是事务？什么是分布式事务？"></a>【基础】什么是事务？什么是分布式事务？</h3><p>:::details 要点</p>
+<p><strong>事务将多个读、写操作捆绑在一起成为一个逻辑操作单元</strong>。<strong>事务中的所有读写是一个执行的整体，整个事务要么成功（提交）、要么失败（中止或回滚）</strong>。</p>
+<p>在单一数据节点中，事务仅限于对单一数据库资源的访问控制，称之为<strong>本地事务</strong>。几乎所有的成熟的关系型数据库都提供了对本地事务的原生支持。</p>
+<p><strong>分布式事务指的是事务操作跨越多个节点，并且要求满足事务的 ACID 特性。</strong></p>
+<p>:::</p>
+<h3 id="【基础】什么是-ACID？什么是-BASE？二者有何区别？"><a href="#【基础】什么是-ACID？什么是-BASE？二者有何区别？" class="headerlink" title="【基础】什么是 ACID？什么是 BASE？二者有何区别？"></a>【基础】什么是 ACID？什么是 BASE？二者有何区别？</h3><p>:::details 要点</p>
+<h4 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h4><p>ACID 是数据库事务正确执行的四个基本要素的单词缩写：</p>
+<ul>
+<li><strong>原子性（Atomicity）</strong><ul>
+<li>原子是指不可分解为更小粒度的东西。事务的原子性意味着：<strong>事务中的所有操作要么全部成功，要么全部失败</strong>。</li>
+<li>回滚可以用日志来实现，日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。</li>
+<li>ACID 中的原子性并不关乎多个操作的并发性，它并没有描述多个线程试图访问相同的数据会发生什么情况，后者其实是由 ACID 的隔离性所定义。</li>
+</ul>
+</li>
+<li><strong>一致性（Consistency）</strong><ul>
+<li>数据库在事务执行前后都保持一致性状态。</li>
+<li>在一致性状态下，所有事务对一个数据的读取结果都是相同的。</li>
+<li>一致性本质上要求应用层来维护状态一致（或者恒等），应用程序有责任正确地定义事务来保持一致性。这不是数据库可以保证的事情。</li>
+</ul>
+</li>
+<li><strong>隔离性（Isolation）</strong><ul>
+<li><strong>同时运行的事务互不干扰</strong>。换句话说，一个事务所做的修改在最终提交以前，对其它事务是不可见的。</li>
+</ul>
+</li>
+<li><strong>持久性（Durability）</strong><ul>
+<li>一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。</li>
+<li>可以通过数据库备份和恢复来实现，在系统发生奔溃时，使用备份的数据库进行数据恢复。</li>
+</ul>
+</li>
+</ul>
+<h4 id="BASE"><a href="#BASE" class="headerlink" title="BASE"></a>BASE</h4><p>BASE 是 <strong><code>基本可用（Basically Available）</code><strong>、</strong><code>软状态（Soft State）</code></strong> 和 <strong><code>最终一致性（Eventually Consistent）</code></strong> 三个短语的缩写。</p>
+<p>BASE 理论的核心思想是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。</p>
+<ul>
+<li><strong>基本可用（Basically Available）</strong>分布式系统在出现故障的时候，<strong>保证核心可用，允许损失部分可用性</strong>。例如，电商在做促销时，为了保证购物系统的稳定性，部分消费者可能会被引导到一个降级的页面。</li>
+<li><strong>软状态（Soft State）</strong>指允许系统中的数据存在中间状态，并认为该中间状态不会影响系统整体可用性，即<strong>允许系统不同节点的数据副本之间进行同步的过程存在延时</strong>。</li>
+<li><strong>最终一致性（Eventually Consistent）</strong>强调的是<strong>系统中所有的数据副本，在经过一段时间的同步后，最终能达到一致的状态</strong>。</li>
+</ul>
+<h4 id="BASE-vs-ACID"><a href="#BASE-vs-ACID" class="headerlink" title="BASE vs. ACID"></a>BASE vs. ACID</h4><p>ACID 要求强一致性，通常运用在传统的数据库系统上。而 BASE 要求最终一致性，通过<strong>牺牲强一致性来达到可用性</strong>，通常运用在大型分布式系统中。BASE 唯一可以确定的是“它不是 ACID”，此外它几乎没有承诺任何东西。</p>
+<p>:::</p>
+<h3 id="【基础】什么是一致性？什么是最终一致性？"><a href="#【基础】什么是一致性？什么是最终一致性？" class="headerlink" title="【基础】什么是一致性？什么是最终一致性？"></a>【基础】什么是一致性？什么是最终一致性？</h3><p>:::details 要点</p>
+<p>一致性（Consistency）指的是<strong>多个数据副本是否能保持一致</strong>的特性。</p>
+<p>数据一致性又可以分为以下几点：</p>
+<ul>
+<li><strong>强一致性</strong> - 数据更新操作结果和操作响应总是一致的，即操作响应通知更新失败，那么数据一定没有被更新，而不是处于不确定状态。</li>
+<li><strong>最终一致性</strong> - 即物理存储的数据可能是不一致的，终端用户访问到的数据可能也是不一致的，但系统经过一段时间的自我修复和修正，数据最终会达到一致。</li>
+</ul>
+<p>在分布式领域，要实现强一致性，代价非常高昂。因此，有人基于 CAP 理论以及 BASE 理论，有人就提出了<strong>柔性事务</strong>的概念。柔性事务是指：在不影响系统整体可用性的情况下 (Basically Available 基本可用），允许系统存在数据不一致的中间状态 (Soft State 软状态），在经过数据同步的延时之后，达到<strong>最终一致性</strong>。<strong>并不是完全放弃了 ACID，而是通过放宽一致性要求，借助本地事务来实现最终分布式事务一致性的同时也保证系统的吞吐</strong>。</p>
+<p>:::</p>
+<h3 id="【中级】有哪些分布式事务解决方案？各有什么利弊？"><a href="#【中级】有哪些分布式事务解决方案？各有什么利弊？" class="headerlink" title="【中级】有哪些分布式事务解决方案？各有什么利弊？"></a>【中级】有哪些分布式事务解决方案？各有什么利弊？</h3><p>:::details 要点</p>
+<p>分布式事务的常见方案如下：</p>
+<ul>
+<li><strong>两阶段提交（2PC）</strong> - 将事务的提交过程分为两个阶段来进行处理：准备阶段和提交阶段。参与者将操作成败通知协调者，再由协调者根据所有参与者的反馈情报决定各参与者是否要提交操作还是中止操作。</li>
+<li><strong>三阶段提交（3PC）</strong> - 与二阶段提交不同的是，引入超时机制。同时在协调者和参与者中都引入超时机制。将二阶段的准备阶段拆分为 2 个阶段，插入了一个 preCommit 阶段，使得原先在二阶段提交中，参与者在准备之后，由于协调者发生崩溃或错误，而导致参与者处于无法知晓是否提交或者中止的“不确定状态”所产生的可能相当长的延时的问题得以解决。</li>
+<li><strong>补偿事务（TCC）</strong><ul>
+<li><strong>Try</strong> - 操作作为一阶段，负责资源的检查和预留。</li>
+<li><strong>Confirm</strong> - 操作作为二阶段提交操作，执行真正的业务。</li>
+<li><strong>Cancel</strong> - 是预留资源的取消。</li>
+</ul>
+</li>
+<li><strong>本地消息表</strong> - 在事务主动发起方额外新建事务消息表，事务发起方处理业务和记录事务消息在本地事务中完成，轮询事务消息表的数据发送事务消息，事务被动方基于消息中间件消费事务消息表中的事务。</li>
+<li><strong>消息事务</strong> - 基于 MQ 的分布式事务方案其实是对本地消息表的封装。</li>
+<li><strong>SAGA</strong> - Saga 事务核心思想是将长事务拆分为多个本地短事务，由 Saga 事务协调器协调，如果正常结束那就正常完成，如果某个步骤失败，则根据相反顺序一次调用补偿操作。</li>
+</ul>
+<p>分布式事务方案对比：</p>
+<ul>
+<li>2PC&#x2F;3PC 依赖于数据库，能够很好的提供强一致性和强事务性，但相对来说延迟比较高，比较适合传统的单体应用，在同一个方法中存在跨库操作的情况，不适合高并发和高性能要求的场景。</li>
+<li>TCC 适用于执行时间确定且较短，实时性要求高，对数据一致性要求高，比如互联网金融企业最核心的三个服务：交易、支付、账务。</li>
+<li>本地消息表&#x2F;消息事务都适用于事务中参与方支持操作幂等，对一致性要求不高，业务上能容忍数据不一致到一个人工检查周期，事务涉及的参与方、参与环节较少，业务上有对账&#x2F;校验系统兜底。</li>
+<li>Saga 事务不能保证隔离性，需要在业务层控制并发，适合于业务场景事务并发操作同一资源较少的情况。Saga 相比缺少预提交动作，导致补偿动作的实现比较麻烦，例如业务是发送短信，补偿动作则得再发送一次短信说明撤销，用户体验比较差。Saga 事务较适用于补偿动作容易处理的场景。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>2PC</th>
+<th>3PC</th>
+<th>TCC</th>
+<th>本地消息表</th>
+<th>MQ 事务</th>
+<th>SAGA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据一致性</td>
+<td>强</td>
+<td>强</td>
+<td>若</td>
+<td>弱</td>
+<td>弱</td>
+<td>弱</td>
+</tr>
+<tr>
+<td>容错性</td>
+<td>低</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>复杂性</td>
+<td>中</td>
+<td>高</td>
+<td>高</td>
+<td>低</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>低</td>
+<td>低</td>
+<td>中</td>
+<td>中</td>
+<td>高</td>
+<td>中</td>
+</tr>
+<tr>
+<td>维护成本</td>
+<td>低</td>
+<td>中</td>
+<td>高</td>
+<td>中</td>
+<td>中</td>
+<td>高</td>
+</tr>
+</tbody></table>
+<p>:::</p>
+<h3 id="【中级】2PC-是如何工作的？"><a href="#【中级】2PC-是如何工作的？" class="headerlink" title="【中级】2PC 是如何工作的？"></a>【中级】2PC 是如何工作的？</h3><p>:::details 要点</p>
+<p>二阶段提交协议（Two-phase Commit，即 2PC）<strong>将事务的提交过程分为两个阶段来进行处理：准备阶段和提交阶段</strong>。事务的发起者称协调者，事务的执行者称参与者。二阶段提交的思路可以概括为：<strong>参与者将操作成败通知协调者，再由协调者根据所有参与者的反馈，决定提交或回滚</strong>。</p>
+<p><strong>阶段 1：准备阶段</strong></p>
+<ol>
+<li>协调者向所有参与者发送事务内容，询问是否可以提交事务，并等待所有参与者答复。</li>
+<li>各参与者执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。</li>
+<li>如参与者执行成功，给协调者反馈 yes，即可以提交；如执行失败，给协调者反馈 no，即不可提交。</li>
+</ol>
+<p><strong>阶段 2：提交阶段</strong></p>
+<p>如果协调者收到了参与者的失败消息或者超时，直接给每个参与者发送回滚 (rollback) 消息；否则，发送提交 (commit) 消息；参与者根据协调者的指令执行提交或者回滚操作，释放所有事务处理过程中使用的锁资源。（注意：必须在最后阶段释放锁资源） 接下来分两种情况分别讨论提交阶段的过程。</p>
+<p><strong>情况 1，当所有参与者均反馈 yes，提交事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140719760.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出正式提交事务的请求（即 commit 请求）。</li>
+<li>参与者执行 commit 请求，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack（应答）完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。</li>
+</ol>
+</blockquote>
+<p><strong>情况 2，当任何阶段 1 一个参与者反馈 no，中断事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140723628.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出回滚请求（即 rollback 请求）。</li>
+<li>参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务中断。</li>
+</ol>
+</blockquote>
+<p>方案总结：</p>
+<p>2PC 方案实现起来简单，实际项目中使用比较少，主要因为以下问题：</p>
+<ul>
+<li><strong>性能问题</strong> - 所有参与者在事务提交阶段处于同步阻塞状态，占用系统资源，容易导致性能瓶颈。</li>
+<li><strong>可靠性问题</strong> - 如果协调者存在单点故障问题，如果协调者出现故障，参与者将一直处于锁定状态。</li>
+<li><strong>数据一致性问题</strong> - 在阶段 2 中，如果发生局部网络问题，一部分事务参与者收到了提交消息，另一部分事务参与者没收到提交消息，那么就导致了节点之间数据的不一致。</li>
+</ul>
+<p>:::</p>
+<h3 id="【中级】3PC-是如何工作的？"><a href="#【中级】3PC-是如何工作的？" class="headerlink" title="【中级】3PC 是如何工作的？"></a>【中级】3PC 是如何工作的？</h3><p>:::details 要点</p>
+<p>三阶段提交协议（Three-phase Commit，3PC），是二阶段提交协议的改进版本，与二阶段提交不同的是，引入超时机制。同时在协调者和参与者中都引入超时机制。</p>
+<p><strong>阶段 1：canCommit</strong></p>
+<p>协调者向参与者发送 commit 请求，参与者如果可以提交就返回 yes 响应（参与者不执行事务操作），否则返回 no 响应：</p>
+<ol>
+<li>协调者向所有参与者发出包含事务内容的 canCommit 请求，询问是否可以提交事务，并等待所有参与者答复。</li>
+<li>参与者收到 canCommit 请求后，如果认为可以执行事务操作，则反馈 yes 并进入预备状态，否则反馈 no。</li>
+</ol>
+<p><strong>阶段 2：preCommit</strong></p>
+<p>协调者根据阶段 1 canCommit 参与者的反应情况来决定是否可以基于事务的 preCommit 操作。根据响应情况，有以下两种可能。</p>
+<p><strong>情况 1：阶段 1 所有参与者均反馈 yes，参与者预执行事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140724776.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出 preCommit 请求，进入准备阶段。</li>
+<li>参与者收到 preCommit 请求后，执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。</li>
+<li>各参与者向协调者反馈 ack 响应或 no 响应，并等待最终指令。</li>
+</ol>
+</blockquote>
+<p><strong>情况 2：阶段 1 任何一个参与者反馈 no，或者等待超时后协调者尚无法收到所有参与者的反馈，即中断事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140725035.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出 abort 请求。</li>
+<li>无论收到协调者发出的 abort 请求，或者在等待协调者请求过程中出现超时，参与者均会中断事务。</li>
+</ol>
+</blockquote>
+<p><strong>阶段 3：doCommit</strong></p>
+<p>该阶段进行真正的事务提交，也可以分为以下两种情况：</p>
+<p><strong>情况 1：阶段 2 所有参与者均反馈 ack 响应，执行真正的事务提交</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140725296.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>如果协调者处于工作状态，则向所有参与者发出 doCommit 请求。</li>
+<li>参与者收到 doCommit 请求后，会正式执行事务提交，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。</li>
+</ol>
+</blockquote>
+<p><strong>情况 2：任何一个参与者反馈 no，或者等待超时后协调者尚无法收到所有参与者的反馈，即中断事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140726693.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>如果协调者处于工作状态，向所有参与者发出 abort 请求。</li>
+<li>参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务中断。</li>
+</ol>
+</blockquote>
+<p>注意：进入阶段 3 后，无论协调者出现问题，或者协调者与参与者网络出现问题，都会导致参与者无法接收到协调者发出的 doCommit 请求或 abort 请求。此时，参与者都会在等待超时之后，继续执行事务提交。</p>
+<p><strong>方案总结</strong>：</p>
+<ul>
+<li><p>优点：<strong>相比二阶段提交，三阶段降低了阻塞范围</strong>，在<strong>等待超时后协调者或参与者会中断事务</strong>。避免了协调者单点问题，阶段 3 中协调者出现问题时，参与者会继续提交事务。</p>
+</li>
+<li><p>缺点：<strong>数据不一致问题依然存在</strong>，当在参与者收到 preCommit 请求后等待 doCommit 指令时，此时如果协调者请求中断事务，而协调者无法与参与者正常通信，会导致参与者继续提交事务，造成数据不一致。</p>
+</li>
+</ul>
+<p>:::</p>
+<h3 id="【中级】TCC-是如何工作的？"><a href="#【中级】TCC-是如何工作的？" class="headerlink" title="【中级】TCC 是如何工作的？"></a>【中级】TCC 是如何工作的？</h3><p>:::details 要点</p>
+<p>TCC 是服务化的二阶段编程模型，其 Try、Confirm、Cancel 3 个方法均由业务编码实现；</p>
+<ul>
+<li><strong>Try</strong> - 操作作为一阶段，负责资源的检查和预留。</li>
+<li><strong>Confirm</strong> - 操作作为二阶段提交操作，执行真正的业务。</li>
+<li><strong>Cancel</strong> - 是预留资源的取消。</li>
+</ul>
+<p>TCC 事务的 Try、Confirm、Cancel 可以理解为 SQL 事务中的 Lock、Commit、Rollback。</p>
+<p><strong>Try 阶段</strong></p>
+<p>从执行阶段来看，与传统事务机制中业务逻辑相同。但从业务角度来看，却不一样。TCC 机制中的 Try 仅是一个初步操作，它和后续的确认一起才能真正构成一个完整的业务逻辑，这个阶段主要完成：</p>
+<ul>
+<li>完成所有业务检查（一致性）</li>
+<li>预留必须业务资源（准隔离性）</li>
+<li>Try 尝试执行业务 TCC 事务机制以初步操作（Try）为中心的，确认操作（Confirm）和取消操作（Cancel）都是围绕初步操作（Try）而展开。因此，Try 阶段中的操作，其保障性是最好的，即使失败，仍然有取消操作（Cancel）可以将其执行结果撤销。</li>
+</ul>
+<p>假设商品库存为 100，购买数量为 2，这里检查和更新库存的同时，冻结用户购买数量的库存，同时创建订单，订单状态为待确认。</p>
+<p><strong>Confirm &#x2F; Cancel 阶段</strong></p>
+<p>根据 Try 阶段服务是否全部正常执行，继续执行确认操作（Confirm）或取消操作（Cancel）。 Confirm 和 Cancel 操作满足幂等性，如果 Confirm 或 Cancel 操作执行失败，将会不断重试直到执行完成。</p>
+<p><strong>Confirm：当 Try 阶段服务全部正常执行， 执行确认业务逻辑操作</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140726821.png" alt="img"></p>
+<p>这里使用的资源一定是 Try 阶段预留的业务资源。在 TCC 事务机制中认为，如果在 Try 阶段能正常的预留资源，那 Confirm 一定能完整正确的提交。Confirm 阶段也可以看成是对 Try 阶段的一个补充，Try+Confirm 一起组成了一个完整的业务逻辑。</p>
+<p><strong>Cancel：当 Try 阶段存在服务执行失败， 进入 Cancel 阶段</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140726904.png" alt="img"></p>
+<p>Cancel 取消执行，释放 Try 阶段预留的业务资源，上面的例子中，Cancel 操作会把冻结的库存释放，并更新订单状态为取消。</p>
+<p><strong>方案总结</strong></p>
+<p>TCC 事务机制相比于上面介绍的 XA 事务机制，有以下优点：</p>
+<ul>
+<li><strong>性能提升</strong> - 具体业务来实现控制资源锁的粒度变小，不会锁定整个资源。</li>
+<li><strong>数据最终一致性</strong> - 基于 Confirm 和 Cancel 的幂等性，保证事务最终完成确认或者取消，保证数据的一致性。</li>
+<li><strong>可靠性</strong> - 解决了 XA 协议的协调者单点故障问题，由主业务方发起并控制整个业务活动，业务活动管理器也变成多点，引入集群。</li>
+</ul>
+<p>缺点： TCC 的 Try、Confirm 和 Cancel 操作功能要按具体业务来实现，<strong>业务耦合度较高</strong>，提高了开发成本。</p>
+<p>:::</p>
+<h3 id="【高级】本地消息表是如何工作的？"><a href="#【高级】本地消息表是如何工作的？" class="headerlink" title="【高级】本地消息表是如何工作的？"></a>【高级】本地消息表是如何工作的？</h3><p>:::details 要点</p>
+<p>本地消息表的核心思路是将分布式事务拆分成本地事务进行处理。</p>
+<p>方案通过在事务主动发起方额外新建事务消息表，事务发起方处理业务和记录事务消息在本地事务中完成，轮询事务消息表的数据发送事务消息，事务被动方基于消息中间件消费事务消息表中的事务。</p>
+<p>这样设计可以避免”<strong>业务处理成功 + 事务消息发送失败</strong>“，或”<strong>业务处理失败 + 事务消息发送成功</strong>“的棘手情况出现，保证 2 个系统事务的数据一致性。</p>
+<p>事务的主动方需要额外新建事务消息表，用于记录分布式事务的消息的发生、处理状态。</p>
+<p>整个业务处理流程如下：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140809614.png" alt="img"></p>
+<blockquote>
+<ol>
+<li><strong>步骤 1、事务主动方处理本地事务。</strong> 事务主动发在本地事务中处理业务更新操作和写消息表操作。 上面例子中库存服务阶段再本地事务中完成扣减库存和写消息表（图中 1、2)。</li>
+<li><strong>步骤 2、事务主动方通过 MQ 通知事务被动方处理事务</strong>。 消息中间件可以基于 Kafka、RocketMQ 消息队列，事务主动方法主动写消息到消息队列，事务消费方消费并处理消息队列中的消息。 上面例子中，库存服务把事务待处理消息写到消息中间件，订单服务消费消息中间件的消息，完成新增订单（图中 3 - 5）。</li>
+<li><strong>步骤 3、事务被动方通过 MQ 返回处理结果。</strong> 上面例子中，订单服务把事务已处理消息写到消息中间件，库存服务消费中间件的消息，并将事务消息的状态更新为已完成（图中 6 - 8)</li>
+</ol>
+</blockquote>
+<p>为了数据的一致性，当处理错误需要重试，事务发送方和事务接收方相关业务处理需要支持幂等。具体保存一致性的容错处理如下：</p>
+<blockquote>
+<ul>
+<li>当步骤 1 处理出错，事务回滚，相当于什么都没发生。</li>
+<li>当步骤 2、步骤 3 处理出错，由于未处理的事务消息还是保存在事务发送方，事务发送方可以定时轮询超时 d 的消息数据，再次发送消息到 MQ 进行处理。事务被动方消费事务消息重试处理。</li>
+<li>如果是业务上的失败，事务被动方可以发消息给事务主动方进行回滚。</li>
+<li>如果多个事务被动方已经消费消息，事务主动方需要回滚事务时需要通知事务被动方回滚。</li>
+</ul>
+</blockquote>
+<p><strong>方案总结</strong></p>
+<p>方案的优点如下：</p>
+<ul>
+<li>从应用设计开发的角度实现了消息数据的可靠性，<strong>消息数据的可靠性不依赖于消息中间件</strong>，弱化了对 MQ 中间件特性的依赖。</li>
+<li><strong>方案简单</strong>，容易实现。</li>
+</ul>
+<p>缺点如下：</p>
+<ul>
+<li>与具体的业务场景绑定，<strong>耦合性高，不可复用</strong>。</li>
+<li>需要额外维护消息数据的传输，占用业务系统资源。</li>
+<li>业务系统在使用关系型数据库的情况下，消息服务性能会受到关系型数据库并发性能的局限。</li>
+</ul>
+<p>:::</p>
+<h3 id="【高级】消息事务是如何工作的？"><a href="#【高级】消息事务是如何工作的？" class="headerlink" title="【高级】消息事务是如何工作的？"></a>【高级】消息事务是如何工作的？</h3><p>:::details 要点</p>
+<p>MQ 事务方案本质是利用 MQ 功能实现的本地消息表。事务消息需要消息队列提供相应的功能才能实现，Kafka 和 RocketMQ 都提供了事务相关功能。</p>
+<ul>
+<li><strong>Kafka</strong> 的解决方案是：直接抛出异常，让用户自行处理。用户可以在业务代码中反复重试提交，直到提交成功，或者删除之前修改的数据记录进行事务补偿。</li>
+<li><strong>RocketMQ</strong> 的解决方案是：通过事务反查机制来解决事务消息提交失败的问题。如果 Producer 在提交或者回滚事务消息时发生网络异常，RocketMQ 的 Broker 没有收到提交或者回滚的请求，Broker 会定期去 Producer 上反查这个事务对应的本地事务的状态，然后根据反查结果决定提交或者回滚这个事务。为了支撑这个事务反查机制，业务代码需要实现一个反查本地事务状态的接口，告知 RocketMQ 本地事务是成功还是失败。</li>
+</ul>
+<h4 id="RocketMQ-事务消息实现"><a href="#RocketMQ-事务消息实现" class="headerlink" title="RocketMQ 事务消息实现"></a>RocketMQ 事务消息实现</h4><p>事务消息是 Apache RocketMQ 提供的一种高级消息类型，支持在分布式场景下保障消息生产和本地事务的最终一致性。</p>
+<p><strong>事务消息处理流程</strong></p>
+<p>事务消息交互流程如下图所示。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405140759853.png" alt="img"></p>
+<ol>
+<li>生产者将消息发送至 Apache RocketMQ 服务端。</li>
+<li>Apache RocketMQ 服务端将消息持久化成功之后，向生产者返回 Ack 确认消息已经发送成功，此时消息被标记为”暂不能投递”，这种状态下的消息即为半事务消息。</li>
+<li>生产者开始执行本地事务逻辑。</li>
+<li>生产者根据本地事务执行结果向服务端提交二次确认结果（Commit 或是 Rollback），服务端收到确认结果后处理逻辑如下：<ul>
+<li>二次确认结果为 Commit：服务端将半事务消息标记为可投递，并投递给消费者。</li>
+<li>二次确认结果为 Rollback：服务端将回滚事务，不会将半事务消息投递给消费者。</li>
+</ul>
+</li>
+<li>在断网或者是生产者应用重启的特殊情况下，若服务端未收到发送者提交的二次确认结果，或服务端收到的二次确认结果为 Unknown 未知状态，经过固定时间后，服务端将对消息生产者即生产者集群中任一生产者实例发起消息回查。 <strong>说明</strong> 服务端回查的间隔时间和最大回查次数，请参见 <a target="_blank" rel="noopener" href="https://rocketmq.apache.org/zh/docs/introduction/03limits">参数限制</a>。</li>
+<li>生产者收到消息回查后，需要检查对应消息的本地事务执行的最终结果。</li>
+<li>生产者根据检查到的本地事务的最终状态再次提交二次确认，服务端仍按照步骤 4 对半事务消息进行处理。</li>
+</ol>
+<p><strong>MQ 事务方案总结</strong></p>
+<p>相比本地消息表方案，MQ 事务方案优点是：</p>
+<ul>
+<li><strong>业务解耦</strong> - 消息数据独立存储 ，降低业务系统与消息系统之间的耦合。</li>
+<li><strong>吞吐量优于本地消息表</strong>方案。</li>
+</ul>
+<p>缺点是：</p>
+<ul>
+<li><strong>一次消息发送需要两次网络请求</strong> (half 消息 + commit&#x2F;rollback 消息）</li>
+<li><strong>业务处理服务需要实现消息状态回查接口</strong></li>
+</ul>
+<p>:::</p>
+<h3 id="【高级】SAGA-事务是如何工作的？"><a href="#【高级】SAGA-事务是如何工作的？" class="headerlink" title="【高级】SAGA 事务是如何工作的？"></a>【高级】SAGA 事务是如何工作的？</h3><p>:::details 要点</p>
+<p>Saga 事务的核心思想是：将长事务拆分为多个本地短事务，由 Saga 事务协调器协调，如果正常结束那就正常完成，如果某个步骤失败，则根据相反顺序依次调用补偿操作。</p>
+<p><strong>Saga 事务基本协议如下</strong>：</p>
+<ul>
+<li><strong>将长事务拆分为多个有序子事务</strong> - 每个 Saga 事务由一系列幂等的有序子事务 (sub-transaction) Ti 组成。</li>
+<li><strong>每个子事务 Ti 都有对应的幂等补偿动作 Ci</strong>，补偿动作用于撤销 Ti 造成的结果。</li>
+</ul>
+<p>可以看到，和 TCC 相比，Saga 没有“预留”动作，它的 Ti 就是直接提交到库。</p>
+<p>下面以下单流程为例，整个操作包括：创建订单、扣减库存、支付、增加积分 Saga 的执行顺序有两种：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150751202.png" alt="img"></p>
+<ul>
+<li>事务正常执行完成 T1, T2, T3, …, Tn，例如：扣减库存 (T1)，创建订单 (T2)，支付 (T3)，依次有序完成整个事务。</li>
+<li>事务回滚 T1, T2, …, Tj, Cj,…, C2, C1，其中 0 &lt; j &lt; n，例如：扣减库存 (T1)，创建订单 (T2)，支付 (T3，支付失败），支付回滚 (C3)，订单回滚 (C2)，恢复库存 (C1)。</li>
+</ul>
+<p>恢复策略</p>
+<p>Saga 定义了两种恢复策略：</p>
+<ul>
+<li>向前恢复 (forward recovery)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150752176.png" alt="img"></p>
+<p>对应于上面第一种执行顺序，<strong>适用于必须要成功的场景</strong>，<strong>失败需要进行重试</strong>，执行顺序是类似于这样的：T1, T2, …, Tj（失败）, Tj（重试）,…, Tn，其中 j 是发生错误的子事务 (sub-transaction)。该情况下不需要 Ci。</p>
+<ul>
+<li>向后恢复 (backward recovery)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150752372.png" alt="img"></p>
+<p>对应于上面提到的第二种执行顺序，其中 j 是发生错误的子事务 (sub-transaction)，这种做法的效果是撤销掉之前所有成功的子事务，使得整个 Saga 的执行结果撤销。</p>
+<p>Saga 事务常见的有两种不同的实现方式：命令协调和事件编排。</p>
+<p><strong>命令协调</strong></p>
+<ul>
+<li><strong>命令协调 (Order Orchestrator)：中央协调器负责集中处理事件的决策和业务逻辑排序。</strong></li>
+</ul>
+<p>中央协调器（Orchestrator，简称 OSO）以命令&#x2F;回复的方式与每项服务进行通信，全权负责告诉每个参与者该做什么以及什么时候该做什么。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150752580.png" alt="img"></p>
+<p>以电商订单的例子为例：</p>
+<blockquote>
+<ol>
+<li>事务发起方的主业务逻辑请求 OSO 服务开启订单事务。</li>
+<li>OSO 向库存服务请求扣减库存，库存服务回复处理结果。</li>
+<li>OSO 向订单服务请求创建订单，订单服务回复创建结果。</li>
+<li>OSO 向支付服务请求支付，支付服务回复处理结果。</li>
+<li>主业务逻辑接收并处理 OSO 事务处理结果回复。</li>
+</ol>
+</blockquote>
+<p>中央协调器必须事先知道执行整个订单事务所需的流程（例如通过读取配置）。如果有任何失败，它还负责通过向每个参与者发送命令来撤销之前的操作来协调分布式的回滚。基于中央协调器协调一切时，回滚要容易得多，因为协调器默认是执行正向流程，回滚时只要执行反向流程即可。</p>
+<p><strong>事件编排</strong></p>
+<ul>
+<li><strong>事件编排 (Event Choreography0：没有中央协调器（没有单点风险）时，每个服务产生并观察其他服务的事件，并决定是否应采取行动</strong>。</li>
+</ul>
+<p>在事件编排方法中，第一个服务执行一个事务，然后发布一个事件。该事件被一个或多个服务进行监听，这些服务再执行本地事务并发布（或不发布）新的事件。</p>
+<p>当最后一个服务执行本地事务并且不发布任何事件时，意味着分布式事务结束，或者它发布的事件没有被任何 Saga 参与者听到都意味着事务结束。</p>
+<p>以电商订单的例子为例：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202405150753776.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>事务发起方的主业务逻辑发布开始订单事件</li>
+<li>库存服务监听开始订单事件，扣减库存，并发布库存已扣减事件</li>
+<li>订单服务监听库存已扣减事件，创建订单，并发布订单已创建事件</li>
+<li>支付服务监听订单已创建事件，进行支付，并发布订单已支付事件</li>
+<li>主业务逻辑监听订单已支付事件并处理。</li>
+</ol>
+</blockquote>
+<p>事件编排是实现 Saga 模式的自然方式，它很简单，容易理解，不需要太多的代码来构建。如果事务涉及 2 至 4 个步骤，则可能是非常合适的。</p>
+<p><strong>方案总结</strong></p>
+<p><strong>命令协调设计的优点和缺点：</strong></p>
+<p>优点如下：</p>
+<ul>
+<li>服务之间关系简单，避免服务之间的循环依赖关系，因为 Saga 协调器会调用 Saga 参与者，但参与者不会调用协调器</li>
+<li>程序开发简单，只需要执行命令&#x2F;回复（其实回复消息也是一种事件消息），降低参与者的复杂性。</li>
+<li>易维护扩展，在添加新步骤时，事务复杂性保持线性，回滚更容易管理，更容易实施和测试</li>
+</ul>
+<p>缺点如下：</p>
+<ul>
+<li>中央协调器容易处理逻辑容易过于复杂，导致难以维护。</li>
+<li>存在协调器单点故障风险。</li>
+</ul>
+<p><strong>事件&#x2F;编排设计的优点和缺点</strong></p>
+<p>优点如下：</p>
+<ul>
+<li>避免中央协调器单点故障风险。</li>
+<li>当涉及的步骤较少服务开发简单，容易实现。</li>
+</ul>
+<p>缺点如下：</p>
+<ul>
+<li>服务之间存在循环依赖的风险。</li>
+<li>当涉及的步骤较多，服务间关系混乱，难以追踪调测。</li>
+</ul>
+<p>值得补充的是，由于 Saga 模型中没有 Prepare 阶段，因此事务间不能保证隔离性，当多个 Saga 事务操作同一资源时，就会产生更新丢失、脏数据读取等问题，这时需要在业务层控制并发，例如：在应用层面加锁，或者应用层面预先冻结资源。</p>
+<p>:::</p>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><blockquote>
+<p>扩展：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5a20cd8bf265da43163cdd9a">分布式锁实现汇总</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/JzCHpIOiFVmBoAko58ZuGw">分布式锁实现原理与最佳实践 - 阿里云开发者</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/-N4x6EkxwAYDGdJhwvmZLw">聊聊分布式锁 - 字节跳动技术团队</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/yZC6VJGxt1ANZkn0SljZBg">Redis、ZooKeeper、Etcd，谁有最好用的分布式锁？ - 腾讯云开发者</a></li>
+</ul>
+</blockquote>
+<h3 id="【初级】什么是分布式锁？为什么需要分布式锁？"><a href="#【初级】什么是分布式锁？为什么需要分布式锁？" class="headerlink" title="【初级】什么是分布式锁？为什么需要分布式锁？"></a>【初级】什么是分布式锁？为什么需要分布式锁？</h3><p>:::details 要点</p>
+<p>在计算机科学中，<strong>锁是在并发场景下用于强行限制资源访问的一种同步机制</strong>，即用于在并发控制中通过互斥手段来保证数据同步安全。</p>
+<p>在 Java 进程中，可以使用 Lock、synchronized 等来支持并发锁。如果是同一台机器的不同进程，想要同时操作一个共享资源（例如修改同一个文件），可以使用操作系统提供的「文件锁」或「信号量」来做互斥。这些发生在同一台机器上的互斥操作，可以称为<strong>本地锁</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190814629.png"></p>
+<p>本地锁无法协同不同机器间的互斥操作。为了解决这个问题，需要引入分布式锁。</p>
+<p><strong>分布式锁</strong>，顾名思义，应用于分布式场景下，它和单进程中的锁并没有本质上的不同，只是控制对象由一个进程中的多个线程变成了多个进程中的多个线程。此外，临界区的资源也由进程内共享资源变成了分布式系统内部共享资源。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190815373.png"></p>
+<p>:::</p>
+<h3 id="【高级】实现分布式锁有哪些要点？"><a href="#【高级】实现分布式锁有哪些要点？" class="headerlink" title="【高级】实现分布式锁有哪些要点？"></a>【高级】实现分布式锁有哪些要点？</h3><p>:::details 要点</p>
+<p>分布式锁的实现要点如下：</p>
+<ul>
+<li><strong>互斥</strong> - <strong>分布式锁必须是独一无二的</strong>，表现形式为：向数据存储插入一个唯一的 key，一旦有一个线程插入这个 key，其他线程就不能再插入了。<ul>
+<li>保证 key 唯一性的最简单的方式是使用 UUID。</li>
+<li>此外，可以参考 Snowflake ID（雪花算法），将机器地址（IP 地址、机器 ID、MAC 地址）、Jvm 进程 ID（应用 ID、服务 ID）、时间戳等关键信息拼接起来作为唯一标识。</li>
+</ul>
+</li>
+<li><strong>避免死锁</strong> - 在分布式锁的场景中，部分失败和异步网络这两个问题是同时存在的。如果一个进程获得了锁，但是这个进程与锁服务之间的网络出现了问题，导致无法通信，那么这个情况下，如果锁服务让它一直持有锁，就会导致死锁的发生。常见的解决思路都是引入<strong>超时机制</strong>，即成功申请锁后，超过一定时间，锁失效（删除 key），原因在于它们无法感知申请锁的客户端节点状态。而 ZooKeeper 由于其 znode 以目录、文件形式组织，天然就存在物理空间隔离，只要 znode 存在，即表示客户端节点还在工作，所以不存在这种问题。</li>
+<li><strong>可重入</strong> - <strong>可重入</strong>指的是：<strong>同一个线程在没有释放锁之前，能否再次获得该锁</strong>。其实现方案是：只需在加锁的时候，<strong>记录好当前获取锁的节点 + 线程组合的唯一标识</strong>，然后在后续的加锁请求时，如果当前请求的节点 + 线程的唯一标识和当前持有锁的相同，那么就直接返回加锁成功；如果不相同，则按正常加锁流程处理。</li>
+<li><strong>公平性</strong> - 当多个线程请求同一锁时，它们必须按照请求的顺序来获取锁，即先来先得的原则。锁的公平性的实现也非常简单，对于被阻塞的加锁请求，我们只要先记录好它们的顺序，在锁被释放后，按顺序颁发就可以了。</li>
+<li><strong>重试</strong> - 有时候，加锁失败可能只是由于网络波动、请求超时等原因，稍候就可以成功获取锁。为了应对这种情况，加锁操作需要支持重试机制。常见的做法是，设置一个加锁超时时间，在该时间范围内，不断自旋重试加锁操作，超时后再判定加锁失败。</li>
+<li><strong>容错</strong> - 分布式锁若存储在单一节点，一旦该节点宕机或失联，就会导致锁失效。将分布式锁存储在多数据库实例中，加锁时并发写入 <code>N</code> 个节点，只要 <code>N / 2 + 1</code> 个节点写入成功即视为加锁成功。</li>
+</ul>
+<p>:::</p>
+<h3 id="【中级】数据库分布式锁如何实现？"><a href="#【中级】数据库分布式锁如何实现？" class="headerlink" title="【中级】数据库分布式锁如何实现？"></a>【中级】数据库分布式锁如何实现？</h3><p>:::details 要点</p>
+<h4 id="数据库分布式锁原理"><a href="#数据库分布式锁原理" class="headerlink" title="数据库分布式锁原理"></a>数据库分布式锁原理</h4><p>（1）创建锁表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE TABLE</span> `distributed_lock` (</span><br><span class="line">	`id` <span class="type">BIGINT</span>(<span class="number">20</span>) UNSIGNED <span class="keyword">NOT NULL</span> AUTO_INCREMENT COMMENT <span class="string">&#x27;主键&#x27;</span>,</span><br><span class="line">	`resource` <span class="type">VARCHAR</span>(<span class="number">64</span>) <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;资源&#x27;</span>,</span><br><span class="line">	`count` <span class="type">INT</span>(<span class="number">10</span>) UNSIGNED <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;锁次数，统计可重入锁&#x27;</span>,</span><br><span class="line">	`<span class="keyword">desc</span>` TEXT <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;备注&#x27;</span>,</span><br><span class="line">	`create_time` DATETIME <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> COMMENT <span class="string">&#x27;创建时间&#x27;</span>,</span><br><span class="line">	`update_time` DATETIME <span class="keyword">NOT NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="built_in">CURRENT_TIMESTAMP</span> COMMENT <span class="string">&#x27;更新时间&#x27;</span>,</span><br><span class="line">	<span class="keyword">PRIMARY KEY</span> (`id`),</span><br><span class="line">	<span class="keyword">UNIQUE</span> KEY `uniq_resource`(`resource`)</span><br><span class="line">)</span><br><span class="line">	ENGINE <span class="operator">=</span> InnoDB <span class="keyword">DEFAULT</span> CHARSET <span class="operator">=</span> `utf8mb4`;</span><br></pre></td></tr></table></figure>
+
+<p>（2）获取锁</p>
+<p>想要锁住某个方法时，执行以下 SQL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert into</span> methodLock(method_name,<span class="keyword">desc</span>) <span class="keyword">values</span> (‘method_name’,‘<span class="keyword">desc</span>’)</span><br></pre></td></tr></table></figure>
+
+<p>因为我们对 <code>method_name</code> 做了唯一性约束，这里如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。</p>
+<p>成功插入则获取锁。</p>
+<p>（3）释放锁</p>
+<p>当方法执行完毕之后，想要释放锁的话，需要执行以下 Sql:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> methodLock <span class="keyword">where</span> method_name <span class="operator">=</span><span class="string">&#x27;method_name&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="数据库分布式锁小结"><a href="#数据库分布式锁小结" class="headerlink" title="数据库分布式锁小结"></a>数据库分布式锁小结</h4><p>数据库分布式锁的<strong>问题</strong>：</p>
+<ul>
+<li><strong>死锁</strong>：一旦释放锁操作失败，或持有锁的机器宕机、断连，就会导致锁记录一直存在，其他线程无法再获得锁。解决办法：为锁增加失效时间字段，启动一个定时任务，隔一段时间清除一次过期的数据。</li>
+<li><strong>非阻塞</strong>：因为 <code>insert</code> 操作一旦失败就会报错，因此未获得锁的线程并不会进入排队队列，要想获得锁就要再次触发加锁操作。解决办法：循环重试，直到插入成功，这么做会产生一定额外开销。</li>
+<li><strong>非重入</strong>：同一个线程在没有释放锁之前无法再次获得该锁。因为数据中数据已经存在了。解决办法：在数据库表中加个字段，记录当前获得锁的节点信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了。</li>
+<li><strong>单点问题</strong>：如果数据库是一个单点，一旦数据库挂掉，会导致业务系统不可用。解决办法：单点问题可以用多数据库实例，同时写入 <code>N</code> 个节点，<code>N / 2 + 1</code> 个成功就加锁成功。</li>
+</ul>
+<p>数据库分布式锁的<strong>利弊</strong>：</p>
+<ul>
+<li><strong>优点</strong>：直接借助数据库，简单易懂。</li>
+<li><strong>缺点</strong>：会有各种各样的问题，在解决问题的过程中会使整个方案变得越来越复杂。此外，数据库性能易成为瓶颈。</li>
+</ul>
+<p>:::</p>
+<h3 id="【高级】ZooKeeper-分布式锁如何实现？"><a href="#【高级】ZooKeeper-分布式锁如何实现？" class="headerlink" title="【高级】ZooKeeper 分布式锁如何实现？"></a>【高级】ZooKeeper 分布式锁如何实现？</h3><p>:::details 要点</p>
+<h4 id="ZooKeeper-分布式锁实现原理"><a href="#ZooKeeper-分布式锁实现原理" class="headerlink" title="ZooKeeper 分布式锁实现原理"></a>ZooKeeper 分布式锁实现原理</h4><p>ZooKeeper 分布式锁的实现基于 ZooKeeper 的两个重要特性：</p>
+<ul>
+<li><strong>顺序临时节点</strong>：ZooKeeper 的存储类似于 DNS 那样的具有层级的命名空间。ZooKeeper 节点类型可以分为持久节点（<code>PERSISTENT</code>）、临时节点（<code>EPHEMERAL</code>），每个节点还能被标记为有序性（<code>SEQUENTIAL</code>），一旦节点被标记为有序性，那么整个节点就具有顺序自增的特点。</li>
+<li><strong>Watch 机制</strong>：ZooKeeper 允许用户在指定节点上注册一些 <code>Watcher</code>，并且在特定事件触发的时候，ZooKeeper 服务端会将事件通知给用户。</li>
+</ul>
+<p>下面是 ZooKeeper 分布式锁的工作流程：</p>
+<ol>
+<li>创建一个目录节点，比如叫做 <code>/locks</code>；</li>
+<li>线程 A 想获取锁，就在 <code>/locks</code> 目录下创建临时顺序 zk 节点；</li>
+<li>获取 <code>/locks</code>目录下所有的子节点，检查是否存在比自己顺序更小的节点：若不存在，则说明当前线程创建的节点顺序最小，获取锁成功；</li>
+<li>此时，线程 B 试图获取锁，发现自己的节点顺序不是最小，设置监听锁号在自己前一位的节点；</li>
+<li>线程 A 处理完，删除自己的节点。线程 B 监听到变更事件，判断自己是不是最小的节点，如果是则获得锁。</li>
+</ol>
+<h4 id="ZooKeeper-分布式锁小结"><a href="#ZooKeeper-分布式锁小结" class="headerlink" title="ZooKeeper 分布式锁小结"></a>ZooKeeper 分布式锁小结</h4><p>ZooKeeper 分布式锁的<strong>优点</strong>是较为<strong>可靠</strong>：</p>
+<ul>
+<li><strong>避免死锁</strong>：ZooKeeper 通过临时节点 + 监听机制，可以保证：如果持有临时节点的线程主动解锁或断连，Zk 会自动删除临时节点，这意味着锁的释放。所以，不存在锁永久不释放从而导致死锁的问题。</li>
+<li><strong>单点问题</strong>：ZooKeeper 采用主从架构，并确保主从同步是强一致的，因此不会出现单点问题。</li>
+</ul>
+<p>ZooKeeper 分布式锁的<strong>缺点</strong>是：加锁、解锁操作，本质上是对 ZooKeeper 的写操作，全部由 ZooKeeper 主节点负责。如果加锁、解锁的吞吐量很大，容易出现单点写入瓶颈。</p>
+<p>:::</p>
+<h3 id="【高级】Redis-分布式锁如何实现？"><a href="#【高级】Redis-分布式锁如何实现？" class="headerlink" title="【高级】Redis 分布式锁如何实现？"></a>【高级】Redis 分布式锁如何实现？</h3><p>:::details 要点</p>
+<h4 id="Redis-分布式锁实现原理"><a href="#Redis-分布式锁实现原理" class="headerlink" title="Redis 分布式锁实现原理"></a>Redis 分布式锁实现原理</h4><h5 id="极简版本"><a href="#极简版本" class="headerlink" title="极简版本"></a>极简版本</h5><p>我们先来看一下，如何实现一个极简版本的 Redis 分布式锁。</p>
+<p>（1）加锁</p>
+<p>Redis 中的 <code>setnx</code> 命令，表示当且仅当 key 不存在时，才会写入 key。由于其互斥性，所以可以基于此来实现分布式锁。</p>
+<p>执行 <code>setnx key val</code>，若返回 1，表示写入成功，即加锁成功；若返回 0，表示该 key 已存在，写入失败，即加锁失败。</p>
+<p>（2）解锁</p>
+<p>Redis 分布式锁如何解锁呢？</p>
+<p>很简单，删除 key 就意味着释放锁，即执行 <code>del key</code> 命令。</p>
+<h5 id="避免死锁"><a href="#避免死锁" class="headerlink" title="避免死锁"></a>避免死锁</h5><p>极简版本的解决方案有一个很大的问题：<strong>存在死锁的可能</strong>。持有锁的节点如果执行业务过程中出现异常或机器宕机，都可能导致无法释放锁。这种情况下，其他节点永远也无法再获取锁。</p>
+<p>对于异常，在 Java 中，可以通过 <code>try...catch...finally</code> 来保证：最终一定会释放锁，其他编程语言也有相似的语法特性。</p>
+<p>对于机器宕机这种情况，如何处理呢？通常的对策是：为锁加上<strong>超时机制，过期自动删除</strong>。</p>
+<p>在 Redis 中，<code>expire</code> 命令可以为 key 设置一个超时时间，一旦过期，Redis 会自动删除 key。如此看来，<code>setnx</code> + <code>expire</code> 组合使用，就能解决死锁问题了。可惜，没那么简单。Redis 只能保证单一命令的原子性，不保证组合命令的原子性。</p>
+<p>那么，Redis 中有没有一条命令可以实现 setnx + expire 的组合语义呢？还真有，可以通过下面的命令来实现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面两条命令是等价的</span></span><br><span class="line">SET key val NX PX 30000</span><br><span class="line">SET key val NX EX 30</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：</p>
+<ul>
+<li><code>NX</code>：该参数表示当且仅当 key 不存在，才能写入成功</li>
+<li><code>PX</code>：超时时间，单位毫秒</li>
+<li><code>EX</code>：超时时间，单位秒</li>
+</ul>
+<h5 id="超时续期"><a href="#超时续期" class="headerlink" title="超时续期"></a>超时续期</h5><p>为了避免死锁，我们为锁添加了超时时间。但这里有一个问题，如果应用加锁时，对于操作共享资源的时长估计不足，可能会出现：操作尚未执行完，但是锁没了的尴尬情况。为了解决这个问题，很自然会想到，时间不够，就续期呗。</p>
+<p>具体来说，如何续期呢？一种方案是：加锁后，启动一个定时任务，周期性检测锁是否快要过期，如果快要过期并且操作尚未结束，就对锁进行自动续期。自行实现这个方案似乎有点繁琐，好在开源 Redis 客户端 <a target="_blank" rel="noopener" href="https://github.com/redisson/redisson">Redisson</a> 中已经为锁的<strong>超时续期</strong>提供了一个成熟的机制——WatchDog（看门狗）。我们可以直接拿来主义即可。</p>
+<h5 id="安全解锁"><a href="#安全解锁" class="headerlink" title="安全解锁"></a>安全解锁</h5><p>前文提到了，解锁的操作，实际上就是 <code>del key</code>。这里存在一个问题：因为没有任何判断，任何节点都可以随意删除 key，换句话说，锁可能会被其他节点释放。如何避免这个问题呢？解决方法就是：为锁添加<strong>唯一性标识</strong>来进行互斥。唯一性标识可以是 UUID，可以是雪花算法 ID 等。</p>
+<p>在 Redis 分布式锁中，唯一性标识的具体实现就是在 <code>set key val</code> 时，将唯一性标识 id 作为 <code>val</code> 写入。<strong>解锁前，先判断 key 的 value，必须和 set 时写入的 id 值保持一致，以此确认锁归属于自己</strong>。解锁的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (redis.get(<span class="string">&quot;key&quot;</span>) == id)</span><br><span class="line">	redis.del(<span class="string">&quot;key&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这里依然存在一个问题，由于需要在 Redis 中，先 <code>get</code>，后 <code>del</code> 操作，所以无法保证操作的原子性。为了保证原子性，可以将这段伪代码用 lua 脚本来实现，这么做的理由是 Redis 中支持原子性的执行 lua 脚本。下面是安全解锁的 lua 脚本代码：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&quot;get&quot;</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">&quot;del&quot;</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="自旋重试"><a href="#自旋重试" class="headerlink" title="自旋重试"></a>自旋重试</h5><p>有时候，加锁失败可能只是由于网络波动、请求超时等原因，稍候就可以成功获取锁。为了应对这种情况，加锁操作需要支持重试机制。常见的做法是，设置一个加锁超时时间，在该时间范围内，不断自旋重试加锁操作，超时后再判定加锁失败。</p>
+<p>下面是一个自旋重试获取锁的伪代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">begin</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> jedis.set(lockKey, uniqId, <span class="string">&quot;NX&quot;</span>, <span class="string">&quot;PX&quot;</span>, expireTime);</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;OK&quot;</span>.equals(result)) &#123;</span><br><span class="line">            <span class="comment">// 加锁成功，执行业务操作</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">long</span> <span class="variable">time</span> <span class="operator">=</span> System.currentTimeMillis() - begin;</span><br><span class="line">        <span class="keyword">if</span> (time &gt;= timeout) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">50</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    <span class="comment">// 异常处理</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="comment">// 释放锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Redis-分布式锁小结"><a href="#Redis-分布式锁小结" class="headerlink" title="Redis 分布式锁小结"></a>Redis 分布式锁小结</h4><p>在前文中，为了实现一个靠谱的 Redis 分布式锁，我们讨论了避免死锁、超时续期、安全解锁几个问题以及应对策略。但是，依然存在一些其他问题：</p>
+<ul>
+<li><strong>不可重入</strong> - 同一个线程无法多次获取同一把锁。</li>
+<li><strong>单点问题</strong> - Redis 主从同步存在延迟，有可能导致锁冲突。举例来说：线程一在主节点加锁，如果主节点尚未同步给从节点就发生宕机；此时，Redis 集群会选举一个从节点作为新的主节点。此时，新的主节点没有锁的数据，若有其他线程试图加锁，就可以成功获取锁，即出现同时有多个线程持有锁的情况。解决这个问题，可以使用 RedLock 算法。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://github.com/redisson/redisson">Redisson</a> 是一个流行的 Redis Java 客户端，它基于 Netty 开发，并提供了丰富的扩展功能，如：<a target="_blank" rel="noopener" href="https://redisson.org/docs/data-and-services/counters/">分布式计数器</a>、<a target="_blank" rel="noopener" href="https://redisson.org/docs/data-and-services/collections/">分布式集合</a>、<a target="_blank" rel="noopener" href="https://redisson.org/docs/data-and-services/locks-and-synchronizers/">分布式锁</a> 等。</p>
+<p>Redisson 支持的分布式锁有多种：Lock, FairLock, MultiLock, RedLock, ReadWriteLock, Semaphore, PermitExpirableSemaphore, CountDownLatch，可以根据场景需要去选择，非常方面。一般而言，使用 Redis 分布式锁，推荐直接使用 Redisson 提供的 API，功能全面且较为可靠。</p>
+<p>:::</p>
+<h3 id="【中级】RedLock-分布式锁如何实现？"><a href="#【中级】RedLock-分布式锁如何实现？" class="headerlink" title="【中级】RedLock 分布式锁如何实现？"></a>【中级】RedLock 分布式锁如何实现？</h3><p>:::details 要点</p>
+<p>RedLock 分布式锁，是 Redis 的作者 Antirez 提出的一种解决方案。</p>
+<blockquote>
+<p>扩展：<a target="_blank" rel="noopener" href="https://redis.io/docs/latest/develop/use/patterns/distributed-locks/">RedLock 官方文档</a></p>
+</blockquote>
+<h4 id="RedLock-分布式锁原理"><a href="#RedLock-分布式锁原理" class="headerlink" title="RedLock 分布式锁原理"></a>RedLock 分布式锁原理</h4><p>RedLock 分布式锁在普通 Redis 分布式锁的基础上，进行了扩展，其要点在于：</p>
+<ul>
+<li>（1）加锁操作不是写入单一节点，而是同时写入多个主节点，官方推荐集群中至少有 5 个主节点。</li>
+<li>（2）只要半数以上的主节点写入成功，即视为加锁成功。</li>
+<li>（3）大多数节点加锁的总耗时，要小于锁设置的过期时间。</li>
+<li>（4）解锁时，要向所有节点发起请求。</li>
+</ul>
+<p>下面来逐一解释以上各要点的用意：</p>
+<p>（1）RedLock 加锁时，为什么要同时写入多个主节点？</p>
+<p>这是为了避免单点问题，即使有部分实例出现异常，依然可以正常提供加锁、解锁能力。</p>
+<p>（2）为什么要半数以上的主节点写入成功，才视为加锁成功？</p>
+<p>在分布式系统中，为了达成共识，常常采用“多数派”策略来进行决策：大多数节点认可的行为，就视为整体通过。</p>
+<p>（3）为什么加锁成功后，还要计算加锁的累计耗时？</p>
+<p>因为操作的是多个节点，所以耗时肯定会比操作单个实例耗时更久。而且，网络情况是复杂的，可能存在延迟、丢包、超时等情况。网络请求越多，异常发生的概率就越大。所以，即使大多数节点加锁成功，但如果加锁的累计耗时已经<strong>超过</strong>了锁的过期时间，那此时有些实例上的锁可能已经失效了，这个锁就没有意义了。</p>
+<p>（4）解锁时，为什么要向所有节点发起请求？</p>
+<p>因为网络环境的复杂性，可能会存在这种情况：向某主节点写入锁信息，实际写入成功，但是响应超时或丢包。</p>
+<p>所以，释放锁时，不管之前有没有加锁成功，需要释放<strong>所有节点</strong>的锁，以保证清理节点上<strong>残留</strong>的锁。</p>
+<h4 id="RedLock-分布式锁小结"><a href="#RedLock-分布式锁小结" class="headerlink" title="RedLock 分布式锁小结"></a>RedLock 分布式锁小结</h4><p>（1）<strong>RedLock 不能完全保证安全性</strong></p>
+<p>分布式系统会遇到三座大山：<strong>NPC</strong></p>
+<ul>
+<li>N：Network Delay，<strong>网络延迟</strong>；</li>
+<li>P：Process Pause，进程暂停（<strong>GC</strong>）；</li>
+<li>C：Clock Drift，<strong>时钟漂移</strong>。</li>
+</ul>
+<p>RedLock 在遇到以上情况时，不能保证安全性。</p>
+<p>（2）RedLock 加锁、解锁需要处理多个节点，代价太高</p>
+<blockquote>
+<p>总结来说，<strong>已知的分布式锁，无论采用什么解决方案，在极端情况下，都无法保证百分百的安全。</strong></p>
+</blockquote>
+<p>:::</p>
+<h3 id="【高级】分布式锁如何进行技术选型？"><a href="#【高级】分布式锁如何进行技术选型？" class="headerlink" title="【高级】分布式锁如何进行技术选型？"></a>【高级】分布式锁如何进行技术选型？</h3><p>:::details 要点</p>
+<p>下面是主流分布式锁技术方案的对比，可以在技术选型时作为参考：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>数据库分布式锁</th>
+<th>Redis 分布式锁</th>
+<th>ZooKeeper 分布式锁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>方案要点</td>
+<td>1. 维护一张锁表，为锁的唯一标识字段添加唯一性约束。<br/>2. 只要 insert 成功，即视为加锁成功。</td>
+<td><code>set lockKey randomValue NX PX/EX time</code> 当且仅当 key 不存在时才可以写入，并且设定超时时间，以避免死锁。</td>
+<td>加锁本质上是在 zk 中指定目录创建<strong>顺序临时接节点</strong>，序号最小即加锁成功。节点删除时，有监听通知机制告知申请锁的线程。</td>
+</tr>
+<tr>
+<td>方案难度</td>
+<td>实现简单、易于理解</td>
+<td>较为简单，但要使其更可靠，需要有一些完善策略</td>
+<td>应用简单，但 zk 内部机制并不简单</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>性能最差，易成为瓶颈</td>
+<td>性能最高</td>
+<td>性能弱于 Redis</td>
+</tr>
+<tr>
+<td>可靠性</td>
+<td>有锁表的风险</td>
+<td>较为可靠（需要一些完善策略）</td>
+<td>可靠性最高</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>一般不采用</td>
+<td>适用于高并发的场景</td>
+<td>适用于要求可靠，但并发量不高的场景</td>
+</tr>
+<tr>
+<td>开源实现</td>
+<td>无</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/redisson/redisson">Redisson</a></td>
+<td><a target="_blank" rel="noopener" href="https://curator.apache.org/docs/about/">Apache Curator</a></td>
+</tr>
+</tbody></table>
+<p>:::</p>
+<h2 id="分布式-ID"><a href="#分布式-ID" class="headerlink" title="分布式 ID"></a>分布式 ID</h2><blockquote>
+<p>扩展：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5bb0217ef265da0ac2567b42">如果再有人问你分布式 ID，这篇文章丢给他</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000011282426">理解分布式 id 生成算法 SnowFlake</a></li>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2017/04/21/mt-leaf.html">Leaf——美团点评分布式 ID 生成系统</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ietf.org/rfc/rfc4122.txt">UUID 规范</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/baidu/uid-generator/blob/master/README.zh_cn.md">百度分布式 ID</a></li>
+<li><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/current/cn/features/sharding/other-features/key-generator/">ShardingSphere 分布式主键</a></li>
+</ul>
+</blockquote>
+<h3 id="【初级】什么是分布式-ID？为什么需要分布式-ID？"><a href="#【初级】什么是分布式-ID？为什么需要分布式-ID？" class="headerlink" title="【初级】什么是分布式 ID？为什么需要分布式 ID？"></a>【初级】什么是分布式 ID？为什么需要分布式 ID？</h3><p>:::details 要点</p>
+<p>ID是Identity的缩写，用于唯一的标识一条数据。<strong>分布式 ID</strong>，顾名思义，是<strong>用于在分布式系统中唯一标识数据的ID</strong>。</p>
+<p>传统数据库基本都支持针对单表生成唯一性的自增主键。随着数据的膨胀，单机成为了性能和容量的瓶颈。为了解决这个问题，有了分库分表技术。分库分表所要面临的第一个问题是：数据分布在不同机器上，数据库无法保证多个节点上产生的主键唯一。 这就需要用到分布式 ID 了，它起到了分布式系统中<strong>全局 ID</strong> 的作用。</p>
+<p>:::</p>
+<h3 id="【中级】有哪些生成分布式-ID-的方式？"><a href="#【中级】有哪些生成分布式-ID-的方式？" class="headerlink" title="【中级】有哪些生成分布式 ID 的方式？"></a>【中级】有哪些生成分布式 ID 的方式？</h3><p>:::details 要点</p>
+<p>生成分布式 ID 主要有以下方式：</p>
+<ul>
+<li><strong>UUID</strong> - UUID 是通用唯一识别码（Universally Unique Identifier）的缩写，是一种 128 位的标识符，用 16 进制表示，需要 32 个字符。<strong>UUID 会根据运行应用的计算机网卡 MAC 地址、时间戳、命令空间等元素，通过一定的随机算法产生</strong>。<ul>
+<li>UUID 存在 5 个版本。</li>
+<li>UUID 不保证全局唯一性，我们需要小心 ID 冲突（尽管这种可能性很小）。</li>
+<li><strong>优点</strong>：实现简单、生成速度较快（本地生成，不依赖其他服务）。</li>
+<li><strong>缺点</strong>：无序、长度过长、不安全（基于 MAC 地址生成 UUID 的算法，可能会造成 MAC 地址泄露）。</li>
+</ul>
+</li>
+<li><strong>数据库自增主键</strong> - 大多数数据库都支持自增主键。基于此特性，可以利用事务管理控制生成唯一 ID。<ul>
+<li><strong>优点</strong>：实现简单、有序、长度较小</li>
+<li><strong>缺点</strong>：性能差、存在单点问题、不安全（可以通过 ID 递增规律推算出数据量）</li>
+</ul>
+</li>
+<li><strong>数据库号段</strong> - 一次批量生成一个 segment（号段），号段的大小由 step（步长）控制。用完之后再去数据库获取新的号段。</li>
+<li><strong>原子计数器</strong> - 一些 NoSQL 数据库提供了原子性的计数器原子计数器 - 利用一些 NoSQL 数据库提供的原子性计数器，来实现分布式 ID。<ul>
+<li><strong>Redis <code>incr</code> &#x2F; <code>incrby</code></strong> - Redis 的 String 类型提供 <code>INCR</code> 和 <code>INCRBY</code> 命令将 key 中储存的数字<strong>原子递增</strong>。<ul>
+<li><strong>优点</strong>：高性能、有序</li>
+<li><strong>缺点</strong>：和数据库自增序列方案的缺点类似</li>
+</ul>
+</li>
+<li><strong>ZooKeeper 顺序节点</strong> - 利用 ZooKeeper 数据模型中的顺序节点作为分布式 ID。<ul>
+<li><strong>优点</strong>：简单、可靠性高</li>
+<li><strong>缺点</strong>：性能不高</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Snowflak（雪花算法）</strong> - Snowflake ID 生成过程包含多个组件：时间戳、机器 ID 和序列号。第一位未使用，以确保 ID 正确。此生成器不需要通过网络与 ID 生成器通信，因此速度快且可扩展。Snowflake 的实现各不相同。例如，可以将数据中心 ID 添加到“MachineID”组件中，以保证全局唯一性。</li>
+</ul>
+<p>:::</p>
+<h2 id="分布式会话"><a href="#分布式会话" class="headerlink" title="分布式会话"></a>分布式会话</h2><h3 id="【初级】Cookie-和-Session-有什么区别？"><a href="#【初级】Cookie-和-Session-有什么区别？" class="headerlink" title="【初级】Cookie 和 Session 有什么区别？"></a>【初级】Cookie 和 Session 有什么区别？</h3><p>:::details 要点</p>
+<p>由于 Http 是一种无状态的协议，服务器单从网络连接上无从知道客户身份。</p>
+<p>所以服务器与浏览器为了进行会话跟踪（知道是谁在访问我），就必须主动的去维护一个状态，这个状态用于告知服务端前后两个请求是否来自同一浏览器。而这个状态需要通过 cookie 或者 session 去实现。</p>
+<p><strong>Cookie</strong> 实际上是存储在用户浏览器上的文本信息，并保留了各种跟踪的信息。生成 Cookie 后，用户后续每次请求都会携带 Cookie。</p>
+<p>Cookie 通常有大小限制（4KB）。用户可以选择在浏览器中禁用 Cookie。</p>
+<p>一个简单的 cookie 设置如下：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Set-Cookie</span><span class="punctuation">: </span>&lt;cookie-name&gt;=&lt;cookie-value&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">HTTP/2.0 200 OK</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>text/html</span><br><span class="line"><span class="attribute">Set-Cookie</span><span class="punctuation">: </span>yummy_cookie=choco</span><br><span class="line"><span class="attribute">Set-Cookie</span><span class="punctuation">: </span>tasty_cookie=strawberry</span><br><span class="line"></span><br><span class="line">[page content]</span><br></pre></td></tr></table></figure>
+
+<p>Session 是在服务器端创建和存储的。服务器上通常会生成一个唯一的会话 ID（sessionId），sessionId 附加到特定的用户会话。sessionId 以 Cookie 的形式返回到客户端。Session 可以容纳大量数据。由于 Session 数据不直接由客户端访问，因此 Session 提供了更高的安全性。</p>
+<p>Cookie 和 Session 的主要区别可以参考以下表格：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Cookie</th>
+<th>Session</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>作用范围</strong></td>
+<td>保存在客户端（浏览器）</td>
+<td>保存在服务器端</td>
+</tr>
+<tr>
+<td><strong>隐私策略</strong></td>
+<td>存储在客户端，比较容易遭到非法获取</td>
+<td>存储在服务端，安全性相对 Cookie 要好一些</td>
+</tr>
+<tr>
+<td><strong>存储方式</strong></td>
+<td>只能保存 ASCII</td>
+<td>可以保存任意数据类型。<br/>一般情况下我们可以在 Session 中保持一些常用变量信息，比如说 UserId 等。</td>
+</tr>
+<tr>
+<td><strong>存储大小</strong></td>
+<td>不能超过 4K</td>
+<td>存储大小远高于 Cookie</td>
+</tr>
+<tr>
+<td><strong>生命周期</strong></td>
+<td>可设置为永久保存<br/>比如我们经常使用的默认登录（记住我）功能</td>
+<td>一般失效时间较短<br/>客户端关闭或者 Session 超时都会失效。</td>
+</tr>
+</tbody></table>
+<p>:::</p>
+<h3 id="【中级】如果禁用了-Cookie-怎么办？"><a href="#【中级】如果禁用了-Cookie-怎么办？" class="headerlink" title="【中级】如果禁用了 Cookie 怎么办？"></a>【中级】如果禁用了 Cookie 怎么办？</h3><p>:::details 要点</p>
+<p>既然服务端是根据 Cookie 中的信息判断用户是否登录，那么如果浏览器中禁止了 Cookie，如何保障整个机制的正常运转。</p>
+<ul>
+<li><p>第一种方案，每次请求中都携带一个 SessionID 的参数，也可以 Post 的方式提交，也可以在请求的地址后面拼接 <code>xxx?SessionID=123456...</code>。</p>
+</li>
+<li><p>第二种方案，Token 机制。Token 机制多用于 App 客户端和服务器交互的模式，也可以用于 Web 端做用户状态管理。</p>
+</li>
+</ul>
+<p>Token 的意思是“令牌”，是服务端生成的一串字符串，作为客户端进行请求的一个标识。Token 机制和 Cookie 和 Session 的使用机制比较类似。</p>
+<p>当用户第一次登录后，服务器根据提交的用户信息生成一个 Token，响应时将 Token 返回给客户端，以后客户端只需带上这个 Token 前来请求数据即可，无需再次登录验证。</p>
+<p>:::</p>
+<h3 id="【中级】分布式-Session-有几种实现方案？"><a href="#【中级】分布式-Session-有几种实现方案？" class="headerlink" title="【中级】分布式 Session 有几种实现方案？"></a>【中级】分布式 Session 有几种实现方案？</h3><p>:::details 要点</p>
+<p>在分布式场景下，一个用户的 Session 如果只存储在一个服务器上，那么当负载均衡器把用户的下一个请求转发到另一个服务器上，该服务器没有用户的 Session，就可能导致用户需要重新进行登录等操作。</p>
+<p>分布式 Session 的几种实现策略：</p>
+<ol>
+<li>粘性 session</li>
+<li>应用服务器间的 session 复制共享</li>
+<li>基于缓存的 session 共享 ✅</li>
+</ol>
+<blockquote>
+<p>推荐：基于缓存的 session 共享</p>
+</blockquote>
+<h4 id="粘性-Session"><a href="#粘性-Session" class="headerlink" title="粘性 Session"></a>粘性 Session</h4><p>粘性 Session（Sticky Sessions）<strong>需要配置负载均衡器，使得一个用户的所有请求都路由到一个服务器节点上</strong>，这样就可以把用户的 Session 存放在该服务器节点中。</p>
+<p>缺点：<strong>当服务器节点宕机时，将丢失该服务器节点上的所有 Session</strong>。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-StickySessions.jpg" />
+</div>
+
+<h4 id="Session-复制共享"><a href="#Session-复制共享" class="headerlink" title="Session 复制共享"></a>Session 复制共享</h4><p>Session 复制共享（Session Replication）<strong>在服务器节点之间进行 Session 同步操作</strong>，这样的话用户可以访问任何一个服务器节点。</p>
+<p>缺点：<strong>占用过多内存</strong>；<strong>同步过程占用网络带宽以及服务器处理器时间</strong>。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SessionReplication.jpg" />
+</div>
+
+<h4 id="基于缓存的-session-共享"><a href="#基于缓存的-session-共享" class="headerlink" title="基于缓存的 session 共享"></a>基于缓存的 session 共享</h4><p><strong>使用一个单独的存储服务器存储 Session 数据</strong>，可以存在 MySQL 数据库上，也可以存在 Redis 或者 Memcached 这种内存型数据库。</p>
+<p>缺点：需要去实现存取 Session 的代码。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/MultiNode-SpringSession.jpg" />
+</div>
+
+<p>:::</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/30329536/"><strong>数据密集型应用系统设计</strong></a> - 这可能是目前最好的分布式存储书籍，强力推荐【进阶】</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/372a9cc0/" title="分布式协同面试">https://dunwu.github.io/blog/pages/372a9cc0/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/%E5%8D%8F%E5%90%8C/" rel="tag"># 协同</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/62e44ef3/" rel="prev" title="Dubbo 面试之架构">
+                  <i class="fa fa-angle-left"></i> Dubbo 面试之架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/6af68a7a/" rel="next" title="分布式调度面试">
+                  分布式调度面试 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"ab0c0d6d7ecd95ee21081d9d7d192042"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Java 虚拟机面试一JVM 简介【中等】JVM 由哪些部分组成？类加载→内存分配→执行引擎运行→GC 回收内存，通过 JNI 与外部交互。 JVM（Java 虚拟机）主要由以下核心部分组成：  类加载子系统：负责加载、验证、准备、解析和初始化类文件（.class）。 运行时数据区： 方法区：存储类元数据、常量池等。 堆：存放对象实例（主 GC 区域）。 虚拟机栈：存储方法调用的栈帧（局部变量、操">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 虚拟机面试一">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/b2f6beb8/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Java 虚拟机面试一JVM 简介【中等】JVM 由哪些部分组成？类加载→内存分配→执行引擎运行→GC 回收内存，通过 JNI 与外部交互。 JVM（Java 虚拟机）主要由以下核心部分组成：  类加载子系统：负责加载、验证、准备、解析和初始化类文件（.class）。 运行时数据区： 方法区：存储类元数据、常量池等。 堆：存放对象实例（主 GC 区域）。 虚拟机栈：存储方法调用的栈帧（局部变量、操">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/jvm/jvm-hotspot-architecture.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202505070632861.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202505070635024.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200617115936.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202505070634474.png">
+<meta property="article:published_time" content="2024-07-02T23:44:02.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.706Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="JVM">
+<meta property="article:tag" content="JavaCore">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/jvm/jvm-hotspot-architecture.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/b2f6beb8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/b2f6beb8/","path":"/pages/b2f6beb8/","title":"Java 虚拟机面试一"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java 虚拟机面试一 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9D%A2%E8%AF%95%E4%B8%80"><span class="nav-number">1.</span> <span class="nav-text">Java 虚拟机面试一</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">JVM 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91JVM-%E7%94%B1%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="nav-number">1.1.1.</span> <span class="nav-text">【中等】JVM 由哪些部分组成？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Java-%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">【中等】Java 是如何实现跨平台的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E8%AF%B4%E8%AF%B4-Java-%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">【中等】说说 Java 的执行流程？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-JIT"><span class="nav-number">1.1.4.</span> <span class="nav-text">【中等】什么是 JIT?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%EF%BC%9F"><span class="nav-number">1.1.5.</span> <span class="nav-text">【困难】什么是逃逸分析？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-AOT%EF%BC%9F"><span class="nav-number">1.1.6.</span> <span class="nav-text">【困难】什么是 AOT？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">JVM 内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91JVM-%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%92%E5%88%86%E7%9A%84%EF%BC%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text">【困难】JVM 的内存区域是如何划分的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91JVM-%E4%BA%A7%E7%94%9F-OOM-%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%E6%83%85%E5%86%B5%EF%BC%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">【困难】JVM 产生 OOM 有哪几种情况？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-heap-space"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Java heap space</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Metaspace%EF%BC%88JDK-8-%E5%8F%8A%E4%BB%A5%E5%90%8E%EF%BC%89"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">Metaspace（JDK 8 及以后）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PermGen-space%EF%BC%88JDK-7-%E5%8F%8A%E4%BB%A5%E5%89%8D%EF%BC%89"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">PermGen space（JDK 7 及以前）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Direct-buffer-memory"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">Direct buffer memory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unable-to-create-new-native-thread"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">Unable to create new native thread</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC-overhead-limit-exceeded"><span class="nav-number">1.2.2.6.</span> <span class="nav-text">GC overhead limit exceeded</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CodeCache-is-full%EF%BC%88JIT-%E7%BC%96%E8%AF%91%E4%BB%A3%E7%A0%81%E7%BC%93%E5%AD%98%E6%BB%A1%EF%BC%89"><span class="nav-number">1.2.2.7.</span> <span class="nav-text">CodeCache is full（JIT 编译代码缓存满）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Requested-array-size-exceeds-VM-limit"><span class="nav-number">1.2.2.8.</span> <span class="nav-text">Requested array size exceeds VM limit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OOM-%E7%B1%BB%E5%9E%8B%E9%80%9F%E6%9F%A5%E8%A1%A8"><span class="nav-number">1.2.2.9.</span> <span class="nav-text">OOM 类型速查表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.3.</span> <span class="nav-text">类加载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Java-%E9%87%8C%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%87%8C%E9%9D%A2%E6%98%AF%E6%80%8E%E4%B9%88%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">【中等】Java 里的对象在虚拟机里面是怎么存储的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Java-%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">【中等】Java 类的生命周期是怎样的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E5%9B%B0%E9%9A%BE%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%90%97%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">【困难】什么是类加载器吗？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">类加载器层次结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">双亲委派模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81"><span class="nav-number">1.4.</span> <span class="nav-text">字节码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Java-%E6%98%AF%E7%BC%96%E8%AF%91%E5%9E%8B%E8%AF%AD%E8%A8%80%E8%BF%98%E6%98%AF%E8%A7%A3%E9%87%8A%E5%9E%8B%E8%AF%AD%E8%A8%80%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">【中等】Java 是编译型语言还是解释型语言？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E4%BB%80%E4%B9%88%E6%98%AF-Java-%E5%AD%97%E8%8A%82%E7%A0%81%EF%BC%9F%E5%AE%83%E4%B8%8E%E6%9C%BA%E5%99%A8%E7%A0%81%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">1.4.2.</span> <span class="nav-text">【中等】什么是 Java 字节码？它与机器码有什么区别？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91-class-%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%93%E6%9E%84%E5%8C%85%E5%90%AB%E5%93%AA%E4%BA%9B%E4%B8%BB%E8%A6%81%E9%83%A8%E5%88%86%EF%BC%9F"><span class="nav-number">1.4.3.</span> <span class="nav-text">【中等】.class 文件的结构包含哪些主要部分？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B-Java-%E5%AD%97%E8%8A%82%E7%A0%81%EF%BC%9F%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">1.4.4.</span> <span class="nav-text">【中等】如何查看 Java 字节码？常用工具有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91Java-%E5%AD%97%E8%8A%82%E7%A0%81%E6%9C%89%E5%93%AA%E4%BA%9B%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="nav-number">1.4.5.</span> <span class="nav-text">【中等】Java 字节码有哪些典型应用场景？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E4%BC%98"><span class="nav-number">1.5.</span> <span class="nav-text">调优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E7%AE%80%E5%8D%95%E3%80%91JDK-%E5%86%85%E7%BD%AE%E4%BA%86%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%EF%BC%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">【简单】JDK 内置了哪些工具？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%B8%B8%E7%94%A8%E7%9A%84-JVM-%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">1.5.2.</span> <span class="nav-text">【中等】常用的 JVM 配置参数有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%A6%82%E4%BD%95%E5%9C%A8-Java-%E4%B8%AD%E8%BF%9B%E8%A1%8C%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%88%86%E6%9E%90%EF%BC%9F"><span class="nav-number">1.5.3.</span> <span class="nav-text">【中等】如何在 Java 中进行内存泄漏分析？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AE%E8%AE%A4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%8E%B0%E8%B1%A1"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">确认内存泄漏现象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%86%85%E5%AD%98%E5%BF%AB%E7%85%A7"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">获取内存快照</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%A0%86%E8%BD%AC%E5%82%A8%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">分析堆转储文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%9C%BA%E6%99%AF%E4%B8%8E%E4%BF%AE%E5%A4%8D"><span class="nav-number">1.5.3.4.</span> <span class="nav-text">常见内存泄漏场景与修复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E8%AF%8A%E6%96%AD%E5%B7%A5%E5%85%B7%EF%BC%88%E6%97%A0%E9%9C%80%E5%A0%86%E8%BD%AC%E5%82%A8%EF%BC%89"><span class="nav-number">1.5.3.5.</span> <span class="nav-text">实时诊断工具（无需堆转储）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%90%E4%B8%AD%E7%AD%89%E3%80%91%E5%A6%82%E4%BD%95%E5%AF%B9-Java-%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E8%BF%9B%E8%A1%8C%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="nav-number">1.5.4.</span> <span class="nav-text">【中等】如何对 Java 的垃圾回收进行调优？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E4%BC%98%E6%A0%B8%E5%BF%83%E7%9B%AE%E6%A0%87"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">调优核心目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E4%BC%98%E5%8E%9F%E5%88%99"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">调优原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E4%BC%98%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.5.4.3.</span> <span class="nav-text">调优步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E5%B7%A5%E5%85%B7"><span class="nav-number">1.5.4.4.</span> <span class="nav-text">高级工具</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/b2f6beb8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java 虚拟机面试一 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 虚拟机面试一<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/99.%E9%9D%A2%E8%AF%95/Java_%E9%9D%A2%E8%AF%95_%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%88%E4%B8%80%EF%BC%89.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-07-03 07:44:02" itemprop="dateCreated datePublished" datetime="2024-07-03T07:44:02+08:00">2024-07-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">面试</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>18k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Java-虚拟机面试一"><a href="#Java-虚拟机面试一" class="headerlink" title="Java 虚拟机面试一"></a>Java 虚拟机面试一</h1><h2 id="JVM-简介"><a href="#JVM-简介" class="headerlink" title="JVM 简介"></a>JVM 简介</h2><h3 id="【中等】JVM-由哪些部分组成？"><a href="#【中等】JVM-由哪些部分组成？" class="headerlink" title="【中等】JVM 由哪些部分组成？"></a>【中等】JVM 由哪些部分组成？</h3><p><strong>类加载→内存分配→执行引擎运行→GC 回收内存</strong>，通过 JNI 与外部交互。</p>
+<p>JVM（Java 虚拟机）主要由以下核心部分组成：</p>
+<ul>
+<li><strong>类加载子系统</strong>：负责加载、验证、准备、解析和初始化类文件（.class）。</li>
+<li><strong>运行时数据区</strong>：<ul>
+<li><strong>方法区</strong>：存储类元数据、常量池等。</li>
+<li><strong>堆</strong>：存放对象实例（主 GC 区域）。</li>
+<li><strong>虚拟机栈</strong>：存储方法调用的栈帧（局部变量、操作数栈等）。</li>
+<li><strong>本地方法栈</strong>：为 Native 方法服务。</li>
+<li><strong>程序计数器</strong>：记录当前线程执行的字节码位置。</li>
+</ul>
+</li>
+<li><strong>执行引擎</strong>：解释或编译字节码为机器码执行（含 JIT 编译器）。<ul>
+<li><strong>解释器（Interpreter）</strong>：逐行解释执行字节码（启动快，执行慢）。</li>
+<li><strong>即时编译器（JIT Compiler）</strong>：将热点代码（频繁执行的代码）编译为本地机器码（如 HotSpot 的 C1、C2 编译器）。</li>
+<li><strong>垃圾回收器（GC）</strong>：自动回收堆中无用的对象（如 Serial、Parallel、G1、ZGC 等算法）。</li>
+</ul>
+</li>
+<li><strong>本地方法接口（JNI）</strong>：调用 C&#x2F;C++实现的 Native 方法。</li>
+<li><strong>本地方法库（Native Libraries）</strong>：由其他语言（如 C&#x2F;C++）编写的库，供 JNI 调用（如文件操作、网络通信等底层功能）。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/java/javacore/jvm/jvm-hotspot-architecture.png"></p>
+<h3 id="【中等】Java-是如何实现跨平台的？"><a href="#【中等】Java-是如何实现跨平台的？" class="headerlink" title="【中等】Java 是如何实现跨平台的？"></a>【中等】Java 是如何实现跨平台的？</h3><p>Java 实现跨平台的本质是：<strong>源码 → 统一字节码 → JVM 按需转换为目标平台机器码</strong>，通过分层抽象实现跨平台。</p>
+<p>Java <strong>【一次编写，到处执行（Write Once, Run Anywhere）】</strong> 的要点：</p>
+<ul>
+<li><strong>JVM（Java 虚拟机）—— 统一运行环境</strong><ul>
+<li>不同操作系统（Windows&#x2F;Linux&#x2F;macOS）安装对应的 JVM，<strong>屏蔽底层硬件和系统差异</strong>。</li>
+<li>JVM 负责加载、验证并执行字节码，确保相同字节码在不同平台表现一致。</li>
+</ul>
+</li>
+<li><strong>字节码（Bytecode）—— 平台无关的中间代码</strong><ul>
+<li>Java 代码编译成<strong>平台无关的字节码（.class 文件）</strong>，而非直接生成机器码。</li>
+<li>由 JVM 解释或 JIT 编译为当前平台的机器指令。</li>
+</ul>
+</li>
+<li><strong>标准化的 Java API</strong>：提供统一的 API（如 <code>java.io</code>、<code>java.net</code>），底层通过 JVM 适配不同操作系统的具体实现。</li>
+<li><strong>严格的规范与兼容性</strong>：JVM 规范（如字节码格式、内存管理）和 Java 语言规范由 Oracle 统一制定，确保各厂商实现的 JVM 行为一致。</li>
+</ul>
+<p><strong>例外情况（需注意）</strong></p>
+<ul>
+<li><strong>JNI（本地方法调用）</strong>：依赖系统原生库时，需为不同平台编译对应的动态库（如 <code>.dll</code>、<code>.so</code>）。</li>
+<li><strong>平台相关细节</strong>：如文件路径分隔符、字符编码、GUI 渲染等可能需要适配。</li>
+</ul>
+<h3 id="【中等】说说-Java-的执行流程？"><a href="#【中等】说说-Java-的执行流程？" class="headerlink" title="【中等】说说 Java 的执行流程？"></a>【中等】说说 Java 的执行流程？</h3><p>Java 程序的执行流程经历了从编译到字节码的生成，再到类加载和 JIT 编译的过程，最终在 JVM 中执行。并且在程序运行过程中，JVM 负责内存管理、垃圾回收和线程调度等工作。</p>
+<p>主要流程如下：</p>
+<ol>
+<li><strong>编写 Java 源代码</strong>：编写 <code>.java</code> 文件。</li>
+<li><strong>编译</strong>：Java 编译器（javac） 将 <code>.java</code> 文件编译为 <code>.class</code> 文件（字节码）。</li>
+<li><strong>类加载</strong>：JVM 通过类加载子系统加载 <code>.class</code> 文件到内存。<ol>
+<li><strong>加载</strong>：采用双亲委派机制，分层级加载字节码。</li>
+<li><strong>链接</strong><ol>
+<li><strong>验证</strong>：检查字节码合法性（如魔数 <code>0xCAFEBABE</code>）。</li>
+<li><strong>准备</strong>：为静态变量分配内存并赋默认值（如 <code>static int a</code> 初始化为 <code>0</code>）。</li>
+<li><strong>解析</strong>：将符号引用（如类名、方法名）转为直接引用（内存地址）。</li>
+</ol>
+</li>
+<li><strong>初始化</strong>：执行静态代码块（<code>static&#123;&#125;</code>）和静态变量赋值（如 <code>static int a = 1;</code>）。</li>
+</ol>
+</li>
+<li><strong>存储运行时数据区</strong>：加载后的类信息存储到内存区域。<ul>
+<li><strong>方法区</strong>：存储类结构（如 <code>HelloWorld</code> 的类名、方法定义、常量池）。</li>
+<li><strong>堆</strong>：存放对象实例（如 <code>String</code> 对象）。</li>
+<li><strong>虚拟机栈</strong>：线程私有，存储 <code>main()</code> 方法的栈帧（局部变量、操作数栈等）。</li>
+<li><strong>程序计数器</strong>：记录当前线程执行的字节码指令地址。</li>
+</ul>
+</li>
+<li><strong>执行阶段</strong><ul>
+<li><strong>解释执行</strong>：逐行解释字节码指令（如 <code>invokestatic</code> 调用 <code>System.out.println</code>）。启动快，执行效率低。</li>
+<li><strong>本地方法调用（JNI）</strong>：若调用 <code>native</code> 方法（如 <code>Object.clone()</code>），通过 <strong>JNI</strong> 执行本地库（C&#x2F;C++）代码。</li>
+<li><strong>JIT 编译优化（可选）</strong>：将热点代码（频繁执行的方法）编译为本地机器码。相关优化技术：<strong>方法内联</strong>、<strong>逃逸分析</strong>等。</li>
+</ul>
+</li>
+<li><strong>垃圾回收</strong>：JVM 管理内存，并回收不再使用的对象。</li>
+<li><strong>程序结束</strong>：main 方法结束，退出程序。</li>
+</ol>
+<h3 id="【中等】什么是-JIT"><a href="#【中等】什么是-JIT" class="headerlink" title="【中等】什么是 JIT?"></a>【中等】什么是 JIT?</h3><p><strong>JIT（Just-In-Time Compilation，即时编译）</strong>在运行时将<strong>热点代码</strong>（频繁执行的字节码）动态编译为<strong>本地机器码</strong>，提升执行效率。</p>
+<ul>
+<li><strong>JIT 是 Java 高性能的关键</strong>：通过运行时编译热点代码，平衡解释执行的灵活性和原生代码的速度。</li>
+<li><strong>核心优化</strong>：方法内联、逃逸分析、分层编译。</li>
+<li><strong>调优方向</strong>：根据应用特点调整编译阈值、代码缓存大小。</li>
+</ul>
+<p><strong>与解释器的区别</strong>：</p>
+<ul>
+<li><strong>解释器</strong>：逐行解释执行字节码，启动快但运行慢。</li>
+<li><strong>JIT</strong>：编译后直接执行机器码，运行快但有编译开销。</li>
+</ul>
+<p><strong>JIT 作用</strong></p>
+<ul>
+<li><strong>性能优化</strong>：对重复执行的代码（如循环、高频方法）编译为机器码，避免重复解释。</li>
+<li><strong>自适应优化</strong>：根据运行时数据（如方法调用次数、分支预测）动态优化代码。</li>
+</ul>
+<p><strong>JIT 工作流程</strong></p>
+<ul>
+<li><strong>热点检测</strong>：通过计数器统计方法调用次数或循环执行次数（如 <code>-XX:CompileThreshold</code> 默认阈值 10000）。</li>
+<li><strong>编译优化</strong>：将热点字节码编译为机器码，存入<strong>代码缓存（Code Cache）</strong>。</li>
+<li><strong>替换执行</strong>：后续调用直接执行编译后的机器码。</li>
+</ul>
+<p><strong>JIT 优化技术</strong></p>
+<ul>
+<li><strong>方法内联（Inlining）</strong>：将小方法调用替换为方法体代码（如 <code>-XX:+InlineSmallMethods</code>）。</li>
+<li><strong>逃逸分析（Escape Analysis）</strong>：判断对象作用域，优化为栈分配或标量替换。</li>
+<li><strong>JIT 分层编译（Tiered Compilation）</strong><ul>
+<li><strong>混合模式</strong>：结合解释器、C1（Client Compiler）和 C2（Server Compiler）：<ul>
+<li><strong>C1</strong>：快速编译，优化启动速度（如 <code>-client</code> 模式）。</li>
+<li><strong>C2</strong>：深度优化，提升峰值性能（如 <code>-server</code> 模式）。</li>
+</ul>
+</li>
+<li><strong>JDK 8+ 默认启用</strong>：<code>-XX:+TieredCompilation</code>。</li>
+</ul>
+</li>
+<li><strong>循环展开（Loop Unrolling）</strong>：减少循环控制开销。</li>
+<li><strong>去虚拟化（Devirtualization）</strong>：将虚方法调用转为直接调用。</li>
+</ul>
+<p><strong>JIT 关键参数</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>参数</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-XX:+UseJIT</code></td>
+<td>启用 JIT（默认开启）</td>
+</tr>
+<tr>
+<td><code>-XX:CompileThreshold=10000</code></td>
+<td>触发 JIT 编译的方法调用阈值</td>
+</tr>
+<tr>
+<td><code>-XX:+PrintCompilation</code></td>
+<td>打印 JIT 编译日志</td>
+</tr>
+<tr>
+<td><code>-XX:ReservedCodeCacheSize</code></td>
+<td>设置代码缓存大小（默认 240MB）</td>
+</tr>
+<tr>
+<td><code>-XX:+TieredCompilation</code></td>
+<td>启用分层编译（JDK 8+ 默认）</td>
+</tr>
+</tbody></table>
+<p><strong>JIT 特点</strong></p>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li>显著提升热点代码性能（接近原生代码速度）。</li>
+<li>自适应优化更灵活。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li>编译开销导致<strong>启动变慢</strong>（如短生命周期应用不适用）。</li>
+<li>代码缓存占用内存。</li>
+</ul>
+</li>
+</ul>
+<p><strong>JIT 适用场景</strong></p>
+<ul>
+<li><strong>长期运行应用</strong>：如 Web 服务、大数据处理（JIT 优势明显）。</li>
+<li><strong>短时任务</strong>：如命令行工具，解释器可能更高效。</li>
+</ul>
+<h3 id="【困难】什么是逃逸分析？"><a href="#【困难】什么是逃逸分析？" class="headerlink" title="【困难】什么是逃逸分析？"></a>【困难】什么是逃逸分析？</h3><p><strong>逃逸分析</strong> 是 JVM 在 <strong>即时编译（JIT）阶段</strong> 进行的一种优化技术，用于分析对象的动态作用域，判断对象是否会“逃逸”出当前方法或线程，从而决定是否可以进行栈上分配、锁消除或标量替换等优化。</p>
+<p>逃逸分析通过判断对象作用域，实现<strong>栈分配、锁消除、标量替换</strong>等优化，是 JVM 提升性能的关键技术之一，尤其在高频代码中效果显著。</p>
+<ul>
+<li><strong>逃逸对象（Escape）</strong></li>
+<li><strong>方法逃逸</strong>：对象被其他方法引用（如作为参数传递或返回值）。<ul>
+<li><strong>线程逃逸</strong>：对象被其他线程访问（如赋值给静态变量或共享实例变量）。</li>
+</ul>
+</li>
+<li><strong>非逃逸对象（Non-Escaping）</strong>：对象仅在当前方法内创建和使用，未被外部引用。</li>
+</ul>
+<p><strong>逃逸分析的优化场景</strong></p>
+<ul>
+<li><strong>栈上分配（Stack Allocation）</strong><ul>
+<li>对于<strong>非逃逸对象</strong>，JVM 直接在栈帧中分配内存（而非堆），对象随方法调用结束自动销毁，减少 GC 压力。</li>
+<li>_示例_：方法内部的临时对象。</li>
+</ul>
+</li>
+<li><strong>标量替换（Scalar Replacement）</strong><ul>
+<li>将非逃逸对象的字段拆解为局部变量（标量），避免创建完整对象。</li>
+<li>_示例_：<code>Point</code> 对象的 <code>x</code>、<code>y</code> 字段被替换为两个局部变量。</li>
+</ul>
+</li>
+<li><strong>锁消除（Lock Elision）</strong><ul>
+<li>若对象未线程逃逸且同步块无竞争，JVM 会移除不必要的锁（如 <code>synchronized</code>）。</li>
+<li>_示例_：局部 <code>StringBuffer</code> 的同步操作会被优化掉。</li>
+</ul>
+</li>
+</ul>
+<p><strong>逃逸分析的触发条件</strong></p>
+<ul>
+<li>需 JVM 启用逃逸分析（默认开启）：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-XX:+DoEscapeAnalysis  <span class="comment"># 开启（默认）</span></span><br><span class="line">-XX:-DoEscapeAnalysis  <span class="comment"># 关闭</span></span><br></pre></td></tr></table></figure></li>
+<li>配合 JIT 编译器（如 C2）在热点代码中应用。</li>
+</ul>
+<p><strong>性能影响</strong></p>
+<ul>
+<li><strong>优点</strong>：减少堆分配、降低 GC 开销、提升局部性。</li>
+<li><strong>限制</strong>：分析本身有开销，复杂对象可能无法优化。</li>
+</ul>
+<p><strong>示例代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">example</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 非逃逸对象（可能被栈分配或标量替换）</span></span><br><span class="line">    <span class="type">Point</span> <span class="variable">p</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Point</span>(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">    System.out.println(p.x + p.y);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Point</span> &#123;</span><br><span class="line">    <span class="type">int</span> x, y;</span><br><span class="line">    Point(<span class="type">int</span> x, <span class="type">int</span> y) &#123; <span class="built_in">this</span>.x = x; <span class="built_in">this</span>.y = y; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="【困难】什么是-AOT？"><a href="#【困难】什么是-AOT？" class="headerlink" title="【困难】什么是 AOT？"></a>【困难】什么是 AOT？</h3><p>::: info 什么是 AOT？<br>:::</p>
+<p>Java 9 引入 <strong>AOT（Ahead of Time Compilation，提前编译）</strong> 。AOT 模式下，<strong>程序运行前直接编译为机器码</strong>（类似 C&#x2F;C++&#x2F;Rust）。</p>
+<p>::: info AOT 和 JIT 有什么区别？<br>:::</p>
+<p><strong>AOT vs. JIT</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>维度</strong></th>
+<th align="left"><strong>AOT</strong></th>
+<th align="left"><strong>JIT</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>启动速度</strong></td>
+<td align="left">⭐⭐⭐（极快）</td>
+<td align="left">⭐（依赖预热）</td>
+</tr>
+<tr>
+<td align="left"><strong>内存占用</strong></td>
+<td align="left">⭐⭐⭐（低）</td>
+<td align="left">⭐⭐（较高）</td>
+</tr>
+<tr>
+<td align="left"><strong>峰值性能</strong></td>
+<td align="left">⭐⭐（静态优化）</td>
+<td align="left">⭐⭐⭐（动态优化）</td>
+</tr>
+<tr>
+<td align="left"><strong>动态支持</strong></td>
+<td align="left">❌（受限）</td>
+<td align="left">✅（完整支持）</td>
+</tr>
+<tr>
+<td align="left"><strong>适合场景</strong></td>
+<td align="left">云原生&#x2F;微服务</td>
+<td align="left">高吞吐&#x2F;动态框架</td>
+</tr>
+</tbody></table>
+<p>提到 AOT 就不得不提 <a target="_blank" rel="noopener" href="https://www.graalvm.org/">GraalVM</a> 了！GraalVM 是一种高性能的 JDK（完整的 JDK 发行版本），它可以运行 Java 和其他 JVM 语言，以及 JavaScript、Python 等非 JVM 语言。 GraalVM 不仅能提供 AOT 编译，还能提供 JIT 编译。感兴趣的同学，可以去看看 <a target="_blank" rel="noopener" href="https://www.graalvm.org/latest/docs/">GraalVM 的官方文档</a>。如果觉得官方文档看着比较难理解的话，也可以找一些文章来看看，比如：</p>
+<p>::: tip 扩展</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/4haTyXUmh8m-dBQaEzwDJw">基于静态编译构建微服务应用</a></li>
+<li>[走向 Native 化：Spring&amp;Dubbo AOT 技术示例与原理讲解](<a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/blog/2023/06/28/%E8%B5%B0%E5%90%91-native-%E5%8C%96">https://cn.dubbo.apache.org/zh-cn/blog/2023/06/28/走向-native-化</a> springdubbo-aot-技术示例与原理讲解&#x2F;)</li>
+</ul>
+<p>:::</p>
+<p>::: info 既然 AOT 这么多优点，那为什么不全部使用这种编译方式呢？<br>:::</p>
+<p><strong>AOT 的局限性在于不支持动态特性</strong>：</p>
+<ul>
+<li>不支持反射、动态代理、运行时类加载、JNI 等</li>
+<li>影响框架兼容性（如 Spring、CGLIB 依赖 ASM 技术生成动态字节码）</li>
+</ul>
+<p><strong>AOT 的适用场景</strong>：</p>
+<ul>
+<li><strong>适合</strong>：启动敏感的微服务、云原生应用</li>
+<li><strong>不适合</strong>：需动态特性的复杂框架或高频优化的长运行任务</li>
+</ul>
+<h2 id="JVM-内存管理"><a href="#JVM-内存管理" class="headerlink" title="JVM 内存管理"></a>JVM 内存管理</h2><h3 id="【困难】JVM-的内存区域是如何划分的？"><a href="#【困难】JVM-的内存区域是如何划分的？" class="headerlink" title="【困难】JVM 的内存区域是如何划分的？"></a>【困难】JVM 的内存区域是如何划分的？</h3><p>JDK7 和 JDK8 的 JVM 的内存区域划分有所不同，如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202505070632861.png"></p>
+<p><strong>线程私有区域</strong></p>
+<ul>
+<li><strong>程序计数器</strong><ul>
+<li>记录当前线程执行的字节码指令地址（Native 方法时为<code>undefined</code>）。</li>
+<li><strong>JVM 中唯一无 OOM 的区域</strong>。</li>
+</ul>
+</li>
+<li><strong>虚拟机栈</strong><ul>
+<li>存储方法调用的<strong>栈帧</strong>（局部变量表、操作数栈、动态链接、返回地址）。<ul>
+<li><strong>局部变量表</strong>：用于存放方法参数和方法内部定义的局部变量。</li>
+<li><strong>操作数栈</strong>：主要作为方法调用的中转站使用，用于存放方法执行过程中产生的中间计算结果。另外，计算过程中产生的临时变量也会放在操作数栈中。</li>
+<li><strong>动态连接</strong> - 用于一个方法调用其他方法的场景。Class 文件的常量池中有大量的符号引用，字节码中的方法调用指令就以常量池中指向方法的符号引用为参数。这些符号引用一部分会在类加载阶段或第一次使用的时候转化为直接引用，这种转化称为<strong>静态解析</strong>；另一部分将在每一次的运行期间转化为直接应用，这部分称为<strong>动态连接</strong>。</li>
+<li><strong>方法返回地址</strong> - 用于返回方法被调用的位置，恢复上层方法的局部变量和操作数栈。Java 方法有两种返回方式，一种是 <code>return</code> 语句正常返回，一种是抛出异常。无论采用何种退出方式，都会导致栈帧被弹出。也就是说，栈帧随着方法调用而创建，随着方法结束而销毁。无论方法正常完成还是异常完成都算作方法结束。</li>
+</ul>
+</li>
+<li>异常：<code>StackOverflowError</code>（栈深度超限）、<code>OOM</code>（扩展失败）。</li>
+<li>可以通过 <code>-Xss</code> 指定占内存大小</li>
+</ul>
+</li>
+<li><strong>本地方法栈</strong>：与虚拟机栈的作用非常相似，二者区别仅在于：<strong>虚拟机栈为 Java 方法服务；本地方法栈为 Native 方法服务</strong>。</li>
+</ul>
+<p><strong>线程共享区域</strong></p>
+<ul>
+<li><strong>堆（Heap）</strong><ul>
+<li>存放<strong>所有对象实例和数组</strong>，是 GC 主战场。</li>
+<li>分区：新生代（Eden+Survivor）、老年代。</li>
+<li>异常：OOM: Java heap space（对象过多或内存泄漏）。</li>
+</ul>
+</li>
+<li><strong>字符串常量池</strong>：用于存储字符串字面量，位于堆内存中的一块特殊区域。通过 String 类的 intern() 方法可以将字符串键入到字符串常量池。</li>
+<li><strong>方法区（JDK 8+：元空间）</strong><ul>
+<li>存储类元信息、运行时常量池、静态变量（JDK 7 后移至堆）。</li>
+<li><strong>JDK 8 用元空间（本地内存）替代永久代</strong>，默认无上限。</li>
+<li>异常：<code>OOM</code>（加载过多类）。</li>
+</ul>
+</li>
+<li><strong>运行时常量池</strong>：Class 文件中存储编译时生成的常量信息，并在类加载时进入 JVM 方法区。</li>
+</ul>
+<p><strong>直接内存（非 JVM 规范）</strong></p>
+<p>直接内存是 JVM 堆外的本地内存。具有读写快、无 GC 开销，需手动管理的特性。</p>
+<ul>
+<li>分配：ByteBuffer.allocateDirect()</li>
+<li>清理：DirectBuffer.cleaner().clean()</li>
+<li>场景：高频 I&#x2F;O（如 NIO、Netty、MMAP）</li>
+<li>异常：Direct buffer memory</li>
+<li>JVM 参数：可以通过 <code>-XX:MaxDirectMemorySize</code> 设置直接内存大小，如果无设置，默认大小等于 <code>-Xmx</code> 值。</li>
+</ul>
+<h3 id="【困难】JVM-产生-OOM-有哪几种情况？"><a href="#【困难】JVM-产生-OOM-有哪几种情况？" class="headerlink" title="【困难】JVM 产生 OOM 有哪几种情况？"></a>【困难】JVM 产生 OOM 有哪几种情况？</h3><p>JVM 发生 <strong>OutOfMemoryError（OOM）</strong> 的原因多种多样，主要与内存区域划分和对象分配机制相关。以下是所有可能的 OOM 类型及其触发条件、典型案例和排查方法：</p>
+<h4 id="Java-heap-space"><a href="#Java-heap-space" class="headerlink" title="Java heap space"></a>Java heap space</h4><ul>
+<li><p><strong>触发条件</strong>：<strong>堆内存不足</strong>，无法分配新对象。</p>
+</li>
+<li><p><strong>常见原因</strong>：</p>
+<ul>
+<li>内存泄漏（如静态容器持续增长、未关闭的资源）。</li>
+<li>堆内存设置过小（<code>-Xmx</code> 值不合理）。</li>
+<li>大对象（如一次性加载超大文件到内存）。</li>
+</ul>
+</li>
+<li><p><strong>案例代码</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">List&lt;<span class="type">byte</span>[]&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    list.add(<span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span> * <span class="number">1024</span>]); <span class="comment">// 持续分配 1MB 数组</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>解决方向</strong>：</p>
+<ul>
+<li>检查 <code>-Xmx</code> 和 <code>-Xms</code> 参数是否合理。</li>
+<li>使用 <code>jmap -histo:live &lt;pid&gt;</code> 或 <strong>MAT（Memory Analyzer Tool）</strong> 分析堆转储（<code>-XX:+HeapDumpOnOutOfMemoryError</code>）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Metaspace（JDK-8-及以后）"><a href="#Metaspace（JDK-8-及以后）" class="headerlink" title="Metaspace（JDK 8 及以后）"></a>Metaspace（JDK 8 及以后）</h4><ul>
+<li><p><strong>触发条件</strong>：<strong>元空间（Metaspace）不足</strong>，无法加载新的类信息。</p>
+</li>
+<li><p><strong>常见原因</strong>：</p>
+<ul>
+<li>动态生成大量类（如反射、CGLIB、动态代理）。</li>
+<li>未设置元空间上限（默认依赖本地内存，可能耗尽）。</li>
+</ul>
+</li>
+<li><p><strong>案例代码</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000000</span>; i++) &#123;</span><br><span class="line">    <span class="type">Enhancer</span> <span class="variable">enhancer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Enhancer</span>(); <span class="comment">// CGLIB 动态生成类</span></span><br><span class="line">    enhancer.setSuperclass(OOM.class);</span><br><span class="line">    enhancer.create();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>解决方向</strong>：</p>
+<ul>
+<li>调整元空间大小：<code>-XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M</code>。</li>
+<li>检查类加载器泄漏（如热部署未清理旧类）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="PermGen-space（JDK-7-及以前）"><a href="#PermGen-space（JDK-7-及以前）" class="headerlink" title="PermGen space（JDK 7 及以前）"></a>PermGen space（JDK 7 及以前）</h4><ul>
+<li><strong>类似 Metaspace</strong>，但发生在永久代（PermGen），JDK 8 后被元空间取代。</li>
+<li><strong>常见原因</strong>：大量字符串常量或类加载未卸载。</li>
+</ul>
+<h4 id="Direct-buffer-memory"><a href="#Direct-buffer-memory" class="headerlink" title="Direct buffer memory"></a>Direct buffer memory</h4><ul>
+<li><p><strong>触发条件</strong>：<strong>直接内存（堆外内存）耗尽</strong>。</p>
+</li>
+<li><p><strong>常见原因</strong>：</p>
+<ul>
+<li>NIO 的 <code>ByteBuffer.allocateDirect()</code> 未释放。</li>
+<li>直接内存上限过小（<code>-XX:MaxDirectMemorySize</code>）。</li>
+</ul>
+</li>
+<li><p><strong>案例代码</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">List&lt;ByteBuffer&gt; buffers = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    buffers.add(ByteBuffer.allocateDirect(<span class="number">1024</span> * <span class="number">1024</span>)); <span class="comment">// 1MB 直接内存</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>解决方向</strong>：</p>
+<ul>
+<li>显式调用 <code>((DirectBuffer) buffer).cleaner().clean()</code> 或复用缓冲区。</li>
+<li>增加 <code>-XX:MaxDirectMemorySize=1G</code>。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Unable-to-create-new-native-thread"><a href="#Unable-to-create-new-native-thread" class="headerlink" title="Unable to create new native thread"></a>Unable to create new native thread</h4><ul>
+<li><p><strong>触发条件</strong>：<strong>线程数超过系统限制</strong>（非堆内存问题）。</p>
+</li>
+<li><p><strong>常见原因</strong>：</p>
+<ul>
+<li>线程池配置不合理（如无界线程池）。</li>
+<li>系统级限制（<code>ulimit -u</code> 查看用户最大线程数）。</li>
+</ul>
+</li>
+<li><p><strong>案例代码</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">100000</span>); &#125; <span class="keyword">catch</span> (Exception e) &#123;&#125;</span><br><span class="line">    &#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>解决方向</strong>：</p>
+<ul>
+<li>改用线程池（如 <code>ThreadPoolExecutor</code>）。</li>
+<li>调整系统限制（Linux 下修改 <code>/etc/security/limits.conf</code>）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="GC-overhead-limit-exceeded"><a href="#GC-overhead-limit-exceeded" class="headerlink" title="GC overhead limit exceeded"></a>GC overhead limit exceeded</h4><ul>
+<li><strong>触发条件</strong>：GC 耗时超过 98% 且回收内存不足 2%（JVM 自我保护）。</li>
+<li><strong>本质原因</strong>：堆内存几乎耗尽，GC 无效循环。</li>
+<li><strong>解决方向</strong>：<ul>
+<li>同 <code>heap space</code> 排查内存泄漏。</li>
+<li>关闭保护机制（不推荐）：<code>-XX:-UseGCOverheadLimit</code>。</li>
+</ul>
+</li>
+</ul>
+<h4 id="CodeCache-is-full（JIT-编译代码缓存满）"><a href="#CodeCache-is-full（JIT-编译代码缓存满）" class="headerlink" title="CodeCache is full（JIT 编译代码缓存满）"></a>CodeCache is full（JIT 编译代码缓存满）</h4><ul>
+<li><strong>触发条件</strong>：JIT 编译的本地代码超出缓存区（<code>-XX:ReservedCodeCacheSize</code>）。</li>
+<li><strong>常见原因</strong>：动态生成大量方法（如频繁调用反射）。</li>
+<li><strong>解决方向</strong>：<ul>
+<li>增加缓存：<code>-XX:ReservedCodeCacheSize=256M</code>。</li>
+<li>关闭分层编译：<code>-XX:-TieredCompilation</code>。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Requested-array-size-exceeds-VM-limit"><a href="#Requested-array-size-exceeds-VM-limit" class="headerlink" title="Requested array size exceeds VM limit"></a>Requested array size exceeds VM limit</h4><ul>
+<li><p><strong>触发条件</strong>：尝试分配超过 JVM 限制的数组（如 <code>Integer.MAX_VALUE - 2</code>）。</p>
+</li>
+<li><p><strong>案例代码</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[Integer.MAX_VALUE]; <span class="comment">// 直接崩溃</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>解决方向</strong>：检查代码中不合理的数组分配逻辑。</p>
+</li>
+</ul>
+<h4 id="OOM-类型速查表"><a href="#OOM-类型速查表" class="headerlink" title="OOM 类型速查表"></a>OOM 类型速查表</h4><table>
+<thead>
+<tr>
+<th>OOM 类型</th>
+<th>关联内存区域</th>
+<th>典型原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Java heap space</code></td>
+<td>堆</td>
+<td>内存泄漏&#x2F;堆太小</td>
+</tr>
+<tr>
+<td><code>Metaspace</code> &#x2F; <code>PermGen space</code></td>
+<td>元空间&#x2F;永久代</td>
+<td>类加载爆炸</td>
+</tr>
+<tr>
+<td><code>Unable to create native thread</code></td>
+<td>系统线程数</td>
+<td>线程池失控&#x2F;系统限制</td>
+</tr>
+<tr>
+<td><code>Direct buffer memory</code></td>
+<td>堆外内存</td>
+<td>NIO Buffer 未释放</td>
+</tr>
+<tr>
+<td><code>GC overhead limit exceeded</code></td>
+<td>堆</td>
+<td>GC 无效循环</td>
+</tr>
+<tr>
+<td><code>CodeCache is full</code></td>
+<td>JIT 代码缓存</td>
+<td>动态方法过多</td>
+</tr>
+<tr>
+<td><code>Requested array size exceeds VM</code></td>
+<td>堆</td>
+<td>超大数组分配</td>
+</tr>
+</tbody></table>
+<h2 id="类加载"><a href="#类加载" class="headerlink" title="类加载"></a>类加载</h2><h3 id="【中等】Java-里的对象在虚拟机里面是怎么存储的？"><a href="#【中等】Java-里的对象在虚拟机里面是怎么存储的？" class="headerlink" title="【中等】Java 里的对象在虚拟机里面是怎么存储的？"></a>【中等】Java 里的对象在虚拟机里面是怎么存储的？</h3><p>64 位 JVM 中，一个空<code>Object</code>占 16 字节（12 字节头 + 4 字节填充）。</p>
+<p>每个 Java 对象在堆内存中分为 <strong>3 个部分</strong>：</p>
+<ul>
+<li><strong>对象头（Header）</strong><ul>
+<li><strong>Mark Word</strong>：存储哈希码、GC 年龄、锁状态（如偏向锁信息）。</li>
+<li><strong>Class Pointer</strong>：指向类元数据的指针（压缩后占 4 字节，否则 8 字节）。</li>
+</ul>
+</li>
+<li><strong>实例数据（Fields）</strong>：对象的所有成员变量（包括继承的字段），按类型对齐存储。</li>
+<li><strong>对齐填充（Padding）</strong>：确保对象大小为 8 字节的整数倍（优化 CPU 缓存行访问）。</li>
+</ul>
+<p><strong>对象分配策略</strong></p>
+<ul>
+<li><strong>新生代分配</strong>：大多数对象优先分配在** Eden 区**（若开启 TLAB，线程先分配至私有缓冲区）。触发 Young GC 后，存活对象移至 Survivor 区或晋升老年代。</li>
+<li><strong>老年代分配</strong>：大对象（如<code>-XX:PretenureSizeThreshold=1MB</code>）直接进入老年代。长期存活对象（年龄 &gt; <code>MaxTenuringThreshold</code>）从 Survivor 晋升。</li>
+</ul>
+<p><strong>分配方式</strong>：</p>
+<ul>
+<li><strong>指针碰撞</strong>（堆内存规整时，如 Serial 收集器）。</li>
+<li><strong>空闲列表</strong>（堆内存碎片化时，如 CMS 收集器）。</li>
+</ul>
+<h3 id="【中等】Java-类的生命周期是怎样的？"><a href="#【中等】Java-类的生命周期是怎样的？" class="headerlink" title="【中等】Java 类的生命周期是怎样的？"></a>【中等】Java 类的生命周期是怎样的？</h3><p>Java 类的生命周期可以分为 7 个阶段：加载 → 链接（验证→准备→解析） → 初始化 → 使用 → （可能）卸载。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202505070635024.png"></p>
+<ul>
+<li><strong>加载（Loading）</strong><ul>
+<li>读取 <code>.class</code> 文件，生成 <code>Class&lt;?&gt;</code> 对象。</li>
+<li>触发条件：<code>new</code>、访问静态成员、反射等。</li>
+</ul>
+</li>
+<li><strong>链接（Linking）</strong><ul>
+<li><strong>验证（Verification）</strong>：检查字节码合法性（如魔数、继承规则）。</li>
+<li><strong>准备（Preparation）</strong>：为 <code>static</code> 变量分配内存，赋默认值（如 <code>int</code> 为 <code>0</code>）。</li>
+<li><strong>解析（Resolution）</strong>：将符号引用（如类名）转为直接引用（内存地址）。</li>
+</ul>
+</li>
+<li><strong>初始化（Initialization）</strong><ul>
+<li>执行 <code>&lt;clinit&gt;()</code>，完成 <code>static</code> 赋值和静态代码块。</li>
+<li>触发条件：首次 <code>new</code>、访问非 <code>final</code> 静态变量、反射初始化等。</li>
+</ul>
+</li>
+<li><strong>使用（Using）</strong><ul>
+<li>正常调用方法、创建实例。</li>
+</ul>
+</li>
+<li><strong>卸载（Unloading）</strong><ul>
+<li>条件：类无实例、<code>ClassLoader</code> 被回收、无 <code>Class&lt;?&gt;</code> 引用。</li>
+<li>典型场景：动态加载的类（如热部署）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="【困难】什么是类加载器吗？"><a href="#【困难】什么是类加载器吗？" class="headerlink" title="【困难】什么是类加载器吗？"></a>【困难】什么是类加载器吗？</h3><p>Java 类加载器是 <strong>JVM（Java 虚拟机）</strong> 的核心组件之一，负责在运行时动态加载 Java 类（<code>.class</code> 文件）到内存，并生成对应的 <code>Class&lt;?&gt;</code> 对象。</p>
+<h4 id="类加载器层次结构"><a href="#类加载器层次结构" class="headerlink" title="类加载器层次结构"></a>类加载器层次结构</h4><p>类加载器采用 <strong>“双亲委派模型”</strong> 进行层次化管理，确保类的唯一性和安全性。按层级自上而下有 4 种类加载器：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200617115936.png" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th align="left">类加载器</th>
+<th align="left">加载范围</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Bootstrap ClassLoader</strong>（启动类加载器）</td>
+<td align="left"><code>JRE/lib</code> 或 <code>-Xbootclasspath</code></td>
+<td align="left">由 C++ 实现，是 JVM 的一部分，无 Java 父类加载器</td>
+</tr>
+<tr>
+<td align="left"><strong>Extension ClassLoader</strong>（扩展类加载器）</td>
+<td align="left"><code>JRE/lib/ext</code> 或 <code>-Djava.ext.dirs</code></td>
+<td align="left">加载 Java 扩展库（如 <code>javax.*</code>）</td>
+</tr>
+<tr>
+<td align="left"><strong>Application ClassLoader</strong>（应用类加载器）</td>
+<td align="left"><code>-Djava.class.path</code> 或 <code>-cp</code> 或 <code>-classpath</code></td>
+<td align="left">默认加载用户编写的类（<code>main()</code> 方法所在类）</td>
+</tr>
+<tr>
+<td align="left"><strong>Custom ClassLoader</strong>（自定义类加载器）</td>
+<td align="left">用户自定义路径（如网络、加密类）</td>
+<td align="left">可继承 <code>ClassLoader</code> 实现个性化加载逻辑</td>
+</tr>
+</tbody></table>
+<h4 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h4><p>双亲委派模型（Parents Delegation Model）要求除了顶层的 Bootstrap ClassLoader 外，其余的类加载器都应有自己的父类加载器。这里类加载器之间的父子关系一般通过组合（Composition）关系来实现，而不是通过继承（Inheritance）的关系实现。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202505070634474.png"></p>
+<p><strong>工作原理</strong>：<strong>只有当父类加载器加载失败的情况下，才会用子类加载器去加载类</strong>。</p>
+<p><strong>优势</strong></p>
+<ul>
+<li><strong>避免重复加载</strong>：双亲委派模型使得 Java 类随着它的类加载器一起具有一种带有优先级的层次关系，从而确保类在 JVM 中唯一（如 <code>java.lang.Object</code> 只由 <code>Bootstrap</code> 加载）。</li>
+<li><strong>安全性</strong>：防止用户伪造核心类（如自定义 <code>java.lang.String</code> 会被父类加载器拦截）。</li>
+</ul>
+<p>以下是抽象类 <code>java.lang.ClassLoader</code> 的代码片段，其中的 <code>loadClass()</code> 方法运行过程如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">ClassLoader</span> &#123;</span><br><span class="line">    <span class="comment">// The parent class loader for delegation</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ClassLoader parent;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Class&lt;?&gt; loadClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">return</span> loadClass(name, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="type">boolean</span> resolve) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;</span><br><span class="line">            <span class="comment">// 首先判断该类型是否已经被加载</span></span><br><span class="line">            Class&lt;?&gt; c = findLoadedClass(name);</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">// 如果没有被加载，就委托给父类加载或者委派给启动类加载器加载</span></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (parent != <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="comment">// 如果存在父类加载器，就委派给父类加载器加载</span></span><br><span class="line">                        c = parent.loadClass(name, <span class="literal">false</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">// 如果不存在父类加载器，就检查是否是由启动类加载器加载的类，通过调用本地方法native Class findBootstrapClass(String name)</span></span><br><span class="line">                        c = findBootstrapClassOrNull(name);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                    <span class="comment">// 如果父类加载器加载失败，会抛出 ClassNotFoundException</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (c == <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 如果父类加载器和启动类加载器都不能完成加载任务，才调用自身的加载功能</span></span><br><span class="line">                    c = findClass(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (resolve) &#123;</span><br><span class="line">                resolveClass(c);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> c;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt; findClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">ClassNotFoundException</span>(name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>【说明】</p>
+<ul>
+<li>先检查类是否已经加载过，如果没有则让父类加载器去加载。</li>
+<li>当父类加载器加载失败时抛出 <code>ClassNotFoundException</code>，此时尝试自己去加载。</li>
+</ul>
+<h2 id="字节码"><a href="#字节码" class="headerlink" title="字节码"></a>字节码</h2><h3 id="【中等】Java-是编译型语言还是解释型语言？"><a href="#【中等】Java-是编译型语言还是解释型语言？" class="headerlink" title="【中等】Java 是编译型语言还是解释型语言？"></a>【中等】Java 是编译型语言还是解释型语言？</h3><p>结论：<strong>Java 既是编译型语言，也是解释型语言</strong>。</p>
+<p>::: info 什么是编译型语言？什么是解释型语言？<br>:::</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B7%A8%E8%AD%AF%E8%AA%9E%E8%A8%80"><strong>编译型语言</strong></a> - 程序在执行之前<strong>需要一个专门的编译过程，把程序编译成为机器语言的文件</strong>，运行时不需要重新翻译，直接使用编译的结果就行了。一般情况下，编译型语言的执行速度比较快，开发效率比较低。常见的编译型语言有 C、C++、Go 等。</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%9B%B4%E8%AD%AF%E8%AA%9E%E8%A8%80"><strong>解释型语言</strong></a> - 程序不需要编译，只是在程序运行时通过 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%9B%B4%E8%AD%AF%E5%99%A8">解释器</a> ，将代码一句一句解释为机器代码后再执行。一般情况下，解释型语言的执行速度比较慢，开发效率比较高。常见的解释型语言有 JavaScript、Python、Ruby 等。</li>
+</ul>
+<p>::: info 为什么说 Java 既是编译型语言，也是解释型语言？<br>:::</p>
+<p>Java 语言既具有编译型语言的特征，也具有解释型语言的特征。因此，我们说 Java 是编译和解释并存的。</p>
+<ul>
+<li><strong>编译</strong>：源码 → 字节码（<code>.java</code> → <code>.class</code>）。</li>
+<li><strong>解释&#x2F;JIT</strong>：字节码 → 机器码（解释执行 + 热点代码编译优化）。</li>
+</ul>
+<p>Java 的源代码，首先，<strong>通过 Javac 编译成为字节码（bytecode）</strong>，即 <code>*.java</code> 文件转为 <code>*.class</code> 文件；然后，在运行时，<strong>通过 Java 虚拟机（JVM）内嵌的解释器将字节码转换成为最终的机器码来执行</strong>。正是由于 JVM 这套机制，使得 Java 可以【<strong>一次编写，到处执行（Write Once, Run Anywhere）</strong>】。</p>
+<p>为了改善解释语言的效率而发展出的 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8D%B3%E6%99%82%E7%B7%A8%E8%AD%AF">即时编译</a> 技术，已经缩小了这两种语言间的差距。这种技术混合了编译语言与解释型语言的优点，它像编译语言一样，先把程序源代码编译成 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AD%97%E8%8A%82%E7%A0%81">字节码</a> 。到执行期时，再将字节码直译，之后执行。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Java">Java</a> 与 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LLVM">LLVM</a> 是这种技术的代表产物。常见的 JVM（如 Hotspot JVM），都提供了 JIT（Just-In-Time）编译器，JIT 能够在运行时将热点代码编译成机器码，这种情况下部分热点代码就属于<strong>编译执行</strong>，而不是解释执行了。</p>
+<p>::: tip 扩展</p>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2020/10/22/java-jit-practice-in-meituan.html">基本功 | Java 即时编译器原理解析及实践</a></p>
+<p>:::</p>
+<h3 id="【中等】什么是-Java-字节码？它与机器码有什么区别？"><a href="#【中等】什么是-Java-字节码？它与机器码有什么区别？" class="headerlink" title="【中等】什么是 Java 字节码？它与机器码有什么区别？"></a>【中等】什么是 Java 字节码？它与机器码有什么区别？</h3><p>Java 字节码（Java Bytecode）是 Java 源代码编译后生成的中间代码，它是 Java 虚拟机（JVM）执行的指令集。<strong>JVM 通过解释器或即时编译（JIT）将字节码转换为机器码执行</strong>。字节码是 Java 实现【<strong>一次编写，到处执行（Write Once, Run Anywhere）</strong>】的核心技术之一。</p>
+<p>机器码是直接由 CPU 执行的二进制指令。</p>
+<p><strong>Java 字节码要点</strong>：</p>
+<ul>
+<li><strong>基本概念</strong><ul>
+<li>平台无关的中间代码，存储在 <code>.class</code> 文件中。</li>
+<li>包含类结构、字段、方法及对应的字节码指令。</li>
+</ul>
+</li>
+<li><strong>指令集</strong>：包含加载（<code>aload</code>&#x2F;<code>iload</code>）、存储（<code>astore</code>）、运算（<code>iadd</code>）、控制流（<code>if_icmpgt</code>）等操作。</li>
+<li><strong>执行方式</strong><ul>
+<li><strong>解释执行</strong>：JVM 逐条解释字节码。</li>
+<li><strong>JIT 编译</strong>：热点代码动态编译为机器码优化性能。</li>
+</ul>
+</li>
+<li><strong>动态能力</strong><ul>
+<li><strong>反射</strong>：运行时动态解析&#x2F;修改字节码（如生成代理类）。</li>
+<li><strong>字节码增强</strong>：框架（Spring AOP 等）通过 ASM、Javassist 等工具修改字节码，实现 AOP 等功能。</li>
+</ul>
+</li>
+</ul>
+<p>::: tip 扩展</p>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/09/05/java-bytecode-enhancement.html">美团 - 字节码增强技术探索</a></p>
+<p>:::</p>
+<h3 id="【中等】-class-文件的结构包含哪些主要部分？"><a href="#【中等】-class-文件的结构包含哪些主要部分？" class="headerlink" title="【中等】.class 文件的结构包含哪些主要部分？"></a>【中等】.class 文件的结构包含哪些主要部分？</h3><ul>
+<li>魔数 (Magic Number)</li>
+<li>版本信息</li>
+<li>常量池 (Constant Pool)</li>
+<li>访问标志</li>
+<li>类索引、父类索引和接口索引</li>
+<li>字段表</li>
+<li>方法表</li>
+<li>属性表</li>
+</ul>
+<h3 id="【中等】如何查看-Java-字节码？常用工具有哪些？"><a href="#【中等】如何查看-Java-字节码？常用工具有哪些？" class="headerlink" title="【中等】如何查看 Java 字节码？常用工具有哪些？"></a>【中等】如何查看 Java 字节码？常用工具有哪些？</h3><ul>
+<li>javap (JDK 自带）</li>
+<li>ASM</li>
+<li>Bytecode Viewer</li>
+<li>JBE (Java Bytecode Editor)</li>
+</ul>
+<h3 id="【中等】Java-字节码有哪些典型应用场景？"><a href="#【中等】Java-字节码有哪些典型应用场景？" class="headerlink" title="【中等】Java 字节码有哪些典型应用场景？"></a>【中等】Java 字节码有哪些典型应用场景？</h3><ul>
+<li><strong>性能优化</strong>：JIT 编译、方法内联、热点代码分析</li>
+<li><strong>AOP 与动态代理</strong>：Spring AOP、CGLIB、JDK 动态代理</li>
+<li><strong>ORM 与懒加载</strong>：Hibernate 字节码增强实现延迟加载</li>
+<li><strong>代码分析与安全</strong>：静态分析（FindBugs）、漏洞检测、代码混淆</li>
+<li><strong>热部署与热修复</strong>：JRebel、阿里 Sophix（运行时替换字节码）</li>
+<li><strong>动态语言支持</strong>：Groovy、Kotlin 等 JVM 语言编译成字节码</li>
+<li><strong>Mock 测试</strong>：Mockito 动态生成 Mock 类字节码</li>
+<li><strong>序列化优化</strong>：Jackson、FastJSON 使用字节码加速反射</li>
+<li><strong>调试与监控</strong>：Arthas、JProfiler 插桩分析执行情况</li>
+<li><strong>JVM 研究与学习</strong>：理解 Java 语法底层实现（如<code>try-with-resources</code>、<code>lambda</code>）</li>
+</ul>
+<p><strong>核心作用</strong>：</p>
+<ul>
+<li><strong>运行时增强</strong>（AOP、代理）</li>
+<li><strong>性能优化</strong>（JIT、减少反射开销）</li>
+<li><strong>动态能力</strong>（热修复、Mock 测试）</li>
+<li><strong>跨语言支持</strong>（JVM 生态多语言）</li>
+</ul>
+<h2 id="调优"><a href="#调优" class="headerlink" title="调优"></a>调优</h2><h3 id="【简单】JDK-内置了哪些工具？"><a href="#【简单】JDK-内置了哪些工具？" class="headerlink" title="【简单】JDK 内置了哪些工具？"></a>【简单】JDK 内置了哪些工具？</h3><p>以下是较常用的 JDK 命令行工具：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>jps</code></td>
+<td>查看 Java 进程。显示系统内的所有 JVM 进程。</td>
+</tr>
+<tr>
+<td><code>jstat</code></td>
+<td>JVM 统计监控工具。监控虚拟机运行时状态信息，它可以显示出 JVM 进程中的类装载、内存、GC、JIT 编译等运行数据。</td>
+</tr>
+<tr>
+<td><code>jmap</code></td>
+<td>生成内存快照（Heap Dump）。用于打印 JVM 进程对象直方图、类加载统计。并且可以生成堆转储快照（一般称为 heapdump 或 dump 文件）。</td>
+</tr>
+<tr>
+<td><code>jstack</code></td>
+<td>线程堆栈分析（排查死锁、线程阻塞）。用于打印 JVM 进程的线程和锁的情况。并且可以生成线程快照（一般称为 threaddump 或 javacore 文件）。</td>
+</tr>
+<tr>
+<td><code>jhat</code></td>
+<td>用来分析 jmap 生成的 dump 文件。</td>
+</tr>
+<tr>
+<td><code>jinfo</code></td>
+<td>查看&#x2F;修改 JVM 运行参数。用于实时查看和调整 JVM 进程参数。</td>
+</tr>
+</tbody></table>
+<p>扩展命令行工具：</p>
+<ul>
+<li><strong>Arthas</strong>：<strong>Arthas 是阿里开源的 Java 诊断工具</strong>，无需重启应用，实时<strong>监控方法调用、查看类加载、分析性能瓶颈、热修复代码</strong>，快速定位线上问题（如 CPU 飙高、内存泄漏、方法阻塞等）。</li>
+</ul>
+<p>以下是较常见的 JVM GUI 工具：</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>工具名称</strong></th>
+<th align="left"><strong>主要功能</strong></th>
+<th align="left"><strong>适用场景</strong></th>
+<th align="left"><strong>优点</strong></th>
+<th align="left"><strong>缺点</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>VisualVM</strong></td>
+<td align="left">- 监控内存、CPU、线程、GC - 堆转储分析 - 插件扩展（如 MBeans 监控）</td>
+<td align="left">开发调试、性能分析</td>
+<td align="left">免费、轻量、JDK 自带</td>
+<td align="left">功能较基础，对大堆支持有限</td>
+</tr>
+<tr>
+<td align="left"><strong>JConsole</strong></td>
+<td align="left">- 监控堆、类、线程、MBean - 简单的 GC 分析</td>
+<td align="left">快速监控 JVM 状态</td>
+<td align="left">JDK 自带，使用简单</td>
+<td align="left">功能较少，无法深入分析</td>
+</tr>
+<tr>
+<td align="left"><strong>Eclipse MAT</strong> (Memory Analyzer Tool)</td>
+<td align="left">- 分析堆转储（<code>heapdump</code>） - 检测内存泄漏、大对象</td>
+<td align="left">内存泄漏排查、OOM 分析</td>
+<td align="left">强大的内存分析能力，可视化展示对象引用链</td>
+<td align="left">需要手动导出堆转储，对超大堆分析较慢</td>
+</tr>
+<tr>
+<td align="left"><strong>JProfiler</strong></td>
+<td align="left">- CPU 分析、内存分析、线程分析 - 实时监控、方法级调用追踪</td>
+<td align="left">企业级性能调优、生产环境监控</td>
+<td align="left">功能全面，支持多种分析模式</td>
+<td align="left">商业软件（付费），学习成本较高</td>
+</tr>
+<tr>
+<td align="left"><strong>Java Mission Control</strong> (JMC)</td>
+<td align="left">- 实时监控 JVM - 飞行记录（Flight Recorder） - 低开销性能分析</td>
+<td align="left">生产环境监控、性能诊断</td>
+<td align="left">JDK 商业版自带，低开销</td>
+<td align="left">部分功能需商业授权（Oracle JDK）</td>
+</tr>
+</tbody></table>
+<h3 id="【中等】常用的-JVM-配置参数有哪些？"><a href="#【中等】常用的-JVM-配置参数有哪些？" class="headerlink" title="【中等】常用的 JVM 配置参数有哪些？"></a>【中等】常用的 JVM 配置参数有哪些？</h3><p><strong>内存相关参数</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>参数</strong></th>
+<th align="left"><strong>作用</strong></th>
+<th align="left"><strong>适用场景</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>-Xss</code></td>
+<td align="left">设置每个线程的栈大小</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>-Xms</code></td>
+<td align="left">初始堆大小</td>
+<td align="left">避免堆动态扩展带来的性能波动</td>
+</tr>
+<tr>
+<td align="left"><code>-Xmx</code></td>
+<td align="left">最大堆大小</td>
+<td align="left">防止 OOM，需留 20% 系统内存余量</td>
+</tr>
+<tr>
+<td align="left"><code>-Xmn</code></td>
+<td align="left">新生代大小（建议占堆 1&#x2F;3~1&#x2F;2）</td>
+<td align="left">优化 GC 频率和停顿时间</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:PermSize</code></td>
+<td align="left">永久代空间的初始值</td>
+<td align="left">Java 7 及以前用于设置方法区大小，Java 8 废弃</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:MaxPermSize</code></td>
+<td align="left">永久代空间的最大值</td>
+<td align="left">Java 7 及以前用于设置方法区大小，Java 8 废弃</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:MetaspaceSize</code></td>
+<td align="left">元空间初始大小（JDK8+）</td>
+<td align="left">避免频繁 Full GC 扩容</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:MaxMetaspaceSize</code></td>
+<td align="left">元空间最大大小（默认无限制）</td>
+<td align="left">防止元空间占用过多内存</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:+UseCompressedOops</code></td>
+<td align="left">启用压缩指针（64位系统默认开启）</td>
+<td align="left">减少内存占用（堆 &lt; 32GB 时有效）</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:NewRatio</code></td>
+<td align="left">新生代与年老代的比例（默认为 2）</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>-XX:SurvivorRatio</code></td>
+<td align="left">Eden 区与 Survivor 区比例（默认 8:1:1）</td>
+<td align="left">调整新生代对象晋升速度</td>
+</tr>
+</tbody></table>
+<p><strong>GC 相关参数</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>参数</strong></th>
+<th align="left"><strong>作用</strong></th>
+<th align="left"><strong>示例&#x2F;默认值</strong></th>
+<th align="left"><strong>适用场景</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>-XX:+UseG1GC</code></td>
+<td align="left">启用 G1 垃圾收集器（JDK9+ 默认）</td>
+<td align="left"><code>-XX:+UseG1GC</code></td>
+<td align="left">大堆（&gt;4GB）低延迟场景</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:MaxGCPauseMillis</code></td>
+<td align="left">G1 最大停顿时间目标（毫秒）</td>
+<td align="left"><code>-XX:MaxGCPauseMillis=200</code></td>
+<td align="left">控制 GC 延迟</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:ParallelGCThreads</code></td>
+<td align="left">并行 GC 线程数（默认&#x3D;CPU 核数）</td>
+<td align="left"><code>-XX:ParallelGCThreads=4</code></td>
+<td align="left">多核服务器优化 GC 效率</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:+UseConcMarkSweepGC</code></td>
+<td align="left">启用 CMS 收集器（已废弃，JDK14 移除）</td>
+<td align="left">不推荐使用</td>
+<td align="left">老年代低延迟（历史项目）</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:+PrintGCDetails</code></td>
+<td align="left">打印详细 GC 日志</td>
+<td align="left">配合 <code>-Xloggc:/path/gc.log</code></td>
+<td align="left">调试 GC 问题</td>
+</tr>
+<tr>
+<td align="left"><code>-XX:+HeapDumpOnOutOfMemoryError</code></td>
+<td align="left">OOM 时自动生成堆转储文件</td>
+<td align="left"><code>-XX:HeapDumpPath=/path/dump.hprof</code></td>
+<td align="left">内存泄漏分析</td>
+</tr>
+</tbody></table>
+<h3 id="【中等】如何在-Java-中进行内存泄漏分析？"><a href="#【中等】如何在-Java-中进行内存泄漏分析？" class="headerlink" title="【中等】如何在 Java 中进行内存泄漏分析？"></a>【中等】如何在 Java 中进行内存泄漏分析？</h3><ul>
+<li>内存泄漏的本质是<strong>对象被意外持有无法回收</strong>，通过引用链分析找到“谁在引用它”。</li>
+<li>生产环境优先配置 <code>-XX:+HeapDumpOnOutOfMemoryError</code> 防患未然。</li>
+</ul>
+<h4 id="确认内存泄漏现象"><a href="#确认内存泄漏现象" class="headerlink" title="确认内存泄漏现象"></a>确认内存泄漏现象</h4><ul>
+<li>堆内存持续增长（通过 <code>jstat -gcutil &lt;pid&gt;</code> 观察 <code>Old Gen</code> 或 <code>Metaspace</code> 使用率）。</li>
+<li>Full GC 频繁但无法回收内存（<code>jstat</code> 显示 <code>Full GC</code> 次数增加）。</li>
+<li>最终触发 <code>OutOfMemoryError: Java heap space</code>。</li>
+</ul>
+<h4 id="获取内存快照"><a href="#获取内存快照" class="headerlink" title="获取内存快照"></a>获取内存快照</h4><p><strong>方法 1：主动触发堆转储（Heap Dump）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 jmap 导出堆转储文件（需进程权限）</span></span><br><span class="line">jmap -dump:format=b,file=heap.hprof &lt;pid&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或配置 JVM 参数自动生成（OOM 时触发）</span></span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/path/heap.hprof</span><br></pre></td></tr></table></figure>
+
+<p><strong>方法 2：通过工具生成</strong></p>
+<ul>
+<li><strong>VisualVM</strong>：右键进程 → “Heap Dump”。</li>
+<li><strong>JConsole</strong>：”MBeans” → “com.sun.management” → “HotSpotDiagnostic” → “dumpHeap”。</li>
+</ul>
+<h4 id="分析堆转储文件"><a href="#分析堆转储文件" class="headerlink" title="分析堆转储文件"></a>分析堆转储文件</h4><p><strong>工具选择</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>工具</strong></th>
+<th><strong>特点</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Eclipse MAT</strong></td>
+<td>功能强大，支持对象引用链分析、泄漏嫌疑报告（推荐首选）。</td>
+</tr>
+<tr>
+<td><strong>VisualVM</strong></td>
+<td>基础分析，适合快速查看大对象分布。</td>
+</tr>
+<tr>
+<td><strong>JProfiler</strong></td>
+<td>商业工具，可视化交互好，支持实时监控。</td>
+</tr>
+</tbody></table>
+<p><strong>MAT 关键操作步骤</strong></p>
+<ol>
+<li><strong>打开堆转储文件</strong>：<code>File</code> → <code>Open Heap Dump</code>。</li>
+<li><strong>查看泄漏报告</strong>：<ul>
+<li>首页会提示 <code>Leak Suspects</code>（泄漏嫌疑对象）。</li>
+<li>示例报告：<code>&quot;java.lang.Thread&quot; instances retained by thread stack</code>（线程未释放）。</li>
+</ul>
+</li>
+<li><strong>分析对象引用链</strong>：<ul>
+<li>右键对象 → <code>Path to GC Roots</code> → <code>exclude weak/soft references</code>（排除弱引用）。</li>
+<li>查找意外被持有的对象（如静态集合、未关闭的资源）。</li>
+</ul>
+</li>
+<li><strong>统计对象占比</strong>：<code>Histogram</code> 视图按类&#x2F;包名分组，排序 <code>Retained Heap</code>（对象总占用内存）。</li>
+</ol>
+<h4 id="常见内存泄漏场景与修复"><a href="#常见内存泄漏场景与修复" class="headerlink" title="常见内存泄漏场景与修复"></a>常见内存泄漏场景与修复</h4><table>
+<thead>
+<tr>
+<th><strong>泄漏类型</strong></th>
+<th><strong>典型原因</strong></th>
+<th><strong>修复方案</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>静态集合</strong></td>
+<td>静态 <code>Map</code>&#x2F;<code>List</code> 持续添加对象未清除。</td>
+<td>使用弱引用（<code>WeakHashMap</code>）或定期清理。</td>
+</tr>
+<tr>
+<td><strong>未关闭资源</strong></td>
+<td>数据库连接、文件流未调用 <code>close()</code>。</td>
+<td>用 <code>try-with-resources</code> 自动关闭。</td>
+</tr>
+<tr>
+<td><strong>线程未终止</strong></td>
+<td>线程池或 <code>Thread</code> 未销毁（如定时任务）。</td>
+<td>调用 <code>shutdown()</code> 或设为守护线程。</td>
+</tr>
+<tr>
+<td><strong>缓存未清理</strong></td>
+<td>本地缓存（如 Guava Cache）无过期策略。</td>
+<td>设置大小限制或过期时间。</td>
+</tr>
+<tr>
+<td><strong>监听器未注销</strong></td>
+<td>事件监听器未移除（如 Spring Bean）。</td>
+<td>在销毁时手动注销监听器。</td>
+</tr>
+</tbody></table>
+<h4 id="实时诊断工具（无需堆转储）"><a href="#实时诊断工具（无需堆转储）" class="headerlink" title="实时诊断工具（无需堆转储）"></a>实时诊断工具（无需堆转储）</h4><p><strong>Arthas（阿里开源）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监控对象增长</span></span><br><span class="line">watch java.util.HashMap size <span class="string">&#x27;&#123;params,returnObj&#125;&#x27;</span> -n 5</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看类实例数量</span></span><br><span class="line">sc -d *MyClass | grep classLoaderHash</span><br><span class="line">jad --source-only com.example.LeakClass &gt; LeakClass.java</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成火焰图分析 CPU/内存</span></span><br><span class="line">profiler start -d 30 -f /tmp/flamegraph.html</span><br></pre></td></tr></table></figure>
+
+<p><strong>JVisualVM</strong>：安装 <strong>VisualGC</strong> 插件，实时观察各内存区域变化。</p>
+<h3 id="【中等】如何对-Java-的垃圾回收进行调优？"><a href="#【中等】如何对-Java-的垃圾回收进行调优？" class="headerlink" title="【中等】如何对 Java 的垃圾回收进行调优？"></a>【中等】如何对 Java 的垃圾回收进行调优？</h3><h4 id="调优核心目标"><a href="#调优核心目标" class="headerlink" title="调优核心目标"></a>调优核心目标</h4><ul>
+<li><strong>降低延迟（Latency）</strong>：减少 GC 停顿时间（STW），提升响应速度。</li>
+<li><strong>提高吞吐量（Throughput）</strong>：最大化应用处理业务的时间占比（GC 时间占比最小化）。</li>
+<li><strong>控制内存占用（Footprint）</strong>：合理分配堆内存，避免浪费或频繁扩容。</li>
+</ul>
+<h4 id="调优原则"><a href="#调优原则" class="headerlink" title="调优原则"></a>调优原则</h4><ul>
+<li><strong>数据驱动</strong>：基于监控而非猜测调整参数。</li>
+<li><strong>渐进式修改</strong>：每次只改一个参数，观察效果。</li>
+<li><strong>权衡取舍</strong>：低延迟可能牺牲吞吐量，需根据业务需求选择。</li>
+</ul>
+<p>通过以上步骤，可系统性地优化 Java GC 性能，解决停顿时间长、吞吐不足等问题。</p>
+<h4 id="调优步骤"><a href="#调优步骤" class="headerlink" title="调优步骤"></a>调优步骤</h4><p><strong>监控与基线分析</strong></p>
+<ul>
+<li><strong>工具</strong>：<ul>
+<li><code>jstat -gcutil &lt;pid&gt;</code>：实时监控 GC 各区域使用率。</li>
+<li><code>GC 日志</code>：通过 <code>-Xlog:gc*</code> 或 <code>-XX:+PrintGCDetails</code> 记录详细 GC 行为。</li>
+<li><strong>VisualVM</strong>&#x2F;<strong>Grafana + Prometheus</strong>：可视化内存和 GC 趋势。</li>
+</ul>
+</li>
+<li><strong>关键指标</strong>：Young GC &#x2F; Full GC 频率、平均停顿时间、吞吐量（<code>1 - GC时间/总时间</code>）。</li>
+</ul>
+<p><strong>选择垃圾收集器</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>收集器</strong></th>
+<th><strong>适用场景</strong></th>
+<th><strong>关键参数</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>G1 GC</strong></td>
+<td>平衡延迟与吞吐（JDK8+ 默认）</td>
+<td><code>-XX:MaxGCPauseMillis=200</code>（目标停顿时间）</td>
+</tr>
+<tr>
+<td><strong>ZGC</strong></td>
+<td>超低延迟（JDK11+，大堆）</td>
+<td><code>-XX:+UseZGC -Xmx&gt;8G</code></td>
+</tr>
+<tr>
+<td><strong>Parallel GC</strong></td>
+<td>高吞吐量（批处理任务）</td>
+<td><code>-XX:+UseParallelGC -XX:ParallelGCThreads=8</code></td>
+</tr>
+</tbody></table>
+<p><strong>堆内存分配优化</strong></p>
+<ul>
+<li><strong>总堆大小</strong>（<code>-Xms</code>&#x2F;<code>-Xmx</code>）：<ul>
+<li>建议设为物理内存的 50%~70%（预留空间给 OS 和其他进程）。</li>
+<li>容器化环境需启用 <code>-XX:+UseContainerSupport</code>。</li>
+</ul>
+</li>
+<li><strong>新生代与老年代比例</strong>：G1 无需手动设置（自动调整），Parallel GC 可设 <code>-Xmn</code>（如堆的 1&#x2F;3）。</li>
+</ul>
+<p><strong>关键参数调优</strong></p>
+<ul>
+<li><p><strong>G1 专用参数</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-XX:InitiatingHeapOccupancyPercent=45  <span class="comment"># 老年代占用阈值触发Mixed GC</span></span><br><span class="line">-XX:G1NewSizePercent=20               <span class="comment"># 新生代最小占比</span></span><br><span class="line">-XX:G1MaxNewSizePercent=50            <span class="comment"># 新生代最大占比</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>通用参数</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-XX:MetaspaceSize=512M                <span class="comment"># 避免元空间动态扩容</span></span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError       <span class="comment"># OOM时自动转储内存</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>避免常见陷阱</strong></p>
+<ul>
+<li><strong>Full GC 频繁</strong>：<ul>
+<li>检查老年代对象晋升过快（调整 <code>-XX:MaxTenuringThreshold</code>）。</li>
+<li>避免大对象直接进入老年代（如 <code>-XX:G1HeapRegionSize</code> 适配对象大小）。</li>
+</ul>
+</li>
+<li><strong>MetaSpace OOM</strong>：<ul>
+<li>增加 <code>-XX:MaxMetaspaceSize</code>（如 <code>1G</code>），并检查动态类生成（反射&#x2F;CGLIB）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>验证与迭代</strong></p>
+<ul>
+<li><strong>压测对比</strong>：使用相同负载对比调优前后的 GC 日志。</li>
+<li><strong>持续监控</strong>：生产环境通过 APM（如 SkyWalking）观察长周期效果。</li>
+</ul>
+<p><strong>调优示例</strong></p>
+<p><strong>场景：Web 服务（低延迟优先）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># G1 GC 配置示例</span></span><br><span class="line">-Xms4G -Xmx4G</span><br><span class="line">-XX:+UseG1GC</span><br><span class="line">-XX:MaxGCPauseMillis=150</span><br><span class="line">-XX:InitiatingHeapOccupancyPercent=40</span><br><span class="line">-XX:G1HeapRegionSize=4M</span><br><span class="line">-Xlog:gc*,gc+heap=debug:file=gc.log:<span class="keyword">time</span>,<span class="built_in">uptime</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>场景：大数据计算（高吞吐优先）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Parallel GC 配置示例</span></span><br><span class="line">-Xms8G -Xmx8G</span><br><span class="line">-XX:+UseParallelGC</span><br><span class="line">-XX:ParallelGCThreads=4</span><br><span class="line">-XX:MaxGCPauseMillis=500</span><br><span class="line">-XX:+UseAdaptiveSizePolicy  <span class="comment"># 自动调整新生代/老年代比例</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="高级工具"><a href="#高级工具" class="headerlink" title="高级工具"></a>高级工具</h4><ul>
+<li><p><strong>JFR（Java Flight Recorder）</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:StartFlightRecording=duration=60s,settings=profile,jfr=memory=on</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Arthas</strong>：实时诊断内存泄漏（如 <code>heapdump</code> 命令）。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/b2f6beb8/" title="Java 虚拟机面试一">https://dunwu.github.io/blog/pages/b2f6beb8/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+              <a href="/blog/tags/JVM/" rel="tag"># JVM</a>
+              <a href="/blog/tags/JavaCore/" rel="tag"># JavaCore</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/f38610f8/" rel="prev" title="Java 基础面试一">
+                  <i class="fa fa-angle-left"></i> Java 基础面试一
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/670b8cb5/" rel="next" title="Java 容器面试二">
+                  Java 容器面试二 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"a1b1e3eba9744de2eba40e16885a20c2"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

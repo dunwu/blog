@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Spring 应用上下文生命周期Spring 应用上下文启动准备阶段AbstractApplicationContext#prepareRefresh() 方法  启动时间 - startupDate 状态标识 - closed(false)、active(true) 初始化 PropertySources - initPropertySources() 检验 Environment 中必须属性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring 应用上下文生命周期">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/bc233194/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Spring 应用上下文生命周期Spring 应用上下文启动准备阶段AbstractApplicationContext#prepareRefresh() 方法  启动时间 - startupDate 状态标识 - closed(false)、active(true) 初始化 PropertySources - initPropertySources() 检验 Environment 中必须属性">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-23T01:58:09.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.714Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="框架">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/bc233194/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/bc233194/","path":"/pages/bc233194/","title":"Spring 应用上下文生命周期"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Spring 应用上下文生命周期 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.</span> <span class="nav-text">Spring 应用上下文生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%90%AF%E5%8A%A8%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.</span> <span class="nav-text">Spring 应用上下文启动准备阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanFactory-%E5%88%9B%E5%BB%BA%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.</span> <span class="nav-text">BeanFactory 创建阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanFactory-%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5"><span class="nav-number">1.3.</span> <span class="nav-text">BeanFactory 准备阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanFactory-%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E9%98%B6%E6%AE%B5"><span class="nav-number">1.4.</span> <span class="nav-text">BeanFactory 后置处理阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanFactory-%E6%B3%A8%E5%86%8C-BeanPostProcessor-%E9%98%B6%E6%AE%B5"><span class="nav-number">1.5.</span> <span class="nav-text">BeanFactory 注册 BeanPostProcessor 阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%85%A7%E5%BB%BA-Bean%EF%BC%9AMessageSource"><span class="nav-number">1.6.</span> <span class="nav-text">初始化內建 Bean：MessageSource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%85%A7%E5%BB%BA-Bean%EF%BC%9ASpring-%E4%BA%8B%E4%BB%B6%E5%B9%BF%E6%92%AD%E5%99%A8"><span class="nav-number">1.7.</span> <span class="nav-text">初始化內建 Bean：Spring 事件广播器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B7%E6%96%B0%E9%98%B6%E6%AE%B5"><span class="nav-number">1.8.</span> <span class="nav-text">Spring 应用上下文刷新阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8%E6%B3%A8%E5%86%8C%E9%98%B6%E6%AE%B5"><span class="nav-number">1.9.</span> <span class="nav-text">Spring 事件监听器注册阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanFactory-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%AE%8C%E6%88%90%E9%98%B6%E6%AE%B5"><span class="nav-number">1.10.</span> <span class="nav-text">BeanFactory 初始化完成阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E5%88%B7%E6%96%B0%E5%AE%8C%E6%88%90%E9%98%B6%E6%AE%B5"><span class="nav-number">1.11.</span> <span class="nav-text">Spring 应用上下刷新完成阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%90%AF%E5%8A%A8%E9%98%B6%E6%AE%B5"><span class="nav-number">1.12.</span> <span class="nav-text">Spring 应用上下文启动阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%81%9C%E6%AD%A2%E9%98%B6%E6%AE%B5"><span class="nav-number">1.13.</span> <span class="nav-text">Spring 应用上下文停止阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%85%B3%E9%97%AD%E9%98%B6%E6%AE%B5"><span class="nav-number">1.14.</span> <span class="nav-text">Spring 应用上下文关闭阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.15.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.16.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/bc233194/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Spring 应用上下文生命周期 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spring 应用上下文生命周期<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/13.%E6%A1%86%E6%9E%B6/01.Spring/01.Spring%E6%A0%B8%E5%BF%83/09.Spring%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-23 09:58:09" itemprop="dateCreated datePublished" datetime="2022-12-23T09:58:09+08:00">2022-12-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E6%A1%86%E6%9E%B6/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E6%A1%86%E6%9E%B6/Spring/Spring%E6%A0%B8%E5%BF%83/" itemprop="url" rel="index"><span itemprop="name">Spring核心</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Spring-应用上下文生命周期"><a href="#Spring-应用上下文生命周期" class="headerlink" title="Spring 应用上下文生命周期"></a>Spring 应用上下文生命周期</h1><h2 id="Spring-应用上下文启动准备阶段"><a href="#Spring-应用上下文启动准备阶段" class="headerlink" title="Spring 应用上下文启动准备阶段"></a>Spring 应用上下文启动准备阶段</h2><p>AbstractApplicationContext#prepareRefresh() 方法</p>
+<ul>
+<li>启动时间 - startupDate</li>
+<li>状态标识 - closed(false)、active(true)</li>
+<li>初始化 PropertySources - initPropertySources()</li>
+<li>检验 Environment 中必须属性</li>
+<li>初始化事件监听器集合</li>
+<li>初始化早期 Spring 事件集合</li>
+</ul>
+<h2 id="BeanFactory-创建阶段"><a href="#BeanFactory-创建阶段" class="headerlink" title="BeanFactory 创建阶段"></a>BeanFactory 创建阶段</h2><p>AbstractApplicationContext#obtainFreshBeanFactory() 方法</p>
+<ul>
+<li>刷新 Spring 应用上下文底层 BeanFactory - refreshBeanFactory()<ul>
+<li>销毁或关闭 BeanFactory，如果已存在的话</li>
+<li>创建 BeanFactory - createBeanFactory()</li>
+<li>设置 BeanFactory Id</li>
+<li>设置“是否允许 BeanDefinition 重复定义” - customizeBeanFactory(DefaultListableBeanFactory)</li>
+<li>设置“是否允许循环引用（依赖）” - customizeBeanFactory(DefaultListableBeanFactory)</li>
+<li>加载 BeanDefinition - loadBeanDefinitions(DefaultListableBeanFactory) 方法</li>
+<li>关联新建 BeanFactory 到 Spring 应用上下文</li>
+</ul>
+</li>
+<li>返回 Spring 应用上下文底层 BeanFactory - getBeanFactory()</li>
+</ul>
+<h2 id="BeanFactory-准备阶段"><a href="#BeanFactory-准备阶段" class="headerlink" title="BeanFactory 准备阶段"></a>BeanFactory 准备阶段</h2><p>AbstractApplicationContext#prepareBeanFactory(ConfigurableListableBeanFactory) 方法</p>
+<ul>
+<li>关联 ClassLoader</li>
+<li>设置 Bean 表达式处理器</li>
+<li>添加 PropertyEditorRegistrar 实现 - ResourceEditorRegistrar</li>
+<li>添加 Aware 回调接口 BeanPostProcessor 实现 - ApplicationContextAwareProcessor</li>
+<li>忽略 Aware 回调接口作为依赖注入接口</li>
+<li>注册 ResolvableDependency 对象 - BeanFactory、ResourceLoader、ApplicationEventPublisher 以及 ApplicationContext</li>
+<li>注册 ApplicationListenerDetector 对象</li>
+<li>注册 LoadTimeWeaverAwareProcessor 对象</li>
+<li>注册单例对象 - Environment、Java System Properties 以及 OS 环境变量</li>
+</ul>
+<h2 id="BeanFactory-后置处理阶段"><a href="#BeanFactory-后置处理阶段" class="headerlink" title="BeanFactory 后置处理阶段"></a>BeanFactory 后置处理阶段</h2><ul>
+<li>AbstractApplicationContext#postProcessBeanFactory(ConfigurableListableBeanFactory) 方法<ul>
+<li>由子类覆盖该方法</li>
+</ul>
+</li>
+<li>AbstractApplicationContext#invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory 方法<ul>
+<li>调用 BeanFactoryPostProcessor 或 BeanDefinitionRegistry 后置处理方法</li>
+<li>注册 LoadTimeWeaverAwareProcessor 对象</li>
+</ul>
+</li>
+</ul>
+<h2 id="BeanFactory-注册-BeanPostProcessor-阶段"><a href="#BeanFactory-注册-BeanPostProcessor-阶段" class="headerlink" title="BeanFactory 注册 BeanPostProcessor 阶段"></a>BeanFactory 注册 BeanPostProcessor 阶段</h2><p>AbstractApplicationContext#registerBeanPostProcessors(ConfigurableListableBeanFactory) 方法</p>
+<ul>
+<li>注册 PriorityOrdered 类型的 BeanPostProcessor Beans</li>
+<li>注册 Ordered 类型的 BeanPostProcessor Beans</li>
+<li>注册普通 BeanPostProcessor Beans</li>
+<li>注册 MergedBeanDefinitionPostProcessor Beans</li>
+<li>注册 ApplicationListenerDetector 对象</li>
+</ul>
+<h2 id="初始化內建-Bean：MessageSource"><a href="#初始化內建-Bean：MessageSource" class="headerlink" title="初始化內建 Bean：MessageSource"></a>初始化內建 Bean：MessageSource</h2><p>AbstractApplicationContext#initMessageSource() 方法</p>
+<h2 id="初始化內建-Bean：Spring-事件广播器"><a href="#初始化內建-Bean：Spring-事件广播器" class="headerlink" title="初始化內建 Bean：Spring 事件广播器"></a>初始化內建 Bean：Spring 事件广播器</h2><p>AbstractApplicationContext#initApplicationEventMulticaster() 方法</p>
+<h2 id="Spring-应用上下文刷新阶段"><a href="#Spring-应用上下文刷新阶段" class="headerlink" title="Spring 应用上下文刷新阶段"></a>Spring 应用上下文刷新阶段</h2><p>AbstractApplicationContext#onRefresh() 方法</p>
+<p>子类覆盖该方法</p>
+<ul>
+<li>org.springframework.web.context.support.AbstractRefreshableWebApplicationContext#onRefresh()</li>
+<li>org.springframework.web.context.support.GenericWebApplicationContext#onRefresh()</li>
+<li>org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext#onRefresh()</li>
+<li>org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext#onRefresh()</li>
+<li>org.springframework.web.context.support.StaticWebApplicationContext#onRefresh()</li>
+</ul>
+<h2 id="Spring-事件监听器注册阶段"><a href="#Spring-事件监听器注册阶段" class="headerlink" title="Spring 事件监听器注册阶段"></a>Spring 事件监听器注册阶段</h2><p>AbstractApplicationContext#registerListeners() 方法</p>
+<ul>
+<li>添加当前应用上下文所关联的 ApplicationListener 对象（集合）</li>
+<li>添加 BeanFactory 所注册 ApplicationListener Beans</li>
+<li>广播早期 Spring 事件</li>
+</ul>
+<h2 id="BeanFactory-初始化完成阶段"><a href="#BeanFactory-初始化完成阶段" class="headerlink" title="BeanFactory 初始化完成阶段"></a>BeanFactory 初始化完成阶段</h2><p>AbstractApplicationContext#finishBeanFactoryInitialization(ConfigurableListableBeanFactory) 方法</p>
+<ul>
+<li>BeanFactory 关联 ConversionService Bean，如果存在</li>
+<li>添加 StringValueResolver 对象</li>
+<li>依赖查找 LoadTimeWeaverAware Bean</li>
+<li>BeanFactory 临时 ClassLoader 置为 null</li>
+<li>BeanFactory 冻结配置</li>
+<li>BeanFactory 初始化非延迟单例 Beans</li>
+</ul>
+<h2 id="Spring-应用上下刷新完成阶段"><a href="#Spring-应用上下刷新完成阶段" class="headerlink" title="Spring 应用上下刷新完成阶段"></a>Spring 应用上下刷新完成阶段</h2><p>AbstractApplicationContext#finishRefresh() 方法</p>
+<ul>
+<li>清除 ResourceLoader 缓存 - clearResourceCaches() @since 5.0</li>
+<li>初始化 LifecycleProcessor 对象 - initLifecycleProcessor()</li>
+<li>调用 LifecycleProcessor#onRefresh() 方法</li>
+<li>发布 Spring 应用上下文已刷新事件 - ContextRefreshedEvent</li>
+<li>向 MBeanServer 托管 Live Beans</li>
+</ul>
+<h2 id="Spring-应用上下文启动阶段"><a href="#Spring-应用上下文启动阶段" class="headerlink" title="Spring 应用上下文启动阶段"></a>Spring 应用上下文启动阶段</h2><p>AbstractApplicationContext#start() 方法</p>
+<ul>
+<li>启动 LifecycleProcessor<ul>
+<li>依赖查找 Lifecycle Beans</li>
+<li>启动 Lifecycle Beans</li>
+</ul>
+</li>
+<li>发布 Spring 应用上下文已启动事件 - ContextStartedEvent</li>
+</ul>
+<h2 id="Spring-应用上下文停止阶段"><a href="#Spring-应用上下文停止阶段" class="headerlink" title="Spring 应用上下文停止阶段"></a>Spring 应用上下文停止阶段</h2><p>AbstractApplicationContext#stop() 方法</p>
+<ul>
+<li>停止 LifecycleProcessor<ul>
+<li>依赖查找 Lifecycle Beans</li>
+<li>停止 Lifecycle Beans</li>
+</ul>
+</li>
+<li>发布 Spring 应用上下文已停止事件 - ContextStoppedEvent</li>
+</ul>
+<h2 id="Spring-应用上下文关闭阶段"><a href="#Spring-应用上下文关闭阶段" class="headerlink" title="Spring 应用上下文关闭阶段"></a>Spring 应用上下文关闭阶段</h2><p>AbstractApplicationContext#close() 方法</p>
+<ul>
+<li>状态标识：active(false)、closed(true)</li>
+<li>Live Beans JMX 撤销托管<ul>
+<li>LiveBeansView.unregisterApplicationContext(ConfigurableApplicationContext)</li>
+</ul>
+</li>
+<li>发布 Spring 应用上下文已关闭事件 - ContextClosedEvent</li>
+<li>关闭 LifecycleProcessor<ul>
+<li>依赖查找 Lifecycle Beans</li>
+<li>停止 Lifecycle Beans</li>
+</ul>
+</li>
+<li>销毁 Spring Beans</li>
+<li>关闭 BeanFactory</li>
+<li>回调 onClose()</li>
+<li>注册 Shutdown Hook 线程（如果曾注册）</li>
+</ul>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>Spring 应用上下文生命周期有哪些阶段</strong>？</p>
+<ul>
+<li>刷新阶段 - ConfigurableApplicationContext#refresh()</li>
+<li>启动阶段 - ConfigurableApplicationContext#start()</li>
+<li>停止阶段 - ConfigurableApplicationContext#stop()</li>
+<li>关闭阶段 - ConfigurableApplicationContext#close()</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans">Spring 官方文档之 Core Technologies</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/course/intro/265">《小马哥讲 Spring 核心编程思想》</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/bc233194/" title="Spring 应用上下文生命周期">https://dunwu.github.io/blog/pages/bc233194/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E6%A1%86%E6%9E%B6/" rel="tag"># 框架</a>
+              <a href="/blog/tags/Spring/" rel="tag"># Spring</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/1e6fd6fc/" rel="prev" title="Spring Environment 抽象">
+                  <i class="fa fa-angle-left"></i> Spring Environment 抽象
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/be2542d9/" rel="next" title="Spring EL 表达式">
+                  Spring EL 表达式 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"3209f95f0aae76cd883c8269e362dab0"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

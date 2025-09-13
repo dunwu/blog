@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="《MySQL 实战 45 讲》笔记二极客时间教程 - MySQL 实战 45 讲 学习笔记 16 order by 是怎么工作的？用 explain 命令查看执行计划时，Extra 这个字段中的“Using filesort”表示的就是需要排序。 全字段排序1select city,name,age from t where city&#x3D;&amp;#x27;杭州&amp;#x27; order by name li">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《MySQL 实战 45 讲》笔记二">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/ef9fb8a5/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="《MySQL 实战 45 讲》笔记二极客时间教程 - MySQL 实战 45 讲 学习笔记 16 order by 是怎么工作的？用 explain 命令查看执行计划时，Extra 这个字段中的“Using filesort”表示的就是需要排序。 全字段排序1select city,name,age from t where city&#x3D;&amp;#x27;杭州&amp;#x27; order by name li">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220728090300.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220728090919.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503200808843.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220802060429.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202503200809203.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220803070027.png">
+<meta property="article:published_time" content="2022-07-20T11:20:08.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.694Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20220728090300.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/ef9fb8a5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/ef9fb8a5/","path":"/pages/ef9fb8a5/","title":"《MySQL 实战 45 讲》笔记二"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《MySQL 实战 45 讲》笔记二 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E3%80%8AMySQL-%E5%AE%9E%E6%88%98-45-%E8%AE%B2%E3%80%8B%E7%AC%94%E8%AE%B0%E4%BA%8C"><span class="nav-number">1.</span> <span class="nav-text">《MySQL 实战 45 讲》笔记二</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#16-order-by-%E6%98%AF%E6%80%8E%E4%B9%88%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">16 order by 是怎么工作的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%AD%97%E6%AE%B5%E6%8E%92%E5%BA%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">全字段排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rowid-%E6%8E%92%E5%BA%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">rowid 排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%AD%97%E6%AE%B5%E6%8E%92%E5%BA%8F-VS-rowid-%E6%8E%92%E5%BA%8F"><span class="nav-number">1.1.3.</span> <span class="nav-text">全字段排序 VS rowid 排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-%E5%A6%82%E4%BD%95%E6%AD%A3%E7%A1%AE%E5%9C%B0%E6%98%BE%E7%A4%BA%E9%9A%8F%E6%9C%BA%E6%B6%88%E6%81%AF%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">17 如何正确地显示随机消息？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9B-SQL-%E8%AF%AD%E5%8F%A5%E9%80%BB%E8%BE%91%E7%9B%B8%E5%90%8C%EF%BC%8C%E6%80%A7%E8%83%BD%E5%8D%B4%E5%B7%AE%E5%BC%82%E5%B7%A8%E5%A4%A7%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">18 为什么这些 SQL 语句逻辑相同，性能却差异巨大？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E5%8F%AA%E6%9F%A5%E4%B8%80%E8%A1%8C%E7%9A%84%E8%AF%AD%E5%8F%A5%EF%BC%8C%E4%B9%9F%E6%89%A7%E8%A1%8C%E8%BF%99%E4%B9%88%E6%85%A2%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">19 为什么我只查一行的语句，也执行这么慢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-%E5%B9%BB%E8%AF%BB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%8C%E5%B9%BB%E8%AF%BB%E6%9C%89%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">20 幻读是什么，幻读有什么问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#21-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E5%8F%AA%E6%94%B9%E4%B8%80%E8%A1%8C%E7%9A%84%E8%AF%AD%E5%8F%A5%EF%BC%8C%E9%94%81%E8%BF%99%E4%B9%88%E5%A4%9A%EF%BC%9F"><span class="nav-number">1.6.</span> <span class="nav-text">21 为什么我只改一行的语句，锁这么多？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#22-MySQL-%E6%9C%89%E5%93%AA%E4%BA%9B%E2%80%9C%E9%A5%AE%E9%B8%A9%E6%AD%A2%E6%B8%B4%E2%80%9D%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%9F"><span class="nav-number">1.7.</span> <span class="nav-text">22 MySQL 有哪些“饮鸩止渴”提高性能的方法？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9F%AD%E8%BF%9E%E6%8E%A5%E9%A3%8E%E6%9A%B4"><span class="nav-number">1.7.0.1.</span> <span class="nav-text">短连接风暴</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.1.</span> <span class="nav-text">慢查询性能问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QPS-%E7%AA%81%E5%A2%9E%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.2.</span> <span class="nav-text">QPS 突增问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#23-Mysql-%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%A2%E7%9A%84"><span class="nav-number">1.8.</span> <span class="nav-text">23 Mysql 是怎么保证数据不丢的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#24-Mysql-%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E4%B8%BB%E5%A4%87%E4%B8%80%E8%87%B4%E7%9A%84"><span class="nav-number">1.9.</span> <span class="nav-text">24 Mysql 是怎么保证主备一致的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#25-Mysql-%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84"><span class="nav-number">1.10.</span> <span class="nav-text">25 Mysql 是怎么保证高可用的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-%E5%A4%87%E5%BA%93%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%BB%B6%E8%BF%9F%E5%A5%BD%E5%87%A0%E4%B8%AA%E5%B0%8F%E6%97%B6"><span class="nav-number">1.11.</span> <span class="nav-text">26 备库为什么会延迟好几个小时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#27-%E4%B8%BB%E5%BA%93%E5%87%BA%E9%97%AE%E9%A2%98%E4%BA%86%EF%BC%8C%E4%BB%8E%E5%BA%93%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">1.12.</span> <span class="nav-text">27 主库出问题了，从库怎么办？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#28-%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9D%91"><span class="nav-number">1.13.</span> <span class="nav-text">28 读写分离有哪些坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#29-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%BA%93%E6%98%AF%E4%B8%8D%E6%98%AF%E5%87%BA%E9%97%AE%E9%A2%98%E4%BA%86"><span class="nav-number">1.14.</span> <span class="nav-text">29 如何判断一个数据库是不是出问题了</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#30-%E7%AD%94%E7%96%91%E6%96%87%E7%AB%A0%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E7%94%A8%E5%8A%A8%E6%80%81%E7%9A%84%E8%A7%82%E7%82%B9%E7%9C%8B%E5%8A%A0%E9%94%81"><span class="nav-number">1.15.</span> <span class="nav-text">30 答疑文章（二）：用动态的观点看加锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.16.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/ef9fb8a5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="《MySQL 实战 45 讲》笔记二 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《MySQL 实战 45 讲》笔记二<a href="https://github.com/dunwu/blog/blob/master/source/_posts/00.%E7%AC%94%E8%AE%B0/12.%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4%E6%95%99%E7%A8%8B-MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2%E7%AC%94%E8%AE%B0%E4%BA%8C.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-20 19:20:08" itemprop="dateCreated datePublished" datetime="2022-07-20T19:20:08+08:00">2022-07-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="《MySQL-实战-45-讲》笔记二"><a href="#《MySQL-实战-45-讲》笔记二" class="headerlink" title="《MySQL 实战 45 讲》笔记二"></a>《MySQL 实战 45 讲》笔记二</h1><p><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/139">极客时间教程 - MySQL 实战 45 讲</a> 学习笔记</p>
+<h2 id="16-order-by-是怎么工作的？"><a href="#16-order-by-是怎么工作的？" class="headerlink" title="16 order by 是怎么工作的？"></a>16 <code>order by</code> 是怎么工作的？</h2><p>用 explain 命令查看执行计划时，Extra 这个字段中的“Using filesort”表示的就是需要排序。</p>
+<h3 id="全字段排序"><a href="#全字段排序" class="headerlink" title="全字段排序"></a>全字段排序</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> city,name,age <span class="keyword">from</span> t <span class="keyword">where</span> city<span class="operator">=</span><span class="string">&#x27;杭州&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> name limit <span class="number">1000</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个语句执行流程如下所示 ：</p>
+<p><strong>执行流程</strong>：</p>
+<ul>
+<li>初始化 <code>sort_buffer</code>，确定放入需要排序的字段（如 <code>name</code>、<code>city</code>、<code>age</code>）。</li>
+<li>从索引中找到满足条件的记录，取出对应的字段值存入 <code>sort_buffer</code>。</li>
+<li>对 <code>sort_buffer</code> 中的数据按照排序字段进行排序。</li>
+<li>返回排序后的结果。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220728090300.png"></p>
+<p><strong>内存与磁盘排序</strong>：</p>
+<ul>
+<li>如果排序数据量小于 <code>sort_buffer_size</code>，排序在内存中完成。</li>
+<li>如果数据量过大，MySQL 会使用临时文件进行外部排序（归并排序）。<strong>MySQL 将需要排序的数据分成 N 份，每一份单独排序后存在这些临时文件中。然后把这 N 个有序文件再合并成一个有序的大文件。</strong></li>
+</ul>
+<p><strong>优化器追踪</strong>：通过 <code>OPTIMIZER_TRACE</code> 可以查看排序过程中是否使用了临时文件（<code>number_of_tmp_files</code>）。</p>
+<h3 id="rowid-排序"><a href="#rowid-排序" class="headerlink" title="rowid 排序"></a>rowid 排序</h3><ul>
+<li><strong>执行流程</strong>：<ul>
+<li>当单行数据过大时，MySQL 会采用 <code>rowid</code> 排序，只将排序字段（如 <code>name</code>）和主键 <code>id</code> 放入 <code>sort_buffer</code>。</li>
+<li>排序完成后，根据 <code>id</code> 回表查询其他字段（如 <code>city</code>、<code>age</code>）。</li>
+</ul>
+</li>
+<li><strong>性能影响</strong>：<code>rowid</code> 排序减少了 <code>sort_buffer</code> 的内存占用，但增加了回表操作，导致更多的磁盘 I&#x2F;O。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220728090919.png"></p>
+<h3 id="全字段排序-VS-rowid-排序"><a href="#全字段排序-VS-rowid-排序" class="headerlink" title="全字段排序 VS rowid 排序"></a>全字段排序 VS rowid 排序</h3><ul>
+<li><strong>内存优先</strong>：<ul>
+<li>如果内存足够大，MySQL 优先使用全字段排序，以减少磁盘访问。</li>
+<li>只有在内存不足时，才会使用 <code>rowid</code> 排序。</li>
+</ul>
+</li>
+<li><strong>设计思想</strong>：<strong>如果内存够，就要多利用内存，尽量减少磁盘访问。</strong></li>
+</ul>
+<p>并不是所有的 order by 语句，都需要排序操作的。MySQL 之所以需要生成临时表，并且在临时表上做排序操作，<strong>其原因是原来的数据都是无序的</strong>。如果查询的字段和排序字段可以通过联合索引覆盖，MySQL 可以直接利用索引的有序性，避免排序操作。</p>
+<h2 id="17-如何正确地显示随机消息？"><a href="#17-如何正确地显示随机消息？" class="headerlink" title="17 如何正确地显示随机消息？"></a>17 如何正确地显示随机消息？</h2><p><strong><code>ORDER BY RAND()</code> 的执行流程</strong></p>
+<ul>
+<li>使用 <code>ORDER BY RAND()</code> 时，MySQL 会创建一个临时表，并为每一行生成一个随机数，然后对临时表进行排序。</li>
+<li>排序过程可能使用内存临时表或磁盘临时表，具体取决于数据量和 <code>tmp_table_size</code> 的设置。</li>
+</ul>
+<p><strong><code>ORDER BY RAND()</code> 的性能问题</strong>：<code>ORDER BY RAND()</code> 需要扫描全表并生成随机数，排序过程消耗大量资源，尤其是在数据量大时，性能较差。</p>
+<p><strong>内存临时表与磁盘临时表</strong></p>
+<p><strong>内存临时表</strong>：当临时表大小小于 <code>tmp_table_size</code> 时，MySQL 使用内存临时表，排序过程使用 <code>rowid</code> 排序算法。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503200808843.png"></p>
+<p><strong>磁盘临时表</strong>：当临时表大小超过 <code>tmp_table_size</code> 时，MySQL 会使用磁盘临时表，排序过程使用归并排序算法。</p>
+<p><strong>优先队列排序</strong>：当只需要返回少量数据（如 <code>LIMIT 3</code>）时，MySQL 5.6 引入了优先队列排序算法，避免对整个数据集进行排序，减少计算量。</p>
+<p><strong>随机排序的优化方法</strong></p>
+<ul>
+<li><p><strong>随机算法 1</strong>：通过 <code>max(id)</code> 和 <code>min(id)</code> 生成随机数，然后使用 <code>LIMIT</code> 获取随机行。问题是：ID 不连续时，某些行的概率不均匀。</p>
+</li>
+<li><p><strong>随机算法 2</strong>：先获取表的总行数 <code>C</code>，然后生成随机数 <code>Y</code>，使用 <code>LIMIT Y, 1</code> 获取随机行。<strong>优点</strong>：解决了概率不均匀的问题，但需要扫描 <code>C + Y + 1</code> 行。</p>
+</li>
+<li><p><strong>随机算法 3</strong>：扩展随机算法 2，生成多个随机数 <code>Y1, Y2, Y3</code>，分别使用 <code>LIMIT Y, 1</code> 获取多行随机数据。<strong>优点</strong>：适用于需要返回多行随机数据的场景。</p>
+<p><strong>总结</strong></p>
+</li>
+<li><p>**避免使用 <code>ORDER BY RAND()</code>**：<code>ORDER BY RAND()</code> 的性能较差，尤其是在数据量大时，应尽量避免使用。</p>
+</li>
+<li><p><strong>应用层处理随机逻辑</strong>：将随机逻辑放在应用层处理，数据库只负责数据读取，减少数据库的计算压力。</p>
+</li>
+<li><p><strong>优化扫描行数</strong>：通过合理的随机算法，减少扫描行数，提升查询性能。</p>
+</li>
+</ul>
+<h2 id="18-为什么这些-SQL-语句逻辑相同，性能却差异巨大？"><a href="#18-为什么这些-SQL-语句逻辑相同，性能却差异巨大？" class="headerlink" title="18 为什么这些 SQL 语句逻辑相同，性能却差异巨大？"></a>18 为什么这些 SQL 语句逻辑相同，性能却差异巨大？</h2><p><strong>对索引字段做函数操作，可能会破坏索引值的有序性，因此优化器就决定放弃走树搜索功能。</strong></p>
+<p><strong>案例一：条件字段函数操作</strong></p>
+<ul>
+<li><strong>问题</strong>：在 <code>WHERE</code> 条件中对索引字段使用函数（如 <code>month(t_modified)</code>），会导致 MySQL 无法使用索引的快速定位功能，转而进行全索引扫描。</li>
+<li><strong>原因</strong>：对索引字段进行函数操作会破坏索引值的有序性，优化器会放弃树搜索功能，转而进行全索引扫描。</li>
+<li><strong>解决方案</strong>：避免在索引字段上使用函数操作，改为基于字段本身的范围查询。例如，将 <code>month(t_modified)=7</code> 改为 <code>t_modified</code> 的范围查询。</li>
+</ul>
+<p><strong>案例二：隐式类型转换</strong></p>
+<ul>
+<li><strong>问题</strong>：当查询条件中的字段类型与索引字段类型不一致时（如 <code>varchar</code> 和 <code>int</code>），MySQL 会进行隐式类型转换，导致无法使用索引。</li>
+<li><strong>原因</strong>：隐式类型转换相当于对索引字段进行了函数操作（如 <code>CAST</code>），优化器会放弃树搜索功能，转而进行全表扫描。</li>
+<li><strong>解决方案</strong>：确保查询条件中的字段类型与索引字段类型一致，避免隐式类型转换。</li>
+</ul>
+<p><strong>案例三：隐式字符编码转换</strong></p>
+<ul>
+<li><strong>问题</strong>：当两个表的字符集不同时（如 <code>utf8</code> 和 <code>utf8mb4</code>），在进行表连接查询时，MySQL 会对被驱动表的索引字段进行字符集转换，导致无法使用索引。</li>
+<li><strong>原因</strong>：字符集转换相当于对索引字段进行了函数操作（如 <code>CONVERT</code>），优化器会放弃树搜索功能，转而进行全表扫描。</li>
+<li><strong>解决方案</strong>：<ul>
+<li><strong>统一字符集</strong>：将两个表的字符集统一为 <code>utf8mb4</code>，避免字符集转换。</li>
+<li><strong>手动转换</strong>：在 SQL 语句中手动进行字符集转换，确保转换操作发生在驱动表上，而不是被驱动表的索引字段上。</li>
+</ul>
+</li>
+</ul>
+<h2 id="19-为什么我只查一行的语句，也执行这么慢？"><a href="#19-为什么我只查一行的语句，也执行这么慢？" class="headerlink" title="19 为什么我只查一行的语句，也执行这么慢？"></a>19 为什么我只查一行的语句，也执行这么慢？</h2><p><strong>查询长时间不返回的可能原因</strong></p>
+<ul>
+<li><strong>等 MDL 锁</strong>：当查询需要获取表的 MDL 读锁，而其他线程持有 MDL 写锁时，查询会被阻塞。<ul>
+<li><strong>解决方案</strong>：通过 <code>sys.schema_table_lock_waits</code> 表找到持有 MDL 写锁的线程，并 <code>KILL</code> 掉该线程。</li>
+</ul>
+</li>
+<li><strong>等 flush</strong>：当有线程正在对表执行 <code>flush tables</code> 操作时，其他查询会被阻塞。<ul>
+<li><strong>解决方案</strong>：找到阻塞 <code>flush</code> 操作的线程并 <code>KILL</code> 掉。</li>
+</ul>
+</li>
+<li><strong>等行锁</strong>：当查询需要获取某行的读锁，而其他事务持有该行的写锁时，查询会被阻塞。<ul>
+<li><strong>解决方案</strong>：通过 <code>sys.innodb_lock_waits</code> 表找到持有写锁的线程，并 <code>KILL</code> 掉该连接。</li>
+</ul>
+</li>
+</ul>
+<p><strong>查询慢的可能原因</strong></p>
+<ul>
+<li><strong>全表扫描</strong>：当查询条件中的字段没有索引时，MySQL 会进行全表扫描，导致查询缓慢。<ul>
+<li><strong>解决方案</strong>：为查询条件中的字段添加索引。</li>
+</ul>
+</li>
+<li><strong>一致性读与当前读</strong>：<ul>
+<li><strong>一致性读</strong>：当查询使用一致性读时，如果该行有大量 undo log（如被频繁更新），MySQL 需要依次执行这些 undo log 才能返回结果，导致查询缓慢。</li>
+<li><strong>当前读</strong>：使用 <code>lock in share mode</code> 或 <code>for update</code> 进行当前读时，MySQL 会直接读取最新的数据，因此速度较快。</li>
+<li><strong>解决方案</strong>：理解一致性读和当前读的区别，根据业务需求选择合适的查询方式。</li>
+</ul>
+</li>
+</ul>
+<h2 id="20-幻读是什么，幻读有什么问题？"><a href="#20-幻读是什么，幻读有什么问题？" class="headerlink" title="20 幻读是什么，幻读有什么问题？"></a>20 幻读是什么，幻读有什么问题？</h2><p><strong>幻读的定义</strong></p>
+<ul>
+<li>幻读指的是一个事务在前后两次查询同一个范围时，后一次查询看到了前一次查询没有看到的行。</li>
+<li>幻读仅在“当前读”（如<code>select ... for update</code>）时出现，普通的快照读不会出现幻读。</li>
+</ul>
+<p><strong>幻读的问题</strong></p>
+<ul>
+<li><strong>语义问题</strong>：事务 A 声明要锁住所有满足条件的行，但由于幻读的存在，其他事务可以插入或修改这些行，破坏了事务 A 的加锁声明。</li>
+<li><strong>数据一致性问题</strong>：幻读可能导致数据和日志在逻辑上不一致，尤其是在使用 binlog 进行数据同步或恢复时，可能会导致数据不一致。</li>
+</ul>
+<p><strong>幻读的解决方案</strong></p>
+<p>产生幻读的原因是，行锁只能锁住行，但是新插入记录这个动作，要更新的是记录之间的“间隙”。因此，为了解决幻读问题，InnoDB 只好引入新的锁，也就是间隙锁 (Gap Lock)。</p>
+<ul>
+<li><strong>间隙锁（Gap Lock）</strong>：为了解决幻读问题，InnoDB 引入了间隙锁。间隙锁锁住的是索引记录之间的间隙，防止新记录的插入。</li>
+<li><strong>Next-Key Lock</strong>：间隙锁和行锁合称 Next-Key Lock，它锁住的是一个前开后闭的区间，确保在锁定范围内无法插入新记录。</li>
+</ul>
+<p><strong>间隙锁的影响</strong>：</p>
+<ul>
+<li>间隙锁虽然解决了幻读问题，但也带来了并发度下降和死锁的风险。特别是在高并发场景下，间隙锁可能会导致更多的锁冲突和死锁。</li>
+</ul>
+<p><strong>隔离级别的选择</strong></p>
+<ul>
+<li>在<strong>可重复读</strong>隔离级别下，间隙锁生效，可以有效防止幻读。</li>
+<li>在<strong>读提交</strong>隔离级别下，间隙锁不生效，幻读问题可能会出现，但可以通过将 binlog 格式设置为<code>row</code>来解决数据一致性问题。</li>
+</ul>
+<p><strong>实际应用中的考虑</strong></p>
+<ul>
+<li>业务开发人员在设计表结构和 SQL 语句时，不仅要考虑行锁，还要考虑间隙锁的影响，避免因间隙锁导致的死锁问题。</li>
+<li>隔离级别的选择应根据业务需求来决定，如果业务不需要可重复读的保证，读提交隔离级别可能是一个更合适的选择。</li>
+</ul>
+<h2 id="21-为什么我只改一行的语句，锁这么多？"><a href="#21-为什么我只改一行的语句，锁这么多？" class="headerlink" title="21 为什么我只改一行的语句，锁这么多？"></a>21 为什么我只改一行的语句，锁这么多？</h2><p><strong>加锁规则里面，包含了两个“原则”、两个“优化”和一个“bug”。</strong></p>
+<ol>
+<li><strong>原则 1</strong>：加锁的基本单位是 Next-Key Lock，即前开后闭区间。</li>
+<li><strong>原则 2</strong>：查找过程中访问到的对象才会加锁。</li>
+<li><strong>优化 1</strong>：索引上的等值查询，给唯一索引加锁时，Next-Key Lock 退化为行锁。</li>
+<li><strong>优化 2</strong>：索引上的等值查询，向右遍历时且最后一个值不满足等值条件时，Next-Key Lock 退化为间隙锁。</li>
+<li><strong>一个 bug</strong>：唯一索引上的范围查询会访问到不满足条件的第一个值为止。</li>
+</ol>
+<p><strong>锁的范围与隔离级别</strong>：</p>
+<ul>
+<li>在<strong>可重复读</strong>隔离级别下，Next-Key Lock 和间隙锁生效，防止幻读。</li>
+<li>在<strong>读提交</strong>隔离级别下，间隙锁不生效，锁的范围更小，锁的时间更短。</li>
+</ul>
+<h2 id="22-MySQL-有哪些“饮鸩止渴”提高性能的方法？"><a href="#22-MySQL-有哪些“饮鸩止渴”提高性能的方法？" class="headerlink" title="22 MySQL 有哪些“饮鸩止渴”提高性能的方法？"></a>22 MySQL 有哪些“饮鸩止渴”提高性能的方法？</h2><h4 id="短连接风暴"><a href="#短连接风暴" class="headerlink" title="短连接风暴"></a>短连接风暴</h4><ul>
+<li><strong>问题</strong>：短连接模式下，业务高峰期连接数暴涨，可能导致数据库连接数超过<code>max_connections</code>限制，进而拒绝新连接。</li>
+<li><strong>解决方案</strong>：<ul>
+<li><strong>方法一</strong>：主动断开空闲连接。优先断开事务外空闲的连接，再考虑断开事务内空闲的连接。可以通过<code>kill connection</code>命令手动断开连接。</li>
+<li><strong>方法二</strong>：减少连接过程的消耗。通过<code>--skip-grant-tables</code>参数重启数据库，跳过权限验证，但这种方法风险极高，尤其是在外网可访问的情况下。</li>
+</ul>
+</li>
+<li><strong>风险</strong>：断开连接可能导致应用端未正确处理连接丢失，进而引发更多问题。</li>
+</ul>
+<h3 id="慢查询性能问题"><a href="#慢查询性能问题" class="headerlink" title="慢查询性能问题"></a>慢查询性能问题</h3><ul>
+<li><strong>慢查询的三种可能原因</strong>：<ol>
+<li><strong>索引没有设计好</strong>：通过紧急创建索引来解决，建议在备库先执行<code>alter table</code>语句，再进行主备切换。</li>
+<li><strong>SQL 语句没写好</strong>：通过改写 SQL 语句来优化，MySQL 5.7 提供了<code>query_rewrite</code>功能，可以自动重写 SQL 语句。</li>
+<li><strong>MySQL 选错了索引</strong>：通过<code>force index</code>强制使用正确的索引。</li>
+</ol>
+</li>
+<li><strong>预防措施</strong>：在上线前，通过慢查询日志和回归测试，提前发现并解决潜在的慢查询问题。</li>
+</ul>
+<h3 id="QPS-突增问题"><a href="#QPS-突增问题" class="headerlink" title="QPS 突增问题"></a>QPS 突增问题</h3><ul>
+<li><strong>问题</strong>：由于业务高峰或应用 bug，某个 SQL 语句的 QPS 突然暴涨，导致数据库压力过大。</li>
+<li><strong>解决方案</strong>：<ol>
+<li><strong>下掉新功能</strong>：如果新功能有 bug，可以直接从数据库端去掉白名单或删除相关用户。</li>
+<li><strong>重写 SQL 语句</strong>：将高 QPS 的 SQL 语句重写为<code>select 1</code>，但这种方法风险较高，可能会误伤其他功能或导致业务逻辑失败。</li>
+</ol>
+</li>
+<li><strong>风险</strong>：重写 SQL 语句可能导致业务逻辑错误，应作为最后的手段。</li>
+</ul>
+<h2 id="23-Mysql-是怎么保证数据不丢的"><a href="#23-Mysql-是怎么保证数据不丢的" class="headerlink" title="23 Mysql 是怎么保证数据不丢的"></a>23 Mysql 是怎么保证数据不丢的</h2><p><strong>binlog 的写入机制</strong></p>
+<ul>
+<li>事务执行过程中，日志先写入 binlog cache，事务提交时再将 binlog cache 写入 binlog 文件。</li>
+<li>binlog cache 是每个线程独有的，而 binlog 文件是共享的。</li>
+<li>写入操作分为 write（写入文件系统的 page cache）和 fsync（持久化到磁盘）。</li>
+<li>参数 <code>sync_binlog</code> 控制 fsync 的时机：<ul>
+<li><code>sync_binlog=0</code>：每次提交事务只 write，不 fsync。</li>
+<li><code>sync_binlog=1</code>：每次提交事务都 fsync。</li>
+<li><code>sync_binlog=N</code>：每 N 个事务提交后 fsync。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220802060429.png"></p>
+<p><strong>redo log 的写入机制</strong></p>
+<ul>
+<li>事务执行过程中，redo log 先写入 redo log buffer。</li>
+<li>redo log 的三种状态：<ul>
+<li>在 redo log buffer 中（内存）。</li>
+<li>写入文件系统的 page cache（write）。</li>
+<li>持久化到磁盘（fsync）。</li>
+</ul>
+</li>
+<li>参数 <code>innodb_flush_log_at_trx_commit</code> 控制 redo log 的写入策略：<ul>
+<li><code>0</code>：事务提交时只写入 redo log buffer。</li>
+<li><code>1</code>：事务提交时将 redo log 持久化到磁盘。</li>
+<li><code>2</code>：事务提交时只写入 page cache。</li>
+</ul>
+</li>
+</ul>
+<p><strong>redo log 写入磁盘的触发时机</strong></p>
+<ul>
+<li>后台线程每秒会将 redo log buffer 中的日志写入磁盘。</li>
+<li>redo log buffer 占用的空间即将达到 innodb_log_buffer_size 一半的时候，后台线程会主动写盘。</li>
+<li>并行的事务提交的时候，顺带将这个事务的 redo log buffer 持久化到磁盘。</li>
+</ul>
+<p><strong>组提交（Group Commit）机制</strong>：</p>
+<ul>
+<li>通过延迟 fsync 操作，将多个事务的 redo log 或 binlog 合并写入磁盘，减少磁盘 I&#x2F;O 操作。</li>
+<li>组提交可以显著提升性能，尤其是在高并发场景下。</li>
+</ul>
+<p><strong>WAL 机制的优势</strong>：</p>
+<ul>
+<li>redo log 和 binlog 都是顺序写入，顺序写比随机写速度快。</li>
+<li>组提交机制减少了磁盘 I&#x2F;O 操作的次数。</li>
+</ul>
+<p><strong>性能优化建议</strong>：</p>
+<ul>
+<li>设置 <code>binlog_group_commit_sync_delay</code> 和 <code>binlog_group_commit_sync_no_delay_count</code> 参数，减少 binlog 的写盘次数。</li>
+<li>将 <code>sync_binlog</code> 设置为大于 1 的值（如 100~1000），减少 fsync 次数，但主机掉电时会丢 binlog 日志。</li>
+<li>将 <code>innodb_flush_log_at_trx_commit</code> 设置为 2，减少 redo log 的 fsync 次数，但主机掉电时会丢失数据。</li>
+</ul>
+<p><strong>数据一致性与可靠性</strong>：</p>
+<ul>
+<li>MySQL 通过 redo log 和 binlog 的持久化来保证 crash-safe。</li>
+<li>即使事务未提交，redo log 和 binlog 的丢失也不会导致数据不一致，因为事务未提交的数据不会被应用到数据库中。</li>
+</ul>
+<p><strong>常见问题解答</strong>：</p>
+<ul>
+<li>解释了为什么 binlog cache 是线程独有，而 redo log buffer 是全局共享的。</li>
+<li>讨论了事务执行期间发生 crash 时，redo log 和 binlog 的丢失不会导致主备不一致。</li>
+<li>解释了 binlog 写入后发生 crash 的情况，客户端重连后事务已提交成功是正常现象。</li>
+</ul>
+<h2 id="24-Mysql-是怎么保证主备一致的"><a href="#24-Mysql-是怎么保证主备一致的" class="headerlink" title="24 Mysql 是怎么保证主备一致的"></a>24 Mysql 是怎么保证主备一致的</h2><p><strong>MySQL 主备同步的基本原理</strong>：</p>
+<ul>
+<li>主库（节点 A）负责处理客户端的读写请求，备库（节点 B）通过同步主库的 binlog 来保持数据一致。</li>
+<li>主备切换时，客户端会从主库切换到备库，备库变为新的主库。</li>
+<li>备库通常设置为只读模式，防止误操作和双写问题，但同步线程拥有超级权限，可以绕过只读限制。</li>
+</ul>
+<p><strong>主备同步的流程</strong>：</p>
+<ul>
+<li>备库通过 <code>change master</code> 命令设置主库的连接信息，并通过 <code>start slave</code> 命令启动两个线程：<code>io_thread</code> 和 <code>sql_thread</code>。</li>
+<li><code>io_thread</code> 负责从主库读取 binlog 并写入备库的中转日志（relay log）。</li>
+<li><code>sql_thread</code> 负责解析并执行中转日志中的命令，保持备库与主库的数据一致。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202503200809203.png"></p>
+<p><strong>binlog 的三种格式</strong>：</p>
+<ul>
+<li><strong>statement</strong>：记录 SQL 语句的原文。优点是日志量小，缺点是某些情况下可能导致主备数据不一致（如使用了 <code>LIMIT</code> 或 <code>NOW()</code> 函数）。</li>
+<li><strong>row</strong>：记录每一行数据的变更。优点是保证主备数据一致，缺点是日志量大，尤其是批量操作时。</li>
+<li><strong>mixed</strong>：MySQL 自动选择 statement 或 row 格式，结合两者的优点，避免数据不一致问题。</li>
+</ul>
+<p><strong>binlog 格式的选择</strong>：</p>
+<ul>
+<li><strong>statement</strong> 格式可能导致主备数据不一致，尤其是在使用不确定函数（如 <code>NOW()</code>）或 <code>LIMIT</code> 时。</li>
+<li><strong>row</strong> 格式记录了每一行数据的变更，确保主备数据一致，但日志量较大。</li>
+<li><strong>mixed</strong> 格式是 MySQL 的折中方案，自动选择 statement 或 row 格式，避免数据不一致问题。</li>
+</ul>
+<p><strong>binlog 的数据恢复</strong>：</p>
+<ul>
+<li><strong>row</strong> 格式的 binlog 记录了每一行数据的变更，可以用于数据恢复。例如，误删数据后可以通过 binlog 恢复删除的行。</li>
+<li><strong>insert</strong>、<strong>update</strong> 和 <strong>delete</strong> 操作都可以通过 binlog 进行恢复，尤其是 row 格式的 binlog 记录了完整的行数据。</li>
+</ul>
+<p><strong>循环复制问题</strong>：</p>
+<ul>
+<li>在双 M 结构（主备互为主备）中，可能会出现循环复制问题，即主库和备库互相同步 binlog，导致无限循环。</li>
+<li>MySQL 通过 server id 解决循环复制问题：每个库在收到 binlog 时，会检查 server id，如果与自己的相同，则丢弃该日志，避免循环复制。</li>
+</ul>
+<p><strong>binlog 的其他用途</strong>：</p>
+<ul>
+<li>binlog 不仅可以用于主备同步，还可以用于数据恢复、审计、数据同步等场景。</li>
+<li>通过 <code>mysqlbinlog</code> 工具可以解析 binlog，并将其用于数据恢复或重放。</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>binlog 是 MySQL 主备同步的核心机制，通过不同的格式（statement、row、mixed）来平衡日志大小和数据一致性。</li>
+<li>主备同步通过 <code>io_thread</code> 和 <code>sql_thread</code> 实现，确保备库与主库的数据一致。</li>
+<li>双 M 结构中的循环复制问题通过 server id 机制解决，避免无限循环。</li>
+</ul>
+<h2 id="25-Mysql-是怎么保证高可用的"><a href="#25-Mysql-是怎么保证高可用的" class="headerlink" title="25 Mysql 是怎么保证高可用的"></a>25 Mysql 是怎么保证高可用的</h2><p><strong>主备同步与最终一致性</strong>：</p>
+<ul>
+<li>MySQL 通过 binlog 实现主备同步，备库接收并执行主库的 binlog，最终达到与主库一致的状态。</li>
+<li>最终一致性是主备同步的基础，但要实现高可用性，还需要解决主备延迟等问题。</li>
+</ul>
+<p><strong>主备延迟的来源</strong>：</p>
+<ul>
+<li><strong>备库性能不足</strong>：备库所在机器的性能较差，导致同步速度慢。</li>
+<li><strong>备库压力大</strong>：备库承担了过多的读请求，消耗了大量 CPU 资源，影响了同步速度。</li>
+<li><strong>大事务</strong>：主库上的大事务（如大量数据删除或大表 DDL）会导致备库延迟，因为备库需要等待主库的事务完成后才能同步。</li>
+<li><strong>备库的并行复制能力</strong>：备库的并行复制能力不足也会导致延迟。</li>
+</ul>
+<p><strong>主备切换策略</strong>：</p>
+<ul>
+<li><strong>可靠性优先策略</strong>：<ul>
+<li>在主备切换时，确保备库的数据与主库完全一致后再切换。</li>
+<li>切换过程中会有短暂的不可用时间，但能保证数据的一致性。</li>
+</ul>
+</li>
+<li><strong>可用性优先策略</strong>：<ul>
+<li>在主备切换时，优先保证系统的可用性，允许短暂的数据不一致。</li>
+<li>这种策略可能会导致数据不一致，尤其是在使用 statement 或 mixed 格式的 binlog 时。</li>
+</ul>
+</li>
+</ul>
+<p><strong>binlog 格式对数据一致性的影响</strong>：</p>
+<ul>
+<li><strong>statement 格式</strong>：记录 SQL 语句的原文，可能导致主备数据不一致（如使用 <code>LIMIT</code> 或 <code>NOW()</code> 函数时）。</li>
+<li><strong>row 格式</strong>：记录每一行数据的变更，确保主备数据一致，但日志量较大。</li>
+<li><strong>mixed 格式</strong>：MySQL 自动选择 statement 或 row 格式，结合两者的优点，避免数据不一致问题。</li>
+</ul>
+<p><strong>高可用性与数据一致性的权衡</strong>：</p>
+<ul>
+<li>大多数情况下，建议使用<strong>可靠性优先策略</strong>，确保数据的准确性。</li>
+<li>在某些特殊场景下（如操作日志记录），<strong>可用性优先策略</strong>可能更为合适，因为短暂的数据不一致可以通过 binlog 修复，且不会对业务造成严重影响。</li>
+</ul>
+<p><strong>异常切换与主备延迟</strong>：</p>
+<ul>
+<li>在主库故障时，主备延迟会影响系统的可用性。延迟越小，系统恢复的时间越短，可用性越高。</li>
+<li>如果主备延迟较大，切换时可能会导致系统不可用或数据不一致。</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>MySQL 的高可用性依赖于主备同步机制，主备延迟是影响高可用性的关键因素。</li>
+<li>通过优化备库性能、减少大事务、提升并行复制能力等手段，可以减少主备延迟。</li>
+<li>在主备切换时，应根据业务需求选择<strong>可靠性优先</strong>或<strong>可用性优先</strong>策略，确保在数据一致性和系统可用性之间找到平衡。</li>
+</ul>
+<h2 id="26-备库为什么会延迟好几个小时"><a href="#26-备库为什么会延迟好几个小时" class="headerlink" title="26 备库为什么会延迟好几个小时"></a>26 备库为什么会延迟好几个小时</h2><p><strong>备库延迟的原因</strong>：</p>
+<ul>
+<li>备库执行日志的速度持续低于主库生成日志的速度，导致延迟可能达到小时级别。</li>
+<li>单线程复制是备库延迟的主要原因之一，尤其是在主库并发高、TPS 高的情况下。</li>
+</ul>
+<p><strong>并行复制的核心原则</strong>：</p>
+<ul>
+<li><strong>不能造成更新覆盖</strong>：更新同一行的两个事务必须被分发到同一个 worker 中。</li>
+<li><strong>同一个事务不能被拆开</strong>：同一个事务的多个更新语句必须放到同一个 worker 中执行。</li>
+</ul>
+<p><strong>多线程复制的演进</strong>：</p>
+<ul>
+<li><strong>MySQL 5.5 及之前版本</strong>：只支持单线程复制，导致备库延迟问题严重。</li>
+<li><strong>MySQL 5.6 版本</strong>：支持了并行复制，允许不同数据库的事务在备库上并行执行。</li>
+<li><strong>MariaDB 的并行复制策略</strong>：基于组提交（group commit）特性，相同 commit_id 的事务可以在备库上并行执行，但存在大事务拖后腿的问题。</li>
+<li><strong>MySQL 5.7 版本</strong>：引入了基于 LOGICAL_CLOCK 的并行复制策略，允许处于 prepare 状态的事务在备库上并行执行，提升了并行度。</li>
+<li><strong>MySQL 5.7.22 版本</strong>：引入了基于 WRITESET 的并行复制策略。算出这一行的 hash 值，组成集合 writeset。如果两个事务没有操作相同的行，也就是说它们的 writeset 没有交集，就可以并行。</li>
+</ul>
+<p><strong>不同并行复制策略的优缺点</strong>：</p>
+<ul>
+<li><strong>按库并行策略</strong>：适用于多数据库场景，但在单数据库或热点表场景下效果不佳。</li>
+<li><strong>按表并行策略</strong>：适用于多表场景，但在热点场景下会退化为单线程复制。</li>
+<li><strong>按行并行策略</strong>：并行度最高，但消耗更多的内存和 CPU 资源，适用于大事务较少的场景。</li>
+<li><strong>MariaDB 的组提交策略</strong>：基于 commit_id 的并行复制，简单易实现，但容易受大事务影响。</li>
+<li><strong>MySQL 5.7 的 LOGICAL_CLOCK 策略</strong>：基于 prepare 状态的并行复制，提升了并行度，但依赖于主库的 binlog 组提交机制。</li>
+<li><strong>MySQL 5.7.22 的 WRITESET 策略</strong>：基于行 hash 值的并行复制，减少了计算量和内存消耗，支持 statement 格式的 binlog。</li>
+</ul>
+<p><strong>大事务对备库延迟的影响</strong>：</p>
+<ul>
+<li>大事务（如大表 DDL 或大量数据删除）会导致备库延迟增加，因为备库需要等待大事务完成后才能继续执行其他事务。</li>
+<li>建议将大事务拆分为小事务，以减少对备库同步的影响。</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>多线程复制是解决备库延迟问题的关键，MySQL 通过不同版本的演进逐步提升了并行复制的效率和灵活性。</li>
+<li>不同的并行复制策略适用于不同的业务场景，DBA 需要根据实际情况选择合适的策略。</li>
+<li>大事务是造成备库延迟的主要原因之一，开发人员应尽量避免大事务操作，将其拆分为小事务。</li>
+</ul>
+<h2 id="27-主库出问题了，从库怎么办？"><a href="#27-主库出问题了，从库怎么办？" class="headerlink" title="27 主库出问题了，从库怎么办？"></a>27 主库出问题了，从库怎么办？</h2><p><strong>一主多从架构</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20220803070027.png"></p>
+<ul>
+<li>一主多从架构通常用于读写分离，主库负责写操作和部分读操作，从库分担读请求。</li>
+<li>当主库发生故障时，需要进行主备切换，从库需要重新指向新的主库，增加了切换的复杂性。</li>
+</ul>
+<p><strong>基于位点的主备切换</strong>：</p>
+<ul>
+<li>在切换过程中，从库需要找到与新主库同步的位点（binlog 文件名和偏移量），以确保数据一致性。</li>
+<li>位点的获取通常是通过解析新主库的 binlog 文件，找到故障时刻的大致位置。</li>
+<li>由于位点不精确，可能会导致从库重复执行某些事务，出现主键冲突等问题。</li>
+<li>解决方法包括：<ul>
+<li>使用 <code>sql_slave_skip_counter</code> 跳过重复事务。</li>
+<li>设置 <code>slave_skip_errors</code> 参数，跳过常见的错误（如 1062 主键冲突和 1032 删除数据找不到行）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>GTID（全局事务标识符）</strong></p>
+<ul>
+<li>GTID 是 MySQL 5.6 引入的机制，用于唯一标识每个事务，格式为 <code>server_uuid:gno</code>。</li>
+<li>GTID 模式简化了主备切换过程，不再需要手动指定位点，系统会自动处理同步问题。</li>
+<li>GTID 的生成方式有两种：<ul>
+<li>自动生成：事务提交时分配 GTID。</li>
+<li>手动指定：通过 <code>set gtid_next</code> 指定 GTID，适用于跳过某些事务的场景。</li>
+</ul>
+</li>
+</ul>
+<p><strong>基于 GTID 的主备切换</strong>：</p>
+<ul>
+<li>在 GTID 模式下，从库只需要执行 <code>CHANGE MASTER TO</code> 命令，并设置 <code>master_auto_position=1</code>，系统会自动计算需要同步的事务。</li>
+<li>新主库会计算自己与从库的 GTID 集合差集，确保从库获取到所有缺失的事务。</li>
+<li>如果新主库缺少从库所需的事务，会直接报错，确保数据完整性。</li>
+</ul>
+<p><strong>GTID 与在线 DDL</strong>：</p>
+<ul>
+<li>在双 M 结构下，备库执行的 DDL 语句可以通过 GTID 机制确保不会在主库上重复执行。</li>
+<li>通过手动设置 GTID，可以确保 DDL 操作的 binlog 记录不会影响主库。</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>基于位点的主备切换复杂且容易出错，而 GTID 模式简化了这一过程，提升了主备切换的效率和可靠性。</li>
+<li>如果 MySQL 版本支持 GTID，建议使用 GTID 模式进行主备切换。</li>
+<li>GTID 模式不仅适用于主备切换，还可以用于在线 DDL 操作，确保数据一致性。</li>
+</ul>
+<h2 id="28-读写分离有哪些坑"><a href="#28-读写分离有哪些坑" class="headerlink" title="28 读写分离有哪些坑"></a>28 读写分离有哪些坑</h2><p><strong>读写分离的基本架构</strong>：</p>
+<p>一主多从架构通常用于读写分离，主库负责写操作，从库分担读请求。</p>
+<p>读写分离的两种常见架构：</p>
+<ul>
+<li><strong>客户端直连</strong>：客户端直接连接数据库，性能较好，但主备切换时客户端需要调整连接信息。</li>
+<li><strong>带 Proxy 的架构</strong>：客户端连接 Proxy，由 Proxy 负责路由请求，对客户端友好，但架构复杂。</li>
+</ul>
+<p><strong>过期读问题</strong>：</p>
+<p>由于<strong>主从延迟</strong>，客户端<strong>在从库上可能会读到过期的数据</strong>，这种现象称为“<strong>过期读</strong>”。过期读的常见场景是主库更新后，从库还未同步完成，客户端查询从库时读到旧数据。</p>
+<p><strong>解决过期读的几种方案</strong>：</p>
+<ul>
+<li><strong>强制走主库</strong>：对于必须读到最新数据的请求，强制查询主库。适用于对数据实时性要求高的场景，但会增加主库的压力。</li>
+<li><strong>Sleep 方案</strong>：在查询从库前先 sleep 一段时间，假设主从延迟在 1 秒内。虽然简单，但不精确，可能导致等待时间过长或仍然读到过期数据。</li>
+<li><strong>判断主备无延迟</strong>：通过 <code>show slave status</code> 判断主从延迟，确保从库同步完成后再查询。可以通过 <code>seconds_behind_master</code>、位点对比或 GTID 集合对比来判断。</li>
+<li><strong>配合 semi-sync</strong>：使用半同步复制（semi-sync），确保主库在事务提交后，至少有一个从库收到 binlog 后才返回确认。可以减少过期读的概率，但在多从库场景下仍可能有问题。semi-sync 流程：<ul>
+<li>事务提交的时候，主库把 binlog 发给从库；</li>
+<li>从库收到 binlog 以后，发回给主库一个 ack，表示收到了；</li>
+<li>主库收到这个 ack 以后，才能给客户端返回“事务完成”的确认。</li>
+</ul>
+</li>
+<li><strong>等主库位点方案</strong>：使用 <code>select master_pos_wait(file, pos, timeout)</code> 命令，等待从库同步到指定位点后再查询。可以精确控制查询时机，避免过期读。</li>
+<li><strong>等 GTID 方案</strong>：使用 <code>select wait_for_executed_gtid_set(gtid_set, timeout)</code> 命令，等待从库执行到指定 GTID 后再查询。适用于 GTID 模式，减少了查询主库位点的开销。</li>
+</ul>
+<p>不同的方案适用于不同的业务场景，需要根据业务需求选择。在实际应用中，可以混合使用多种方案，根据请求的类型选择不同的处理方式。</p>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>过期读是读写分离架构中常见的问题，主从延迟是主要原因。</li>
+<li>通过合理的方案选择，可以在保证读写分离的同时，尽量减少过期读的发生。</li>
+<li>对于高一致性要求的场景，建议使用等主库位点或等 GTID 方案，确保查询结果的准确性。</li>
+</ul>
+<h2 id="29-如何判断一个数据库是不是出问题了"><a href="#29-如何判断一个数据库是不是出问题了" class="headerlink" title="29 如何判断一个数据库是不是出问题了"></a>29 如何判断一个数据库是不是出问题了</h2><p><strong>select 1 判断</strong>：</p>
+<ul>
+<li><code>select 1</code> 只能检测数据库进程是否存活，无法检测数据库内部的并发线程数是否过高或是否存在其他问题。</li>
+<li>当并发线程数达到 <code>innodb_thread_concurrency</code> 设置的上限时，数据库可能无法处理新请求，但 <code>select 1</code> 仍然可以成功返回，导致误判。</li>
+</ul>
+<p><strong>查表判断</strong>：</p>
+<ul>
+<li>在系统库（如 <code>mysql</code> 库）中创建一个健康检查表（如 <code>health_check</code>），里面只放一行数据，然后定期执行 <code>select * from mysql.health_check</code>。</li>
+<li>这种方法<strong>可以检测到由于并发线程过多导致的数据库不可用</strong>情况，但<strong>无法检测磁盘空间满等问题</strong>。</li>
+</ul>
+<p><strong>更新判断</strong>：</p>
+<ul>
+<li>在健康检查表中加入一个 <code>timestamp</code> 字段，定期执行更新操作（如 <code>update mysql.health_check set t_modified=now()</code>）。</li>
+<li>这种方法可以检测到磁盘空间满等问题，因为更新操作需要写 binlog，如果磁盘空间满，更新操作会失败。为了避免主备冲突，可以在健康检查表中使用 <code>server_id</code> 作为主键，确保主库和备库的更新操作不会冲突。</li>
+<li>更新判断的局限性：<ul>
+<li>更新判断存在“判定慢”的问题，即在系统 IO 资源紧张时，更新操作可能仍然成功返回，导致误判。</li>
+<li>外部检测的随机性可能导致问题无法及时被发现，尤其是在定时轮询的间隔期间。</li>
+</ul>
+</li>
+</ul>
+<p><strong>内部统计</strong>：</p>
+<ul>
+<li>MySQL 5.6 版本以后提供了 <code>performance_schema</code> 库，可以统计每次 IO 请求的时间。</li>
+<li>通过监控 <code>performance_schema.file_summary_by_event_name</code> 表中的 IO 请求时间，可以更准确地判断数据库是否出现性能问题。</li>
+<li>可以设置阈值，当单次 IO 请求时间超过一定值（如 200 毫秒）时，认为数据库出现异常。</li>
+</ul>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>不同的检测方法各有优缺点，<code>select 1</code> 简单但不精确，查表和更新判断可以检测更多问题，但仍存在局限性。</li>
+<li>内部统计方法（如 <code>performance_schema</code>）可以提供更精确的数据库状态信息，但会带来一定的性能损耗。</li>
+<li>在实际应用中，可以根据业务需求选择合适的检测方法，通常建议结合更新判断和内部统计方法，以提高检测的准确性。</li>
+</ul>
+<h2 id="30-答疑文章（二）：用动态的观点看加锁"><a href="#30-答疑文章（二）：用动态的观点看加锁" class="headerlink" title="30 答疑文章（二）：用动态的观点看加锁"></a>30 答疑文章（二）：用动态的观点看加锁</h2><p><strong>加锁规则回顾</strong>：</p>
+<ul>
+<li><strong>原则 1</strong>：加锁的基本单位是 next-key lock，即前开后闭区间。</li>
+<li><strong>原则 2</strong>：查找过程中访问到的对象才会加锁。</li>
+<li><strong>优化 1</strong>：唯一索引上的等值查询，next-key lock 退化为行锁。</li>
+<li><strong>优化 2</strong>：索引上的等值查询，向右遍历时且最后一个值不满足等值条件时，next-key lock 退化为间隙锁。</li>
+<li><strong>一个 bug</strong>：唯一索引上的范围查询会访问到不满足条件的第一个值为止。</li>
+</ul>
+<p><strong>不等号条件里的等值查询</strong>：</p>
+<ul>
+<li>在不等号查询中，虽然条件是不等号，但在索引树的搜索过程中，引擎内部会使用等值查询来定位记录。</li>
+<li>例如，<code>select * from t where id&gt;9 and id&lt;12 order by id desc for update;</code> 的加锁范围是 (0,5]、(5,10] 和 (10,15)，其中 id&#x3D;15 不满足条件，next-key lock 退化为间隙锁 (10,15)。</li>
+</ul>
+<p><strong>等值查询的过程</strong>：</p>
+<ul>
+<li>对于 <code>select id from t where c in(5,20,10) lock in share mode;</code>，加锁过程是逐个进行的，先加 c&#x3D;5 的记录锁，再加 c&#x3D;10 的记录锁，最后加 c&#x3D;20 的记录锁。</li>
+<li>如果并发执行 <code>select id from t where c in(5,20,10) order by c desc for update;</code>，加锁顺序相反，可能导致死锁。</li>
+</ul>
+<p><strong>死锁分析</strong>：</p>
+<ul>
+<li>死锁发生时，InnoDB 会选择回滚成本较小的事务来解除死锁。</li>
+<li>通过 <code>show engine innodb status</code> 可以查看死锁信息，了解哪些事务持有锁、等待锁，以及最终回滚了哪个事务。</li>
+</ul>
+<p><strong>锁等待分析</strong>：</p>
+<ul>
+<li>通过 <code>show engine innodb status</code> 可以查看锁等待信息，了解哪些事务在等待锁，以及等待的锁类型（如间隙锁、插入意向锁等）。</li>
+<li>间隙锁的范围是由间隙右边的记录定义的，删除记录后，间隙锁的范围可能会发生变化。</li>
+</ul>
+<p><strong>update 语句的加锁行为</strong>：</p>
+<ul>
+<li>update 语句的加锁范围可以通过语句的执行逻辑来分析。例如，<code>update t set c=1 where c=5</code> 会先插入新记录，再删除旧记录，可能会被间隙锁阻塞。</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/139">极客时间教程 - MySQL 实战 45 讲</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/ef9fb8a5/" title="《MySQL 实战 45 讲》笔记二">https://dunwu.github.io/blog/pages/ef9fb8a5/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/d5d0c1d8/" rel="prev" title="《极客时间教程 - SQL 必知必会》笔记">
+                  <i class="fa fa-angle-left"></i> 《极客时间教程 - SQL 必知必会》笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/183a3fd4/" rel="next" title="《MySQL 实战 45 讲》笔记三">
+                  《MySQL 实战 45 讲》笔记三 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"4de669470bb3a8121ae0c578d0f4ea22"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

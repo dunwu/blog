@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="翻译自：https:&#x2F;&#x2F;sourcemaking.com&#x2F;refactoring&#x2F;smells&#x2F;oo-abusers 滥用面向对象(Object-Orientation Abusers)这组坏味道意味着：代码部分或完全地违背了面向对象编程原则。  Switch 声明 Switch 声明(Switch Statements) 你有一个复杂的 switch 语句或 if 序列语句。   问题原因面向">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码坏味道之滥用面向对象">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/3ba0474c/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="翻译自：https:&#x2F;&#x2F;sourcemaking.com&#x2F;refactoring&#x2F;smells&#x2F;oo-abusers 滥用面向对象(Object-Orientation Abusers)这组坏味道意味着：代码部分或完全地违背了面向对象编程原则。  Switch 声明 Switch 声明(Switch Statements) 你有一个复杂的 switch 语句或 if 序列语句。   问题原因面向">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/switch-statements-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/switch-statements-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/temporary-field-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/temporary-field-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/temporary-field-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/alternative-classes-with-different-interfaces-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/alternative-classes-with-different-interfaces-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/parameterize-method-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/parameterize-method-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/refused-bequest-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/refused-bequest-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/refused-bequest-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-inheritance-with-delegation-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-inheritance-with-delegation-after.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-before.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-after.png">
+<meta property="article:published_time" content="2018-10-13T14:48:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.726Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="设计">
+<meta property="article:tag" content="重构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/switch-statements-1.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/3ba0474c/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/3ba0474c/","path":"/pages/3ba0474c/","title":"代码坏味道之滥用面向对象"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>代码坏味道之滥用面向对象 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Switch-%E5%A3%B0%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">Switch 声明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A"><span class="nav-number">1.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E5%87%BD%E6%95%B0-Extract-Method"><span class="nav-number">1.5.1.</span> <span class="nav-text">提炼函数(Extract Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%AC%E7%A7%BB%E5%87%BD%E6%95%B0-Move-Method"><span class="nav-number">1.5.2.</span> <span class="nav-text">搬移函数(Move Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%AD%90%E7%B1%BB%E5%8F%96%E4%BB%A3%E7%B1%BB%E5%9E%8B%E7%A0%81-Replace-Type-Code-with-Subclass"><span class="nav-number">1.5.3.</span> <span class="nav-text">以子类取代类型码(Replace Type Code with Subclass)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E7%8A%B6%E6%80%81-%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E5%8F%96%E4%BB%A3%E7%B1%BB%E5%9E%8B%E7%A0%81-Replace-Type-Code-with-State-Strategy"><span class="nav-number">1.5.4.</span> <span class="nav-text">以状态&#x2F;策略模式取代类型码(Replace Type Code with State&#x2F;Strategy)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%A4%9A%E6%80%81%E5%8F%96%E4%BB%A3%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F-Replace-Conditional-with-Polymorphism"><span class="nav-number">1.5.5.</span> <span class="nav-text">以多态取代条件表达式(Replace Conditional with Polymorphism)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E6%98%8E%E7%A1%AE%E5%87%BD%E6%95%B0%E5%8F%96%E4%BB%A3%E5%8F%82%E6%95%B0-Replace-Parameter-with-Explicit-Methods"><span class="nav-number">1.5.6.</span> <span class="nav-text">以明确函数取代参数(Replace Parameter with Explicit Methods)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5-Null-%E5%AF%B9%E8%B1%A1-Introduce-Null-Object"><span class="nav-number">1.5.7.</span> <span class="nav-text">引入 Null 对象(Introduce Null Object)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E5%AD%97%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">临时字段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-1"><span class="nav-number">2.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-1"><span class="nav-number">2.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-1"><span class="nav-number">2.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-1"><span class="nav-number">2.4.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E7%B1%BB-Extract-Class"><span class="nav-number">2.4.1.</span> <span class="nav-text">提炼类(Extract Class)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E5%8F%96%E4%BB%A3%E5%87%BD%E6%95%B0-Replace-Method-with-Method-Object"><span class="nav-number">2.4.2.</span> <span class="nav-text">以函数对象取代函数(Replace Method with Method Object)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5-Null-%E5%AF%B9%E8%B1%A1-Introduce-Null-Object-1"><span class="nav-number">2.4.3.</span> <span class="nav-text">引入 Null 对象(Introduce Null Object)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%9B%B2%E5%90%8C%E5%B7%A5%E7%9A%84%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">异曲同工的类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-2"><span class="nav-number">3.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-2"><span class="nav-number">3.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-2"><span class="nav-number">3.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E5%BF%BD%E7%95%A5-1"><span class="nav-number">3.4.</span> <span class="nav-text">何时忽略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-2"><span class="nav-number">3.5.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%94%B9%E5%90%8D-Rename-Method"><span class="nav-number">3.5.1.</span> <span class="nav-text">函数改名(Rename Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%AC%E7%A7%BB%E5%87%BD%E6%95%B0-Move-Method-1"><span class="nav-number">3.5.2.</span> <span class="nav-text">搬移函数(Move Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%8F%82%E6%95%B0-Add-Parameter"><span class="nav-number">3.5.3.</span> <span class="nav-text">添加参数(Add Parameter)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A4%E5%87%BD%E6%95%B0%E6%90%BA%E5%B8%A6%E5%8F%82%E6%95%B0-Parameterize-Method"><span class="nav-number">3.5.4.</span> <span class="nav-text">令函数携带参数(Parameterize Method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E8%B6%85%E7%B1%BB-Extract-Superclass"><span class="nav-number">3.5.5.</span> <span class="nav-text">提炼超类(Extract Superclass)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A2%AB%E6%8B%92%E7%BB%9D%E7%9A%84%E9%A6%88%E8%B5%A0"><span class="nav-number">4.</span> <span class="nav-text">被拒绝的馈赠</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%8E%9F%E5%9B%A0-3"><span class="nav-number">4.1.</span> <span class="nav-text">问题原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95-3"><span class="nav-number">4.2.</span> <span class="nav-text">解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-3"><span class="nav-number">4.3.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E-3"><span class="nav-number">4.4.</span> <span class="nav-text">重构方法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%A7%94%E6%89%98%E5%8F%96%E4%BB%A3%E7%BB%A7%E6%89%BF-Replace-Inheritance-with-Delegation"><span class="nav-number">4.4.1.</span> <span class="nav-text">以委托取代继承(Replace Inheritance with Delegation)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E7%82%BC%E8%B6%85%E7%B1%BB-Extract-Superclass-1"><span class="nav-number">4.4.2.</span> <span class="nav-text">提炼超类(Extract Superclass)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E9%98%85%E8%AF%BB"><span class="nav-number">5.</span> <span class="nav-text">扩展阅读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/3ba0474c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="代码坏味道之滥用面向对象 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          代码坏味道之滥用面向对象<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/03.%E9%87%8D%E6%9E%84/03.%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E6%BB%A5%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-10-13 22:48:00" itemprop="dateCreated datePublished" datetime="2018-10-13T22:48:00+08:00">2018-10-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E9%87%8D%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">重构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>翻译自：<a target="_blank" rel="noopener" href="https://sourcemaking.com/refactoring/smells/oo-abusers">https://sourcemaking.com/refactoring/smells/oo-abusers</a></p>
+<p><strong>滥用面向对象(Object-Orientation Abusers)这组坏味道意味着：代码部分或完全地违背了面向对象编程原则。</strong></p>
+</blockquote>
+<h2 id="Switch-声明"><a href="#Switch-声明" class="headerlink" title="Switch 声明"></a>Switch 声明</h2><blockquote>
+<p>Switch 声明(Switch Statements)</p>
+<p>你有一个复杂的 <code>switch</code> 语句或 <code>if</code> 序列语句。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/switch-statements-1.png" alt="img"></p>
+<h3 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h3><p>面向对象程序的一个最明显特征就是：少用 <code>switch</code> 和 <code>case</code> 语句。从本质上说，<code>switch</code> 语句的问题在于重复（<code>if</code> 序列也同样如此）。你常会发现 <code>switch</code> 语句散布于不同地点。如果要为它添加一个新的 <code>case</code> 子句，就必须找到所有 <code>switch</code> 语句并修改它们。面向对象中的多态概念可为此带来优雅的解决办法。</p>
+<p>大多数时候，一看到 <code>switch</code> 语句，就应该考虑以多态来替换它。</p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>问题是多态该出现在哪？switch 语句常常根据类型码进行选择，你要的是“与该类型码相关的函数或类”，所以应该运用 <code>提炼函数(Extract Method)</code> 将 <code>switch</code> 语句提炼到一个独立函数中，再以 <code>搬移函数(Move Method)</code> 将它搬移到需要多态性的那个类里。</li>
+<li>如果你的 <code>switch</code> 是基于类型码来识别分支，这时可以运用 <code>以子类取代类型码(Replace Type Code with Subclass)</code> 或 <code>以状态/策略模式取代类型码(Replace Type Code with State/Strategy)</code> 。</li>
+<li>一旦完成这样的继承结构后，就可以运用 <code>以多态取代条件表达式(Replace Conditional with Polymorphism)</code> 了。</li>
+<li>如果条件分支并不多并且它们使用不同参数调用相同的函数，多态就没必要了。在这种情况下，你可以运用 <code>以明确函数取代参数(Replace Parameter with Explicit Methods)</code> 。</li>
+<li>如果你的选择条件之一是 null，可以运用 <code>引入 Null 对象(Introduce Null Object)</code> 。</li>
+</ul>
+<h3 id="收益"><a href="#收益" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>提升代码组织性。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/switch-statements-2.png" alt="img"></p>
+<h3 id="何时忽略"><a href="#何时忽略" class="headerlink" title="何时忽略"></a>何时忽略</h3><ul>
+<li>如果一个 <code>switch</code> 操作只是执行简单的行为，就没有重构的必要了。</li>
+<li><code>switch</code> 常被工厂设计模式族（<code>工厂方法模式(Factory Method)</code>和<code>抽象工厂模式(Abstract Factory)</code>）所使用，这种情况下也没必要重构。</li>
+</ul>
+<h3 id="重构方法说明"><a href="#重构方法说明" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="提炼函数-Extract-Method"><a href="#提炼函数-Extract-Method" class="headerlink" title="提炼函数(Extract Method)"></a>提炼函数(Extract Method)</h4><p><strong>问题</strong></p>
+<p>你有一段代码可以组织在一起。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//print details</span></span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + getOutstanding());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>移动这段代码到一个新的函数中，使用函数的调用来替代老代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">printOwing</span><span class="params">()</span> &#123;</span><br><span class="line">  printBanner();</span><br><span class="line">  printDetails(getOutstanding());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">printDetails</span><span class="params">(<span class="type">double</span> outstanding)</span> &#123;</span><br><span class="line">  System.out.println(<span class="string">&quot;name: &quot;</span> + name);</span><br><span class="line">  System.out.println(<span class="string">&quot;amount: &quot;</span> + outstanding);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="搬移函数-Move-Method"><a href="#搬移函数-Move-Method" class="headerlink" title="搬移函数(Move Method)"></a>搬移函数(Move Method)</h4><p><strong>问题</strong></p>
+<p>你的程序中，有个函数与其所驻类之外的另一个类进行更多交流：调用后者，或被后者调用。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在该函数最常引用的类中建立一个有着类似行为的新函数。将旧函数变成一个单纯的委托函数，或是旧函数完全移除。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png" alt="img"></p>
+<h4 id="以子类取代类型码-Replace-Type-Code-with-Subclass"><a href="#以子类取代类型码-Replace-Type-Code-with-Subclass" class="headerlink" title="以子类取代类型码(Replace Type Code with Subclass)"></a>以子类取代类型码(Replace Type Code with Subclass)</h4><p><strong>问题</strong></p>
+<p>你有一个不可变的类型码，它会影响类的行为。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以子类取代这个类型码。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-subclasses-after.png" alt="img"></p>
+<h4 id="以状态-策略模式取代类型码-Replace-Type-Code-with-State-Strategy"><a href="#以状态-策略模式取代类型码-Replace-Type-Code-with-State-Strategy" class="headerlink" title="以状态&#x2F;策略模式取代类型码(Replace Type Code with State&#x2F;Strategy)"></a>以状态&#x2F;策略模式取代类型码(Replace Type Code with State&#x2F;Strategy)</h4><p><strong>问题</strong></p>
+<p>你有一个类型码，它会影响类的行为，但你无法通过继承消除它。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>以状态对象取代类型码。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-type-code-with-state-strategy-after.png" alt="img"></p>
+<h4 id="以多态取代条件表达式-Replace-Conditional-with-Polymorphism"><a href="#以多态取代条件表达式-Replace-Conditional-with-Polymorphism" class="headerlink" title="以多态取代条件表达式(Replace Conditional with Polymorphism)"></a>以多态取代条件表达式(Replace Conditional with Polymorphism)</h4><p><strong>问题</strong></p>
+<p>你手上有个条件表达式，它根据对象类型的不同而选择不同的行为。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="type">double</span> <span class="title function_">getSpeed</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> (type) &#123;</span><br><span class="line">      <span class="keyword">case</span> EUROPEAN:</span><br><span class="line">        <span class="keyword">return</span> getBaseSpeed();</span><br><span class="line">      <span class="keyword">case</span> AFRICAN:</span><br><span class="line">        <span class="keyword">return</span> getBaseSpeed() - getLoadFactor() * numberOfCoconuts;</span><br><span class="line">      <span class="keyword">case</span> NORWEGIAN_BLUE:</span><br><span class="line">        <span class="keyword">return</span> (isNailed) ? <span class="number">0</span> : getBaseSpeed(voltage);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;Should be unreachable&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>将这个条件表达式的每个分支放进一个子类内的覆写函数中，然后将原始函数声明为抽象函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">abstract</span> <span class="type">double</span> <span class="title function_">getSpeed</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">European</span> <span class="keyword">extends</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">  <span class="type">double</span> <span class="title function_">getSpeed</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> getBaseSpeed();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">African</span> <span class="keyword">extends</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">  <span class="type">double</span> <span class="title function_">getSpeed</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> getBaseSpeed() - getLoadFactor() * numberOfCoconuts;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NorwegianBlue</span> <span class="keyword">extends</span> <span class="title class_">Bird</span> &#123;</span><br><span class="line">  <span class="type">double</span> <span class="title function_">getSpeed</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (isNailed) ? <span class="number">0</span> : getBaseSpeed(voltage);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Somewhere in client code</span></span><br><span class="line">speed = bird.getSpeed();</span><br></pre></td></tr></table></figure>
+
+<h4 id="以明确函数取代参数-Replace-Parameter-with-Explicit-Methods"><a href="#以明确函数取代参数-Replace-Parameter-with-Explicit-Methods" class="headerlink" title="以明确函数取代参数(Replace Parameter with Explicit Methods)"></a>以明确函数取代参数(Replace Parameter with Explicit Methods)</h4><p><strong>问题</strong></p>
+<p>你有一个函数，其中完全取决于参数值而采取不同的行为。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">setValue</span><span class="params">(String name, <span class="type">int</span> value)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (name.equals(<span class="string">&quot;height&quot;</span>)) &#123;</span><br><span class="line">    height = value;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (name.equals(<span class="string">&quot;width&quot;</span>)) &#123;</span><br><span class="line">    width = value;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  Assert.shouldNeverReachHere();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>针对该参数的每一个可能值，建立一个独立函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">setHeight</span><span class="params">(<span class="type">int</span> arg)</span> &#123;</span><br><span class="line">  height = arg;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">setWidth</span><span class="params">(<span class="type">int</span> arg)</span> &#123;</span><br><span class="line">  width = arg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="引入-Null-对象-Introduce-Null-Object"><a href="#引入-Null-对象-Introduce-Null-Object" class="headerlink" title="引入 Null 对象(Introduce Null Object)"></a>引入 Null 对象(Introduce Null Object)</h4><p><strong>问题</strong></p>
+<p>你需要再三检查某对象是否为 null。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (customer == <span class="literal">null</span>) &#123;</span><br><span class="line">  plan = BillingPlan.basic();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">  plan = customer.getPlan();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>将 null 值替换为 null 对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NullCustomer</span> <span class="keyword">extends</span> <span class="title class_">Customer</span> &#123;</span><br><span class="line">  Plan <span class="title function_">getPlan</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">NullPlan</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Some other NULL functionality.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Replace null values with Null-object.</span></span><br><span class="line">customer = (order.customer != <span class="literal">null</span>) ? order.customer : <span class="keyword">new</span> <span class="title class_">NullCustomer</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use Null-object as if it&#x27;s normal subclass.</span></span><br><span class="line">plan = customer.getPlan();</span><br></pre></td></tr></table></figure>
+
+<h2 id="临时字段"><a href="#临时字段" class="headerlink" title="临时字段"></a>临时字段</h2><blockquote>
+<p>临时字段(Temporary Field)的值只在特定环境下有意义，离开这个环境，它们就什么也不是了。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/temporary-field-1.png" alt="img"></p>
+<h3 id="问题原因-1"><a href="#问题原因-1" class="headerlink" title="问题原因"></a>问题原因</h3><p>有时你会看到这样的对象：其内某个实例变量仅为某种特定情况而设。这样的代码让人不易理解，因为你通常认为对象在所有时候都需要它的所有变量。在变量未被使用的情况下猜测当初设置目的，会让你发疯。<br>通常，临时字段是在某一算法需要大量输入时而创建。因此，为了避免函数有过多参数，程序员决定在类中创建这些数据的临时字段。这些临时字段仅仅在算法中使用，其他时候却毫无用处。<br>这种代码不好理解。你期望查看对象字段的数据，但是出于某种原因，它们总是为空。</p>
+<h3 id="解决方法-1"><a href="#解决方法-1" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>可以通过 <code>提炼类(Extract Class)</code> 将临时字段和操作它们的所有代码提炼到一个单独的类中。此外，你可以运用 <code>以函数对象取代函数(Replace Method with Method Object)</code> 来实现同样的目的。</li>
+<li><code>引入 Null 对象(Introduce Null Object)</code> 在“变量不合法”的情况下创建一个 null 对象，从而避免写出条件表达式。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/temporary-field-2.png" alt="img"></p>
+<h3 id="收益-1"><a href="#收益-1" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>更好的代码清晰度和组织性。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/temporary-field-3.png" alt="img"></p>
+<h3 id="重构方法说明-1"><a href="#重构方法说明-1" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="提炼类-Extract-Class"><a href="#提炼类-Extract-Class" class="headerlink" title="提炼类(Extract Class)"></a>提炼类(Extract Class)</h4><p><strong>问题</strong></p>
+<p>某个类做了不止一件事。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>建立一个新类，将相关的字段和函数从旧类搬移到新类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-class-after.png" alt="img"></p>
+<h4 id="以函数对象取代函数-Replace-Method-with-Method-Object"><a href="#以函数对象取代函数-Replace-Method-with-Method-Object" class="headerlink" title="以函数对象取代函数(Replace Method with Method Object)"></a>以函数对象取代函数(Replace Method with Method Object)</h4><p><strong>问题</strong></p>
+<p>你有一个过长函数，它的局部变量交织在一起，以致于你无法应用提炼函数(Extract Method) 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Order</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">price</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">double</span> primaryBasePrice;</span><br><span class="line">    <span class="type">double</span> secondaryBasePrice;</span><br><span class="line">    <span class="type">double</span> tertiaryBasePrice;</span><br><span class="line">    <span class="comment">// long computation.</span></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>将函数移到一个独立的类中，使得局部变量成了这个类的字段。然后，你可以将函数分割成这个类中的多个函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Order</span> &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">price</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">PriceCalculator</span>(<span class="built_in">this</span>).compute();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PriceCalculator</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">double</span> primaryBasePrice;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">double</span> secondaryBasePrice;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">double</span> tertiaryBasePrice;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="title function_">PriceCalculator</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">    <span class="comment">// copy relevant information from order object.</span></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">compute</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// long computation.</span></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="引入-Null-对象-Introduce-Null-Object-1"><a href="#引入-Null-对象-Introduce-Null-Object-1" class="headerlink" title="引入 Null 对象(Introduce Null Object)"></a>引入 Null 对象(Introduce Null Object)</h4><p><strong>问题</strong></p>
+<p>你需要再三检查某对象是否为 null。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (customer == <span class="literal">null</span>) &#123;</span><br><span class="line">  plan = BillingPlan.basic();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">  plan = customer.getPlan();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>将 null 值替换为 null 对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">NullCustomer</span> <span class="keyword">extends</span> <span class="title class_">Customer</span> &#123;</span><br><span class="line">  Plan <span class="title function_">getPlan</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">NullPlan</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Some other NULL functionality.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Replace null values with Null-object.</span></span><br><span class="line">customer = (order.customer != <span class="literal">null</span>) ? order.customer : <span class="keyword">new</span> <span class="title class_">NullCustomer</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use Null-object as if it&#x27;s normal subclass.</span></span><br><span class="line">plan = customer.getPlan();</span><br></pre></td></tr></table></figure>
+
+<h2 id="异曲同工的类"><a href="#异曲同工的类" class="headerlink" title="异曲同工的类"></a>异曲同工的类</h2><blockquote>
+<p>异曲同工的类(Alternative Classes with Different Interfaces)</p>
+<p>两个类中有着不同的函数，却在做着同一件事。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/alternative-classes-with-different-interfaces-1.png" alt="img"></p>
+<h3 id="问题原因-2"><a href="#问题原因-2" class="headerlink" title="问题原因"></a>问题原因</h3><p>这种情况往往是因为：创建这个类的程序员并不知道已经有实现这个功能的类存在了。</p>
+<h3 id="解决方法-2"><a href="#解决方法-2" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>如果两个函数做同一件事，却有着不同的签名，请运用 <code>函数改名(Rename Method)</code> 根据它们的用途重新命名。</li>
+<li>运用 <code>搬移函数(Move Method)</code> 、 <code>添加参数(Add Parameter)</code> 和 <code>令函数携带参数(Parameterize Method)</code> 来使得方法的名称和实现一致。</li>
+<li>如果两个类仅有部分功能是重复的，尝试运用 <code>提炼超类(Extract Superclass)</code> 。这种情况下，已存在的类就成了超类。</li>
+<li>当最终选择并运用某种方法来重构后，也许你就能删除其中一个类了。</li>
+</ul>
+<h3 id="收益-2"><a href="#收益-2" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>消除了不必要的重复代码，为代码瘦身了。</li>
+<li>代码更易读（不再需要猜测为什么要有两个功能相同的类）。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/alternative-classes-with-different-interfaces-2.png" alt="img"></p>
+<h3 id="何时忽略-1"><a href="#何时忽略-1" class="headerlink" title="何时忽略"></a>何时忽略</h3><ul>
+<li>有时合并类是不可能的，或者是如此困难以至于没有意义。例如：两个功能相似的类存在于不同的 lib 库中。</li>
+</ul>
+<h3 id="重构方法说明-2"><a href="#重构方法说明-2" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="函数改名-Rename-Method"><a href="#函数改名-Rename-Method" class="headerlink" title="函数改名(Rename Method)"></a>函数改名(Rename Method)</h4><p><strong>问题</strong></p>
+<p>函数的名称未能恰当的揭示函数的用途。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> String <span class="title function_">getsnm</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong></p>
+<p>修改函数名。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> String <span class="title function_">getSecondName</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="搬移函数-Move-Method-1"><a href="#搬移函数-Move-Method-1" class="headerlink" title="搬移函数(Move Method)"></a>搬移函数(Move Method)</h4><p><strong>问题</strong></p>
+<p>你的程序中，有个函数与其所驻类之外的另一个类进行更多交流：调用后者，或被后者调用。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>在该函数最常引用的类中建立一个有着类似行为的新函数。将旧函数变成一个单纯的委托函数，或是旧函数完全移除。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/move-method-after.png" alt="img"></p>
+<h4 id="添加参数-Add-Parameter"><a href="#添加参数-Add-Parameter" class="headerlink" title="添加参数(Add Parameter)"></a>添加参数(Add Parameter)</h4><p><strong>问题</strong><br>某个函数需要从调用端得到更多信息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Customer</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> Contact <span class="title function_">getContact</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决</strong><br>为此函数添加一个对象函数，让改对象带进函数所需信息。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Customer</span> </span>&#123;</span><br><span class="line">  public Contact getContact(Date date);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="令函数携带参数-Parameterize-Method"><a href="#令函数携带参数-Parameterize-Method" class="headerlink" title="令函数携带参数(Parameterize Method)"></a>令函数携带参数(Parameterize Method)</h4><p><strong>问题</strong></p>
+<p>若干函数做了类似的工作，但在函数本体中却包含了不同的值。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/parameterize-method-before.png" alt="img"><br><strong>解决</strong></p>
+<p>建立单一函数，以参数表达哪些不同的值。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/parameterize-method-after.png" alt="img"></p>
+<h4 id="提炼超类-Extract-Superclass"><a href="#提炼超类-Extract-Superclass" class="headerlink" title="提炼超类(Extract Superclass)"></a>提炼超类(Extract Superclass)</h4><p><strong>问题</strong></p>
+<p>两个类有相似特性。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>为这两个类建立一个超类，将相同特性移至超类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-after.png" alt="img"></p>
+<h2 id="被拒绝的馈赠"><a href="#被拒绝的馈赠" class="headerlink" title="被拒绝的馈赠"></a>被拒绝的馈赠</h2><blockquote>
+<p>被拒绝的馈赠(Refused Bequest)</p>
+<p>子类仅仅使用父类中的部分方法和属性。其他来自父类的馈赠成为了累赘。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/refused-bequest-1.png" alt="img"></p>
+<h3 id="问题原因-3"><a href="#问题原因-3" class="headerlink" title="问题原因"></a>问题原因</h3><p>有些人仅仅是想重用超类中的部分代码而创建了子类。但实际上超类和子类完全不同。</p>
+<h3 id="解决方法-3"><a href="#解决方法-3" class="headerlink" title="解决方法"></a>解决方法</h3><ul>
+<li>如果继承没有意义并且子类和父类之间确实没有共同点，可以运用 <code>以委托取代继承(Replace Inheritance with Delegation)</code> 消除继承。</li>
+<li>如果继承是适当的，则去除子类中不需要的字段和方法。运用 <code>提炼超类(Extract Superclass)</code> 将所有超类中对于子类有用的字段和函数提取出来，置入一个新的超类中，然后让两个类都继承自它。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/refused-bequest-2.png" alt="img"></p>
+<h3 id="收益-3"><a href="#收益-3" class="headerlink" title="收益"></a>收益</h3><ul>
+<li>提高代码的清晰度和组织性。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/refused-bequest-3.png" alt="img"></p>
+<h3 id="重构方法说明-3"><a href="#重构方法说明-3" class="headerlink" title="重构方法说明"></a>重构方法说明</h3><h4 id="以委托取代继承-Replace-Inheritance-with-Delegation"><a href="#以委托取代继承-Replace-Inheritance-with-Delegation" class="headerlink" title="以委托取代继承(Replace Inheritance with Delegation)"></a>以委托取代继承(Replace Inheritance with Delegation)</h4><p><strong>问题</strong></p>
+<p>某个子类只使用超类接口中的一部分，或是根本不需要继承而来的数据。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-inheritance-with-delegation-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<ol>
+<li>在子类中新建一个字段用以保存超类；</li>
+<li>调整子类函数，令它改而委托超类；</li>
+<li>然后去掉两者之间的继承关系。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/replace-inheritance-with-delegation-after.png" alt="img"></p>
+<h4 id="提炼超类-Extract-Superclass-1"><a href="#提炼超类-Extract-Superclass-1" class="headerlink" title="提炼超类(Extract Superclass)"></a>提炼超类(Extract Superclass)</h4><p><strong>问题</strong></p>
+<p>两个类有相似特性。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-before.png" alt="img"></p>
+<p><strong>解决</strong></p>
+<p>为这两个类建立一个超类，将相同特性移至超类。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/refactor/extract-superclass-after.png" alt="img"></p>
+<h2 id="扩展阅读"><a href="#扩展阅读" class="headerlink" title="扩展阅读"></a>扩展阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E7%9A%84%E5%9D%8F%E5%91%B3%E9%81%93%E5%92%8C%E9%87%8D%E6%9E%84.md">代码的坏味道和重构</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E4%BB%A3%E7%A0%81%E8%87%83%E8%82%BF.md">代码坏味道之代码臃肿</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E6%BB%A5%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1.md">代码坏味道之滥用面向对象</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E5%8F%98%E9%9D%A9%E7%9A%84%E9%9A%9C%E7%A2%8D.md">代码坏味道之变革的障碍</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E9%9D%9E%E5%BF%85%E8%A6%81%E7%9A%84.md">代码坏味道之非必要的</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/dunwu/design/blob/master/docs/refactor/%E4%BB%A3%E7%A0%81%E5%9D%8F%E5%91%B3%E9%81%93%E4%B9%8B%E8%80%A6%E5%90%88.md">代码坏味道之耦合</a></li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/4199741/">《代码整洁之道》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/4262627/">《重构 - 改善既有代码的设计》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/1477390/">《代码大全》</a></li>
+<li><a target="_blank" rel="noopener" href="https://sourcemaking.com/refactoring">https://sourcemaking.com/refactoring</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/3ba0474c/" title="代码坏味道之滥用面向对象">https://dunwu.github.io/blog/pages/3ba0474c/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E8%AE%BE%E8%AE%A1/" rel="tag"># 设计</a>
+              <a href="/blog/tags/%E9%87%8D%E6%9E%84/" rel="tag"># 重构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/69705a6c/" rel="prev" title="代码坏味道之变革的障碍">
+                  <i class="fa fa-angle-left"></i> 代码坏味道之变革的障碍
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/7804288f/" rel="next" title="代码坏味道之代码臃肿">
+                  代码坏味道之代码臃肿 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"1664a0e5c9590b372fe17b3e679ee1c1"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

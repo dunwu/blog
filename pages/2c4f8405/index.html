@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="系统架构概述大型系统架构演化一个大型系统的架构是一个渐进的演化过程。罗马不是一天建成的，同理，微信、淘宝等大型系统绝不是一蹴而就的。随着业务的不断发展，用户体量的增加，系统的复杂度势必不断攀升，最终迫使系统架构进化，以应对挑战。 了解大型系统架构的演化过程，有利于我们了解架构进化的发展规律和业界一些成熟的应对方案。帮助我们在实际工作中，如何去思考架构，如何去凝练解决方案。 大型系统架构演化比较具有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统架构概述">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/2c4f8405/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="系统架构概述大型系统架构演化一个大型系统的架构是一个渐进的演化过程。罗马不是一天建成的，同理，微信、淘宝等大型系统绝不是一蹴而就的。随着业务的不断发展，用户体量的增加，系统的复杂度势必不断攀升，最终迫使系统架构进化，以应对挑战。 了解大型系统架构的演化过程，有利于我们了解架构进化的发展规律和业界一些成熟的应对方案。帮助我们在实际工作中，如何去思考架构，如何去凝练解决方案。 大型系统架构演化比较具有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200702718.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200703123.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200705172.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200704005.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200707199.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200710745.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200710835.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200711984.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200711267.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200711681.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/layered-architecture.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/event-driven-architecture.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/simple-event-driven-architecture.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/plug-in-architecture.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/microservices-architecture.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/cloud-architecture.png">
+<meta property="article:published_time" content="2018-07-05T07:11:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.721Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="微服务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200702718.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/2c4f8405/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/2c4f8405/","path":"/pages/2c4f8405/","title":"系统架构概述"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>系统架构概述 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">系统架构概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E5%9E%8B%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E6%BC%94%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">大型系统架构演化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.1.</span> <span class="nav-text">单机架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E6%9C%8D%E5%8A%A1%E5%92%8C%E6%95%B0%E6%8D%AE%E6%9C%8D%E5%8A%A1%E5%88%86%E7%A6%BB"><span class="nav-number">1.1.2.</span> <span class="nav-text">应用服务和数据服务分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98%E6%94%B9%E5%96%84%E6%80%A7%E8%83%BD"><span class="nav-number">1.1.3.</span> <span class="nav-text">使用缓存改善性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">1.1.4.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">1.1.5.</span> <span class="nav-text">数据库读写分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="nav-number">1.1.6.</span> <span class="nav-text">多级缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E6%8B%86%E5%88%86"><span class="nav-number">1.1.7.</span> <span class="nav-text">业务拆分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="nav-number">1.1.8.</span> <span class="nav-text">分库分表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%84%E4%BB%B6"><span class="nav-number">1.1.9.</span> <span class="nav-text">分布式组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.1.10.</span> <span class="nav-text">微服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84%E8%80%83%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">架构设计的考量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.1.</span> <span class="nav-text">什么是架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">架构设计的目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84%E5%8E%9F%E5%88%99"><span class="nav-number">1.2.3.</span> <span class="nav-text">架构设计的原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E9%80%82%E5%8E%9F%E5%88%99"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">合适原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%8E%9F%E5%88%99"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">简单原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E5%8C%96%E5%8E%9F%E5%88%99"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">演化原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%A8%E8%8F%B2%E5%AE%9A%E5%BE%8B"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">墨菲定律</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%B7%E5%A8%81%E5%AE%9A%E5%BE%8B"><span class="nav-number">1.2.3.5.</span> <span class="nav-text">康威定律</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%85%AB%E5%AE%9A%E5%BE%8B"><span class="nav-number">1.2.3.6.</span> <span class="nav-text">二八定律</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD"><span class="nav-number">1.2.4.</span> <span class="nav-text">高性能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">性能指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87%E6%89%8B%E6%AE%B5"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">性能提升手段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">1.2.5.</span> <span class="nav-text">高可用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">无状态应用的高可用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">有状态应用的高可用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%89%8B%E6%AE%B5"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">高可用手段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">1.2.6.</span> <span class="nav-text">扩展性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%B8%E7%BC%A9%E6%80%A7"><span class="nav-number">1.2.7.</span> <span class="nav-text">伸缩性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">1.2.8.</span> <span class="nav-text">安全性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">常见架构模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">分层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.2.</span> <span class="nav-text">事件驱动架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.3.</span> <span class="nav-text">微核架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.4.</span> <span class="nav-text">微服务架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%91%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.5.</span> <span class="nav-text">云架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/2c4f8405/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="系统架构概述 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统架构概述<a href="https://github.com/dunwu/blog/blob/master/source/_posts/03.%E8%AE%BE%E8%AE%A1/01.%E6%9E%B6%E6%9E%84/00.%E7%BB%BC%E5%90%88/02.%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-05 15:11:00" itemprop="dateCreated datePublished" datetime="2018-07-05T15:11:00+08:00">2018-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E8%AE%BE%E8%AE%A1/%E6%9E%B6%E6%9E%84/%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="系统架构概述"><a href="#系统架构概述" class="headerlink" title="系统架构概述"></a>系统架构概述</h1><h2 id="大型系统架构演化"><a href="#大型系统架构演化" class="headerlink" title="大型系统架构演化"></a>大型系统架构演化</h2><p>一个大型系统的架构是一个渐进的演化过程。罗马不是一天建成的，同理，微信、淘宝等大型系统绝不是一蹴而就的。随着业务的不断发展，用户体量的增加，系统的复杂度势必不断攀升，最终迫使系统架构进化，以应对挑战。</p>
+<p>了解大型系统架构的演化过程，有利于我们了解架构进化的发展规律和业界一些成熟的应对方案。帮助我们在实际工作中，如何去思考架构，如何去凝练解决方案。</p>
+<p>大型系统架构演化比较具有代表性的就是大型网站的演化过程。这里介绍一下大型网站演化的一般规律。</p>
+<h3 id="单机架构"><a href="#单机架构" class="headerlink" title="单机架构"></a>单机架构</h3><ul>
+<li><strong>问题</strong>：网站运营初期，访问用户少，一台服务器绰绰有余。</li>
+<li><strong>特征</strong>：<strong>应用程序、数据库、文件等所有的资源都在一台服务器上。</strong></li>
+<li><strong>描述</strong>：通常服务器操作系统使用 linux，应用程序使用 PHP 开发，然后部署在 Apache 上，数据库使用 Mysql，通俗称为 LAMP。汇集各种免费开源软件以及一台廉价服务器就可以开始系统的发展之路了。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200702718.png"></p>
+<h3 id="应用服务和数据服务分离"><a href="#应用服务和数据服务分离" class="headerlink" title="应用服务和数据服务分离"></a>应用服务和数据服务分离</h3><ul>
+<li><strong>问题</strong>：越来越多的用户访问导致性能越来越差，越来越多的数据导致存储空间不足，一台服务器已不足以支撑。</li>
+<li><strong>特征</strong>：<strong>应用服务器、数据库服务器、文件服务器分别独立部署。</strong></li>
+<li><strong>描述</strong>：三台服务器对性能要求各不相同：<ul>
+<li>应用服务器要处理大量业务逻辑，因此需要更快更强大的 CPU；</li>
+<li>数据库服务器需要快速磁盘检索和数据缓存，因此需要更快的硬盘和更大的内存；</li>
+<li>文件服务器需要存储大量文件，因此需要更大容量的硬盘。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200703123.png"></p>
+<h3 id="使用缓存改善性能"><a href="#使用缓存改善性能" class="headerlink" title="使用缓存改善性能"></a>使用缓存改善性能</h3><ul>
+<li><strong>问题</strong>：随着用户逐渐增多，数据库压力太大导致访问延迟。</li>
+<li><strong>特征</strong>：由于网站访问和财富分配一样遵循二八定律：_80% 的业务访问集中在 20% 的数据上_。<strong>将数据库中访问较集中的少部分数据缓存在内存中，可以减少数据库的访问次数，降低数据库的访问压力。</strong></li>
+<li><strong>描述</strong>：缓存分为两种：应用服务器上的本地缓存和分布式缓存服务器上的远程缓存。<ul>
+<li>本地缓存访问速度更快，但缓存数据量有限，同时存在与应用程序争用内存的情况。</li>
+<li>分布式缓存可以采用集群方式，理论上可以做到不受内存容量限制的缓存服务。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200705172.png"></p>
+<h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><ul>
+<li><strong>问题</strong>：使用缓存后，数据库访问压力得到有效缓解。但是单一应用服务器能够处理的请求连接有限，在访问高峰期，成为瓶颈。</li>
+<li><strong>特征</strong>：<strong>多台服务器通过负载均衡同时向外部提供服务，解决单一服务器处理能力和存储空间不足的问题。</strong></li>
+<li><strong>描述</strong>：使用集群是系统解决高并发、海量数据问题的常用手段。通过向集群中追加资源，提升系统的并发处理能力，使得服务器的负载压力不再成为整个系统的瓶颈。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200704005.png"></p>
+<h3 id="数据库读写分离"><a href="#数据库读写分离" class="headerlink" title="数据库读写分离"></a>数据库读写分离</h3><ul>
+<li><strong>问题</strong>：网站使用缓存后，使绝大部分数据读操作访问都可以不通过数据库就能完成，但是仍有一部分读操作和全部的写操作需要访问数据库，在网站的用户达到一定规模后，数据库因为负载压力过高而成为网站的瓶颈。</li>
+<li><strong>特征</strong>：目前大部分的主流数据库都提供主从热备功能，通过配置两台数据库主从关系，可以将一台数据库服务器的数据更新同步到一台服务器上。<strong>网站利用数据库的主从热备功能，实现数据库读写分离，从而改善数据库负载压力。</strong></li>
+<li><strong>描述</strong>：应用服务器在写操作的时候，访问主数据库，主数据库通过主从复制机制将数据更新同步到从数据库。这样当应用服务器在读操作的时候，访问从数据库获得数据。为了便于应用程序访问读写分离后的数据库，通常在应用服务器端使用专门的数据访问模块，使数据库读写分离的对应用透明。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200707199.png"></p>
+<h3 id="多级缓存"><a href="#多级缓存" class="headerlink" title="多级缓存"></a>多级缓存</h3><ul>
+<li><strong>问题</strong>：中国网络环境复杂，不同地区的用户访问网站时，速度差别也极大。</li>
+<li><strong>特征</strong>：<strong>采用 CDN 和反向代理加快系统的静态资源访问速度。</strong></li>
+<li><strong>描述</strong>：CDN 和反向代理的基本原理都是缓存，区别在于：<ul>
+<li>CDN 部署在网络提供商的机房，使用户在请求网站服务时，可以从距离自己最近的网络提供商机房获取数据；</li>
+<li>而反向代理则部署在网站的中心机房，当用户请求到达中心机房后，首先访问的服务器时反向代理服务器，如果反向代理服务器中缓存着用户请求的资源，就将其直接返回给用户。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200710745.png"></p>
+<h3 id="业务拆分"><a href="#业务拆分" class="headerlink" title="业务拆分"></a>业务拆分</h3><ul>
+<li><strong>问题</strong>：大型网站的业务场景日益复杂，分为多个产品线。</li>
+<li><strong>特征</strong>：采用分而治之的手段将整个网站业务分成不同的产品线。<strong>系统上按照业务进行拆分改造，应用服务器按照业务区分进行分别部署。</strong></li>
+<li><strong>描述</strong>：应用之间可以通过超链接建立关系，也可以通过消息队列进行数据分发，当然更多的还是通过访问同一个数据存储系统来构成一个关联的完整系统。<ul>
+<li><strong>纵向拆分</strong>：<strong>将一个大应用拆分为多个小应用</strong>，如果新业务较为独立，那么就直接将其设计部署为一个独立的 Web 应用系统。纵向拆分相对较为简单，通过梳理业务，将较少相关的业务剥离即可。</li>
+<li><strong>横向拆分</strong>：<strong>将复用的业务拆分出来，独立部署为分布式服务</strong>，新增业务只需要调用这些分布式服务横向拆分需要识别可复用的业务，设计服务接口，规范服务依赖关系。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200710835.png"></p>
+<h3 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h3><ul>
+<li><strong>问题</strong>：随着大型网站业务持续增长，数据库经过读写分离，从一台服务器拆分为两台服务器，依然不能满足需求。</li>
+<li><strong>特征</strong>：<strong>数据库采用分布式数据库。</strong></li>
+<li><strong>描述</strong>：分布式数据库是数据库拆分的最后方法，只有在单表数据规模非常庞大的时候才使用。不到不得已时，更常用的数据库拆分手段是业务分库，将不同的业务数据库部署在不同的物理服务器上。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200711984.png"></p>
+<h3 id="分布式组件"><a href="#分布式组件" class="headerlink" title="分布式组件"></a>分布式组件</h3><ul>
+<li><strong>问题</strong>：随着网站业务越来越复杂，对数据存储和检索的需求也越来越复杂。</li>
+<li><strong>特征</strong>：<strong>系统引入 NoSQL 数据库及搜索引擎。</strong></li>
+<li><strong>描述</strong>：NoSQL 数据库及搜索引擎对可伸缩的分布式特性具有更好的支持。应用服务器通过统一数据访问模块访问各种数据，减轻应用程序管理诸多数据源的麻烦。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200711267.png"></p>
+<h3 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h3><ul>
+<li><strong>问题</strong>：随着业务越拆越小，存储系统越来越庞大，应用系统整体复杂程度呈指数级上升，部署维护越来越困难。由于所有应用要和所有数据库系统连接，最终导致数据库连接资源不足，拒绝服务。</li>
+<li><strong>特征</strong>：<strong>公共业务提取出来，独立部署。由这些可复用的业务连接数据库，通过分布式服务提供共用业务服务。</strong></li>
+<li>描述：大型网站的架构演化到这里，基本上大多数的技术问题都得以解决，诸如跨数据中心的实时数据同步和具体网站业务相关的问题也都可以组合改进现有技术架构来解决。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200711681.png"></p>
+<h2 id="架构设计的考量"><a href="#架构设计的考量" class="headerlink" title="架构设计的考量"></a>架构设计的考量</h2><blockquote>
+<p><strong>每一个模式描述了一个不但重复发生的问题及该问题解决方案的核心。这样，就可以不断复用该方案而减少重复工作</strong>。</p>
+</blockquote>
+<h3 id="什么是架构"><a href="#什么是架构" class="headerlink" title="什么是架构"></a>什么是架构</h3><p>架构是一个非常抽象的概念，每个人由于技术的深度、思维的视角等差异，对于架构的理解，各不相同。</p>
+<p>这里摘抄网上某段比较精髓的定义：</p>
+<ul>
+<li><strong>架构是软件系统的顶层设计</strong>。</li>
+<li><strong>框架是面向编程或配置的半成品</strong>。</li>
+<li><strong>组件是从技术维度上的复用</strong>。</li>
+<li><strong>模块是从业务维度上职责的划分</strong>。</li>
+<li><strong>系统是相互协同可运行的实体</strong>。</li>
+</ul>
+<h3 id="架构设计的目标"><a href="#架构设计的目标" class="headerlink" title="架构设计的目标"></a>架构设计的目标</h3><p><strong>架构设计的主要目的是为了解决软件系统复杂度带来的问题</strong>。</p>
+<p>架构设计应该<strong>按需设计</strong>。任何网站都是随着业务逐步发展，不断演化而成，不要指望一劳永逸。</p>
+<p>关于架构设计的目的，常见的<strong>误区</strong>有：</p>
+<ul>
+<li>因为架构很重要，所以要做架构设计</li>
+<li>为了高性能、高可用、可扩展，所以要做架构设计</li>
+<li>大厂都是这么做的，所以我们也这么做</li>
+<li>这种新技术很牛逼，我们也一定要引入</li>
+</ul>
+<p>架构的原则：</p>
+<ul>
+<li>架构设计应该<strong>按需设计</strong>。任何网站都是随着业务逐步发展，不断演化而成，不要指望一劳永逸。</li>
+<li><strong>驱动技术发展的主要力量是业务发展</strong>。</li>
+<li><strong>不要盲目跟风</strong>大公司的解决方案。</li>
+<li><strong>不要盲目追求流行技术</strong>，而脱离了业务发展的实际情况。</li>
+<li><strong>不要把所有问题都丢给技术</strong>。现实中，有很多案例告诉我们，很多问题不一定需要通过技术来解决。归根结底，技术始终都是业务的辅助，业务问题究竟是通过技术来解决还是直接通过业务来解决，需要根据实际情况去分析判断。这就需要对业务领域有比较深入的理解和思考。</li>
+</ul>
+<h3 id="架构设计的原则"><a href="#架构设计的原则" class="headerlink" title="架构设计的原则"></a>架构设计的原则</h3><blockquote>
+<p>合适优于先进&gt;演化优于一步到位&gt;简单优于复杂</p>
+</blockquote>
+<h4 id="合适原则"><a href="#合适原则" class="headerlink" title="合适原则"></a>合适原则</h4><p>没那么多人，却想干那么多活，是失败的第一个主要原因。</p>
+<p>没有那么多积累，却想一步登天，是失败的第二个主要原因。</p>
+<p>没有那么卓越的业务场景，却幻想灵光一闪成为天才，是失败的第三个主要原因。</p>
+<h4 id="简单原则"><a href="#简单原则" class="headerlink" title="简单原则"></a>简单原则</h4><p>再高大上的解决方案如果不能落地，也是白扯。</p>
+<p>所以，应对需求</p>
+<h4 id="演化原则"><a href="#演化原则" class="headerlink" title="演化原则"></a>演化原则</h4><p>演化优于一步到位。</p>
+<p>不要妄图设计一个一步到位，永久不变的架构。</p>
+<h4 id="墨菲定律"><a href="#墨菲定律" class="headerlink" title="墨菲定律"></a>墨菲定律</h4><ul>
+<li>任何事都没有表面看起来那么简单；</li>
+<li>所有的事都会比你预计的时间长；</li>
+<li>会出错的事总会出错；</li>
+<li>如果你担心某种情况发生，那么它就更有可能发生。</li>
+</ul>
+<h4 id="康威定律"><a href="#康威定律" class="headerlink" title="康威定律"></a>康威定律</h4><p>系统设计(产品结构)等同组织形式，每个设计系统的组织，其产生的设计等同于组织之间的沟通结构（简单点说就是，系统的设计受限于设计系统的组织的人员架构形式。</p>
+<h4 id="二八定律"><a href="#二八定律" class="headerlink" title="二八定律"></a>二八定律</h4><h3 id="高性能"><a href="#高性能" class="headerlink" title="高性能"></a>高性能</h3><blockquote>
+<p>性能是软件系统的重要衡量标准。很多扩展性、伸缩性、可用性的问题，是为了解决性能问题而引入的。</p>
+</blockquote>
+<h4 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h4><p>响应延时、并发处理能力、内存、CPU、IO 开销等都可以视为系统的性能指标。</p>
+<p>分析用户体量、日访问量的峰值，估算出为了平稳应对峰值访问流量所需的并发量、吞吐量。如果是应用型系统，性能够用就好，没必要一味追求高性能。比如：用户体量可能还不过万，一天总访问量可能也就一两千 PV，峰值也就几百 QPS，这样的系统如果要考虑每秒几万的 QPS，显然有些多虑了。</p>
+<h4 id="性能提升手段"><a href="#性能提升手段" class="headerlink" title="性能提升手段"></a>性能提升手段</h4><p>常见的性能提升手段有：</p>
+<ul>
+<li>前端<ul>
+<li>浏览器缓存</li>
+<li>静态资源压缩</li>
+<li>合理布局页面</li>
+<li>减少 cookie 传输</li>
+<li>CDN</li>
+</ul>
+</li>
+<li>应用服务<ul>
+<li>负载均衡和反向代理</li>
+<li>本地缓存</li>
+<li>分布式缓存</li>
+<li>异步消息队列</li>
+<li>集群</li>
+<li>代码层面：使用多线程、改善内存管理</li>
+</ul>
+</li>
+<li>数据库<ul>
+<li>索引</li>
+<li>数据库缓存</li>
+<li>SQL 优化</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注意：<strong>缓存是改善软件性能的第一手段</strong>。缓存除了可以加快数据访问速度以外，还可以减轻后端应用和数据存储的负载压力。所以，如果要提升系统性能，应该第一时间想到缓存。</p>
+<p>使用缓存有两个前提：</p>
+<ul>
+<li>数据访问热点不均匀，频繁访问的数据应该放在缓存中。</li>
+<li>数据在某个时间段有效，不会很快过期，否则缓存数据会因已经失效而产生脏读。</li>
+</ul>
+</blockquote>
+<h3 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h3><blockquote>
+<p>系统无中断地执行其功能的能力，代表系统的可用性程度，是进行系统设计时的准则之一。</p>
+</blockquote>
+<p><strong>高性能增加机器目的在于“扩展”处理性能；高可用增加机器目的在于“冗余”处理单元</strong>。</p>
+<p>单点系统，是无法保证高可用的。系统自身故障、断电、硬件故障、网络等等，都可能导致服务不可用。高可用方案五花八门，本质上都是通过“<strong>冗余</strong>”来实现高可用。</p>
+<h4 id="无状态应用的高可用"><a href="#无状态应用的高可用" class="headerlink" title="无状态应用的高可用"></a>无状态应用的高可用</h4><p>无状态应用一般具有幂等性，即<strong>无论在哪台机器上进行计算，同样的算法和输入数据，产出的结果都是一样的。</strong>所以，计算在任意节点服务器上执行，结果都一样。</p>
+<p>无状态应用的高可用：</p>
+<ul>
+<li>需要增加一个任务分配器，选择合适的任务分配器也是一件复杂的事情，需要综合考虑性能、成本、可维护性、可用性等各方面因素。</li>
+<li>任务分配器和真正的业务服务器之间有连接和交互，需要选择合适的连接方式，并且对连接进行管理。例如，连接建立、连接检测、连接中断后如何处理等。</li>
+<li>任务分配器需要增加分配算法。例如，常见的双机算法有主备、主主，主备方案又可以细分为冷备、温备、热备。</li>
+</ul>
+<h4 id="有状态应用的高可用"><a href="#有状态应用的高可用" class="headerlink" title="有状态应用的高可用"></a>有状态应用的高可用</h4><p>有状态应用，是指需要存储数据的系统，比如各种分布式存储。和无状态应用相比，有一个本质上的区别：<strong>各节点需要通过同步保持数据一致</strong>。分布式领域里面有一个著名的 CAP 定理，从理论上论证了存储高可用的复杂度。也就是说，存储高可用不可能同时满足“一致性、可用性、分区容错性”，最多满足其中两个，这就要求我们在做架构设计时结合业务进行取舍。</p>
+<h4 id="高可用手段"><a href="#高可用手段" class="headerlink" title="高可用手段"></a>高可用手段</h4><p>高可用的常用手段：</p>
+<ul>
+<li><strong>负载均衡</strong> - 通过负载均衡设备建立集群共同对外提供服务。</li>
+<li><strong>备份</strong> - 数据存储在多台服务器，互相备份。即使访问和负载很小的服务也必须部署至少两台服务器，构成一个集群，目的就是通过冗余实现服务的高可用。<ul>
+<li><strong>冷备份</strong> - 数据应该定期备份；</li>
+<li><strong>热备份</strong> - 为了保证在线业务高可用，还需要对数据库进行主从分离，实时同步 。</li>
+<li><strong>灾备</strong> - 为了抵御地震、海啸等不可抗因素导致的网站完全瘫痪，某些大型网站会对整个数据中心进行备份，全球范围内部署 <strong>灾备数据中心</strong>。网站程序和数据定期同步到多个灾备数据中心。</li>
+</ul>
+</li>
+<li><strong>自动化</strong> - 自动化是指，大型系统有必要通过预发布验证、自动化测试、自动化发布、灰度发布等手段，减少将故障引入线上环境的可能。常见自动化手段有：<ul>
+<li>发布过程自动化<ul>
+<li>自动化代码管理</li>
+<li>自动化测试</li>
+<li>自动化安全监测</li>
+<li>自动化部署</li>
+</ul>
+</li>
+<li>运维自动化<ul>
+<li>自动化监控</li>
+<li>自动化报警</li>
+<li>自动化失效转移</li>
+<li>自动化失效恢复</li>
+<li>自动化降级</li>
+<li>自动化分配资源</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="扩展性"><a href="#扩展性" class="headerlink" title="扩展性"></a>扩展性</h3><blockquote>
+<p><strong>可扩展性指系统为了应对将来需求变化而提供的一种扩展能力</strong>，当有新的需求出现时，系统不需要或者仅需要少量修改就可以支持，无须整个系统重构或者重建。</p>
+<p>衡量扩展性的标准就是增加新的业务产品时，是否可以实现对现有产品透明无影响，不需要任何改动或很少改动，既有功能就可以上线新产品。</p>
+<p>软件发展的一个重要目标和驱动力是降低软件耦合性。事物之间直接关系越少，彼此影响就越小，也就更容易独立发展，即扩展性好。</p>
+</blockquote>
+<p>主要手段有：</p>
+<ul>
+<li><p><strong>分层</strong> - 分层是扩展性设计的最基本手段。通过分层，可以将一个的软件系统切分为不同的部分，便于分工合作开发和维护；各层间具有一定的独立性。</p>
+<ul>
+<li>分层架构的约束：<strong>禁止跨层次的调用及逆向调用</strong>。</li>
+<li>即使系统规模很小，也应该考虑采用分层的架构，这样便于以后扩展。</li>
+</ul>
+</li>
+<li><p><strong>分割</strong> - 将不同的功能和服务分割开来，包装成高内聚、低耦合的模块单元。这有助于软件的开发和维护，便于不同模块的分布式部署，提高系统的并发处理能力和功能扩展能力。</p>
+</li>
+<li><p><strong>异步</strong> - 业务间的消息传递不是同步调用，而是将一个业务操作拆分成多阶段，每个阶段间通过共享数据的方式异步执行进行协作。</p>
+<ul>
+<li><strong>在单一服务器内部可通过多线程共享内存队列的方式实现异步</strong>，处在业务操作前面的线程将操作输出到队列，后面的线程从队列中读取数据进行处理；</li>
+<li>在分布式系统中，<strong>多个服务器集群通过分布式消息队列实现异步</strong>。</li>
+</ul>
+</li>
+<li><p><strong>分布式</strong> - 将业务和可复用服务分离，通过分布式服务框架调用。分布式是指多台服务器部署相同应用构成一个集群，通过负载均衡设备共同对外提供服务。着意味着服务可以用更多的机器工作，即扩展 CPU、内存、IO 等资源，从而提高系统整体的吞吐量和并发处理能力。</p>
+<ul>
+<li>常用的分布式方案：<ul>
+<li>分布式应用和服务</li>
+<li>分布式静态资源</li>
+<li>分布式数据和存储</li>
+<li>分布式计算</li>
+</ul>
+</li>
+<li>分布式也引入了一些问题：<ul>
+<li>服务调用必须通过网络，网络延迟会影响性能。</li>
+<li>服务器越多，宕机概率也越大，导致可用性降低。</li>
+<li>数据一致性非常困难，分布式事务也难以保证。</li>
+<li>网站依赖错综复杂，开发管理维护困难。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="伸缩性"><a href="#伸缩性" class="headerlink" title="伸缩性"></a>伸缩性</h3><blockquote>
+<p>衡量伸缩的标准就是是否可以用多台服务器构建集群，是否容易向集群中增删服务器节点。增删服务器节点后是否可以提供和之前无差别的服务。集群中可容纳的总服务器数是否有限制。</p>
+</blockquote>
+<p>伸缩性是指<strong>通过增&#x2F;减服务器节点数，来灵活的提高&#x2F;降低系统处理能力</strong>。</p>
+<p>主要手段有:</p>
+<ul>
+<li><strong>应用服务器集群</strong> - 只要服务器上保存数据，则所有服务器都是对等的，通过负载均衡设备向集群中不断加入服务器即可</li>
+<li><strong>缓存服务器集群</strong> - 加入新的服务器可能会导致缓存路由失效，进而导致集群中的大部分缓存数据都无法访问。虽然缓存数据可以通过数据库重新加载，但是如果应用严重依赖缓存，可能会导致网站崩溃。需要改进缓存路由算法保证缓存数据的可访问性。</li>
+<li><strong>关系型数据库集群</strong> - 关系型数据库虽然支持数据复制，主从热备等机制，但是很难做到大规模集群的可伸缩性，因此关系型数据库的集群伸缩性方案必须在数据库之外实现，通过路由分区等手段将部署有多个数据库的服务器组成一个集群。</li>
+<li><strong>Nosql 数据库集群</strong> - 由于先天就是为了应对海量数据而产生，因此对伸缩性的支持通常都非常好。</li>
+</ul>
+<h3 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h3><p>安全是指系统应该对恶意攻击有一定的抵抗能力，保护重要数据不被窃取。</p>
+<ul>
+<li><strong>密码</strong> 和 <strong>手机校验码</strong> 进行身份认证</li>
+<li>登录、交易等重要操作需要对网络通信进行 <strong>加密</strong>，存储的敏感数据如用户信息等也进行加密处理</li>
+<li>防止机器人程序攻击网站，使用 <strong>验证码</strong> 进行识别</li>
+<li>对常见用于 <strong>攻击</strong> 网站的 XSS 攻击、SQL 注入、进行编码转换等相应处理</li>
+<li>对垃圾信息、敏感信息进行 <strong>过滤</strong></li>
+<li>对交易转账等重要操作根据交易模式和交易信息进行 <strong>风险控制</strong></li>
+</ul>
+<h2 id="常见架构模型"><a href="#常见架构模型" class="headerlink" title="常见架构模型"></a>常见架构模型</h2><h3 id="分层架构"><a href="#分层架构" class="headerlink" title="分层架构"></a>分层架构</h3><p>分层架构（layered architecture）是最常见的软件架构，也是事实上的标准架构。</p>
+<p>这种架构将软件分成若干个水平层，每一层都有清晰的角色和分工，不需要知道其他层的细节。层与层之间通过接口通信。</p>
+<p>四层的结构最常见。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/layered-architecture.png" width="500"/>
+</div>
+
+<ul>
+<li>表现层（presentation）：用户界面，负责视觉和用户互动</li>
+<li>业务层（business）：实现业务逻辑</li>
+<li>持久层（persistence）：提供数据，SQL 语句就放在这一层</li>
+<li>数据库（database） ：保存数据</li>
+</ul>
+<p>优点</p>
+<ul>
+<li>结构简单，容易理解和开发</li>
+<li>不同技能的程序员可以分工，负责不同的层，天然适合大多数软件公司的组织架构</li>
+<li>每一层都可以独立测试，其他层的接口通过模拟解决</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>一旦环境变化，需要代码调整或增加功能时，通常比较麻烦和费时</li>
+<li>部署比较麻烦，即使只修改一个小地方，往往需要整个软件重新部署，不容易做持续发布</li>
+<li>软件升级时，可能需要整个服务暂停</li>
+<li>扩展性差。用户请求大量增加时，必须依次扩展每一层，由于每一层内部是耦合的，扩展会很困难</li>
+</ul>
+<h3 id="事件驱动架构"><a href="#事件驱动架构" class="headerlink" title="事件驱动架构"></a>事件驱动架构</h3><p>事件（event）是状态发生变化时，软件发出的通知。</p>
+<p>事件驱动架构（event-driven architecture）就是通过事件进行通信的软件架构。它分成四个部分。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/event-driven-architecture.png" width="500"/>
+</div>
+
+<ul>
+<li>事件队列（event queue）：接收事件的入口</li>
+<li>分发器（event mediator）：将不同的事件分发到不同的业务逻辑单元</li>
+<li>事件通道（event channel）：分发器与处理器之间的联系渠道</li>
+<li>事件处理器（event processor）：实现业务逻辑，处理完成后会发出事件，触发下一步操作</li>
+</ul>
+<p>对于简单的项目，事件队列、分发器和事件通道，可以合为一体，整个软件就分成事件代理和事件处理器两部分。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/simple-event-driven-architecture.png" width="500"/>
+</div>
+
+<p>优点</p>
+<ul>
+<li>分布式的异步架构，事件处理器之间高度解耦，软件的扩展性好</li>
+<li>适用性广，各种类型的项目都可以用</li>
+<li>性能较好，因为事件的异步本质，软件不易产生堵塞</li>
+<li>事件处理器可以独立地加载和卸载，容易部署</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>涉及异步编程（要考虑远程通信、失去响应等情况），开发相对复杂</li>
+<li>难以支持原子性操作，因为事件通过会涉及多个处理器，很难回滚</li>
+<li>分布式和异步特性导致这个架构较难测试</li>
+</ul>
+<h3 id="微核架构"><a href="#微核架构" class="headerlink" title="微核架构"></a>微核架构</h3><p>微核架构（microkernel architecture）又称为”插件架构”（plug-in architecture），指的是软件的内核相对较小，主要功能和业务逻辑都通过插件实现。</p>
+<p>内核（core）通常只包含系统运行的最小功能。插件则是互相独立的，插件之间的通信，应该减少到最低，避免出现互相依赖的问题。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/plug-in-architecture.png" width="500"/>
+</div>
+
+<p>优点</p>
+<ul>
+<li>良好的功能延伸性（extensibility），需要什么功能，开发一个插件即可</li>
+<li>功能之间是隔离的，插件可以独立的加载和卸载，使得它比较容易部署，</li>
+<li>可定制性高，适应不同的开发需要</li>
+<li>可以渐进式地开发，逐步增加功能</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>扩展性（scalability）差，内核通常是一个独立单元，不容易做成分布式</li>
+<li>开发难度相对较高，因为涉及到插件与内核的通信，以及内部的插件登记机制</li>
+</ul>
+<h3 id="微服务架构"><a href="#微服务架构" class="headerlink" title="微服务架构"></a>微服务架构</h3><p>微服务架构（microservices architecture）是服务导向架构（service-oriented architecture，缩写 SOA）的升级。</p>
+<p>每一个服务就是一个独立的部署单元（separately deployed unit）。这些单元都是分布式的，互相解耦，通过远程通信协议（比如 REST、SOAP）联系。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/microservices-architecture.png" width="500"/>
+</div>
+
+<p>微服务架构分成三种实现模式。</p>
+<ul>
+<li>RESTful API 模式：服务通过 API 提供，云服务就属于这一类</li>
+<li>RESTful 应用模式：服务通过传统的网络协议或者应用协议提供，背后通常是一个多功能的应用程序，常见于企业内部</li>
+<li>集中消息模式：采用消息代理（message broker），可以实现消息队列、负载均衡、统一日志和异常处理，缺点是会出现单点失败，消息代理可能要做成集群</li>
+</ul>
+<p>优点</p>
+<ul>
+<li>扩展性好，各个服务之间低耦合</li>
+<li>容易部署，软件从单一可部署单元，被拆成了多个服务，每个服务都是可部署单元</li>
+<li>容易开发，每个组件都可以进行持续集成式的开发，可以做到实时部署，不间断地升级</li>
+<li>易于测试，可以单独测试每一个服务</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>由于强调互相独立和低耦合，服务可能会拆分得很细。这导致系统依赖大量的微服务，变得很凌乱和笨重，性能也会不佳。</li>
+<li>一旦服务之间需要通信（即一个服务要用到另一个服务），整个架构就会变得复杂。典型的例子就是一些通用的 Utility 类，一种解决方案是把它们拷贝到每一个服务中去，用冗余换取架构的简单性。</li>
+<li>分布式的本质使得这种架构很难实现原子性操作，交易回滚会比较困难。</li>
+</ul>
+<h3 id="云架构"><a href="#云架构" class="headerlink" title="云架构"></a>云架构</h3><p>云结构（cloud architecture）主要解决扩展性和并发的问题，是最容易扩展的架构。</p>
+<p>它的高扩展性，主要原因是没使用中央数据库，而是把数据都复制到内存中，变成可复制的内存数据单元。然后，业务处理能力封装成一个个处理单元（prcessing unit）。访问量增加，就新建处理单元；访问量减少，就关闭处理单元。由于没有中央数据库，所以扩展性的最大瓶颈消失了。由于每个处理单元的数据都在内存里，最好要进行数据持久化。</p>
+<div align="center">
+<img src="https://raw.githubusercontent.com/dunwu/images/master/cs/design/architecture/cloud-architecture.png" width="500"/>
+</div>
+
+<p>这个模式主要分成两部分：处理单元（processing unit）和虚拟中间件（virtualized middleware）。</p>
+<ul>
+<li>处理单元：实现业务逻辑</li>
+<li>虚拟中间件：负责通信、保持 sessions、数据复制、分布式处理、处理单元的部署。</li>
+</ul>
+<p>虚拟中间件又包含四个组件。</p>
+<blockquote>
+<ul>
+<li><strong>消息中间件</strong>（Messaging Grid）：管理用户请求和 session，当一个请求进来以后，决定分配给哪一个处理单元。</li>
+<li><strong>数据中间件</strong>（Data Grid）：将数据复制到每一个处理单元，即数据同步。保证某个处理单元都得到同样的数据。</li>
+<li><strong>处理中间件</strong>（Processing Grid）：可选，如果一个请求涉及不同类型的处理单元，该中间件负责协调处理单元</li>
+<li><strong>部署中间件</strong>（Deployment Manager）：负责处理单元的启动和关闭，监控负载和响应时间，当负载增加，就新启动处理单元，负载减少，就关闭处理单元。</li>
+</ul>
+</blockquote>
+<p>优点</p>
+<ul>
+<li>高负载，高扩展性</li>
+<li>动态部署</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>实现复杂，成本较高</li>
+<li>主要适合网站类应用，不合适大量数据吞吐的大型数据库应用</li>
+<li>较难测试</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://item.jd.com/11322972.html">《大型网站技术架构：核心原理与案例分析》</a></li>
+<li>《从 0 开始学架构》</li>
+<li><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2016/09/software-architecture.html">软件架构入门- 阮一峰的网络日志</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/2c4f8405/" title="系统架构概述">https://dunwu.github.io/blog/pages/2c4f8405/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+              <a href="/blog/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag"># 微服务</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/bf101e07/" rel="prev" title="系统高性能架构">
+                  <i class="fa fa-angle-left"></i> 系统高性能架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/6da58e4b/" rel="next" title="负载均衡">
+                  负载均衡 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"d32d542e923a4e1c4b99c7bf7998844e"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

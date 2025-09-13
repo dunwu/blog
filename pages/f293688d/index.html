@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="分布式事务事务简介什么是事务在数据存储环境中，可能会出现各种各样的问题：  数据库软件或硬件可能会随时失效（包括正在执行写操作的过程中）。 应用程序可能随时崩愤（包括一系列操作执行到中间某一步）。 应用与数据库节点间的连接可能会随时中断，数据库节点间也存在同样问题。 多个客户端可能同时写入数据库，导致数据覆盖。 客户端可能读到一些无意义的、部分更新的数据。 客户端之间由于边界条件竞争所引入的各种奇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式事务">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/f293688d/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="分布式事务事务简介什么是事务在数据存储环境中，可能会出现各种各样的问题：  数据库软件或硬件可能会随时失效（包括正在执行写操作的过程中）。 应用程序可能随时崩愤（包括一系列操作执行到中间某一步）。 应用与数据库节点间的连接可能会随时中断，数据库节点间也存在同样问题。 多个客户端可能同时写入数据库，导致数据覆盖。 客户端可能读到一些无意义的、部分更新的数据。 客户端之间由于边界条件竞争所引入的各种奇">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190813952.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190750592.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190750182.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200746619.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102180526.png">
+<meta property="og:image" content="https://www.wangbase.com/blogimg/asset/201807/bg2018071602.png">
+<meta property="og:image" content="https://www.wangbase.com/blogimg/asset/201807/bg2018071603.png">
+<meta property="og:image" content="https://www.wangbase.com/blogimg/asset/201807/bg2018071604.png">
+<meta property="og:image" content="https://www.wangbase.com/blogimg/asset/201807/bg2018071605.png">
+<meta property="og:image" content="https://www.wangbase.com/blogimg/asset/201807/bg2018071606.png">
+<meta property="og:image" content="https://www.wangbase.com/blogimg/asset/201807/bg2018071601.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102191819.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102191820.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102192406.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190751196.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190751172.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190752281.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190752525.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190753250.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190753329.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190757821.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190757821.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190758570.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190758755.png">
+<meta property="og:image" content="https://rocketmq.apache.org/zh/assets/images/lifecyclefortrans-fe4a49f1c9fdae5d590a64546722036f.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190758952.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190759028.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190800829.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190800891.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190808479.png">
+<meta property="article:published_time" content="2019-06-21T03:30:00.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.745Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="ACID">
+<meta property="article:tag" content="协同">
+<meta property="article:tag" content="事务">
+<meta property="article:tag" content="互斥">
+<meta property="article:tag" content="2PC">
+<meta property="article:tag" content="3PC">
+<meta property="article:tag" content="TCC">
+<meta property="article:tag" content="本地消息表">
+<meta property="article:tag" content="消息事务">
+<meta property="article:tag" content="SAGA">
+<meta property="article:tag" content="XA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190813952.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/f293688d/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/f293688d/","path":"/pages/f293688d/","title":"分布式事务"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式事务 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">事务简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ACID"><span class="nav-number">1.1.2.</span> <span class="nav-text">ACID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.1.3.</span> <span class="nav-text">什么是分布式事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CAP-%E7%90%86%E8%AE%BA"><span class="nav-number">1.1.4.</span> <span class="nav-text">CAP 理论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">可用性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">分区容错性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AP-or-CP"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">AP or CP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BASE-%E7%90%86%E8%AE%BA"><span class="nav-number">1.1.5.</span> <span class="nav-text">BASE 理论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-BASE-%E5%AE%9A%E7%90%86"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">什么是 BASE 定理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BASE-vs-ACID"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">BASE vs. ACID</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%94%E6%80%A7%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.1.6.</span> <span class="nav-text">柔性事务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%EF%BC%882PC%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">两阶段提交（2PC）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">方案简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">处理流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5-1%EF%BC%9A%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">阶段 1：准备阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5-2%EF%BC%9A%E6%8F%90%E4%BA%A4%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">阶段 2：提交阶段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.3.</span> <span class="nav-text">方案总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%EF%BC%883PC%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">三阶段提交（3PC）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E7%AE%80%E4%BB%8B-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">方案简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">处理流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5-1%EF%BC%9AcanCommit"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">阶段 1：canCommit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5-2%EF%BC%9ApreCommit"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">阶段 2：preCommit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5-3%EF%BC%9AdoCommit"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">阶段 3：doCommit</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93-1"><span class="nav-number">1.3.3.</span> <span class="nav-text">方案总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%81%BF%E4%BA%8B%E5%8A%A1%EF%BC%88TCC%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">补偿事务（TCC）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E7%AE%80%E4%BB%8B-2"><span class="nav-number">1.4.1.</span> <span class="nav-text">方案简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-2"><span class="nav-number">1.4.2.</span> <span class="nav-text">处理流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Try-%E9%98%B6%E6%AE%B5"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">Try 阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Confirm-Cancel-%E9%98%B6%E6%AE%B5"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">Confirm &#x2F; Cancel 阶段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93-2"><span class="nav-number">1.4.3.</span> <span class="nav-text">方案总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%B6%88%E6%81%AF%E8%A1%A8"><span class="nav-number">1.5.</span> <span class="nav-text">本地消息表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E7%AE%80%E4%BB%8B-3"><span class="nav-number">1.5.1.</span> <span class="nav-text">方案简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-3"><span class="nav-number">1.5.2.</span> <span class="nav-text">处理流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93-3"><span class="nav-number">1.5.3.</span> <span class="nav-text">方案总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.6.</span> <span class="nav-text">消息事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ-%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.1.</span> <span class="nav-text">RocketMQ 事务消息实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MQ-%E4%BA%8B%E5%8A%A1%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.2.</span> <span class="nav-text">MQ 事务方案总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SAGA-%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.7.</span> <span class="nav-text">SAGA 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E7%AE%80%E4%BB%8B-4"><span class="nav-number">1.7.1.</span> <span class="nav-text">方案简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-4"><span class="nav-number">1.7.2.</span> <span class="nav-text">处理流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E7%AD%96%E7%95%A5"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">恢复策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E5%8D%8F%E8%B0%83"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">命令协调</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E7%BC%96%E6%8E%92"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">事件编排</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93-4"><span class="nav-number">1.7.3.</span> <span class="nav-text">方案总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.8.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%84%E6%96%B9%E6%A1%88%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.8.1.</span> <span class="nav-text">各方案使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%96%B9%E6%A1%88%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.8.2.</span> <span class="nav-text">分布式事务方案设计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/f293688d/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式事务 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式事务<a href="https://github.com/dunwu/blog/blob/master/source/_posts/15.%E5%88%86%E5%B8%83%E5%BC%8F/11.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/01.%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-21 11:30:00" itemprop="dateCreated datePublished" datetime="2019-06-21T11:30:00+08:00">2019-06-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/" itemprop="url" rel="index"><span itemprop="name">分布式协同</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E5%90%8C%E7%BB%BC%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">分布式协同综合</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>16k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h1><h2 id="事务简介"><a href="#事务简介" class="headerlink" title="事务简介"></a>事务简介</h2><h3 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h3><p>在数据存储环境中，可能会出现各种各样的问题：</p>
+<ul>
+<li>数据库软件或硬件可能会随时失效（包括正在执行写操作的过程中）。</li>
+<li>应用程序可能随时崩愤（包括一系列操作执行到中间某一步）。</li>
+<li>应用与数据库节点间的连接可能会随时中断，数据库节点间也存在同样问题。</li>
+<li>多个客户端可能同时写入数据库，导致数据覆盖。</li>
+<li>客户端可能读到一些无意义的、部分更新的数据。</li>
+<li>客户端之间由于边界条件竞争所引入的各种奇怪问题。</li>
+</ul>
+<p>为了解决以上问题，产生了事务这个概念。</p>
+<p><strong>事务（Transaction）指的是满足 ACID 特性的一组操作</strong>。事务内的 SQL 语句，要么全执行成功，要么全执行失败。可以通过 <code>Commit</code> 提交一个事务，也可以使用 <code>Rollback</code> 进行回滚。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190813952.png"></p>
+<p>通俗的说，<strong>事务将多个读、写操作捆绑在一起成为一个逻辑操作单元</strong>。<strong>事务中的所有读写是一个执行的整体，整个事务要么成功（提交）、要么失败（中止或回滚）</strong>。如果失败，应用程序可以安全地重试。这样，由于不需要担心部分失败的情况（无论出于任何原因），应用层的错误处理就变得简单很多。</p>
+<h3 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h3><p>那么，什么是 ACID 特性呢？ACID 是数据库事务正确执行的四个基本要素的单词缩写：</p>
+<ul>
+<li><strong>原子性（Atomicity）</strong><ul>
+<li>原子是指不可分解为更小粒度的东西。事务的原子性意味着：<strong>事务中的所有操作要么全部成功，要么全部失败</strong>。</li>
+<li>回滚可以用日志来实现，日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。</li>
+<li>ACID 中的原子性并不关乎多个操作的并发性，它并没有描述多个线程试图访问相同的数据会发生什么情况，后者其实是由 ACID 的隔离性所定义。</li>
+</ul>
+</li>
+<li><strong>一致性（Consistency）</strong><ul>
+<li>数据库在事务执行前后都保持一致性状态。</li>
+<li>在一致性状态下，所有事务对一个数据的读取结果都是相同的。</li>
+<li>一致性本质上要求应用层来维护状态一致（或者恒等），应用程序有责任正确地定义事务来保持一致性。这不是数据库可以保证的事情。</li>
+</ul>
+</li>
+<li><strong>隔离性（Isolation）</strong><ul>
+<li><strong>同时运行的事务互不干扰</strong>。换句话说，一个事务所做的修改在最终提交以前，对其它事务是不可见的。</li>
+</ul>
+</li>
+<li><strong>持久性（Durability）</strong><ul>
+<li>一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。</li>
+<li>可以通过数据库备份和恢复来实现，在系统发生奔溃时，使用备份的数据库进行数据恢复。</li>
+</ul>
+</li>
+</ul>
+<p>一个支持事务（Transaction）中的数据库系统，必需要具有这四种特性，否则在事务过程（Transaction processing）当中无法保证数据的正确性。</p>
+<ul>
+<li>只有满足一致性，事务的执行结果才是正确的。</li>
+<li>在无并发的情况下，事务串行执行，隔离性一定能够满足。此时只要能满足原子性，就一定能满足一致性。</li>
+<li>在并发的情况下，多个事务并行执行，事务不仅要满足原子性，还需要满足隔离性，才能满足一致性。</li>
+<li>事务满足持久化是为了能应对系统崩溃的情况。</li>
+</ul>
+<h3 id="什么是分布式事务"><a href="#什么是分布式事务" class="headerlink" title="什么是分布式事务"></a>什么是分布式事务</h3><p>在单一数据节点中，事务仅限于对单一数据库资源的访问控制，称之为<strong>本地事务</strong>。几乎所有的成熟的关系型数据库都提供了对本地事务的原生支持。</p>
+<p><strong>分布式事务指的是事务操作跨越多个节点，并且要求满足事务的 ACID 特性。</strong></p>
+<p>随着互联网快速发展，微服务，SOA 等服务架构模式正在被大规模的使用，现在分布式系统一般由多个独立的子系统组成，多个子系统通过网络通信互相协作配合完成各个功能。</p>
+<p>有很多用例会跨多个子系统才能完成，比较典型的是电子商务网站的下单支付流程，至少会涉及交易系统和支付系统，而且这个过程中会涉及到事务的概念，即保证交易系统和支付系统的数据一致性，此处我们称这种<strong>跨系统的事务为分布式事务</strong>，具体一点而言，分布式事务是指事务的参与者、支持事务的服务器、资源服务器以及事务管理器分别位于不同的分布式系统的不同节点之上。</p>
+<p>举个互联网常用的交易业务为例：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190750592.png"></p>
+<p>上图中包含了库存和订单两个独立的微服务，每个微服务维护了自己的数据库。在交易系统的业务逻辑中，一个商品在下单之前需要先调用库存服务，进行扣除库存，再调用订单服务，创建订单记录。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190750182.png"></p>
+<p>可以看到，如果多个数据库之间的数据更新没有保证事务，将会导致出现子系统数据不一致，业务出现问题。</p>
+<p>分布式事务相比于本地事务，实现复杂度要高很多，主要是因为其存在以下<strong>难点</strong>：</p>
+<ul>
+<li><strong>事务的原子性</strong>：事务操作跨不同节点，当多个节点某一节点操作失败时，需要保证多节点操作的<strong>都做或都不做（All or Nothing）</strong>的原子性。</li>
+<li><strong>事务的一致性</strong>：当发生网络传输故障或者节点故障，节点间数据复制通道中断，在进行事务操作时需要保证数据一致性，保证事务的任何操作都不会使得数据违反数据库定义的约束、触发器等规则。</li>
+<li><strong>事务的隔离性</strong>：事务隔离性的本质就是如何正确多个并发事务的处理的读写冲突和写写冲突，因为在分布式事务控制中，可能会出现提交不同步的现象，这个时候就有可能出现“部分已经提交”的事务。此时并发应用访问数据如果没有加以控制，有可能出现“脏读”问题。</li>
+</ul>
+<p>在分布式领域，要实现强一致性，代价非常高昂。因此，有人基于 CAP 理论以及 BASE 理论，有人就提出了<strong>柔性事务</strong>的概念。柔性事务是指：在不影响系统整体可用性的情况下 (Basically Available 基本可用），允许系统存在数据不一致的中间状态 (Soft State 软状态），在经过数据同步的延时之后，最终数据能够达到一致。<strong>并不是完全放弃了 ACID，而是通过放宽一致性要求，借助本地事务来实现最终分布式事务一致性的同时也保证系统的吞吐</strong>。</p>
+<h3 id="CAP-理论"><a href="#CAP-理论" class="headerlink" title="CAP 理论"></a>CAP 理论</h3><blockquote>
+<p>CAP 定理是加州大学计算机科学家埃里克·布鲁尔提出来的猜想，后来被证明成为分布式计算领域公认的定理。</p>
+</blockquote>
+<p><strong>CAP 定理</strong>，指的是：<strong>在一个分布式系统中，当发生网络分区时，那么强一致性和可用性只能二选一</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202310200746619.png"></p>
+<p>CAP 就是取 Consistency、Availability、Partition Tolerance 的首字母而命名。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102180526.png" alt="img"></p>
+<ul>
+<li>一致性（<strong>C</strong>onsistency）：在任何给定时间，网络中的所有节点都具有完全相同（最近）的值。</li>
+<li>可用性（<strong>A</strong>vailability）：对网络的每个请求都会收到响应，但不能保证返回的数据是最新的。</li>
+<li>分区容错性（<strong>P</strong>artition Tolerance）：即使任意数量的节点出现故障，网络仍会继续运行。</li>
+</ul>
+<h4 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h4><p>一致性（Consistency）指的是<strong>多个数据副本是否能保持一致</strong>的特性。</p>
+<p>在一致性的条件下，分布式系统在执行写操作成功后，如果所有用户都能够读取到最新的值，该系统就被认为具有强一致性。</p>
+<p>数据一致性又可以分为以下几点：</p>
+<ul>
+<li><strong>强一致性</strong> - 数据更新操作结果和操作响应总是一致的，即操作响应通知更新失败，那么数据一定没有被更新，而不是处于不确定状态。</li>
+<li><strong>最终一致性</strong> - 即物理存储的数据可能是不一致的，终端用户访问到的数据可能也是不一致的，但系统经过一段时间的自我修复和修正，数据最终会达到一致。</li>
+</ul>
+<p>举例来说，某条记录是 v0，用户向 G1 发起一个写操作，将其改为 v1。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201807/bg2018071602.png" alt="img"></p>
+<p>接下来，用户的读操作就会得到 v1。这就叫一致性。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201807/bg2018071603.png" alt="img"></p>
+<p>问题是，用户有可能向 G2 发起读操作，由于 G2 的值没有发生变化，因此返回的是 v0。G1 和 G2 读操作的结果不一致，这就不满足一致性了。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201807/bg2018071604.png" alt="img"></p>
+<p>为了让 G2 也能变为 v1，就要在 G1 写操作的时候，让 G1 向 G2 发送一条消息，要求 G2 也改成 v1。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201807/bg2018071605.png" alt="img"></p>
+<p>这样的话，用户向 G2 发起读操作，也能得到 v1。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201807/bg2018071606.png" alt="img"></p>
+<h4 id="可用性"><a href="#可用性" class="headerlink" title="可用性"></a>可用性</h4><p>可用性指<strong>分布式系统在面对各种异常时可以提供正常服务的能力</strong>，可以用系统可用时间占总时间的比值来衡量，4 个 9 的可用性表示系统 <code>99.99%</code> 的时间是可用的。</p>
+<p>在可用性条件下，系统提供的服务一直处于可用的状态，对于用户的每一个操作请求总是能够在有限的时间内返回结果。</p>
+<h4 id="分区容错性"><a href="#分区容错性" class="headerlink" title="分区容错性"></a>分区容错性</h4><p>分区容错性（Partition Tolerance）指 <strong>分布式系统在遇到任何网络分区故障的时候，仍然需要能对外提供一致性和可用性的服务，除非是整个网络环境都发生了故障</strong>。</p>
+<p>在一个分布式系统里面，节点组成的网络本来应该是连通的。然而可能因为一些故障，使得有些节点之间不连通了，整个网络就分成了几块区域。数据就散布在了这些不连通的区域中，这就叫分区。</p>
+<p>假设，某个数据项只在一个节点中保存，那么分区出现后，和这个节点不连通的部分就访问不到这个数据了。这时分区就是无法容忍的。</p>
+<p>提高分区容错性的办法就是一个数据项复制到多个节点上，那么出现分区之后，这一数据项就可能分布到各个区里。容错性就提高了。</p>
+<p>然而，要把数据复制到多个节点，就会带来一致性的问题，就是多个节点上面的数据可能是不一致的。要保证一致，每次写操作就都要等待全部节点写成功，而这等待又会带来可用性的问题。</p>
+<p>总的来说就是，数据存在的节点越多，分区容错性越高，但要复制更新的数据就越多，一致性就越难保证。为了保证一致性，更新所有节点数据所需要的时间就越长，可用性就会降低。</p>
+<p>大多数分布式系统都分布在多个子网络，每个子网络就叫做一个区（Partition）。分区容错的意思是，区间通信可能失败。比如，一台服务器放在中国，另一台服务器放在美国，这就是两个区，它们之间可能无法通信。</p>
+<p><img src="https://www.wangbase.com/blogimg/asset/201807/bg2018071601.png" alt="img"></p>
+<p>上图中，G1 和 G2 是两台跨区的服务器。G1 向 G2 发送一条消息，G2 可能无法收到。系统设计的时候，必须考虑到这种情况。</p>
+<p><strong>一般来说，分区容错无法避免</strong>，因此可以认为 CAP 的 P 总是成立。CAP 定理告诉我们，剩下的 C 和 A 无法同时做到。</p>
+<h4 id="AP-or-CP"><a href="#AP-or-CP" class="headerlink" title="AP or CP"></a>AP or CP</h4><p>在分布式系统中，分区容错性必不可少，因为需要总是假设网络是不可靠的。因此，<strong>CAP 理论实际在是要在可用性和一致性之间做权衡</strong>。</p>
+<p>由于分布式数据存储（如区块链）的性质，分区容错性是一个既定的事实；网络中总会有失败&#x2F;无法访问的节点（尤其是因为互联网的不稳定特性）。 CAP 定理指出，当存在 P（分区）时，必须在 C（一致性）或 A（可用性）之间进行选择。</p>
+<p>（1）AP 模式</p>
+<blockquote>
+<p><strong>AP</strong> <strong>模式</strong>：对网络的每个请求都会收到响应，即使网络由于网络分区故障而无法保证它是最新的。</p>
+</blockquote>
+<p>选择 <strong>AP</strong> <strong>模式</strong>，实现了服务的高可用。用户访问系统的时候，都能得到响应数据，不会出现响应错误；但是，当出现分区故障时，相同的读操作，访问不同的节点，得到响应数据可能不一样。</p>
+<img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102191819.png" style="width: 500px" />
+
+<p>（2）CP 模式</p>
+<blockquote>
+<p><strong>CP</strong> <strong>模式</strong>：如果由于网络分区（故障节点）而无法保证特定信息是最新的，则系统将返回错误或超时。</p>
+</blockquote>
+<p>选择 <strong>CP</strong> <strong>模式</strong>，这样能够提供一部分的可用性。采用 CP 模型的分布式系统，一旦因为消息丢失、延迟过高发生了网络分区，就影响用户的体验和业务的可用性。因为为了防止数据不一致，集群将拒绝新数据的写入。</p>
+<img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102191820.png" style="width: 500px" />
+
+<h3 id="BASE-理论"><a href="#BASE-理论" class="headerlink" title="BASE 理论"></a>BASE 理论</h3><h4 id="什么是-BASE-定理"><a href="#什么是-BASE-定理" class="headerlink" title="什么是 BASE 定理"></a>什么是 BASE 定理</h4><blockquote>
+<p><strong>BASE 定理是对 CAP 中一致性和可用性权衡的结果</strong>。</p>
+</blockquote>
+<p>不符合 ACID 标准的系统有时被冠以 BASE。BASE 是 <strong><code>基本可用（Basically Available）</code><strong>、</strong><code>软状态（Soft State）</code></strong> 和 <strong><code>最终一致性（Eventually Consistent）</code></strong> 三个短语的缩写。</p>
+<p>BASE 理论的核心思想是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。</p>
+<ul>
+<li><strong>基本可用（Basically Available）</strong>分布式系统在出现故障的时候，<strong>保证核心可用，允许损失部分可用性</strong>。例如，电商在做促销时，为了保证购物系统的稳定性，部分消费者可能会被引导到一个降级的页面。</li>
+<li><strong>软状态（Soft State）</strong>指允许系统中的数据存在中间状态，并认为该中间状态不会影响系统整体可用性，即<strong>允许系统不同节点的数据副本之间进行同步的过程存在延时</strong>。</li>
+<li><strong>最终一致性（Eventually Consistent）</strong>强调的是<strong>系统中所有的数据副本，在经过一段时间的同步后，最终能达到一致的状态</strong>。</li>
+</ul>
+<h4 id="BASE-vs-ACID"><a href="#BASE-vs-ACID" class="headerlink" title="BASE vs. ACID"></a>BASE vs. ACID</h4><p>BASE 的理论的<strong>核心思想</strong>是：即使无法做到强一致性，但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。</p>
+<p>ACID 要求强一致性，通常运用在传统的数据库系统上。而 BASE 要求最终一致性，通过<strong>牺牲强一致性来达到可用性</strong>，通常运用在大型分布式系统中。</p>
+<p>BASE 唯一可以确定的是“它不是 ACID”，此外它几乎没有承诺任何东西。</p>
+<img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20211102192406.png" style="width: 640px" />
+
+<h3 id="柔性事务"><a href="#柔性事务" class="headerlink" title="柔性事务"></a>柔性事务</h3><p>在分布式领域，要实现强一致性，代价非常高昂。因此，有人基于 CAP 理论以及 BASE 理论，提出了<strong>柔性事务</strong>的概念。</p>
+<p>柔性事务是指：在不影响系统整体可用性的情况下 (Basically Available 基本可用），允许系统存在数据不一致的中间状态 (Soft State 软状态），在经过数据同步的延时之后，最终数据能够达到一致。<strong>并不是完全放弃了 ACID，而是通过放宽一致性要求，借助本地事务来实现最终分布式事务一致性的同时也保证系统的吞吐</strong>。</p>
+<p>下面介绍的是实现柔性事务的一些常见特性，这些特性在具体的方案中不一定都要满足，因为不同的方案要求不一样。</p>
+<ul>
+<li><strong>可见性（对外可查询）</strong>：在分布式事务执行过程中，如果某一个步骤执行出错，就需要明确的知道其他几个操作的处理情况，这就需要其他的服务都能够提供查询接口，保证可以通过查询来判断操作的处理情况。为了保证操作的可查询，需要对于每一个服务的每一次调用都有一个全局唯一的标识，可以是业务单据号（如订单号）、也可以是系统分配的操作流水号（如支付记录流水号）。除此之外，操作的时间信息也要有完整的记录。</li>
+<li><strong>操作幂等性</strong>：幂等性，其实是一个数学概念。幂等函数，或幂等方法，是指可以使用相同参数重复执行，并能获得相同结果的函数。幂等操作的特点是其任意多次执行所产生的影响均与一次执行的影响相同。也就是说，同一个方法，使用同样的参数，调用多次产生的业务结果与调用一次产生的业务结果相同。之所以需要操作幂等性，是因为为了保证数据的最终一致性，很多事务协议都会有很多重试的操作，如果一个方法不保证幂等，那么将无法被重试。幂等操作的实现方式有多种，如在系统中缓存所有的请求与处理结果、检测到重复操作后，直接返回上一次的处理结果等。</li>
+</ul>
+<h2 id="两阶段提交（2PC）"><a href="#两阶段提交（2PC）" class="headerlink" title="两阶段提交（2PC）"></a>两阶段提交（2PC）</h2><h3 id="方案简介"><a href="#方案简介" class="headerlink" title="方案简介"></a>方案简介</h3><p>二阶段提交协议（Two-phase Commit，即 2PC）是常用的分布式事务解决方案，即<strong>将事务的提交过程分为两个阶段来进行处理：准备阶段和提交阶段</strong>。事务的发起者称协调者，事务的执行者称参与者。</p>
+<p>在分布式系统里，每个节点都可以知晓自己操作的成功或者失败，却无法知道其他节点操作的成功或失败。当一个事务跨多个节点时，为了保持事务的原子性与一致性，而引入一个协调者来统一掌控所有参与者的操作结果，并指示它们是否要把操作结果进行真正的提交或者回滚（rollback）。</p>
+<p>二阶段提交的思路可以概括为：<strong>参与者将操作成败通知协调者，再由协调者根据所有参与者的反馈，决定提交或回滚</strong>。</p>
+<p>核心思想就是对每一个事务都采用先尝试后提交的处理方式，处理后所有的读操作都要能获得最新的数据，因此也可以将二阶段提交看作是一个强一致性算法。</p>
+<h3 id="处理流程"><a href="#处理流程" class="headerlink" title="处理流程"></a>处理流程</h3><p>简单一点理解，可以把协调者节点比喻为带头大哥，参与者理解比喻为跟班小弟，带头大哥统一协调跟班小弟的任务执行。</p>
+<h4 id="阶段-1：准备阶段"><a href="#阶段-1：准备阶段" class="headerlink" title="阶段 1：准备阶段"></a>阶段 1：准备阶段</h4><ol>
+<li>协调者向所有参与者发送事务内容，询问是否可以提交事务，并等待所有参与者答复。</li>
+<li>各参与者执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。</li>
+<li>如参与者执行成功，给协调者反馈 yes，即可以提交；如执行失败，给协调者反馈 no，即不可提交。</li>
+</ol>
+<h4 id="阶段-2：提交阶段"><a href="#阶段-2：提交阶段" class="headerlink" title="阶段 2：提交阶段"></a>阶段 2：提交阶段</h4><p>如果协调者收到了参与者的失败消息或者超时，直接给每个参与者发送回滚 (rollback) 消息；否则，发送提交 (commit) 消息；参与者根据协调者的指令执行提交或者回滚操作，释放所有事务处理过程中使用的锁资源。（注意：必须在最后阶段释放锁资源） 接下来分两种情况分别讨论提交阶段的过程。</p>
+<p><strong>情况 1，当所有参与者均反馈 yes，提交事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190751196.png"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出正式提交事务的请求（即 commit 请求）。</li>
+<li>参与者执行 commit 请求，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack（应答）完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。</li>
+</ol>
+</blockquote>
+<p><strong>情况 2，当任何阶段 1 一个参与者反馈 no，中断事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190751172.png"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出回滚请求（即 rollback 请求）。</li>
+<li>参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务中断。</li>
+</ol>
+</blockquote>
+<h3 id="方案总结"><a href="#方案总结" class="headerlink" title="方案总结"></a>方案总结</h3><p>2PC 方案实现起来简单，实际项目中使用比较少，主要因为以下问题：</p>
+<ul>
+<li><strong>性能问题</strong> - 所有参与者在事务提交阶段处于同步阻塞状态，占用系统资源，容易导致性能瓶颈。</li>
+<li><strong>可靠性问题</strong> - 如果协调者存在单点故障问题，如果协调者出现故障，参与者将一直处于锁定状态。</li>
+<li><strong>数据一致性问题</strong> - 在阶段 2 中，如果发生局部网络问题，一部分事务参与者收到了提交消息，另一部分事务参与者没收到提交消息，那么就导致了节点之间数据的不一致。</li>
+</ul>
+<h2 id="三阶段提交（3PC）"><a href="#三阶段提交（3PC）" class="headerlink" title="三阶段提交（3PC）"></a>三阶段提交（3PC）</h2><h3 id="方案简介-1"><a href="#方案简介-1" class="headerlink" title="方案简介"></a>方案简介</h3><p>三阶段提交协议（Three-phase Commit，3PC），是二阶段提交协议的改进版本，与二阶段提交不同的是，引入超时机制。同时在协调者和参与者中都引入超时机制。</p>
+<p>三阶段提交将二阶段的准备阶段拆分为 2 个阶段，插入了一个 preCommit 阶段，使得原先在二阶段提交中，参与者在准备之后，由于协调者发生崩溃或错误，而导致参与者处于无法知晓是否提交或者中止的“不确定状态”所产生的可能相当长的延时的问题得以解决。</p>
+<h3 id="处理流程-1"><a href="#处理流程-1" class="headerlink" title="处理流程"></a>处理流程</h3><h4 id="阶段-1：canCommit"><a href="#阶段-1：canCommit" class="headerlink" title="阶段 1：canCommit"></a>阶段 1：canCommit</h4><p>协调者向参与者发送 commit 请求，参与者如果可以提交就返回 yes 响应（参与者不执行事务操作），否则返回 no 响应：</p>
+<ol>
+<li>协调者向所有参与者发出包含事务内容的 canCommit 请求，询问是否可以提交事务，并等待所有参与者答复。</li>
+<li>参与者收到 canCommit 请求后，如果认为可以执行事务操作，则反馈 yes 并进入预备状态，否则反馈 no。</li>
+</ol>
+<h4 id="阶段-2：preCommit"><a href="#阶段-2：preCommit" class="headerlink" title="阶段 2：preCommit"></a>阶段 2：preCommit</h4><p>协调者根据阶段 1 canCommit 参与者的反应情况来决定是否可以基于事务的 preCommit 操作。根据响应情况，有以下两种可能。</p>
+<p><strong>情况 1：阶段 1 所有参与者均反馈 yes，参与者预执行事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190752281.png"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出 preCommit 请求，进入准备阶段。</li>
+<li>参与者收到 preCommit 请求后，执行事务操作，将 undo 和 redo 信息记入事务日志中（但不提交事务）。</li>
+<li>各参与者向协调者反馈 ack 响应或 no 响应，并等待最终指令。</li>
+</ol>
+</blockquote>
+<p><strong>情况 2：阶段 1 任何一个参与者反馈 no，或者等待超时后协调者尚无法收到所有参与者的反馈，即中断事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190752525.png"></p>
+<blockquote>
+<ol>
+<li>协调者向所有参与者发出 abort 请求。</li>
+<li>无论收到协调者发出的 abort 请求，或者在等待协调者请求过程中出现超时，参与者均会中断事务。</li>
+</ol>
+</blockquote>
+<h4 id="阶段-3：doCommit"><a href="#阶段-3：doCommit" class="headerlink" title="阶段 3：doCommit"></a>阶段 3：doCommit</h4><p>该阶段进行真正的事务提交，也可以分为以下两种情况：</p>
+<p><strong>情况 1：阶段 2 所有参与者均反馈 ack 响应，执行真正的事务提交</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190753250.png"></p>
+<blockquote>
+<ol>
+<li>如果协调者处于工作状态，则向所有参与者发出 doCommit 请求。</li>
+<li>参与者收到 doCommit 请求后，会正式执行事务提交，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务提交。</li>
+</ol>
+</blockquote>
+<p><strong>情况 2：任何一个参与者反馈 no，或者等待超时后协调者尚无法收到所有参与者的反馈，即中断事务</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190753329.png"></p>
+<blockquote>
+<ol>
+<li>如果协调者处于工作状态，向所有参与者发出 abort 请求。</li>
+<li>参与者使用阶段 1 中的 undo 信息执行回滚操作，并释放整个事务期间占用的资源。</li>
+<li>各参与者向协调者反馈 ack 完成的消息。</li>
+<li>协调者收到所有参与者反馈的 ack 消息后，即完成事务中断。</li>
+</ol>
+</blockquote>
+<p>注意：进入阶段 3 后，无论协调者出现问题，或者协调者与参与者网络出现问题，都会导致参与者无法接收到协调者发出的 doCommit 请求或 abort 请求。此时，参与者都会在等待超时之后，继续执行事务提交。</p>
+<h3 id="方案总结-1"><a href="#方案总结-1" class="headerlink" title="方案总结"></a>方案总结</h3><ul>
+<li>优点：<strong>相比二阶段提交，三阶段降低了阻塞范围</strong>，在<strong>等待超时后协调者或参与者会中断事务</strong>。避免了协调者单点问题，阶段 3 中协调者出现问题时，参与者会继续提交事务。</li>
+<li>缺点：<strong>数据不一致问题依然存在</strong>，当在参与者收到 preCommit 请求后等待 doCommit 指令时，此时如果协调者请求中断事务，而协调者无法与参与者正常通信，会导致参与者继续提交事务，造成数据不一致。</li>
+</ul>
+<h2 id="补偿事务（TCC）"><a href="#补偿事务（TCC）" class="headerlink" title="补偿事务（TCC）"></a>补偿事务（TCC）</h2><h3 id="方案简介-2"><a href="#方案简介-2" class="headerlink" title="方案简介"></a>方案简介</h3><p>TCC（Try-Confirm-Cancel）的概念，最早是由 Pat Helland 于 2007 年发表的一篇名为《Life beyond Distributed Transactions:an Apostate’s Opinion》的论文提出。</p>
+<p>TCC 是服务化的二阶段编程模型，其 Try、Confirm、Cancel 3 个方法均由业务编码实现；</p>
+<ul>
+<li><strong>Try</strong> - 操作作为一阶段，负责资源的检查和预留。</li>
+<li><strong>Confirm</strong> - 操作作为二阶段提交操作，执行真正的业务。</li>
+<li><strong>Cancel</strong> - 是预留资源的取消。</li>
+</ul>
+<p>TCC 事务的 Try、Confirm、Cancel 可以理解为 SQL 事务中的 Lock、Commit、Rollback。</p>
+<h3 id="处理流程-2"><a href="#处理流程-2" class="headerlink" title="处理流程"></a>处理流程</h3><p>为了方便理解，下面以电商下单为例进行方案解析，这里把整个过程简单分为扣减库存，订单创建 2 个步骤，库存服务和订单服务分别在不同的服务器节点上。</p>
+<h4 id="Try-阶段"><a href="#Try-阶段" class="headerlink" title="Try 阶段"></a>Try 阶段</h4><p>从执行阶段来看，与传统事务机制中业务逻辑相同。但从业务角度来看，却不一样。TCC 机制中的 Try 仅是一个初步操作，它和后续的确认一起才能真正构成一个完整的业务逻辑，这个阶段主要完成：</p>
+<ul>
+<li>完成所有业务检查（一致性）</li>
+<li>预留必须业务资源（准隔离性）</li>
+<li>Try 尝试执行业务 TCC 事务机制以初步操作（Try）为中心的，确认操作（Confirm）和取消操作（Cancel）都是围绕初步操作（Try）而展开。因此，Try 阶段中的操作，其保障性是最好的，即使失败，仍然有取消操作（Cancel）可以将其执行结果撤销。</li>
+</ul>
+<p>假设商品库存为 100，购买数量为 2，这里检查和更新库存的同时，冻结用户购买数量的库存，同时创建订单，订单状态为待确认。</p>
+<h4 id="Confirm-Cancel-阶段"><a href="#Confirm-Cancel-阶段" class="headerlink" title="Confirm &#x2F; Cancel 阶段"></a>Confirm &#x2F; Cancel 阶段</h4><p>根据 Try 阶段服务是否全部正常执行，继续执行确认操作（Confirm）或取消操作（Cancel）。 Confirm 和 Cancel 操作满足幂等性，如果 Confirm 或 Cancel 操作执行失败，将会不断重试直到执行完成。</p>
+<p><strong>Confirm：当 Try 阶段服务全部正常执行， 执行确认业务逻辑操作</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190757821.png"></p>
+<p>这里使用的资源一定是 Try 阶段预留的业务资源。在 TCC 事务机制中认为，如果在 Try 阶段能正常的预留资源，那 Confirm 一定能完整正确的提交。Confirm 阶段也可以看成是对 Try 阶段的一个补充，Try+Confirm 一起组成了一个完整的业务逻辑。</p>
+<p><strong>Cancel：当 Try 阶段存在服务执行失败， 进入 Cancel 阶段</strong></p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190757821.png"></p>
+<p>Cancel 取消执行，释放 Try 阶段预留的业务资源，上面的例子中，Cancel 操作会把冻结的库存释放，并更新订单状态为取消。</p>
+<h3 id="方案总结-2"><a href="#方案总结-2" class="headerlink" title="方案总结"></a>方案总结</h3><p>TCC 事务机制相比于上面介绍的 XA 事务机制，有以下优点：</p>
+<ul>
+<li><strong>性能提升</strong> - 具体业务来实现控制资源锁的粒度变小，不会锁定整个资源。</li>
+<li><strong>数据最终一致性</strong> - 基于 Confirm 和 Cancel 的幂等性，保证事务最终完成确认或者取消，保证数据的一致性。</li>
+<li><strong>可靠性</strong> - 解决了 XA 协议的协调者单点故障问题，由主业务方发起并控制整个业务活动，业务活动管理器也变成多点，引入集群。</li>
+</ul>
+<p>缺点： TCC 的 Try、Confirm 和 Cancel 操作功能要按具体业务来实现，<strong>业务耦合度较高</strong>，提高了开发成本。</p>
+<h2 id="本地消息表"><a href="#本地消息表" class="headerlink" title="本地消息表"></a>本地消息表</h2><h3 id="方案简介-3"><a href="#方案简介-3" class="headerlink" title="方案简介"></a>方案简介</h3><p>本地消息表的方案最初是由 ebay 提出，核心思路是将分布式事务拆分成本地事务进行处理。</p>
+<p>方案通过在事务主动发起方额外新建事务消息表，事务发起方处理业务和记录事务消息在本地事务中完成，轮询事务消息表的数据发送事务消息，事务被动方基于消息中间件消费事务消息表中的事务。</p>
+<p>这样设计可以避免”<strong>业务处理成功 + 事务消息发送失败</strong>“，或”<strong>业务处理失败 + 事务消息发送成功</strong>“的棘手情况出现，保证 2 个系统事务的数据一致性。</p>
+<h3 id="处理流程-3"><a href="#处理流程-3" class="headerlink" title="处理流程"></a>处理流程</h3><p>下面把分布式事务最先开始处理的事务方称为事务主动方，在事务主动方之后处理的业务内的其他事务称为事务被动方。</p>
+<p>为了方便理解，下面继续以电商下单为例进行方案解析，这里把整个过程简单分为扣减库存，订单创建 2 个步骤，库存服务和订单服务分别在不同的服务器节点上，其中库存服务是事务主动方，订单服务是事务被动方。</p>
+<p>事务的主动方需要额外新建事务消息表，用于记录分布式事务的消息的发生、处理状态。</p>
+<p>整个业务处理流程如下：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190758570.png"></p>
+<blockquote>
+<ol>
+<li><strong>步骤 1、事务主动方处理本地事务。</strong> 事务主动发在本地事务中处理业务更新操作和写消息表操作。 上面例子中库存服务阶段再本地事务中完成扣减库存和写消息表（图中 1、2)。</li>
+<li><strong>步骤 2、事务主动方通过 MQ 通知事务被动方处理事务</strong>。 消息中间件可以基于 Kafka、RocketMQ 消息队列，事务主动方法主动写消息到消息队列，事务消费方消费并处理消息队列中的消息。 上面例子中，库存服务把事务待处理消息写到消息中间件，订单服务消费消息中间件的消息，完成新增订单（图中 3 - 5）。</li>
+<li><strong>步骤 3、事务被动方通过 MQ 返回处理结果。</strong> 上面例子中，订单服务把事务已处理消息写到消息中间件，库存服务消费中间件的消息，并将事务消息的状态更新为已完成（图中 6 - 8)</li>
+</ol>
+</blockquote>
+<p>为了数据的一致性，当处理错误需要重试，事务发送方和事务接收方相关业务处理需要支持幂等。具体保存一致性的容错处理如下：</p>
+<blockquote>
+<ul>
+<li>当步骤 1 处理出错，事务回滚，相当于什么都没发生。</li>
+<li>当步骤 2、步骤 3 处理出错，由于未处理的事务消息还是保存在事务发送方，事务发送方可以定时轮询超时 d 的消息数据，再次发送消息到 MQ 进行处理。事务被动方消费事务消息重试处理。</li>
+<li>如果是业务上的失败，事务被动方可以发消息给事务主动方进行回滚。</li>
+<li>如果多个事务被动方已经消费消息，事务主动方需要回滚事务时需要通知事务被动方回滚。</li>
+</ul>
+</blockquote>
+<h3 id="方案总结-3"><a href="#方案总结-3" class="headerlink" title="方案总结"></a>方案总结</h3><p>方案的优点如下：</p>
+<ul>
+<li>从应用设计开发的角度实现了消息数据的可靠性，<strong>消息数据的可靠性不依赖于消息中间件</strong>，弱化了对 MQ 中间件特性的依赖。</li>
+<li><strong>方案简单</strong>，容易实现。</li>
+</ul>
+<p>缺点如下：</p>
+<ul>
+<li>与具体的业务场景绑定，<strong>耦合性高，不可复用</strong>。</li>
+<li>需要额外维护消息数据的传输，占用业务系统资源。</li>
+<li>业务系统在使用关系型数据库的情况下，消息服务性能会受到关系型数据库并发性能的局限。</li>
+</ul>
+<h2 id="消息事务"><a href="#消息事务" class="headerlink" title="消息事务"></a>消息事务</h2><p>MQ 事务方案本质是利用 MQ 功能实现的本地消息表。事务消息需要消息队列提供相应的功能才能实现，Kafka 和 RocketMQ 都提供了事务相关功能。</p>
+<ul>
+<li><strong>Kafka</strong> 的解决方案是：直接抛出异常，让用户自行处理。用户可以在业务代码中反复重试提交，直到提交成功，或者删除之前修改的数据记录进行事务补偿。</li>
+<li><strong>RocketMQ</strong> 的解决方案是：通过事务反查机制来解决事务消息提交失败的问题。如果 Producer 在提交或者回滚事务消息时发生网络异常，RocketMQ 的 Broker 没有收到提交或者回滚的请求，Broker 会定期去 Producer 上反查这个事务对应的本地事务的状态，然后根据反查结果决定提交或者回滚这个事务。为了支撑这个事务反查机制，业务代码需要实现一个反查本地事务状态的接口，告知 RocketMQ 本地事务是成功还是失败。</li>
+</ul>
+<h3 id="RocketMQ-事务消息实现"><a href="#RocketMQ-事务消息实现" class="headerlink" title="RocketMQ 事务消息实现"></a>RocketMQ 事务消息实现</h3><p>事务消息是 Apache RocketMQ 提供的一种高级消息类型，支持在分布式场景下保障消息生产和本地事务的最终一致性。</p>
+<p><strong>事务消息处理流程</strong></p>
+<p>事务消息交互流程如下图所示。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190758755.png"></p>
+<ol>
+<li>生产者将消息发送至 Apache RocketMQ 服务端。</li>
+<li>Apache RocketMQ 服务端将消息持久化成功之后，向生产者返回 Ack 确认消息已经发送成功，此时消息被标记为”暂不能投递”，这种状态下的消息即为半事务消息。</li>
+<li>生产者开始执行本地事务逻辑。</li>
+<li>生产者根据本地事务执行结果向服务端提交二次确认结果（Commit 或是 Rollback），服务端收到确认结果后处理逻辑如下：</li>
+</ol>
+<ul>
+<li>二次确认结果为 Commit：服务端将半事务消息标记为可投递，并投递给消费者。</li>
+<li>二次确认结果为 Rollback：服务端将回滚事务，不会将半事务消息投递给消费者。</li>
+</ul>
+<ol start="5">
+<li>在断网或者是生产者应用重启的特殊情况下，若服务端未收到发送者提交的二次确认结果，或服务端收到的二次确认结果为 Unknown 未知状态，经过固定时间后，服务端将对消息生产者即生产者集群中任一生产者实例发起消息回查。 <strong>说明</strong> 服务端回查的间隔时间和最大回查次数，请参见 <a target="_blank" rel="noopener" href="https://rocketmq.apache.org/zh/docs/introduction/03limits">参数限制</a>。</li>
+<li>生产者收到消息回查后，需要检查对应消息的本地事务执行的最终结果。</li>
+<li>生产者根据检查到的本地事务的最终状态再次提交二次确认，服务端仍按照步骤 4 对半事务消息进行处理。</li>
+</ol>
+<p><strong>事务消息生命周期</strong> <img src="https://rocketmq.apache.org/zh/assets/images/lifecyclefortrans-fe4a49f1c9fdae5d590a64546722036f.png" alt="事务消息"></p>
+<ul>
+<li>初始化：半事务消息被生产者构建并完成初始化，待发送到服务端的状态。</li>
+<li>事务待提交：半事务消息被发送到服务端，和普通消息不同，并不会直接被服务端持久化，而是会被单独存储到事务存储系统中，等待第二阶段本地事务返回执行结果后再提交。此时消息对下游消费者不可见。</li>
+<li>消息回滚：第二阶段如果事务执行结果明确为回滚，服务端会将半事务消息回滚，该事务消息流程终止。</li>
+<li>提交待消费：第二阶段如果事务执行结果明确为提交，服务端会将半事务消息重新存储到普通存储系统中，此时消息对下游消费者可见，等待被消费者获取并消费。</li>
+<li>消费中：消息被消费者获取，并按照消费者本地的业务逻辑进行处理的过程。 此时服务端会等待消费者完成消费并提交消费结果，如果一定时间后没有收到消费者的响应，Apache RocketMQ 会对消息进行重试处理。具体信息，请参见 <a target="_blank" rel="noopener" href="https://rocketmq.apache.org/zh/docs/featureBehavior/10consumerretrypolicy">消费重试</a>。</li>
+<li>消费提交：消费者完成消费处理，并向服务端提交消费结果，服务端标记当前消息已经被处理（包括消费成功和失败）。 Apache RocketMQ 默认支持保留所有消息，此时消息数据并不会立即被删除，只是逻辑标记已消费。消息在保存时间到期或存储空间不足被删除前，消费者仍然可以回溯消息重新消费。</li>
+<li>消息删除：Apache RocketMQ 按照消息保存机制滚动清理最早的消息数据，将消息从物理文件中删除。更多信息，请参见 <a target="_blank" rel="noopener" href="https://rocketmq.apache.org/zh/docs/featureBehavior/11messagestorepolicy">消息存储和清理机制</a>。</li>
+</ul>
+<h3 id="MQ-事务方案总结"><a href="#MQ-事务方案总结" class="headerlink" title="MQ 事务方案总结"></a>MQ 事务方案总结</h3><p>相比本地消息表方案，MQ 事务方案优点是：</p>
+<ul>
+<li><strong>业务解耦</strong> - 消息数据独立存储 ，降低业务系统与消息系统之间的耦合。</li>
+<li><strong>吞吐量优于本地消息表</strong>方案。</li>
+</ul>
+<p>缺点是：</p>
+<ul>
+<li><strong>一次消息发送需要两次网络请求</strong> (half 消息 + commit&#x2F;rollback 消息）</li>
+<li><strong>业务处理服务需要实现消息状态回查接口</strong></li>
+</ul>
+<h2 id="SAGA-事务"><a href="#SAGA-事务" class="headerlink" title="SAGA 事务"></a>SAGA 事务</h2><h3 id="方案简介-4"><a href="#方案简介-4" class="headerlink" title="方案简介"></a>方案简介</h3><p>1987 年，Hector Garcia-Molina 和 Kenneth Salem 发表了名为 <a target="_blank" rel="noopener" href="https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf">SAGAS</a> 的论文，讲述了如何处理 long lived transaction（长活事务）。Saga 事务的核心思想是：将长事务拆分为多个本地短事务，由 Saga 事务协调器协调，如果正常结束那就正常完成，如果某个步骤失败，则根据相反顺序依次调用补偿操作。</p>
+<h3 id="处理流程-4"><a href="#处理流程-4" class="headerlink" title="处理流程"></a>处理流程</h3><p><strong>Saga 事务基本协议如下</strong>：</p>
+<ul>
+<li><strong>将长事务拆分为多个有序子事务</strong> - 每个 Saga 事务由一系列幂等的有序子事务 (sub-transaction) Ti 组成。</li>
+<li><strong>每个子事务 Ti 都有对应的幂等补偿动作 Ci</strong>，补偿动作用于撤销 Ti 造成的结果。</li>
+</ul>
+<p>可以看到，和 TCC 相比，Saga 没有“预留”动作，它的 Ti 就是直接提交到库。</p>
+<p>下面以下单流程为例，整个操作包括：创建订单、扣减库存、支付、增加积分 Saga 的执行顺序有两种：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190758952.png"></p>
+<ul>
+<li>事务正常执行完成 T1, T2, T3, …, Tn，例如：扣减库存 (T1)，创建订单 (T2)，支付 (T3)，依次有序完成整个事务。</li>
+<li>事务回滚 T1, T2, …, Tj, Cj,…, C2, C1，其中 0 &lt; j &lt; n，例如：扣减库存 (T1)，创建订单 (T2)，支付 (T3，支付失败），支付回滚 (C3)，订单回滚 (C2)，恢复库存 (C1)。</li>
+</ul>
+<h4 id="恢复策略"><a href="#恢复策略" class="headerlink" title="恢复策略"></a>恢复策略</h4><p>Saga 定义了两种恢复策略：</p>
+<ul>
+<li>向前恢复 (forward recovery)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190759028.png"></p>
+<p>对应于上面第一种执行顺序，<strong>适用于必须要成功的场景</strong>，<strong>失败需要进行重试</strong>，执行顺序是类似于这样的：T1, T2, …, Tj（失败）, Tj（重试）,…, Tn，其中 j 是发生错误的子事务 (sub-transaction)。该情况下不需要 Ci。</p>
+<ul>
+<li>向后恢复 (backward recovery)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190800829.png"></p>
+<p>对应于上面提到的第二种执行顺序，其中 j 是发生错误的子事务 (sub-transaction)，这种做法的效果是撤销掉之前所有成功的子事务，使得整个 Saga 的执行结果撤销。</p>
+<p>Saga 事务常见的有两种不同的实现方式：命令协调和事件编排。</p>
+<h4 id="命令协调"><a href="#命令协调" class="headerlink" title="命令协调"></a>命令协调</h4><ul>
+<li><strong>命令协调 (Order Orchestrator)：中央协调器负责集中处理事件的决策和业务逻辑排序。</strong></li>
+</ul>
+<p>中央协调器（Orchestrator，简称 OSO）以命令&#x2F;回复的方式与每项服务进行通信，全权负责告诉每个参与者该做什么以及什么时候该做什么。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190800891.png"></p>
+<p>以电商订单的例子为例：</p>
+<blockquote>
+<ol>
+<li>事务发起方的主业务逻辑请求 OSO 服务开启订单事务。</li>
+<li>OSO 向库存服务请求扣减库存，库存服务回复处理结果。</li>
+<li>OSO 向订单服务请求创建订单，订单服务回复创建结果。</li>
+<li>OSO 向支付服务请求支付，支付服务回复处理结果。</li>
+<li>主业务逻辑接收并处理 OSO 事务处理结果回复。</li>
+</ol>
+</blockquote>
+<p>中央协调器必须事先知道执行整个订单事务所需的流程（例如通过读取配置）。如果有任何失败，它还负责通过向每个参与者发送命令来撤销之前的操作来协调分布式的回滚。基于中央协调器协调一切时，回滚要容易得多，因为协调器默认是执行正向流程，回滚时只要执行反向流程即可。</p>
+<h4 id="事件编排"><a href="#事件编排" class="headerlink" title="事件编排"></a>事件编排</h4><ul>
+<li><strong>事件编排 (Event Choreography0：没有中央协调器（没有单点风险）时，每个服务产生并观察其他服务的事件，并决定是否应采取行动</strong>。</li>
+</ul>
+<p>在事件编排方法中，第一个服务执行一个事务，然后发布一个事件。该事件被一个或多个服务进行监听，这些服务再执行本地事务并发布（或不发布）新的事件。</p>
+<p>当最后一个服务执行本地事务并且不发布任何事件时，意味着分布式事务结束，或者它发布的事件没有被任何 Saga 参与者听到都意味着事务结束。</p>
+<p>以电商订单的例子为例：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/202412190808479.png"></p>
+<blockquote>
+<ol>
+<li>事务发起方的主业务逻辑发布开始订单事件</li>
+<li>库存服务监听开始订单事件，扣减库存，并发布库存已扣减事件</li>
+<li>订单服务监听库存已扣减事件，创建订单，并发布订单已创建事件</li>
+<li>支付服务监听订单已创建事件，进行支付，并发布订单已支付事件</li>
+<li>主业务逻辑监听订单已支付事件并处理。</li>
+</ol>
+</blockquote>
+<p>事件编排是实现 Saga 模式的自然方式，它很简单，容易理解，不需要太多的代码来构建。如果事务涉及 2 至 4 个步骤，则可能是非常合适的。</p>
+<h3 id="方案总结-4"><a href="#方案总结-4" class="headerlink" title="方案总结"></a>方案总结</h3><p><strong>命令协调设计的优点和缺点：</strong></p>
+<p>优点如下：</p>
+<ul>
+<li>服务之间关系简单，避免服务之间的循环依赖关系，因为 Saga 协调器会调用 Saga 参与者，但参与者不会调用协调器</li>
+<li>程序开发简单，只需要执行命令&#x2F;回复（其实回复消息也是一种事件消息），降低参与者的复杂性。</li>
+<li>易维护扩展，在添加新步骤时，事务复杂性保持线性，回滚更容易管理，更容易实施和测试</li>
+</ul>
+<p>缺点如下：</p>
+<ul>
+<li>中央协调器容易处理逻辑容易过于复杂，导致难以维护。</li>
+<li>存在协调器单点故障风险。</li>
+</ul>
+<p><strong>事件&#x2F;编排设计的优点和缺点</strong></p>
+<p>优点如下：</p>
+<ul>
+<li>避免中央协调器单点故障风险。</li>
+<li>当涉及的步骤较少服务开发简单，容易实现。</li>
+</ul>
+<p>缺点如下：</p>
+<ul>
+<li>服务之间存在循环依赖的风险。</li>
+<li>当涉及的步骤较多，服务间关系混乱，难以追踪调测。</li>
+</ul>
+<p>值得补充的是，由于 Saga 模型中没有 Prepare 阶段，因此事务间不能保证隔离性，当多个 Saga 事务操作同一资源时，就会产生更新丢失、脏数据读取等问题，这时需要在业务层控制并发，例如：在应用层面加锁，或者应用层面预先冻结资源。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="各方案使用场景"><a href="#各方案使用场景" class="headerlink" title="各方案使用场景"></a>各方案使用场景</h3><p>介绍完分布式事务相关理论和常见解决方案后，最终的目的在实际项目中运用，因此，总结一下各个方案的常见的使用场景。</p>
+<p>分布式事务的常见方案如下：</p>
+<ul>
+<li><strong>两阶段提交（2PC）</strong> - 将事务的提交过程分为两个阶段来进行处理：准备阶段和提交阶段。<strong>参与者将操作成败通知协调者，再由协调者根据所有参与者的反馈信息决定各参与者是否要提交操作还是中止操作</strong>。</li>
+<li><strong>三阶段提交（3PC）</strong> - 与二阶段提交不同的是，<strong>引入超时机制</strong>。同时在协调者和参与者中都引入超时机制。将二阶段的准备阶段拆分为 2 个阶段，插入了一个 preCommit 阶段，使得原先在二阶段提交中，参与者在准备之后，由于协调者发生崩溃或错误，而导致参与者处于无法知晓是否提交或者中止的“不确定状态”所产生的可能相当长的延时的问题得以解决。</li>
+<li><strong>补偿事务（TCC）</strong><ul>
+<li><strong>Try</strong> - 操作作为一阶段，负责资源的检查和预留。</li>
+<li><strong>Confirm</strong> - 操作作为二阶段提交操作，执行真正的业务。</li>
+<li><strong>Cancel</strong> - 是预留资源的取消。</li>
+</ul>
+</li>
+<li><strong>本地消息表</strong> - 在事务主动发起方额外新建事务消息表，事务发起方处理业务和记录事务消息在本地事务中完成，轮询事务消息表的数据发送事务消息，事务被动方基于消息中间件消费事务消息表中的事务。</li>
+<li><strong>消息事务</strong> - 基于 MQ 的分布式事务方案其实是对本地消息表的封装。</li>
+<li><strong>SAGA</strong> - Saga 事务核心思想是将长事务拆分为多个本地短事务，由 Saga 事务协调器协调，如果正常结束那就正常完成，如果某个步骤失败，则根据相反顺序一次调用补偿操作。</li>
+</ul>
+<p>分布式事务方案对比：</p>
+<ul>
+<li>2PC&#x2F;3PC 依赖于数据库，能够很好的提供强一致性和强事务性，但相对来说延迟比较高，比较适合传统的单体应用，在同一个方法中存在跨库操作的情况，不适合高并发和高性能要求的场景。</li>
+<li>TCC 适用于执行时间确定且较短，实时性要求高，对数据一致性要求高，比如互联网金融企业最核心的三个服务：交易、支付、账务。</li>
+<li>本地消息表&#x2F;消息事务都适用于事务中参与方支持操作幂等，对一致性要求不高，业务上能容忍数据不一致到一个人工检查周期，事务涉及的参与方、参与环节较少，业务上有对账&#x2F;校验系统兜底。</li>
+<li>Saga 事务不能保证隔离性，需要在业务层控制并发，适合于业务场景事务并发操作同一资源较少的情况。Saga 相比缺少预提交动作，导致补偿动作的实现比较麻烦，例如业务是发送短信，补偿动作则得再发送一次短信说明撤销，用户体验比较差。Saga 事务较适用于补偿动作容易处理的场景。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>2PC</th>
+<th>3PC</th>
+<th>TCC</th>
+<th>本地消息表</th>
+<th>MQ 事务</th>
+<th>SAGA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据一致性</td>
+<td>强</td>
+<td>强</td>
+<td>若</td>
+<td>弱</td>
+<td>弱</td>
+<td>弱</td>
+</tr>
+<tr>
+<td>容错性</td>
+<td>低</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>复杂性</td>
+<td>中</td>
+<td>高</td>
+<td>高</td>
+<td>低</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>低</td>
+<td>低</td>
+<td>中</td>
+<td>中</td>
+<td>高</td>
+<td>中</td>
+</tr>
+<tr>
+<td>维护成本</td>
+<td>低</td>
+<td>中</td>
+<td>高</td>
+<td>中</td>
+<td>中</td>
+<td>高</td>
+</tr>
+</tbody></table>
+<h3 id="分布式事务方案设计"><a href="#分布式事务方案设计" class="headerlink" title="分布式事务方案设计"></a>分布式事务方案设计</h3><p>本文介绍的偏向于原理，业界已经有不少开源的或者收费的解决方案，篇幅所限，就不再展开介绍。</p>
+<p>实际运用理论时进行架构设计时，许多人容易犯“手里有了锤子，看什么都觉得像钉子”的错误，设计方案时考虑的问题场景过多，各种重试，各种补偿机制引入系统，导致设计出来的系统过于复杂，落地遥遥无期。</p>
+<blockquote>
+<p>世界上解决一个计算机问题最简单的方法：“恰好”不需要解决它！—— 阿里中间件技术专家沈询</p>
+</blockquote>
+<p>有些问题，看起来很重要，但实际上我们可以通过<strong>合理的设计</strong>或者将<strong>问题分解</strong>来规避。设计分布式事务系统也不是需要考虑所有异常情况，不必过度设计各种回滚，补偿机制。如果硬要把时间花在解决问题本身，实际上不仅效率低下，而且也是一种浪费。</p>
+<p>如果系统要实现回滚流程的话，有可能系统复杂度将大大提升，且很容易出现 Bug，估计出现 Bug 的概率会比需要事务回滚的概率大很多。在设计系统时，我们需要衡量是否值得花这么大的代价来解决这样一个出现概率非常小的问题，可以考虑当出现这个概率很小的问题，能否采用<strong>人工解决</strong>的方式，这也是大家在解决疑难问题时需要多多思考的地方。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf"><strong>Brewer’s Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services</strong></a>，<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903936718012430"><strong>解读</strong></a> - 经典的 CAP 理论，即：在一个分布式系统中，当发生网络分区时，那么强一致性和可用性只能二选一。</li>
+<li><a target="_blank" rel="noopener" href="https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/"><strong>CAP Twelve Years Later: How the “Rules” Have Changed</strong></a>, <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/64778723/answer/224266038"><strong>解读</strong></a> - CAP 理论的新解读，并阐述 CAP 理论的一些常见误区。</li>
+<li><a target="_blank" rel="noopener" href="https://www.semanticscholar.org/paper/BASE%3A-An-Acid-Alternative-Pritchett/2e72e6c022dd33115304ecfcb6dad7ea609534a4"><strong>BASE: An Acid Alternative</strong></a>，<a target="_blank" rel="noopener" href="https://www.cnblogs.com/savorboard/p/base-an-acid-alternative.html"><strong>译文</strong></a> - BASE 理论是对 CAP 中一致性和可用性的权衡，提出采用适当的方式来使系统达到最终一致性。</li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/savorboard/p/distributed-system-transaction-consistency.html">聊聊分布式事务，再说说解决方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5c0e5bf8e51d45063322fe50">理解分布式事务</a></li>
+<li><a target="_blank" rel="noopener" href="https://rocketmq.apache.org/zh/docs/featureBehavior/04transactionmessage">RocketMQ 官方文档之事务消息</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf">SAGAS</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/f293688d/" title="分布式事务">https://dunwu.github.io/blog/pages/f293688d/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+              <a href="/blog/tags/ACID/" rel="tag"># ACID</a>
+              <a href="/blog/tags/%E5%8D%8F%E5%90%8C/" rel="tag"># 协同</a>
+              <a href="/blog/tags/%E4%BA%8B%E5%8A%A1/" rel="tag"># 事务</a>
+              <a href="/blog/tags/%E4%BA%92%E6%96%A5/" rel="tag"># 互斥</a>
+              <a href="/blog/tags/2PC/" rel="tag"># 2PC</a>
+              <a href="/blog/tags/3PC/" rel="tag"># 3PC</a>
+              <a href="/blog/tags/TCC/" rel="tag"># TCC</a>
+              <a href="/blog/tags/%E6%9C%AC%E5%9C%B0%E6%B6%88%E6%81%AF%E8%A1%A8/" rel="tag"># 本地消息表</a>
+              <a href="/blog/tags/%E6%B6%88%E6%81%AF%E4%BA%8B%E5%8A%A1/" rel="tag"># 消息事务</a>
+              <a href="/blog/tags/SAGA/" rel="tag"># SAGA</a>
+              <a href="/blog/tags/XA/" rel="tag"># XA</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/16deae27/" rel="prev" title="分布式会话基本原理">
+                  <i class="fa fa-angle-left"></i> 分布式会话基本原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/366cf7bd/" rel="next" title="缓存基本原理">
+                  缓存基本原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"db5e7340acf7462b884bf2193f9ec572"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

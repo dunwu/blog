@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="MongoDB 复制::: info 概述 复制主要指通过网络在多台机器上保存相同数据的副本。 复制数据，可能出于各种各样的原因：  提高可用性 - 当部分组件出现位障，系统依然可以继续工作，系统依然可以继续工作。 降低访问延迟 - 使数据在地理位置上更接近用户。 提高读吞吐量 - 扩展至多台机器以同时提供数据访问服务。  综上可知，复制是所有分布式系统的核心特性，是高可用的重要保证。 Mongo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB 复制">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/cd111ced/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="MongoDB 复制::: info 概述 复制主要指通过网络在多台机器上保存相同数据的副本。 复制数据，可能出于各种各样的原因：  提高可用性 - 当部分组件出现位障，系统依然可以继续工作，系统依然可以继续工作。 降低访问延迟 - 使数据在地理位置上更接近用户。 提高读吞吐量 - 扩展至多台机器以同时提供数据访问服务。  综上可知，复制是所有分布式系统的核心特性，是高可用的重要保证。 Mongo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920165054.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920165055.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920165053.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920175429.svg">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920204024.svg">
+<meta property="article:published_time" content="2020-09-20T15:12:17.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.734Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="文档数据库">
+<meta property="article:tag" content="mongodb">
+<meta property="article:tag" content="复制">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920165054.svg">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/cd111ced/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/cd111ced/","path":"/pages/cd111ced/","title":"MongoDB 复制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MongoDB 复制 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MongoDB-%E5%A4%8D%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">MongoDB 复制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">复制模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%E9%9B%86"><span class="nav-number">1.2.</span> <span class="nav-text">副本集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="nav-number">1.2.1.</span> <span class="nav-text">主节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E8%8A%82%E7%82%B9"><span class="nav-number">1.2.2.</span> <span class="nav-text">从节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%B2%E8%A3%81%E8%8A%82%E7%82%B9"><span class="nav-number">1.2.3.</span> <span class="nav-text">仲裁节点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-number">1.3.</span> <span class="nav-text">异步复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E5%BB%B6%E8%BF%9F%E5%92%8C%E6%B5%81%E6%8E%A7"><span class="nav-number">1.3.1.</span> <span class="nav-text">复制延迟和流控</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.4.</span> <span class="nav-text">故障转移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.</span> <span class="nav-text">读操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E5%81%8F%E5%A5%BD"><span class="nav-number">1.5.1.</span> <span class="nav-text">读取偏好</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-number">1.5.2.</span> <span class="nav-text">数据可见性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E8%AF%BB%E5%8F%96"><span class="nav-number">1.5.3.</span> <span class="nav-text">镜像读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/cd111ced/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MongoDB 复制 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB 复制<a href="https://github.com/dunwu/blog/blob/master/source/_posts/12.%E6%95%B0%E6%8D%AE%E5%BA%93/04.%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/mongodb/MongoDB_%E5%A4%8D%E5%88%B6.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-20 23:12:17" itemprop="dateCreated datePublished" datetime="2020-09-20T23:12:17+08:00">2020-09-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">文档数据库</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/mongodb/" itemprop="url" rel="index"><span itemprop="name">mongodb</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="MongoDB-复制"><a href="#MongoDB-复制" class="headerlink" title="MongoDB 复制"></a>MongoDB 复制</h1><p>::: info 概述</p>
+<p><strong>复制主要指通过网络在多台机器上保存相同数据的副本</strong>。</p>
+<p>复制数据，可能出于各种各样的原因：</p>
+<ul>
+<li><strong>提高可用性</strong> - 当部分组件出现位障，系统依然可以继续工作，系统依然可以继续工作。</li>
+<li><strong>降低访问延迟</strong> - 使数据在地理位置上更接近用户。</li>
+<li><strong>提高读吞吐量</strong> - 扩展至多台机器以同时提供数据访问服务。</li>
+</ul>
+<p>综上可知，复制是所有分布式系统的核心特性，是高可用的重要保证。</p>
+<p>MongoDB 本身是一个分布式数据库，自然也需要具备复制的能力。MongoDB 复制采用了经典的主从架构。<strong>所有的写入操作都发送到主节点</strong>，由主节点负责将数据更改事件发送到从节点，每个从节点都可以接收读请求。</p>
+<p>本文将逐一阐述 MongoDB 复制的各个要点，以及如何基于复制来保证 MongoDB 的高可用。</p>
+<p>:::</p>
+<span id="more"></span>
+
+<h2 id="复制模式"><a href="#复制模式" class="headerlink" title="复制模式"></a>复制模式</h2><p><strong>复制主要指通过网络在多台机器上保存相同数据的副本</strong>。</p>
+<p>分布式系统复制的模式有以下几种：</p>
+<ul>
+<li><strong>主从复制</strong> - <strong>所有的写入操作都发送到主节点</strong>，由主节点负责将数据更改事件发送到从节点。每个从节点都可以接收读请求，但内容可能是过期值。</li>
+<li><strong>多主复制</strong> - <strong>系统存在多个主节点，每个都可以接收写请求</strong>，客户端将写请求发送到其中的一个主节点上，由该主节点负责将数据更改事件同步到其他主节点和自己的从节点。</li>
+<li><strong>无主复制</strong> - <strong>系统中不存在主节点，每一个节点都能接受客户端的写请求</strong>。接受写请求的副本不会将数据变更同步到其他的副本。此外，<strong>读取时从多个节点上并行读取，以此检测和纠正某些过期数据</strong>。</li>
+</ul>
+<p><strong>MongoDB 复制采用了主从架构</strong>。</p>
+<h2 id="副本集"><a href="#副本集" class="headerlink" title="副本集"></a>副本集</h2><p>在 MongoDB 中，<strong>副本集</strong>是一组维护相同数据集的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/program/mongod/#mongodb-binary-bin.mongod"><code>mongod</code></a> 进程，副本集提供了冗余和 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-high-availability">高可用性</a>。MongoDB 副本集中有三种节点类型：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-primary/#std-label-replica-set-primary">主节点</a> - 主节点接收所有写入操作。</li>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-secondary/#std-label-replica-set-secondary-members-ref">从节点</a> - 从节点复制主节点的操作以维护相同的数据集。</li>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-arbiter/#std-label-replica-set-arbiter-configuration">仲裁节点</a> - 仲裁节点将参与 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-elections/#std-label-replica-set-elections">主节点的选举</a>，但仲裁节点<strong>没有</strong>数据集的副本，从而<strong>无法</strong>成为主节点。</li>
+</ul>
+<p>一个副本集中，有且只有一个主节点，可以有一个 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-arbiter/#std-label-replica-set-arbiter-configuration">仲裁节点</a>（可选），多个 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-secondary/#std-label-replica-set-secondary-members-ref">从节点</a>。</p>
+<h3 id="主节点"><a href="#主节点" class="headerlink" title="主节点"></a>主节点</h3><p><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-primary/#std-label-replica-set-primary">主节点（Primary）</a> 会接收所有写入操作。副本集只能有一个可以使用 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/write-concern/#mongodb-writeconcern-writeconcern.-majority-"><code>&#123; w: &quot;majority&quot; &#125;</code></a> 写关注（write concern）级别对写入请求进行确认的主节点；尽管在某些情况下，另一 mongod 实例可能会暂时将自身视为主节点。主节点在其操作日志（即 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-oplog/">oplog</a>）中记录对其数据集的所有更改。</p>
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-primary/">副本集主节点</a></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920165054.svg" alt="读写请求路由到主节点"></p>
+<h3 id="从节点"><a href="#从节点" class="headerlink" title="从节点"></a>从节点</h3><p><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-secondary/#std-label-replica-set-secondary-members-ref">从节点（Secondary）</a> 负责复制 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-primary">主节点</a> 的数据集副本。为了复制数据，从节点异步的将来自主节点的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-oplog/#std-label-replica-set-oplog">oplog</a> 操作同步到自己的数据集。如果主节点不可用，则某个符合条件的从节点将进行选举，以将自己选举为新的主节点。</p>
+<p>尽管客户端无法将数据写入从节点，但客户端可以自从节点读取数据。</p>
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-secondary/">副本集从节点</a></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920165055.svg" alt="一主两从集群"></p>
+<h3 id="仲裁节点"><a href="#仲裁节点" class="headerlink" title="仲裁节点"></a>仲裁节点</h3><p>在某些情况下（例如存在一个主节点和一个从节点，但由于成本有限无法再添加另一个从节点），可以选择将一个 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/program/mongod/#mongodb-binary-bin.mongod"><code>mongod</code></a> 实例作为 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-arbiter/#std-label-replica-set-arbiter-configuration">仲裁节点（Arbiter）</a> 添加到副本集中。仲裁节点参与 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-elections/#std-label-replica-set-elections">选举</a>，但不持有数据（即不提供数据冗余）。</p>
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-arbiter/">副本集仲裁节点</a></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920165053.svg" alt="一主一从一仲裁集群"></p>
+<p><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-arbiter/#std-label-replica-set-arbiter-configuration">仲裁节点</a> 将永远是仲裁节点，而在选举期间，<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-primary/#std-label-replica-set-primary">主节点</a> 可能被降级成为 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-secondary/#std-label-replica-set-secondary-members-ref">从节点</a>，从节点可能变为主节点。</p>
+<blockquote>
+<p>注意：不要在同时托管主节点或从节点的服务器上运行投票节点。</p>
+</blockquote>
+<h2 id="异步复制"><a href="#异步复制" class="headerlink" title="异步复制"></a>异步复制</h2><p>从节点会复制主节点的 oplog 并将操作异步应用于其数据集。通过使从节点的数据集反应主节点数据集的状态，即便一个或多个节点出现故障，副本集也可继续运行。</p>
+<blockquote>
+<p>扩展阅读：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-oplog/#std-label-replica-set-oplog">副本集 Oplog</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-sync/#std-label-replica-set-sync">副本集数据同步</a></li>
+</ul>
+</blockquote>
+<h3 id="复制延迟和流控"><a href="#复制延迟和流控" class="headerlink" title="复制延迟和流控"></a>复制延迟和流控</h3><p>副本集的从节点会记录应用时间超过慢操作阈值的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-oplog/#std-label-slow-oplog-application">oplog 条目</a>。</p>
+<p><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-replication-lag">复制延迟</a> 是指 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-primary">主节点</a> 上的操作与将该操作从 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-oplog">oplog</a> 应用到 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-secondary">从节点</a> 之间的延迟。一些小的延迟是可以接受的，但随着复制延迟的增加，会出现严重的问题，包括在主节点上创建缓存压力。</p>
+<p>管理员可以限制主节点应用写入的速率，目标是将 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/command/replSetGetStatus/#mongodb-data-replSetGetStatus.optimes.lastCommittedOpTime"><code>majority committed</code></a> 延迟保持在可配置的最大 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/parameters/#mongodb-parameter-param.flowControlTargetLagSeconds"><code>flowControlTargetLagSeconds</code></a> 值以下。默认情况下，流量控制为 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/parameters/#mongodb-parameter-param.enableFlowControl"><code>enabled</code>。</a></p>
+<p>启用流量控制后，随着延迟接近 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/parameters/#mongodb-parameter-param.flowControlTargetLagSeconds"><code>flowControlTargetLagSeconds</code></a>，主节点上的写入操作必须先获取令牌，然后才能进行锁定并执行写操作。通过限制每秒发出的令牌数量，流量控制机制将尝试将延迟保持在目标延迟以下。</p>
+<h2 id="故障转移"><a href="#故障转移" class="headerlink" title="故障转移"></a>故障转移</h2><p>当主节点在超过配置的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/replica-configuration/#mongodb-rsconf-rsconf.settings.electionTimeoutMillis"><code>electionTimeoutMillis</code></a> 时间段（默认 10 秒）内未与副本集中的其他节点通信时，一个符合条件的从节点将发起选举，并提名自己成为新的主节点。集群将尝试完成新主节点的选举并恢复其正常运转。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920175429.svg" alt="img"></p>
+<p>在成功完成选举之前，副本集无法处理写操作。如果将读取查询配置为当主节点离线时 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/read-preference/#std-label-replica-set-read-preference">在从节点上运行</a>，那么副本集可以继续为读取查询提供服务。</p>
+<p>假设采用默认 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/replica-configuration/#mongodb-rsconf-rsconf.settings"><code>replica configuration settings</code></a>（副本配置设置），那么集群选举新的主节点之前的平均时间通常不应超过 12 秒。这包括将主节点标记为 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/replication/#std-label-replication-auto-failover">不可用</a> 以及召集和完成 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-elections/#std-label-replica-set-elections">选举</a> 所需的时间。可以通过修改 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/replica-configuration/#mongodb-rsconf-rsconf.settings.electionTimeoutMillis"><code>settings.electionTimeoutMillis</code></a> 复制配置选项来调整该时间段。网络延迟等因素可能会延长副本集选举完成所需的时间，这反过来又会影响集群在没有主节点的情况下运行的时间。这些因素取决于具体集群架构。</p>
+<p>将 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/replica-configuration/#mongodb-rsconf-rsconf.settings.electionTimeoutMillis"><code>electionTimeoutMillis</code></a> 复制配置选项从默认的 <code>10000</code>（10 秒）降低，可以更快地检测到主节点故障。然而，由于临时网络延迟等因素，即使主节点在其他方面是健康的，集群也可能会更频繁地进行选举。这可能导致 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-rollbacks/#std-label-replica-set-rollback">w: 1</a> 写入操作的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/write-concern/#std-label-wc-w">回滚次数增加</a>。</p>
+<p>应用程序连接逻辑应包括对自动故障转移和后续选举的容忍度。MongoDB 驱动程序可检测到主节点丢失，并一次性自动 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/retryable-writes/#std-label-retryable-writes">重试某些写入操作</a>，从而为自动故障转移和选举提供额外的内置处理功能：</p>
+<p>MongoDB 提供 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/replication/#std-label-mirrored-reads">镜像读</a> 功能，用最近访问的数据预热可选从节点缓存。预热从节点的缓存有助于在选举后更快地恢复性能。</p>
+<h2 id="读操作"><a href="#读操作" class="headerlink" title="读操作"></a>读操作</h2><h3 id="读取偏好"><a href="#读取偏好" class="headerlink" title="读取偏好"></a>读取偏好</h3><p>默认情况下，客户端从主节点读取数据；但是，客户端可以指定 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/read-preference/">读取偏好</a> 以向从节点发送读取操作。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200920204024.svg" alt="img"></p>
+<p><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/replication/#std-label-asynchronous-replication">异步复制</a> 到从节点意味着在从节点读取到的数据可能不会反映主节点上数据的状态。</p>
+<p>包含读操作的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/transactions/#std-label-transactions">分布式事务</a> 必须使用读取偏好 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/read-preference/#mongodb-readmode-primary"><code>primary</code></a>。给定事务中的所有操作必须路由至同一节点。</p>
+<blockquote>
+<p>扩展阅读：<a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/read-preference/">读取偏好</a></p>
+</blockquote>
+<h3 id="数据可见性"><a href="#数据可见性" class="headerlink" title="数据可见性"></a>数据可见性</h3><p>根据读关注，客户端可在写入操作 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-durable">持久化</a> 之前看到写入结果：</p>
+<ul>
+<li>无论写入操作的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/write-concern/#std-label-write-concern">写关注级别</a> 如何，使用 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/read-concern-local/#mongodb-readconcern-readconcern.-local-"><code>&quot;local&quot;</code></a> 或 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/read-concern-available/#mongodb-readconcern-readconcern.-available-"><code>&quot;available&quot;</code></a> 读关注（read concern）的其他客户端均可在写入操作被发起它的客户端确认之前，看到该操作的结果。</li>
+<li>使用 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/read-concern-local/#mongodb-readconcern-readconcern.-local-"><code>&quot;local&quot;</code></a> 或 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/read-concern-available/#mongodb-readconcern-readconcern.-available-"><code>&quot;available&quot;</code></a> 读关注的客户端可读取数据，而这些数据后续可能会在副本集故障转移期间进行 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/replica-set-rollbacks/">回滚</a>。</li>
+</ul>
+<p>对于 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/transactions/">多文档事务</a> 中的操作，当事务提交时，该事务中进行的所有数据更改都将保存并在事务外部可见。换言之，一个事务不会在回滚其他事务的同时提交某些更改。</p>
+<p>在事务进行提交前，在事务中所做的数据更改在事务外不可见。不过，当事务写入多个分片时，并非所有外部读取操作都需等待已提交事务的结果在各个分片上可见。例如，如果事务已提交并且写入 1 在分片 A 上可见，但写入 2 在分片 B 上尚不可见，则读关注 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/read-concern-local/#mongodb-readconcern-readconcern.-local-"><code>&quot;local&quot;</code></a> 处的外部读取可以在不看到写入 2 的情况下读取写入 1 的结果。</p>
+<blockquote>
+<p>有关 MongoDB 读取隔离性、一致性和新近度的更多信息，请参阅 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/core/read-isolation-consistency-recency/">读取隔离性、一致性和新近度</a>。</p>
+</blockquote>
+<h3 id="镜像读取"><a href="#镜像读取" class="headerlink" title="镜像读取"></a>镜像读取</h3><p>镜像读取可减少由于中断或计划维护后主节点选举对系统的影响。在副本集发生 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/glossary/#std-term-failover">故障转移</a> 后，接管成为新主节点的从节点会在新查询请求传入时更新其缓存。在缓存预热期间，性能可能会受到影响。</p>
+<p>镜像读会预热 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/replica-configuration/#mongodb-rsconf-rsconf.members-n-.priority"><code>electable</code></a> 从节点副本集成员的缓存。为了预热可选举从节点的缓存，主节点会将其接收到的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/replication/#std-label-mirrored-reads-supported-operations">受支持操作</a> 的示例镜像到可选举的从节点。</p>
+<p>可以使用 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/replica-configuration/#mongodb-rsconf-rsconf.members-n-.priority"><code>mirrorReads</code></a> 参数来配置接收镜像读的 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/reference/parameters/#mongodb-parameter-param.mirrorReads"><code>electable</code></a> 从节点副本集节点的子集的大小。有关更多详细信息，请参见 <a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/replication/#std-label-mirrored-reads-parameters">启用&#x2F;禁用对镜像读的支持</a>。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/zh-cn/docs/manual/replication/">MongoDB 官方文档之复制</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/cd111ced/" title="MongoDB 复制">https://dunwu.github.io/blog/pages/cd111ced/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+              <a href="/blog/tags/%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 文档数据库</a>
+              <a href="/blog/tags/mongodb/" rel="tag"># mongodb</a>
+              <a href="/blog/tags/%E5%A4%8D%E5%88%B6/" rel="tag"># 复制</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/60921fba/" rel="prev" title="MySQL 面试">
+                  <i class="fa fa-angle-left"></i> MySQL 面试
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/ea60b1cc/" rel="next" title="MongoDB 分片">
+                  MongoDB 分片 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"7462a43bb5243dd875c5bda13245e12c"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

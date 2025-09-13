@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Hystrix 快速入门Hystrix 简介Hystrix 是什么Hystrix 是由 Netflix 开源，用于处理分布式系统的延迟和容错的一个开源组件。在分布式系统里，许多依赖不可避免的会调用失败，比如超时、异常等。Hystrix 采用断路器模式来实现服务间的彼此隔离，从而避免级联故障，以提高分布式系统整体的弹性。 “断路器”本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hystrix 快速入门">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/bef3ae94/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Hystrix 快速入门Hystrix 简介Hystrix 是什么Hystrix 是由 Netflix 开源，用于处理分布式系统的延迟和容错的一个开源组件。在分布式系统里，许多依赖不可避免的会调用失败，比如超时、异常等。Hystrix 采用断路器模式来实现服务间的彼此隔离，从而避免级联故障，以提高分布式系统整体的弹性。 “断路器”本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717141615.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717141749.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717141859.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717142842.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717143247.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-60964d9fa41614c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/563/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-8790f97df332d9a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-dce007513bf90794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-11710915e1a5dcda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-55a0be64ecac4cda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-8e16e7f8072475eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-9af3442e03df941e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-70fd779fc1f3b9b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-84833e6225a05df0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/14126519-bb4aa4ba3a1de64c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="article:published_time" content="2022-02-17T14:34:30.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.719Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="中间件">
+<meta property="article:tag" content="流量控制">
+<meta property="article:tag" content="Hystrix">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717141615.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/bef3ae94/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/bef3ae94/","path":"/pages/bef3ae94/","title":"Hystrix 快速入门"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hystrix 快速入门 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hystrix-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="nav-number">1.</span> <span class="nav-text">Hystrix 快速入门</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Hystrix 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.1.</span> <span class="nav-text">Hystrix 是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-Hystrix"><span class="nav-number">1.1.2.</span> <span class="nav-text">为什么需要 Hystrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hystrix-%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.3.</span> <span class="nav-text">Hystrix 的功能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix-%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">Hystrix 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA-HystrixCommand-%E6%88%96-HystrixObservableCommand-%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.2.1.</span> <span class="nav-text">（一）构建一个 HystrixCommand 或 HystrixObservableCommand 对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="nav-number">1.2.2.</span> <span class="nav-text">（二）执行命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E6%98%AF%E5%90%A6%E7%BC%93%E5%AD%98"><span class="nav-number">1.2.3.</span> <span class="nav-text">（三）是否缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AF%E6%96%AD%E8%B7%AF%E5%99%A8"><span class="nav-number">1.2.4.</span> <span class="nav-text">（四）是否开启断路器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%94%EF%BC%89%E4%BF%A1%E5%8F%B7%E9%87%8F%E3%80%81%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%98%AF%E5%90%A6%E6%8B%92%E7%BB%9D"><span class="nav-number">1.2.5.</span> <span class="nav-text">（五）信号量、线程池是否拒绝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%85%AD%EF%BC%89construct-%E6%88%96-run"><span class="nav-number">1.2.6.</span> <span class="nav-text">（六）construct() 或 run()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%83%EF%BC%89%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5"><span class="nav-number">1.2.7.</span> <span class="nav-text">（七）健康检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%85%AB%EF%BC%89%E8%8E%B7%E5%8F%96-Fallback"><span class="nav-number">1.2.8.</span> <span class="nav-text">（八）获取 Fallback</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B9%9D%EF%BC%89%E8%BF%94%E5%9B%9E%E7%BB%93%E6%9E%9C"><span class="nav-number">1.2.9.</span> <span class="nav-text">（九）返回结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%AD%E8%B7%AF%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">断路器工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%8C%87%E6%A0%87"><span class="nav-number">1.3.1.</span> <span class="nav-text">系统指标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB%E6%8A%80%E6%9C%AF"><span class="nav-number">1.4.</span> <span class="nav-text">资源隔离技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%9A%94%E7%A6%BB"><span class="nav-number">1.4.1.</span> <span class="nav-text">线程池隔离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E9%9A%94%E7%A6%BB"><span class="nav-number">1.4.2.</span> <span class="nav-text">信号量隔离</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix-%E5%BA%94%E7%94%A8"><span class="nav-number">1.5.</span> <span class="nav-text">Hystrix 应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.</span> <span class="nav-text">Hystrix 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">执行配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%AD%E8%B7%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">断路配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E6%A0%87%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.3.</span> <span class="nav-text">指标配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.4.</span> <span class="nav-text">线程池配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%99%90%E6%B5%81%E6%8A%80%E6%9C%AF"><span class="nav-number">1.7.</span> <span class="nav-text">其他限流技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/bef3ae94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Hystrix 快速入门 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hystrix 快速入门<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/14.%E4%B8%AD%E9%97%B4%E4%BB%B6/03.%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6/01.Hystrix.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-17 22:34:30" itemprop="dateCreated datePublished" datetime="2022-02-17T22:34:30+08:00">2022-02-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E4%B8%AD%E9%97%B4%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">中间件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/%E4%B8%AD%E9%97%B4%E4%BB%B6/%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">流量控制</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Hystrix-快速入门"><a href="#Hystrix-快速入门" class="headerlink" title="Hystrix 快速入门"></a>Hystrix 快速入门</h1><h2 id="Hystrix-简介"><a href="#Hystrix-简介" class="headerlink" title="Hystrix 简介"></a>Hystrix 简介</h2><h3 id="Hystrix-是什么"><a href="#Hystrix-是什么" class="headerlink" title="Hystrix 是什么"></a>Hystrix 是什么</h3><p>Hystrix 是由 Netflix 开源，用于处理分布式系统的延迟和容错的一个开源组件。在分布式系统里，许多依赖不可避免的会调用失败，比如超时、异常等。Hystrix 采用<strong>断路器模式</strong>来实现服务间的彼此隔离，从而避免级联故障，以提高分布式系统整体的弹性。</p>
+<p>“断路器”本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控（类似熔断保险丝），<strong>向调用方返回一个符合预期的、可处理的备选响应（FallBack），而不是长时间的等待或者抛出调用方无法处理的异常</strong>，这样就保证了服务调用方的线程不会被长时间、不必要地占用，从而避免了故障在分布式系统中的蔓延，乃至雪崩。</p>
+<p>Hystrix 官方已宣布<strong>不再发布新版本</strong>。但是，Hystrix 的断路器设计理念，有非常高的学习价值。</p>
+<h3 id="为什么需要-Hystrix"><a href="#为什么需要-Hystrix" class="headerlink" title="为什么需要 Hystrix"></a>为什么需要 Hystrix</h3><p>复杂的分布式系统架构中的应用程序往往具有数十个依赖项，每个依赖项都会不可避免地在某个时刻失败。 如果主机应用程序未与这些外部故障隔离开来，则可能会被波及。</p>
+<p>例如，对于依赖于 30 个服务的应用程序，假设每个服务的正常运行时间为 99.99％，则可以期望：</p>
+<blockquote>
+<p>99.99<sup>30</sup> &#x3D; 99.7％ 的正常运行时间</p>
+<p>10 亿个请求中的 0.3％&#x3D; 3,000,000 个失败</p>
+<p>即使所有依赖项都具有出色的正常运行时间，每月也会有 2 个小时以上的停机时间。</p>
+<p>然而，现实情况一般比这种估量情况更糟糕。</p>
+</blockquote>
+<hr>
+<p>当一切正常时，整体系统如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717141615.png" alt="img"></p>
+<p>在高并发场景，这些依赖的稳定性与否对系统的影响非常大，但是依赖有很多不可控问题：如网络连接、资源繁忙、服务宕机等。例如：下图中有一个 QPS 为 50 的依赖 I 出现不可用，但是其他依赖服务是可用的。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717141749.png" alt="img"></p>
+<p>但是，在高并发场景下，当依赖 I 阻塞时，大多数服务器的线程池就出现阻塞(BLOCK)。当这种级联故障愈演愈烈，就可能造成整个线上服务不可用的雪崩效应，如下图：</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717141859.png" alt="img"></p>
+<p>Hystrix 就是为了解决这类问题而应运而生。</p>
+<h3 id="Hystrix-的功能"><a href="#Hystrix-的功能" class="headerlink" title="Hystrix 的功能"></a>Hystrix 的功能</h3><p>Hystrix 具有以下功能：</p>
+<ul>
+<li>避免资源耗尽：阻止任何一个依赖服务耗尽所有的资源，比如 tomcat 中的所有线程资源。</li>
+<li>避免请求排队和积压：采用限流和 <code>fail fast</code> 来控制故障。</li>
+<li>支持降级：提供 fallback 降级机制来应对故障。</li>
+<li>资源隔离：比如 <code>bulkhead</code>（舱壁隔离技术）、<code>swimlane</code>（泳道技术）、<code>circuit breaker</code>（断路技术）来限制任何一个依赖服务的故障的影响。</li>
+<li>统计&#x2F;监控&#x2F;报警：通过近实时的统计&#x2F;监控&#x2F;报警功能，来提高故障发现的速度。</li>
+<li>通过近实时的属性和配置<strong>热修改</strong>功能，来提高故障处理和恢复的速度。</li>
+<li>保护依赖服务调用的所有故障情况，而不仅仅只是网络故障情况。</li>
+</ul>
+<p>如果使用 Hystrix 对每个基础依赖服务进行过载保护，则整个系统架构将会类似下图所示，每个依赖项彼此隔离，受到延迟时发生饱和的资源的被限制访问，并包含 fallback 逻辑（用于降级处理），该逻辑决定了在依赖项中发生任何类型的故障时做出对应的处理。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717142842.png" alt="img"></p>
+<h2 id="Hystrix-原理"><a href="#Hystrix-原理" class="headerlink" title="Hystrix 原理"></a>Hystrix 原理</h2><p>如下图所示，Hystrix 的工作流程大致可以分为 9 个步骤。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200717143247.png" alt="img"></p>
+<h3 id="（一）构建一个-HystrixCommand-或-HystrixObservableCommand-对象"><a href="#（一）构建一个-HystrixCommand-或-HystrixObservableCommand-对象" class="headerlink" title="（一）构建一个 HystrixCommand 或 HystrixObservableCommand 对象"></a>（一）构建一个 HystrixCommand 或 HystrixObservableCommand 对象</h3><p>Hystrix 进行资源隔离，其实是提供了一个抽象，叫做命令模式。这也是 Hystrix 最基本的资源隔离技术。</p>
+<p>在使用 Hystrix 的过程中，会对依赖服务的调用请求封装成命令对象，Hystrix 对 命令对象抽象了两个抽象类：<code>HystrixCommand</code> 和 <code>HystrixObservableCommand</code> 。</p>
+<ul>
+<li><code>HystrixCommand</code> 表示的命令对象会返回一个唯一返回值。</li>
+<li><code>HystrixObservableCommand</code> 表示的命令对象 会返回多个返回值。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HystrixCommand</span> <span class="variable">command</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HystrixCommand</span>(arg1, arg2);</span><br><span class="line"><span class="type">HystrixObservableCommand</span> <span class="variable">command</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HystrixObservableCommand</span>(arg1, arg2);</span><br></pre></td></tr></table></figure>
+
+<h3 id="（二）执行命令"><a href="#（二）执行命令" class="headerlink" title="（二）执行命令"></a>（二）执行命令</h3><p>Hystrix 中共有 4 种方式执行命令，如下所示：</p>
+<table>
+<thead>
+<tr>
+<th align="left">执行方式</th>
+<th align="left">说明</th>
+<th align="left">可用对象</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a target="_blank" rel="noopener" href="http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixCommand.html#execute()"><code>execute()</code></a></td>
+<td align="left">阻塞式同步执行，返回依赖服务的单一返回结果(或者抛出异常)</td>
+<td align="left"><code>HystrixCommand</code></td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixCommand.html#queue()"><code>queue()</code></a></td>
+<td align="left">异步执行，通过 <code>Future</code> 返回依赖服务的单一返回结果(或者抛出异常)</td>
+<td align="left"><code>HystrixCommand</code></td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixObservableCommand.html#observe()"><code>observe()</code></a></td>
+<td align="left">基于 Rxjava 的 Observable 方式，返回通过 Observable 表示的依赖服务返回结果。代调用代码先执行(Hot Obserable)</td>
+<td align="left"><code>HystrixObservableCommand</code></td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixObservableCommand.html#toObservable()"><code>toObservable()</code></a></td>
+<td align="left">基于 Rxjava 的 Observable 方式，返回通过 Observable 表示的依赖服务返回结果。执行代码等到真正订阅的时候才会执行(cold observable)</td>
+<td align="left"><code>HystrixObservableCommand</code></td>
+</tr>
+</tbody></table>
+<p>这四种命令中，<code>exeucte()</code>、<code>queue()</code>、<code>observe()</code> 的表示其实是通过 <code>toObservable()</code> 实现的，其转换关系如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-60964d9fa41614c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/563/format/webp" alt="img"></p>
+<p><code>HystrixCommand</code> 执行方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">K</span> <span class="variable">value</span>   <span class="operator">=</span> command.execute();</span><br><span class="line"><span class="comment">// 等价语句：</span></span><br><span class="line"><span class="type">K</span> <span class="variable">value</span> <span class="operator">=</span> command.execute().queue().get();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Future&lt;K&gt; fValue  = command.queue();</span><br><span class="line"><span class="comment">//等价语句：</span></span><br><span class="line">Future&lt;K&gt; fValue = command.toObservable().toBlocking().toFuture();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Observable&lt;K&gt; ohValue = command.observe(); <span class="comment">//hot observable，立刻订阅，命令立刻执行</span></span><br><span class="line"><span class="comment">//等价语句：</span></span><br><span class="line">Observable&lt;K&gt; ohValue = command.toObservable().subscribe(subject);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 上述执行最终实现还是基于 toObservable()</span></span><br><span class="line">Observable&lt;K&gt; ocValue = command.toObservable(); <span class="comment">//cold observable，延后订阅，订阅发生后，执行才真正执行</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="（三）是否缓存"><a href="#（三）是否缓存" class="headerlink" title="（三）是否缓存"></a>（三）是否缓存</h3><p>如果当前命令对象启用了请求缓存，并且请求的响应存在于缓存中，则缓存的响应会立刻以 <code>Observable</code> 的形式返回。</p>
+<h3 id="（四）是否开启断路器"><a href="#（四）是否开启断路器" class="headerlink" title="（四）是否开启断路器"></a>（四）是否开启断路器</h3><p>如果第三步没有缓存没有命中，则判断一下当前断路器的断路状态是否打开。如果断路器状态为打开状态，则 Hystrix 将不会执行此 Command 命令，直接执行步骤 8 调用 Fallback；</p>
+<p>如果断路器状态是关闭，则执行步骤 5 检查是否有足够的资源运行 Command 命令</p>
+<h3 id="（五）信号量、线程池是否拒绝"><a href="#（五）信号量、线程池是否拒绝" class="headerlink" title="（五）信号量、线程池是否拒绝"></a>（五）信号量、线程池是否拒绝</h3><p>当您执行该命令时，Hystrix 会检查断路器以查看电路是否打开。</p>
+<p>如果电路开路（或“跳闸”），则 Hystrix 将不会执行该命令，而是将流程路由到 (8) 获取回退。</p>
+<p>如果电路闭合，则流程前进至 (5) 以检查是否有可用容量来运行命令。</p>
+<p>如果当前要执行的 Command 命令 先关连的线程池 和队列(或者信号量)资源已经满了，Hystrix 将不会运行 Command 命令，直接执行 <strong>步骤 8</strong>的 Fallback 降级处理；如果未满，表示有剩余的资源执行 Command 命令，则执行<strong>步骤 6</strong></p>
+<h3 id="（六）construct-或-run"><a href="#（六）construct-或-run" class="headerlink" title="（六）construct() 或 run()"></a>（六）construct() 或 run()</h3><p>当经过<strong>步骤 5</strong> 判断，有足够的资源执行 Command 命令时，本步骤将调用 Command 命令运行方法，基于不同类型的 Command，有如下两种两种运行方式：</p>
+<table>
+<thead>
+<tr>
+<th align="left">运行方式</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>HystrixCommand.run()</code></td>
+<td align="left">返回一个处理结果或者抛出一个异常</td>
+</tr>
+<tr>
+<td align="left"><code>HystrixObservableCommand.construct()</code></td>
+<td align="left">返回一个 Observable 表示的结果(可能多个)，或者 基于<code>onError</code>的错误通知</td>
+</tr>
+</tbody></table>
+<p>如果<code>run()</code> 或者<code>construct()</code>方法 的<code>真实执行时间</code>超过了 Command 设置的<code>超时时间阈值</code>, 则<strong>当前则执行线程</strong>（或者是独立的定时器线程）将会抛出<code>TimeoutException</code>。抛出超时异常 TimeoutException，后，将执行<strong>步骤 8</strong>的 Fallback 降级处理。即使<code>run()</code>或者<code>construct()</code>执行没有被取消或中断，最终能够处理返回结果，但在降级处理逻辑中，将会抛弃<code>run()</code>或<code>construct()</code>方法的返回结果，而返回 Fallback 降级处理结果。</p>
+<blockquote>
+<p><strong>注意事项</strong><br>需要注意的是，Hystrix 无法强制 将正在运行的线程停止掉–Hystrix 能够做的最好的方式就是在 JVM 中抛出一个<code>InterruptedException</code>。如果 Hystrix 包装的工作不抛出中断异常<code>InterruptedException</code>, 则在 Hystrix 线程池中的线程将会继续执行，尽管<code>调用的客户端</code>已经接收到了<code>TimeoutException</code>。这种方式会使 Hystrix 的线程池处于饱和状态。大部分的 Java Http Client 开源库并不会解析 <code>InterruptedException</code>。所以确认 HTTP client 相关的连接和读&#x2F;写相关的超时时间设置。<br>如果 Command 命令没有抛出任何异常，并且有返回结果，则 Hystrix 将会在做完日志记录和统计之后会将结果返回。 如果是通过<code>run()</code>方式运行，则返回一个<code>Obserable</code>对象，包含一个唯一值，并且发送一个<code>onCompleted</code>通知；如果是通过<code>consturct()</code>方式运行 ，则返回一个<code>Observable对象</code>。</p>
+</blockquote>
+<h3 id="（七）健康检查"><a href="#（七）健康检查" class="headerlink" title="（七）健康检查"></a>（七）健康检查</h3><p>Hystrix 会统计 Command 命令执行执行过程中的<strong>成功数</strong>、<strong>失败数</strong>、<strong>拒绝数</strong>和<strong>超时数</strong>,将这些信息记录到<strong>断路器(Circuit Breaker)<strong>中。断路器将上述统计按照</strong>时间窗</strong>的形式记录到一个定长数组中。断路器根据时间窗内的统计数据去判定请求什么时候可以被熔断，熔断后，在接下来一段恢复周期内，相同的请求过来后会直接被熔断。当再次校验，如果健康监测通过后，熔断开关将会被关闭。</p>
+<h3 id="（八）获取-Fallback"><a href="#（八）获取-Fallback" class="headerlink" title="（八）获取 Fallback"></a>（八）获取 Fallback</h3><p>当以下场景出现后，Hystrix 将会尝试触发 <code>Fallback</code>:</p>
+<blockquote>
+<ul>
+<li>步骤 6 Command 执行时抛出了任何异常；</li>
+<li>步骤 4 断路器已经被打开</li>
+<li>步骤 5 执行命令的线程池、队列或者信号量资源已满</li>
+<li>命令执行的时间超过阈值</li>
+</ul>
+</blockquote>
+<h3 id="（九）返回结果"><a href="#（九）返回结果" class="headerlink" title="（九）返回结果"></a>（九）返回结果</h3><p>如果 Hystrix 命令对象执行成功，将会返回结果，或者以<code>Observable</code>形式包装的结果。根据<strong>步骤 2</strong>的 command 调用方式，返回的<code>Observable</code> 会按照如下图说是的转换关系进行返回：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-8790f97df332d9a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<ul>
+<li><code>execute()</code> — 用和 <code>.queue()</code> 相同的方式获取 <code>Future</code>，然后调用 <code>Future</code> 的 <code>get()</code> 以获取 <code>Observable</code> 的单个值。</li>
+<li><code>queue()</code> —将 <code>Observable</code> 转换为 <code>BlockingObservable</code>，以便可以将其转换为 <code>Future</code> 并返回。</li>
+<li><code>watch()</code> —订阅 <code>Observable</code> 并开始执行命令的流程； 返回一个 <code>Observable</code>，当订阅该 <code>Observable</code> 时，它会重新通知。</li>
+<li><code>toObservable()</code> —返回不变的 <code>Observable</code>； 必须订阅它才能真正开始执行命令的流程。</li>
+</ul>
+<h2 id="断路器工作原理"><a href="#断路器工作原理" class="headerlink" title="断路器工作原理"></a>断路器工作原理</h2><p><img src="https://upload-images.jianshu.io/upload_images/14126519-dce007513bf90794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<ol>
+<li>断路器时间窗内的请求数 是否超过了<strong>请求数断路器生效阈值</strong><code>circuitBreaker.requestVolumeThreshold</code>,如果超过了阈值，则将会触发断路，断路状态为<strong>开启</strong><br>例如，如果当前阈值设置的是<code>20</code>,则当时间窗内统计的请求数共计 19 个，即使 19 个全部失败了，都不会触发断路器。</li>
+<li>并且请求错误率超过了<strong>请求错误率阈值</strong><code>errorThresholdPercentage</code></li>
+<li>如果两个都满足，则将断路器由<strong>关闭</strong>迁移到<strong>开启</strong></li>
+<li>如果断路器开启，则后续的所有相同请求将会被断路掉；</li>
+<li>直到过了<strong>沉睡时间窗</strong><code>sleepWindowInMilliseconds</code>后，再发起请求时，允许其通过（此时的状态为<strong>半开起状态</strong>）。如果请求失败了，则保持断路器状态为<strong>开启</strong>状态，并更新<strong>沉睡时间窗</strong>。如果请求成功了，则将断路器状态改为<strong>关闭</strong>状态；</li>
+</ol>
+<p>核心的逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">                       <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(HealthCounts hc)</span> &#123;</span><br><span class="line">                           <span class="comment">// check if we are past the statisticalWindowVolumeThreshold</span></span><br><span class="line">                           <span class="keyword">if</span> (hc.getTotalRequests() &lt; properties.circuitBreakerRequestVolumeThreshold().get()) &#123;</span><br><span class="line">                               <span class="comment">// we are not past the minimum volume threshold for the stat window,</span></span><br><span class="line">                               <span class="comment">// so no change to circuit status.</span></span><br><span class="line">                               <span class="comment">// if it was CLOSED, it stays CLOSED</span></span><br><span class="line">                               <span class="comment">// if it was half-open, we need to wait for a successful command execution</span></span><br><span class="line">                               <span class="comment">// if it was open, we need to wait for sleep window to elapse</span></span><br><span class="line">                           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                               <span class="keyword">if</span> (hc.getErrorPercentage() &lt; properties.circuitBreakerErrorThresholdPercentage().get()) &#123;</span><br><span class="line">                                   <span class="comment">//we are not past the minimum error threshold for the stat window,</span></span><br><span class="line">                                   <span class="comment">// so no change to circuit status.</span></span><br><span class="line">                                   <span class="comment">// if it was CLOSED, it stays CLOSED</span></span><br><span class="line">                                   <span class="comment">// if it was half-open, we need to wait for a successful command execution</span></span><br><span class="line">                                   <span class="comment">// if it was open, we need to wait for sleep window to elapse</span></span><br><span class="line">                               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                   <span class="comment">// our failure rate is too high, we need to set the state to OPEN</span></span><br><span class="line">                                   <span class="keyword">if</span> (status.compareAndSet(Status.CLOSED, Status.OPEN)) &#123;</span><br><span class="line">                                       circuitOpened.set(System.currentTimeMillis());</span><br><span class="line">                                   &#125;</span><br><span class="line">                               &#125;</span><br><span class="line">                           &#125;</span><br><span class="line">                       &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="系统指标"><a href="#系统指标" class="headerlink" title="系统指标"></a>系统指标</h3><p>Hystrix 对系统指标的统计是基于时间窗模式的：</p>
+<blockquote>
+<p><strong>时间窗</strong>：最近的一个时间区间内，比如前一小时到现在，那么时间窗的长度就是<code>1小时</code>；<br><strong>桶</strong>：桶是在特定的<strong>时间窗</strong>内，等分的指标收集的统计集合；比如时间窗的长度为<code>1小时</code>，而桶的数量为<code>10</code>,那么每个桶在时间轴上依次排开，时间由远及近，每个桶统计的时间分片为 <code>1h / 10 = 6 min</code> 6 分钟。一个桶中，包含了<code>成功数</code>、<code>失败数</code>、<code>超时数</code>、<code>拒绝数</code> 四个指标。</p>
+</blockquote>
+<p>在系统内，时间窗会随着系统的运行逐渐向前移动，而时间窗的长度和桶的数量是固定不变的，那么随着时间的移动，会出现较久的过期的桶被移除出去，新的桶被添加进来，如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-11710915e1a5dcda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<h2 id="资源隔离技术"><a href="#资源隔离技术" class="headerlink" title="资源隔离技术"></a>资源隔离技术</h2><h3 id="线程池隔离"><a href="#线程池隔离" class="headerlink" title="线程池隔离"></a>线程池隔离</h3><p>如下图所示，由于计算机系统的基本执行单位就是线程，线程具备独立的执行能力，所以，为了做到资源保护，需要对系统的线程池进行划分，对于外部调用方</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">User</span> <span class="title">Request</span></span><br></pre></td></tr></table></figure>
+
+<p>的请求，调用各个线程池的服务，各个线程池独立完成调用，然后将结果返回</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">调用方</span><br></pre></td></tr></table></figure>
+
+<p>。在调用服务的过程中，如果</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">服务提供方</span><br></pre></td></tr></table></figure>
+
+<p>执行时间过长，则</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">调用方</span><br></pre></td></tr></table></figure>
+
+<p>可以直接以超时的方式直接返回，快速失败。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-55a0be64ecac4cda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<p>线程池隔离的几点好处</p>
+<blockquote>
+<ol>
+<li>使用超时返回的机制，避免同步调用服务时，调用时间过长，无法释放，导致资源耗尽的情况</li>
+<li>服务方可以控制请求数量，请求过多，可以直接拒绝,达到快速失败的目的；</li>
+<li>请求排队，线程池可以维护执行队列，将请求压到队列中处理</li>
+</ol>
+</blockquote>
+<p>举个例子，如下代码段，模拟了同步调用服务的过程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//服务提供方，执行服务的时候模拟2分钟的耗时</span></span><br><span class="line">Callable&lt;String&gt; callableService  = ()-&gt;&#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">while</span>(System.currentTimeMillis()-start&gt; <span class="number">1000</span> * <span class="number">60</span> *<span class="number">2</span>)&#123;</span><br><span class="line">       <span class="comment">//模拟服务执行时间过长的情况</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;OK&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//模拟10个客户端调用服务</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">clients</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line"><span class="comment">//模拟给10个客户端提交处理请求</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">    clients.execute(()-&gt;&#123;</span><br><span class="line">        <span class="comment">//同步调用</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> callableService.call();</span><br><span class="line">            System.out.println(<span class="string">&quot;当前客户端：&quot;</span>+Thread.currentThread().getName()+<span class="string">&quot;调用服务完成，得到结果：&quot;</span>+result);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在此环节中，客户端 <code>clients</code>必须等待服务方返回结果之后，才能接收新的请求。如果用吞吐量来衡量系统的话，会发现系统的处理能力比较低。为了提高相应时间，可以借助线程池的方式，设置超时时间，这样的话，客户端就不需要必须等待服务方返回，如果时间过长，可以提前返回,改造后的代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//服务提供方，执行服务的时候模拟2分钟的耗时</span></span><br><span class="line">       Callable&lt;String&gt; callableService  = ()-&gt;&#123;</span><br><span class="line">           <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">           <span class="keyword">while</span>(System.currentTimeMillis()-start&gt; <span class="number">1000</span> * <span class="number">60</span> *<span class="number">2</span>)&#123;</span><br><span class="line">              <span class="comment">//模拟服务执行时间过长的情况</span></span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">return</span> <span class="string">&quot;OK&quot;</span>;</span><br><span class="line">       &#125;;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//创建线程池作为服务方</span></span><br><span class="line">       <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">30</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       <span class="comment">//模拟10个客户端调用服务</span></span><br><span class="line">       <span class="type">ExecutorService</span> <span class="variable">clients</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">10</span>);</span><br><span class="line">       <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">           clients.execute(()-&gt;&#123;</span><br><span class="line">               <span class="comment">//同步调用</span></span><br><span class="line">                   <span class="comment">//将请求提交给线程池执行，Callable 和 Runnable在某种意义上，也是Command对象</span></span><br><span class="line">                   Future&lt;String&gt; future = executorService.submit(callableService::call);</span><br><span class="line">                   <span class="comment">//在指定的时间内获取结果，如果超时，调用方可以直接返回</span></span><br><span class="line">                   <span class="keyword">try</span> &#123;</span><br><span class="line">                       <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> future.get(<span class="number">1000</span>, TimeUnit.SECONDS);</span><br><span class="line">                       <span class="comment">//客户端等待时间之后，快速返回</span></span><br><span class="line">                       System.out.println(<span class="string">&quot;当前客户端：&quot;</span>+Thread.currentThread().getName()+<span class="string">&quot;调用服务完成，得到结果：&quot;</span>+result);</span><br><span class="line">                   &#125;<span class="keyword">catch</span> (TimeoutException timeoutException)&#123;</span><br><span class="line">                       System.out.println(<span class="string">&quot;服务调用超时，返回处理&quot;</span>);</span><br><span class="line">                   &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line"></span><br><span class="line">                   &#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">                   &#125;</span><br><span class="line">           &#125;);</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们将服务方的线程池设置为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadPoolExecutor</span> <span class="variable">executorService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(<span class="number">10</span>,<span class="number">1000</span>,TimeUnit.SECONDS,</span><br><span class="line"><span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">100</span>),</span><br><span class="line"><span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.DiscardPolicy() <span class="comment">// 提交请求过多时，可以丢弃请求，避免死等阻塞的情况。</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>线程池隔离模式的弊端</strong></p>
+<blockquote>
+<p>线程池隔离模式，会根据服务划分出独立的线程池，系统资源的线程并发数是有限的，当线程数过多，系统话费大量的 CPU 时间来做线程上下文切换的无用操作，反而降低系统性能；如果线程池隔离的过多，会导致真正用于接收用户请求的线程就相应地减少，系统吞吐量反而下降；<br><strong>在实践上，应当对像远程方法调用，网络资源请求这种服务时间不太可控的场景下使用线程池隔离模式处理</strong><br>如下图所示，是线程池隔离模式的三种场景：</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-8e16e7f8072475eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<h3 id="信号量隔离"><a href="#信号量隔离" class="headerlink" title="信号量隔离"></a>信号量隔离</h3><p>由于基于线程池隔离的模式占用系统线程池资源，Hystrix 还提供了另外一个隔离技术：基于信号量的隔离。</p>
+<p>基于信号量的隔离方式非常地简单，其核心就是使用共用变量</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">semaphore</span></span><br></pre></td></tr></table></figure>
+
+<p>进行原子操作，控制线程的并发量，当并发量达到一定量级时，服务禁止调用。如下图所示：信号量本身不会消耗多余的线程资源，所以就非常轻量。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-9af3442e03df941e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640/format/webp" alt="img"></p>
+<p>基于信号量隔离的利弊</p>
+<blockquote>
+<p>利：基于信号量的隔离，利用 JVM 的原子性 CAS 操作，避免了资源锁的竞争，省去了线程池开销，效率非常高；<br>弊：本质上基于信号量的隔离是同步行为，所以无法做到超时熔断，所以服务方自身要控制住执行时间，避免超时。<br>应用场景：<strong>业务服务上，有并发上限限制时，可以考虑此方式</strong> &gt; <code>Alibaba Sentinel</code>开源框架，就是基于信号量的熔断和断路器框架。</p>
+</blockquote>
+<h2 id="Hystrix-应用"><a href="#Hystrix-应用" class="headerlink" title="Hystrix 应用"></a>Hystrix 应用</h2><ul>
+<li><strong>Hystrix 配置无法动态调节生效</strong>。Hystrix 框架本身是使用的<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/Netflix/archaius">Archaius</a>框架完成的配置加载和刷新，但是集成自 Spring Cloud 下，无法有效地根据实时监控结果，动态调整熔断和系统参数</li>
+<li><strong>线程池和 Command 之间的配置比较复杂</strong>,在 Spring Cloud 在做 feigin-hystrix 集成的时候，还有些 BUG，对 command 的默认配置没有处理好，导致所有 command 占用公共的 command 线程池，没有细粒度控制，还需要做框架适配调整</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">SetterFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Returns a hystrix setter appropriate for the given target and method</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  HystrixCommand.Setter <span class="title function_ invoke__">create</span>(Target&lt;?&gt; target, Method method);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Default behavior is to derive the group key from &#123;<span class="doctag">@link</span> Target#name()&#125; and the command key from</span></span><br><span class="line"><span class="comment">   * &#123;<span class="doctag">@link</span> Feign#configKey(Class, Method)&#125;.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Default</span> <span class="keyword">implements</span> <span class="title">SetterFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> HystrixCommand.Setter <span class="title function_ invoke__">create</span>(Target&lt;?&gt; target, Method method) &#123;</span><br><span class="line">      String groupKey = target.<span class="title function_ invoke__">name</span>();</span><br><span class="line">      String commandKey = Feign.<span class="title function_ invoke__">configKey</span>(target.<span class="title function_ invoke__">type</span>(), method);</span><br><span class="line">      <span class="keyword">return</span> HystrixCommand.Setter</span><br><span class="line">          .<span class="title function_ invoke__">withGroupKey</span>(HystrixCommandGroupKey.Factory.<span class="title function_ invoke__">asKey</span>(groupKey))</span><br><span class="line">          .<span class="title function_ invoke__">andCommandKey</span>(HystrixCommandKey.Factory.<span class="title function_ invoke__">asKey</span>(commandKey));</span><br><span class="line">          <span class="comment">//没有处理好default配置项的加载</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hystrix-配置"><a href="#Hystrix-配置" class="headerlink" title="Hystrix 配置"></a>Hystrix 配置</h2><blockquote>
+<p>详细配置可以参考 <a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration">Hystrix 官方配置手册</a>，这里仅介绍比较核心的配置</p>
+</blockquote>
+<h3 id="执行配置"><a href="#执行配置" class="headerlink" title="执行配置"></a>执行配置</h3><p>以下配置用于控制 <a target="_blank" rel="noopener" href="http://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixCommand.html#run()"><code>HystrixCommand.run()</code></a> 如何执行。</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#execution.isolation.strategy"><code>execution.isolation.strategy</code></a></td>
+<td>线程隔离（THREAD）或信号量隔离（SEMAPHORE）</td>
+<td>THREAD</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#execution.isolation.thread.timeoutInMilliseconds"><code>execution.isolation.thread.timeoutInMilliseconds</code></a></td>
+<td>方法执行超时时间</td>
+<td>1000(ms)</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#execution.isolation.semaphore.maxConcurrentRequests"><code>execution.isolation.semaphore.maxConcurrentRequests</code></a></td>
+<td>信号量隔离最大并发数</td>
+<td>10</td>
+</tr>
+</tbody></table>
+<h3 id="断路配置"><a href="#断路配置" class="headerlink" title="断路配置"></a>断路配置</h3><p>以下配置用于控制 <a target="_blank" rel="noopener" href="http://netflix.github.io/Hystrix/javadoc/index.html?com/netflix/hystrix/HystrixCircuitBreaker.html"><code>HystrixCircuitBreaker</code></a> 的断路处理。</p>
+<table>
+<thead>
+<tr>
+<th align="left">配置项</th>
+<th align="left">说明</th>
+<th align="left">默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#circuitBreaker.enabled"><code>circuitBreaker.enabled</code></a></td>
+<td align="left">是否开启断路器</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#circuitBreaker.requestVolumeThreshold"><code>circuitBreaker.requestVolumeThreshold</code></a></td>
+<td align="left">断路器启用请求数阈值</td>
+<td align="left">20</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#circuitBreaker.sleepWindowInMilliseconds"><code>circuitBreaker.sleepWindowInMilliseconds</code></a></td>
+<td align="left">断路器启用后的休眠时间</td>
+<td align="left">5000(ms)</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#circuitBreaker.errorThresholdPercentage"><code>circuitBreaker.errorThresholdPercentage</code></a></td>
+<td align="left">断路器启用失败率阈值</td>
+<td align="left">50(%)</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#circuitBreaker.forceOpen"><code>circuitBreaker.forceOpen</code></a></td>
+<td align="left">是否强制将断路器设置成开启状态</td>
+<td align="left">false</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#circuitBreaker.forceClosed"><code>circuitBreaker.forceClosed</code></a></td>
+<td align="left">是否强制将断路器设置成关闭状态</td>
+<td align="left">false</td>
+</tr>
+</tbody></table>
+<h3 id="指标配置"><a href="#指标配置" class="headerlink" title="指标配置"></a>指标配置</h3><p>以下配置用于从 HystrixCommand 和 HystrixObservableCommand 执行中捕获相关指标。</p>
+<table>
+<thead>
+<tr>
+<th align="left">配置项</th>
+<th align="left">说明</th>
+<th align="left">默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#metrics.rollingStats.timeInMilliseconds"><code>metrics.rollingStats.timeInMilliseconds</code></a></td>
+<td align="left">时间窗的长度</td>
+<td align="left">10000(ms)</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#metrics.rollingStats.numBuckets"><code>metrics.rollingStats.numBuckets</code></a></td>
+<td align="left">桶的数量，需要保证<code>timeInMilliseconds % numBuckets =0</code></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#metrics.rollingPercentile.enabled"><code>metrics.rollingPercentile.enabled</code></a></td>
+<td align="left">是否统计运行延迟的占比</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#metrics.rollingPercentile.timeInMilliseconds"><code>metrics.rollingPercentile.timeInMilliseconds</code></a></td>
+<td align="left"><strong>运行延迟占比</strong>统计的时间窗</td>
+<td align="left">60000(ms)</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#metrics.rollingPercentile.numBuckets"><code>metrics.rollingPercentile.numBuckets</code></a></td>
+<td align="left"><strong>运行延迟占比</strong>统计的桶数</td>
+<td align="left">6</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#metrics.rollingPercentile.bucketSize"><code>metrics.rollingPercentile.bucketSize</code></a></td>
+<td align="left">百分比统计桶的容量，桶内最多保存的运行时间统计</td>
+<td align="left">100</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#metrics.healthSnapshot.intervalInMilliseconds"><code>metrics.healthSnapshot.intervalInMilliseconds</code></a></td>
+<td align="left">统计快照刷新间隔</td>
+<td align="left">500 (ms)</td>
+</tr>
+</tbody></table>
+<h3 id="线程池配置"><a href="#线程池配置" class="headerlink" title="线程池配置"></a>线程池配置</h3><p>以下配置用于控制 Hystrix Command 执行所使用的线程池。</p>
+<table>
+<thead>
+<tr>
+<th align="left">配置项</th>
+<th align="left">说明</th>
+<th align="left">默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#coreSize"><code>coreSize</code></a></td>
+<td align="left">线程池核心线程数</td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#maximumSize"><code>maximumSize</code></a></td>
+<td align="left">线程池最大线程数</td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#maxQueueSize"><code>maxQueueSize</code></a></td>
+<td align="left">最大 LinkedBlockingQueue 的大小，-1 表示用 SynchronousQueue</td>
+<td align="left">-1</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#queueSizeRejectionThreshold"><code>queueSizeRejectionThreshold</code></a></td>
+<td align="left">队列大小阈值，超过则拒绝</td>
+<td align="left">5</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix/wiki/Configuration#allowMaximumSizeToDivergeFromCoreSize"><code>allowMaximumSizeToDivergeFromCoreSize</code></a></td>
+<td align="left">此属性允许 maximumSize 的配置生效。该值可以等于或大于 coreSize。设置 coreSize &lt;maximumSize 使得线程池可以维持 maximumSize 并发性，但是会在相对空闲时将线程回收。（取决于 keepAliveTimeInMinutes）</td>
+<td align="left">false</td>
+</tr>
+</tbody></table>
+<h2 id="其他限流技术"><a href="#其他限流技术" class="headerlink" title="其他限流技术"></a>其他限流技术</h2><ul>
+<li><p><strong>resilience4j</strong><br>Hystrix 虽然官方宣布不再维护，其推荐另外一个框架：<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/resilience4j/resilience4j">resilience4j</a>, 这个框架是是为 Java 8 和 函数式编程设计的一个轻量级的容错框架，该框架充分利用函数式编程的概念，为<code>函数式接口</code>、<code>lamda表达式</code>、<code>方法引用</code>高阶函数进行包装，(本质上是装饰者模式的概念)，通过包装实现<code>断路</code>、<code>限流</code>、<code>重试</code>、<code>舱壁</code>功能。<br>这个框架整体而言比较轻量，没有控制台，不太好做系统级监控；</p>
+</li>
+<li><p>Alibaba Sentinel</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Sentinel</span></span><br></pre></td></tr></table></figure>
+
+<p>是 阿里巴巴开源的轻量级的流量控制、熔断降级 Java 库，该库的核心是使用的是信号量隔离的方式做流量控制和熔断，其优点是其集成性和易用性，几乎能和当前主流的 Spring Cloud, dubbo ,grpc ,nacos, zookeeper 做集成，如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-70fd779fc1f3b9b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p>
+<p>sentinel-features-overview-en.png</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Sentinel</span></span><br></pre></td></tr></table></figure>
+
+<p>的目标生态圈：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-84833e6225a05df0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img"></p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sentinel</span></span><br></pre></td></tr></table></figure>
+
+<p>一个强大的功能，就是它有一个流控管理控制台，你可以实时地监控每个服务的流控情况，并且可以实时编辑各种流控、熔断规则，有效地保证了服务保护的及时性。下图是内部试用的 sentinel 控制台：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/14126519-bb4aa4ba3a1de64c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt="img">另外，</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sentinel</span></span><br></pre></td></tr></table></figure>
+
+<p>还可以和</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ctrip apollo</span></span><br></pre></td></tr></table></figure>
+
+<p>分布式配置系统进行集成，将流控规降级等各种规则先配置在 apollo 中，然后服务启动自动加载流控规则。</p>
+</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix">Hystrix Github</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/684b04b6c454">Spring Cloud Hystrix 设计原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5c009ff6f265da614b11b84d">Hystrix 都停更了，我为什么还要学？</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/bef3ae94/" title="Hystrix 快速入门">https://dunwu.github.io/blog/pages/bef3ae94/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag"># 中间件</a>
+              <a href="/blog/tags/%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6/" rel="tag"># 流量控制</a>
+              <a href="/blog/tags/Hystrix/" rel="tag"># Hystrix</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/20889acf/" rel="prev" title="Tomcat 快速入门">
+                  <i class="fa fa-angle-left"></i> Tomcat 快速入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/f5949220/" rel="next" title="Http 缓存">
+                  Http 缓存 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"22fc8550d83eedde86d6fb76e8870fd6"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>

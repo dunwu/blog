@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/uploads/favicon.ico">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dunwu.github.io","root":"/blog/","images":"/blog/images","scheme":"Pisces","darkmode":true,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"atom-one-light","dark":"atom-one-dark"},"prism":{"light":"atom-one-light","dark":"atom-one-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/blog/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/blog/js/config.js" defer></script>
+
+    <meta name="description" content="Java 并发之分工工具对于简单的并行任务，你可以通过“线程池 + Future”的方案来解决；如果任务之间有聚合关系，无论是 AND 聚合还是 OR 聚合，都可以通过 CompletableFuture 来解决；而批量的并行任务，则可以通过 CompletionService 来解决。 FutureTaskFutureTask 有两个构造函数： 12FutureTask(Callable&lt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 并发之分工工具">
+<meta property="og:url" content="https://dunwu.github.io/blog/pages/d7fa17f4/index.html">
+<meta property="og:site_name" content="Dunwu Blog">
+<meta property="og:description" content="Java 并发之分工工具对于简单的并行任务，你可以通过“线程池 + Future”的方案来解决；如果任务之间有聚合关系，无论是 AND 聚合还是 OR 聚合，都可以通过 CompletableFuture 来解决；而批量的并行任务，则可以通过 CompletionService 来解决。 FutureTaskFutureTask 有两个构造函数： 12FutureTask(Callable&lt;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200703141326.png">
+<meta property="article:published_time" content="2020-07-14T07:27:46.000Z">
+<meta property="article:modified_time" content="2025-09-13T09:56:53.702Z">
+<meta property="article:author" content="钝悟 ◾ Dunwu">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="JavaCore">
+<meta property="article:tag" content="FutureTask">
+<meta property="article:tag" content="CompletableFuture">
+<meta property="article:tag" content="CompletionStage">
+<meta property="article:tag" content="CompletionService">
+<meta property="article:tag" content="ForkJoinPool">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/dunwu/images/master/snap/20200703141326.png">
+
+
+<link rel="canonical" href="https://dunwu.github.io/blog/pages/d7fa17f4/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://dunwu.github.io/blog/pages/d7fa17f4/","path":"/pages/d7fa17f4/","title":"Java 并发之分工工具"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java 并发之分工工具 | Dunwu Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/motion.js" defer></script><script src="/blog/js/sidebar.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+  <script src="/blog/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Dunwu Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">大道至简，知易行难</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">428</span></a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">124</span></a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">508</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-%E5%B9%B6%E5%8F%91%E4%B9%8B%E5%88%86%E5%B7%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">Java 并发之分工工具</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FutureTask"><span class="nav-number">1.1.</span> <span class="nav-text">FutureTask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CompletableFuture"><span class="nav-number">1.2.</span> <span class="nav-text">CompletableFuture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CompletionStage"><span class="nav-number">1.3.</span> <span class="nav-text">CompletionStage</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E5%85%B3%E7%B3%BB"><span class="nav-number">1.3.1.</span> <span class="nav-text">串行关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0-AND-%E6%B1%87%E8%81%9A%E5%85%B3%E7%B3%BB"><span class="nav-number">1.3.2.</span> <span class="nav-text">描述 AND 汇聚关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0-OR-%E6%B1%87%E8%81%9A%E5%85%B3%E7%B3%BB"><span class="nav-number">1.3.3.</span> <span class="nav-text">描述 OR 汇聚关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">1.3.4.</span> <span class="nav-text">异常处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CompletionService"><span class="nav-number">1.4.</span> <span class="nav-text">CompletionService</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ForkJoinPool"><span class="nav-number">1.5.</span> <span class="nav-text">ForkJoinPool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="钝悟 ◾ Dunwu"
+      src="/blog/uploads/avatar.gif">
+  <p class="site-author-name" itemprop="name">钝悟 ◾ Dunwu</p>
+  <div class="site-description" itemprop="description">钝悟的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/blog/archives/">
+          <span class="site-state-item-count">508</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/blog/categories/">
+        <span class="site-state-item-count">124</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/blog/tags/">
+        <span class="site-state-item-count">428</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dunwu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dunwu" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:forbreak@163.com" title="E-Mail → mailto:forbreak@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://dunwu.github.io/blog/pages/d7fa17f4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/uploads/avatar.gif">
+      <meta itemprop="name" content="钝悟 ◾ Dunwu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dunwu Blog">
+      <meta itemprop="description" content="钝悟的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java 并发之分工工具 | Dunwu Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 并发之分工工具<a href="https://github.com/dunwu/blog/blob/master/source/_posts/01.Java/01.JavaCore/05.%E5%B9%B6%E5%8F%91/Java_%E5%B9%B6%E5%8F%91_%E5%88%86%E5%B7%A5%E5%B7%A5%E5%85%B7.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-14 15:27:46" itemprop="dateCreated datePublished" datetime="2020-07-14T15:27:46+08:00">2020-07-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-09-13 17:56:53" itemprop="dateModified" datetime="2025-09-13T17:56:53+08:00">2025-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/" itemprop="url" rel="index"><span itemprop="name">JavaCore</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/Java/JavaCore/%E5%B9%B6%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">并发</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Java-并发之分工工具"><a href="#Java-并发之分工工具" class="headerlink" title="Java 并发之分工工具"></a>Java 并发之分工工具</h1><p><strong>对于简单的并行任务，你可以通过“线程池 + Future”的方案来解决；如果任务之间有聚合关系，无论是 AND 聚合还是 OR 聚合，都可以通过 CompletableFuture 来解决；而批量的并行任务，则可以通过 CompletionService 来解决。</strong></p>
+<h2 id="FutureTask"><a href="#FutureTask" class="headerlink" title="FutureTask"></a>FutureTask</h2><p>FutureTask 有两个构造函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FutureTask(Callable&lt;V&gt; callable);</span><br><span class="line">FutureTask(Runnable runnable, V result);</span><br></pre></td></tr></table></figure>
+
+<p><code>FutureTask</code> 实现了 <code>Runnable</code> 和 <code>Future</code> 接口。由于实现了 <code>Runnable</code> 接口，所以可以将 <code>FutureTask</code> 对象作为任务提交给 <code>ThreadPoolExecutor</code> 去执行，也可以直接被 <code>Thread</code> 执行；又因为实现了 <code>Future</code> 接口，所以也能用来获得任务的执行结果。</p>
+<p>下面，通过一组示例来展示 FutureTask 如何分别交给线程池、线程执行。</p>
+<p>::: tabs#创建 FutureTask 示例</p>
+<p>@tab <code>FutureTask</code> 交给线程池执行</p>
+<p>【示例】<code>FutureTask</code> 交给线程池执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FutureTaskDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ExecutionException, InterruptedException &#123;</span><br><span class="line">        <span class="comment">// 创建 FutureTask</span></span><br><span class="line">        <span class="type">Task</span> <span class="variable">task</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Task</span>();</span><br><span class="line">        FutureTask&lt;String&gt; f1 = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(task);</span><br><span class="line">        FutureTask&lt;String&gt; f2 = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(task);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建线程池</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newCachedThreadPool();</span><br><span class="line">        executor.submit(f1);</span><br><span class="line">        executor.submit(f2);</span><br><span class="line">        System.out.println(f1.get());</span><br><span class="line">        System.out.println(f2.get());</span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;String&gt; &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">call</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> Thread.currentThread().getName() + <span class="string">&quot; 执行成功！&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// pool-1-thread-1 执行成功！</span></span><br><span class="line"><span class="comment">// pool-1-thread-2 执行成功！</span></span><br></pre></td></tr></table></figure>
+
+<p>@tab <code>FutureTask</code> 交给线程执行</p>
+<p>【示例】<code>FutureTask</code> 交给线程执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FutureTaskDemo2</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException, ExecutionException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建 FutureTask</span></span><br><span class="line">        <span class="type">Task</span> <span class="variable">task</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Task</span>();</span><br><span class="line">        FutureTask&lt;String&gt; f1 = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(task);</span><br><span class="line">        FutureTask&lt;String&gt; f2 = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(task);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建线程</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(f1).start();</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(f2).start();</span><br><span class="line">        System.out.println(f1.get());</span><br><span class="line">        System.out.println(f2.get());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Task</span> <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;String&gt; &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> String <span class="title function_">call</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> Thread.currentThread().getName() + <span class="string">&quot; 执行成功！&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// Thread-0 执行成功！</span></span><br><span class="line"><span class="comment">// Thread-1 执行成功！</span></span><br></pre></td></tr></table></figure>
+
+<p>@tab 用 <code>FutureTask</code> 完成并行计算</p>
+<p>【示例】用 <code>FutureTask</code> 完成并行计算</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FutureTaskDemo3</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException, ExecutionException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建一个线程池来执行任务</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建两个 Callable 对象</span></span><br><span class="line">        Callable&lt;Integer&gt; t1 = () -&gt; &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">100</span>; i++) &#123;</span><br><span class="line">                result += i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;;</span><br><span class="line">        Callable&lt;Integer&gt; t2 = () -&gt; &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">101</span>; i &lt;= <span class="number">200</span>; i++) &#123;</span><br><span class="line">                result += i;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建两个 FutureTask 对象</span></span><br><span class="line">        FutureTask&lt;Integer&gt; f1 = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(t1);</span><br><span class="line">        FutureTask&lt;Integer&gt; f2 = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(t2);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 提交任务到线程池执行</span></span><br><span class="line">        executor.execute(f1);</span><br><span class="line">        executor.execute(f2);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取任务的结果</span></span><br><span class="line">        <span class="type">Integer</span> <span class="variable">value1</span> <span class="operator">=</span> f1.get();</span><br><span class="line">        <span class="type">Integer</span> <span class="variable">value2</span> <span class="operator">=</span> f2.get();</span><br><span class="line">        System.out.println(<span class="string">&quot;total = &quot;</span> + value1 + value2);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 关闭线程池</span></span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>:::</p>
+<h2 id="CompletableFuture"><a href="#CompletableFuture" class="headerlink" title="CompletableFuture"></a>CompletableFuture</h2><p>JDK8 提供了 CompletableFuture 来支持异步编程。</p>
+<p>CompletableFuture 提供了四个静态方法来创建一个异步操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用默认线程池</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> CompletableFuture&lt;Void&gt; <span class="title function_">runAsync</span><span class="params">(Runnable runnable)</span> &#123; <span class="comment">// 省略 &#125;</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;U&gt; CompletableFuture&lt;U&gt; <span class="title function_">supplyAsync</span><span class="params">(Supplier&lt;U&gt; supplier)</span> &#123; <span class="comment">// 省略 &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用自定义线程池</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> CompletableFuture&lt;Void&gt; <span class="title function_">runAsync</span><span class="params">(Runnable runnable, Executor executor)</span> &#123; <span class="comment">// 省略 &#125;</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;U&gt; CompletableFuture&lt;U&gt; <span class="title function_">supplyAsync</span><span class="params">(Supplier&lt;U&gt; supplier, Executor executor)</span> &#123; <span class="comment">// 省略 &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的 4 个静态方法中，有 2 个 <code>runAsync</code> 方法，2 个 <code>supplyAsync</code> 方法，它们的区别是：</p>
+<ul>
+<li><code>runAsync</code> 方法没有返回值。</li>
+<li><code>supplyAsync</code> 方法有返回值。</li>
+</ul>
+<p>默认情况下 <code>CompletableFuture</code> 会使用公共的 <code>ForkJoinPool</code> 线程池，这个线程池默认创建的线程数是 CPU 的核数（也可以通过 JVM option: <code>-Djava.util.concurrent.ForkJoinPool.common.parallelism</code> 来设置 <code>ForkJoinPool</code> 线程池的线程数）。如果所有 <code>CompletableFuture</code> 共享一个线程池，那么一旦有任务执行一些很慢的 I&#x2F;O 操作，就会导致线程池中所有线程都阻塞在 I&#x2F;O 操作上，从而造成线程饥饿，进而影响整个系统的性能。所以，强烈建议你要<strong>根据不同的业务类型创建不同的线程池，以避免互相干扰</strong>。</p>
+<h2 id="CompletionStage"><a href="#CompletionStage" class="headerlink" title="CompletionStage"></a>CompletionStage</h2><p>CompletionStage 接口可以清晰地描述任务之间的时序关系，如<strong>串行关系、并行关系、汇聚关系</strong>等。</p>
+<h3 id="串行关系"><a href="#串行关系" class="headerlink" title="串行关系"></a>串行关系</h3><p>CompletionStage 接口里面描述串行关系，主要是 <code>thenApply</code>、<code>thenAccept</code>、<code>thenRun</code> 和 <code>thenCompose</code> 这四个系列的接口。</p>
+<p><code>thenApply</code> 系列函数里参数 <code>fn</code> 的类型是接口 <code>Function&lt;T, R&gt;</code>，这个接口里与 <code>CompletionStage</code> 相关的方法是 <code>R apply(T t)</code>，这个方法既能接收参数也支持返回值，所以 <code>thenApply</code> 系列方法返回的是<code>CompletionStage&lt;R&gt;</code>。</p>
+<p><code>thenAccept</code> 系列方法里参数 <code>consumer</code> 的类型是接口 <code>Consumer&lt;T&gt;</code>，这个接口里与 <code>CompletionStage</code> 相关的方法是 <code>void accept(T t)</code>，这个方法虽然支持参数，但却不支持回值，所以 <code>thenAccept</code> 系列方法返回的是<code>CompletionStage&lt;Void&gt;</code>。</p>
+<p><code>thenRun</code> 系列方法里 <code>action</code> 的参数是 <code>Runnable</code>，所以 <code>action</code> 既不能接收参数也不支持返回值，所以 thenRun 系列方法返回的也是 <code>CompletionStage&lt;Void&gt;</code>。</p>
+<p>这些方法里面 Async 代表的是异步执行 <code>fn</code>、<code>consumer</code> 或者 <code>action</code>。其中，需要你注意的是 <code>thenCompose</code> 系列方法，这个系列的方法会新创建出一个子流程，最终结果和 <code>thenApply</code> 系列是相同的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CompletionStage&lt;R&gt; <span class="title function_">thenApply</span><span class="params">(fn)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">thenApplyAsync</span><span class="params">(fn)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">thenAccept</span><span class="params">(consumer)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">thenAcceptAsync</span><span class="params">(consumer)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">thenRun</span><span class="params">(action)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">thenRunAsync</span><span class="params">(action)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">thenCompose</span><span class="params">(fn)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">thenComposeAsync</span><span class="params">(fn)</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="描述-AND-汇聚关系"><a href="#描述-AND-汇聚关系" class="headerlink" title="描述 AND 汇聚关系"></a>描述 AND 汇聚关系</h3><p><code>CompletionStage</code> 接口里面描述 AND 汇聚关系，主要是 <code>thenCombine</code>、<code>thenAcceptBoth</code> 和 <code>runAfterBoth</code> 系列的接口，这些接口的区别也是源自 <code>fn</code>、<code>consumer</code>、<code>action</code> 这三个核心参数不同。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CompletionStage&lt;R&gt; <span class="title function_">thenCombine</span><span class="params">(other, fn)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">thenCombineAsync</span><span class="params">(other, fn)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">thenAcceptBoth</span><span class="params">(other, consumer)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">thenAcceptBothAsync</span><span class="params">(other, consumer)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">runAfterBoth</span><span class="params">(other, action)</span>;</span><br><span class="line">CompletionStage&lt;Void&gt; <span class="title function_">runAfterBothAsync</span><span class="params">(other, action)</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="描述-OR-汇聚关系"><a href="#描述-OR-汇聚关系" class="headerlink" title="描述 OR 汇聚关系"></a>描述 OR 汇聚关系</h3><p><code>CompletionStage</code> 接口里面描述 OR 汇聚关系，主要是 <code>applyToEither</code>、<code>acceptEither</code> 和 <code>runAfterEither</code> 系列的接口，这些接口的区别也是源自 <code>fn</code>、<code>consumer</code>、<code>action</code> 这三个核心参数不同。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CompletionStage <span class="title function_">applyToEither</span><span class="params">(other, fn)</span>;</span><br><span class="line">CompletionStage <span class="title function_">applyToEitherAsync</span><span class="params">(other, fn)</span>;</span><br><span class="line">CompletionStage <span class="title function_">acceptEither</span><span class="params">(other, consumer)</span>;</span><br><span class="line">CompletionStage <span class="title function_">acceptEitherAsync</span><span class="params">(other, consumer)</span>;</span><br><span class="line">CompletionStage <span class="title function_">runAfterEither</span><span class="params">(other, action)</span>;</span><br><span class="line">CompletionStage <span class="title function_">runAfterEitherAsync</span><span class="params">(other, action)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>下面的示例代码展示了如何使用 applyToEither() 方法来描述一个 OR 汇聚关系。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CompletableFuture&lt;String&gt; f1 = CompletableFuture.supplyAsync(() -&gt; &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">t</span> <span class="operator">=</span> getRandom(<span class="number">5</span>, <span class="number">10</span>);</span><br><span class="line">    sleep(t, TimeUnit.SECONDS);</span><br><span class="line">    <span class="keyword">return</span> String.valueOf(t);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">CompletableFuture&lt;String&gt; f2 = CompletableFuture.supplyAsync(() -&gt; &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">t</span> <span class="operator">=</span> getRandom(<span class="number">5</span>, <span class="number">10</span>);</span><br><span class="line">    sleep(t, TimeUnit.SECONDS);</span><br><span class="line">    <span class="keyword">return</span> String.valueOf(t);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">CompletableFuture&lt;String&gt; f3 = f1.applyToEither(f2, s -&gt; s);</span><br><span class="line">System.out.println(f3.join());</span><br></pre></td></tr></table></figure>
+
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><p>虽然上面我们提到的 <code>fn</code>、<code>consumer</code>、<code>action</code> 它们的核心方法都<strong>不允许抛出可检查异常，但是却无法限制它们抛出运行时异常</strong>，例如下面的代码，执行 <code>7/0</code> 就会出现除零错误这个运行时异常。非异步编程里面，我们可以使用 <code>try &#123;&#125; catch &#123;&#125;</code> 来捕获并处理异常，那在异步编程里面，异常该如何处理呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CompletableFuture&lt;Integer&gt; f = CompletableFuture.supplyAsync(() -&gt; (<span class="number">7</span> / <span class="number">0</span>))</span><br><span class="line">                                                 .thenApply(r -&gt; r * <span class="number">10</span>);</span><br><span class="line">System.out.println(f.join());</span><br></pre></td></tr></table></figure>
+
+<p><code>CompletionStage</code> 接口给我们提供的方案非常简单，比 <code>try &#123;&#125; catch &#123;&#125;</code> 还要简单，下面是相关的方法，使用这些方法进行异常处理和串行操作是一样的，都支持链式编程方式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CompletionStage <span class="title function_">exceptionally</span><span class="params">(fn)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">whenComplete</span><span class="params">(consumer)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">whenCompleteAsync</span><span class="params">(consumer)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">handle</span><span class="params">(fn)</span>;</span><br><span class="line">CompletionStage&lt;R&gt; <span class="title function_">handleAsync</span><span class="params">(fn)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>下面的示例代码展示了如何使用 <code>exceptionally()</code> 方法来处理异常，<code>exceptionally()</code> 的使用非常类似于 <code>try &#123;&#125; catch &#123;&#125;</code> 中的 <code>catch &#123;&#125;</code>，但是由于支持链式编程方式，所以相对更简单。既然有 <code>try &#123;&#125; catch &#123;&#125;</code>，那就一定还有 <code>try &#123;&#125; catch &#123;&#125;</code>，<code>whenComplete()</code> 和 <code>handle()</code> 系列方法就类似于 <code>try &#123;&#125; catch &#123;&#125;</code> 中的 <code>finally &#123;&#125;</code>，无论是否发生异常都会执行 <code>whenComplete()</code> 中的回调函数 <code>consumer</code> 和 <code>handle()</code> 中的回调函数 <code>fn</code>。<code>whenComplete()</code> 和 <code>handle()</code> 的区别在于 <code>whenComplete()</code> 不支持返回结果，而 <code>handle()</code> 是支持返回结果的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CompletableFuture&lt;Integer&gt; f = CompletableFuture.supplyAsync(() -&gt; <span class="number">7</span> / <span class="number">0</span>)</span><br><span class="line">                                                .thenApply(r -&gt; r * <span class="number">10</span>)</span><br><span class="line">                                                .exceptionally(e -&gt; <span class="number">0</span>);</span><br><span class="line">System.out.println(f.join());</span><br></pre></td></tr></table></figure>
+
+<h2 id="CompletionService"><a href="#CompletionService" class="headerlink" title="CompletionService"></a>CompletionService</h2><p><code>CompletionService</code> 接口的实现类是 <code>ExecutorCompletionService</code>，这个实现类的构造方法有两个，分别是：</p>
+<ol>
+<li><code>ExecutorCompletionService(Executor executor)</code>；</li>
+<li><code>ExecutorCompletionService(Executor executor, BlockingQueue&lt;Future&lt;V&gt;&gt; completionQueue)</code>。</li>
+</ol>
+<p>这两个构造方法都需要传入一个线程池，如果不指定 <code>completionQueue</code>，那么默认会使用无界的 <code>LinkedBlockingQueue</code>。任务执行结果的 <code>Future</code> 对象就是加入到 <code>completionQueue</code> 中。</p>
+<p>下面的示例代码完整地展示了如何利用 <code>CompletionService</code> 来实现高性能的询价系统。其中，我们没有指定 <code>completionQueue</code>，因此默认使用无界的 <code>LinkedBlockingQueue</code>。之后通过 <code>CompletionService</code> 接口提供的 <code>submit()</code> 方法提交了三个询价操作，这三个询价操作将会被 <code>CompletionService</code> 异步执行。最后，我们通过 CompletionService 接口提供的 <code>take()</code> 方法获取一个 <code>Future</code> 对象（前面我们提到过，加入到阻塞队列中的是任务执行结果的 <code>Future</code> 对象），调用 <code>Future</code> 对象的 <code>get()</code> 方法就能返回询价操作的执行结果了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建线程池</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line"><span class="comment">// 创建 CompletionService</span></span><br><span class="line">CompletionService&lt;Integer&gt; cs = <span class="keyword">new</span> <span class="title class_">ExecutorCompletionService</span>&lt;&gt;(executor);</span><br><span class="line"><span class="comment">// 异步向电商 S1 询价</span></span><br><span class="line">cs.submit(()-&gt;getPriceByS1());</span><br><span class="line"><span class="comment">// 异步向电商 S2 询价</span></span><br><span class="line">cs.submit(()-&gt;getPriceByS2());</span><br><span class="line"><span class="comment">// 异步向电商 S3 询价</span></span><br><span class="line">cs.submit(()-&gt;getPriceByS3());</span><br><span class="line"><span class="comment">// 将询价结果异步保存到数据库</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;<span class="number">3</span>; i++) &#123;</span><br><span class="line">  <span class="type">Integer</span> <span class="variable">r</span> <span class="operator">=</span> cs.take().get();</span><br><span class="line">  executor.execute(()-&gt;save(r));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CompletionService 接口提供的方法有 5 个，这 5 个方法的方法签名如下所示。</p>
+<p>其中，submit() 相关的方法有两个。一个方法参数是<code>Callable&lt;V&gt; task</code>，前面利用 CompletionService 实现询价系统的示例代码中，我们提交任务就是用的它。另外一个方法有两个参数，分别是<code>Runnable task</code>和<code>V result</code>，这个方法类似于 ThreadPoolExecutor 的 <code>&lt;T&gt; Future&lt;T&gt; submit(Runnable task, T result)</code> ，这个方法在 <a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/91292">《23 | Future：如何用多线程实现最优的“烧水泡茶”程序？》</a> 中我们已详细介绍过，这里不再赘述。</p>
+<p>CompletionService 接口其余的 3 个方法，都是和阻塞队列相关的，take()、poll() 都是从阻塞队列中获取并移除一个元素；它们的区别在于如果阻塞队列是空的，那么调用 take() 方法的线程会被阻塞，而 poll() 方法会返回 null 值。 <code>poll(long timeout, TimeUnit unit)</code> 方法支持以超时的方式获取并移除阻塞队列头部的一个元素，如果等待了 timeout unit 时间，阻塞队列还是空的，那么该方法会返回 null 值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;V&gt; <span class="title function_">submit</span><span class="params">(Callable&lt;V&gt; task)</span>;</span><br><span class="line">Future&lt;V&gt; <span class="title function_">submit</span><span class="params">(Runnable task, V result)</span>;</span><br><span class="line">Future&lt;V&gt; <span class="title function_">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException;</span><br><span class="line">Future&lt;V&gt; <span class="title function_">poll</span><span class="params">()</span>;</span><br><span class="line">Future&lt;V&gt; <span class="title function_">poll</span><span class="params">(<span class="type">long</span> timeout, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException;</span><br></pre></td></tr></table></figure>
+
+<p>当需要批量提交异步任务的时候建议你使用 CompletionService。CompletionService 将线程池 Executor 和阻塞队列 BlockingQueue 的功能融合在了一起，能够让批量异步任务的管理更简单。除此之外，CompletionService 能够让异步任务的执行结果有序化，先执行完的先进入阻塞队列，利用这个特性，你可以轻松实现后续处理的有序性，避免无谓的等待，同时还可以快速实现诸如 Forking Cluster 这样的需求。</p>
+<p>CompletionService 的实现类 ExecutorCompletionService，需要你自己创建线程池，虽看上去有些啰嗦，但好处是你可以让多个 ExecutorCompletionService 的线程池隔离，这种隔离性能避免几个特别耗时的任务拖垮整个应用的风险。</p>
+<h2 id="ForkJoinPool"><a href="#ForkJoinPool" class="headerlink" title="ForkJoinPool"></a>ForkJoinPool</h2><p>Fork&#x2F;Join 是一个并行计算的框架，主要就是用来支持分治任务模型的，这个计算框架里的** Fork 对应的是分治任务模型里的任务分解，Join 对应的是结果合并<strong>。Fork&#x2F;Join 计算框架主要包含两部分，一部分是</strong>分治任务的线程池 ForkJoinPool<strong>，另一部分是</strong>分治任务 ForkJoinTask**。这两部分的关系类似于 ThreadPoolExecutor 和 Runnable 的关系，都可以理解为提交任务到线程池，只不过分治任务有自己独特类型 ForkJoinTask。</p>
+<p>ForkJoinTask 是一个抽象类，它的方法有很多，最核心的是 fork() 方法和 join() 方法，其中 fork() 方法会异步地执行一个子任务，而 join() 方法则会阻塞当前线程来等待子任务的执行结果。ForkJoinTask 有两个子类——RecursiveAction 和 RecursiveTask，通过名字你就应该能知道，它们都是用递归的方式来处理分治任务的。这两个子类都定义了抽象方法 compute()，不过区别是 RecursiveAction 定义的 compute() 没有返回值，而 RecursiveTask 定义的 compute() 方法是有返回值的。这两个子类也是抽象类，在使用的时候，需要你定义子类去扩展。</p>
+<p>Fork&#x2F;Join 并行计算的核心组件是 ForkJoinPool，所以下面我们就来简单介绍一下 ForkJoinPool 的工作原理。</p>
+<p>ForkJoinPool 本质上也是一个生产者 - 消费者的实现，但是更加智能，你可以参考下面的 ForkJoinPool 工作原理图来理解其原理。ThreadPoolExecutor 内部只有一个任务队列，而 ForkJoinPool 内部有多个任务队列，当我们通过 ForkJoinPool 的 invoke() 或者 submit() 方法提交任务时，ForkJoinPool 根据一定的路由规则把任务提交到一个任务队列中，如果任务在执行过程中会创建出子任务，那么子任务会提交到工作线程对应的任务队列中。</p>
+<p>如果工作线程对应的任务队列空了，是不是就没活儿干了呢？不是的，ForkJoinPool 支持一种叫做“<strong>任务窃取</strong>”的机制，如果工作线程空闲了，那它可以“窃取”其他工作任务队列里的任务，例如下图中，线程 T2 对应的任务队列已经空了，它可以“窃取”线程 T1 对应的任务队列的任务。如此一来，所有的工作线程都不会闲下来了。</p>
+<p>ForkJoinPool 中的任务队列采用的是双端队列，工作线程正常获取任务和“窃取任务”分别是从任务队列不同的端消费，这样能避免很多不必要的数据竞争。我们这里介绍的仅仅是简化后的原理，ForkJoinPool 的实现远比我们这里介绍的复杂，如果你感兴趣，建议去看它的源码。</p>
+<p><img src="https://raw.githubusercontent.com/dunwu/images/master/snap/20200703141326.png" alt="img"></p>
+<p>【示例】模拟 MapReduce 统计单词数量</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    String[] fc = &#123; <span class="string">&quot;hello world&quot;</span>,</span><br><span class="line">        <span class="string">&quot;hello me&quot;</span>,</span><br><span class="line">        <span class="string">&quot;hello fork&quot;</span>,</span><br><span class="line">        <span class="string">&quot;hello join&quot;</span>,</span><br><span class="line">        <span class="string">&quot;fork join in world&quot;</span> &#125;;</span><br><span class="line">    <span class="comment">//创建 ForkJoin 线程池</span></span><br><span class="line">    <span class="type">ForkJoinPool</span> <span class="variable">fjp</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ForkJoinPool</span>(<span class="number">3</span>);</span><br><span class="line">    <span class="comment">//创建任务</span></span><br><span class="line">    <span class="type">MR</span> <span class="variable">mr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MR</span>(fc, <span class="number">0</span>, fc.length);</span><br><span class="line">    <span class="comment">//启动任务</span></span><br><span class="line">    Map&lt;String, Long&gt; result = fjp.invoke(mr);</span><br><span class="line">    <span class="comment">//输出结果</span></span><br><span class="line">    result.forEach((k, v) -&gt; System.out.println(k + <span class="string">&quot;:&quot;</span> + v));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//MR 模拟类</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">MR</span> <span class="keyword">extends</span> <span class="title class_">RecursiveTask</span>&lt;Map&lt;String, Long&gt;&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String[] fc;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> start, end;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//构造函数</span></span><br><span class="line">    MR(String[] fc, <span class="type">int</span> fr, <span class="type">int</span> to) &#123;</span><br><span class="line">        <span class="built_in">this</span>.fc = fc;</span><br><span class="line">        <span class="built_in">this</span>.start = fr;</span><br><span class="line">        <span class="built_in">this</span>.end = to;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Map&lt;String, Long&gt; <span class="title function_">compute</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (end - start == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> calc(fc[start]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">mid</span> <span class="operator">=</span> (start + end) / <span class="number">2</span>;</span><br><span class="line">            <span class="type">MR</span> <span class="variable">mr1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MR</span>(fc, start, mid);</span><br><span class="line">            mr1.fork();</span><br><span class="line">            <span class="type">MR</span> <span class="variable">mr2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MR</span>(fc, mid, end);</span><br><span class="line">            <span class="comment">//计算子任务，并返回合并的结果</span></span><br><span class="line">            <span class="keyword">return</span> merge(mr2.compute(),</span><br><span class="line">                mr1.join());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//合并结果</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Long&gt; <span class="title function_">merge</span><span class="params">(Map&lt;String, Long&gt; r1, Map&lt;String, Long&gt; r2)</span> &#123;</span><br><span class="line">        Map&lt;String, Long&gt; result = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        result.putAll(r1);</span><br><span class="line">        <span class="comment">//合并结果</span></span><br><span class="line">        r2.forEach((k, v) -&gt; &#123;</span><br><span class="line">            <span class="type">Long</span> <span class="variable">c</span> <span class="operator">=</span> result.get(k);</span><br><span class="line">            <span class="keyword">if</span> (c != <span class="literal">null</span>) &#123; result.put(k, c + v); &#125; <span class="keyword">else</span> &#123; result.put(k, v); &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//统计单词数量</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Long&gt; <span class="title function_">calc</span><span class="params">(String line)</span> &#123;</span><br><span class="line">        Map&lt;String, Long&gt; result = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        <span class="comment">//分割单词</span></span><br><span class="line">        String[] words = line.split(<span class="string">&quot;\\s+&quot;</span>);</span><br><span class="line">        <span class="comment">//统计单词数量</span></span><br><span class="line">        <span class="keyword">for</span> (String w : words) &#123;</span><br><span class="line">            <span class="type">Long</span> <span class="variable">v</span> <span class="operator">=</span> result.get(w);</span><br><span class="line">            <span class="keyword">if</span> (v != <span class="literal">null</span>) &#123; result.put(w, v + <span class="number">1</span>); &#125; <span class="keyword">else</span> &#123; result.put(w, <span class="number">1L</span>); &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/10484692/">《Java 并发编程实战》</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.douban.com/subject/26591326/">《Java 并发编程的艺术》</a></li>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/intro/100023901">极客时间教程 - Java 并发编程实战</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6bac52527ca4">CompletableFuture 使用详解</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>钝悟 ◾ Dunwu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://dunwu.github.io/blog/pages/d7fa17f4/" title="Java 并发之分工工具">https://dunwu.github.io/blog/pages/d7fa17f4/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Java/" rel="tag"># Java</a>
+              <a href="/blog/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+              <a href="/blog/tags/JavaCore/" rel="tag"># JavaCore</a>
+              <a href="/blog/tags/FutureTask/" rel="tag"># FutureTask</a>
+              <a href="/blog/tags/CompletableFuture/" rel="tag"># CompletableFuture</a>
+              <a href="/blog/tags/CompletionStage/" rel="tag"># CompletionStage</a>
+              <a href="/blog/tags/CompletionService/" rel="tag"># CompletionService</a>
+              <a href="/blog/tags/ForkJoinPool/" rel="tag"># ForkJoinPool</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/pages/f18c87b0/" rel="prev" title="Redis 面试之应用篇">
+                  <i class="fa fa-angle-left"></i> Redis 面试之应用篇
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/pages/2f9875b2/" rel="next" title="MySQL 索引">
+                  MySQL 索引 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2015 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">钝悟 ◾ Dunwu</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">4.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">68:08</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/dunwu/blog" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"dunwu","repo":"blog","client_id":"c45bc13ca1d3d3aa4836","client_secret":"1907a9f0c22087badad3938e1d7dcba9078f88ac","admin_user":"dunwu","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.8.0/dist/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"23610578e550114510db9a91e9ccfeb7"}</script>
+<script src="/blog/js/third-party/comments/gitalk.js" defer></script>
+
+</body>
+</html>
